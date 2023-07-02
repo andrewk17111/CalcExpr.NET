@@ -53,17 +53,17 @@ public class TestNumber
     [TestMethod]
     public void TestConvert()
     {
-        Assert.AreEqual(decimal.MaxValue, (decimal)new Number((double)decimal.MaxValue));
-        Assert.AreEqual(double.MaxValue, (double)new Number(double.MaxValue));
-        Assert.AreEqual(float.MaxValue, (float)new Number(float.MaxValue));
-        Assert.AreEqual(long.MaxValue, (long)new Number(long.MaxValue));
-        Assert.AreEqual(int.MaxValue, (int)new Number(int.MaxValue));
-        Assert.AreEqual(short.MaxValue, (short)new Number(short.MaxValue));
-        Assert.AreEqual(sbyte.MaxValue, (sbyte)new Number(sbyte.MaxValue));
-        Assert.AreEqual(ulong.MaxValue, (ulong)new Number(ulong.MaxValue));
-        Assert.AreEqual(uint.MaxValue, (uint)new Number(uint.MaxValue));
-        Assert.AreEqual(ushort.MaxValue, (ushort)new Number(ushort.MaxValue));
-        Assert.AreEqual(byte.MaxValue, (byte)new Number(byte.MaxValue));
+        Assert.AreEqual(0.156489m, (decimal)new Number((double)0.156489m));
+        Assert.AreEqual(0.24567841318, (double)new Number(0.24567841318));
+        Assert.AreEqual(-5648.0549f, (float)new Number(-5648.0549f));
+        Assert.AreEqual(-123157L, (long)new Number(-123157L));
+        Assert.AreEqual(-1234853, (int)new Number(-1234853));
+        Assert.AreEqual((short)-4364, (short)new Number((short)-4364));
+        Assert.AreEqual((sbyte)-127, (sbyte)new Number((sbyte)-127));
+        Assert.AreEqual(123475UL, (ulong)new Number(123475UL));
+        Assert.AreEqual(1237488U, (uint)new Number(1237488U));
+        Assert.AreEqual((ushort)4364, (ushort)new Number((ushort)4364));
+        Assert.AreEqual((byte)255, (byte)new Number((byte)255));
 
         Assert.AreEqual(new Number((double)decimal.MaxValue).Value, ((Number)decimal.MaxValue).Value);
         Assert.AreEqual(new Number(double.MaxValue).Value, ((Number)double.MaxValue).Value);

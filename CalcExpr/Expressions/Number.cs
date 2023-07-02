@@ -26,68 +26,68 @@ public class Number : IExpression
         => throw new NotImplementedException();
 
     public static explicit operator decimal(Number n)
-        => throw new NotImplementedException();
+        => (decimal)n.Value;
 
     public static explicit operator double(Number n)
-        => throw new NotImplementedException();
+        => n.Value;
 
     public static explicit operator float(Number n)
-        => throw new NotImplementedException();
+        => (float)n.Value;
 
     public static explicit operator long(Number n)
-        => throw new NotImplementedException();
+        => (long)n.Value;
 
     public static explicit operator int(Number n)
-        => throw new NotImplementedException();
+        => (int)n.Value;
 
     public static explicit operator short(Number n)
-        => throw new NotImplementedException();
+        => (short)n.Value;
 
     public static explicit operator sbyte(Number n)
-        => throw new NotImplementedException();
+        => (sbyte)n.Value;
 
     public static explicit operator ulong(Number n)
-        => throw new NotImplementedException();
+        => (ulong)n.Value;
 
     public static explicit operator uint(Number n)
-        => throw new NotImplementedException();
+        => (uint)n.Value;
 
     public static explicit operator ushort(Number n)
-        => throw new NotImplementedException();
+        => (ushort)n.Value;
 
     public static explicit operator byte(Number n)
-        => throw new NotImplementedException();
+        => (byte)n.Value;
 
     public static explicit operator Number(decimal n)
-        => throw new NotImplementedException();
+        => new Number((double)n);
 
     public static explicit operator Number(double n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(float n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(long n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(int n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(short n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(sbyte n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(ulong n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(uint n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(ushort n)
-        => throw new NotImplementedException();
+        => new Number(n);
 
     public static explicit operator Number(byte n)
-        => throw new NotImplementedException();
+        => new Number(n);
 }
