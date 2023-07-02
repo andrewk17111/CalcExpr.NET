@@ -11,4 +11,6 @@ public interface IExpression
     public IExpression Evaluate();
 
     public IExpression Clone();
+
+    public string ToString();
 }

@@ -1,7 +1,4 @@
-﻿using CalcExpr.Parsing;
-using System.Text.RegularExpressions;
-
-namespace CalcExpr.Expressions;
+﻿namespace CalcExpr.Expressions;
 
 public class Number : IExpression
 {
@@ -24,6 +21,9 @@ public class Number : IExpression
 
     public IExpression Clone()
         => new Number(Value);
+
+    public override string ToString()
+        => throw new NotImplementedException();
 
     public static explicit operator decimal(Number n)
         => throw new NotImplementedException();
