@@ -6,6 +6,9 @@ namespace TestCalcExpr;
 [TestClass]
 public class TestNumber
 {
+    /// <summary>
+    /// Tests that the value of the Number is the same as the value passed into the Number's constructor.
+    /// </summary>
     [TestMethod]
     public void TestInit()
     {
@@ -19,6 +22,11 @@ public class TestNumber
         }
     }
 
+    /// <summary>
+    /// Tests that a number can be parsed with an optional leading decimal point, optional trailing decimal point,
+    /// optional leading and trailing zeroes, and that the value represented in the string is the same value of the
+    /// parsed Number.
+    /// </summary>
     [TestMethod]
     public void TestParse()
     {
@@ -38,14 +46,35 @@ public class TestNumber
             Assert.AreEqual (((Number)new Parser().Parse(expression)).Value, expressions[expression]);
     }
 
+    /// <summary>
+    /// Tests that the Number can be cast to and from decimal, double, float, long, int, short, sbyte, ulong, uint,
+    /// ushort, and byte.
+    /// </summary>
     [TestMethod]
     public void TestConvert()
     {
-        /*
-         * Number can cast to decimal, double, float, long, int, short, sbyte, ulong, uint, ushort, and byte for valid
-         * values.
-         */
+        Assert.AreEqual(decimal.MaxValue, (decimal)new Number((double)decimal.MaxValue));
+        Assert.AreEqual(double.MaxValue, (double)new Number(double.MaxValue));
+        Assert.AreEqual(float.MaxValue, (float)new Number(float.MaxValue));
+        Assert.AreEqual(long.MaxValue, (long)new Number(long.MaxValue));
+        Assert.AreEqual(int.MaxValue, (int)new Number(int.MaxValue));
+        Assert.AreEqual(short.MaxValue, (short)new Number(short.MaxValue));
+        Assert.AreEqual(sbyte.MaxValue, (sbyte)new Number(sbyte.MaxValue));
+        Assert.AreEqual(ulong.MaxValue, (ulong)new Number(ulong.MaxValue));
+        Assert.AreEqual(uint.MaxValue, (uint)new Number(uint.MaxValue));
+        Assert.AreEqual(ushort.MaxValue, (ushort)new Number(ushort.MaxValue));
+        Assert.AreEqual(byte.MaxValue, (byte)new Number(byte.MaxValue));
 
-        Assert.Fail();
+        Assert.AreEqual(new Number((double)decimal.MaxValue).Value, ((Number)decimal.MaxValue).Value);
+        Assert.AreEqual(new Number(double.MaxValue).Value, ((Number)double.MaxValue).Value);
+        Assert.AreEqual(new Number(float.MaxValue).Value, ((Number)float.MaxValue).Value);
+        Assert.AreEqual(new Number(long.MaxValue).Value, ((Number)long.MaxValue).Value);
+        Assert.AreEqual(new Number(int.MaxValue).Value, ((Number)int.MaxValue).Value);
+        Assert.AreEqual(new Number(short.MaxValue).Value, ((Number)short.MaxValue).Value);
+        Assert.AreEqual(new Number(sbyte.MaxValue).Value, ((Number)sbyte.MaxValue).Value);
+        Assert.AreEqual(new Number(ulong.MaxValue).Value, ((Number)ulong.MaxValue).Value);
+        Assert.AreEqual(new Number(uint.MaxValue).Value, ((Number)uint.MaxValue).Value);
+        Assert.AreEqual(new Number(ushort.MaxValue).Value, ((Number)ushort.MaxValue).Value);
+        Assert.AreEqual(new Number(byte.MaxValue).Value, ((Number)byte.MaxValue).Value);
     }
 }
