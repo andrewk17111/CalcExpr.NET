@@ -77,4 +77,26 @@ public class TestNumber
         Assert.AreEqual(new Number(ushort.MaxValue).Value, ((Number)ushort.MaxValue).Value);
         Assert.AreEqual(new Number(byte.MaxValue).Value, ((Number)byte.MaxValue).Value);
     }
+
+    /// <summary>
+    /// Tests that the Number converts to a string properly.
+    /// </summary>
+    [TestMethod]
+    public void TestToString()
+    {
+        Dictionary<string, string> expressions = new Dictionary<string, string>()
+        {
+            { ".1234", "0.1234" },
+            { "0.1234", "0.1234" },
+            { "1234.", "1234" },
+            { "1234", "1234" },
+            { "436.246", "436.246" },
+            { "0123", "123" },
+            { "1230", "1230" },
+            { "489.38400", "489.384" }
+        };
+
+        foreach (string expression in expressions.Keys)
+            Assert.AreEqual(expressions[expression], new Parser().Parse(expression).ToString());
+    }
 }
