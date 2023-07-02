@@ -17,4 +17,31 @@ public class TestNumber
             Assert.AreEqual(val, new Number(val).Value);
         }
     }
+
+    [TestMethod]
+    public void TestParse()
+    {
+        /*
+         * Parser returns a valid Number with it's value equal to the number represented in the strings using the
+         * following requirements.
+         * 1. Only numeric digits and periods
+         * 2. Optional leading '.'
+         * 3. Optional trailing '.'
+         * 4. Optional leading 0's
+         * 5. Optional trailing 0's
+         */
+
+        Assert.Fail();
+    }
+
+    [TestMethod]
+    public void TestConvert()
+    {
+        /*
+         * Number can cast to decimal, double, float, long, int, short, sbyte, ulong, uint, ushort, and byte for valid
+         * values.
+         */
+
+        Assert.Fail();
+    }
 }
