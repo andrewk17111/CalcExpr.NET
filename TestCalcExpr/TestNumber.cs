@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Parsing;
 
 namespace TestCalcExpr;
 
@@ -21,17 +22,20 @@ public class TestNumber
     [TestMethod]
     public void TestParse()
     {
-        /*
-         * Parser returns a valid Number with it's value equal to the number represented in the strings using the
-         * following requirements.
-         * 1. Only numeric digits and periods
-         * 2. Optional leading '.'
-         * 3. Optional trailing '.'
-         * 4. Optional leading 0's
-         * 5. Optional trailing 0's
-         */
+        Dictionary<string, double> expressions = new Dictionary<string, double>()
+        {
+            { ".1234", 0.1234 },
+            { "0.1234", 0.1234 },
+            { "1234.", 1234 },
+            { "1234", 1234 },
+            { "436.246", 436.246 },
+            { "0123", 123 },
+            { "1230", 1230 },
+            { "489.38400", 489.384 }
+        };
 
-        Assert.Fail();
+        foreach (string expression in expressions.Keys)
+            Assert.AreEqual (((Number)new Parser().Parse(expression)).Value, expressions[expression]);
     }
 
     [TestMethod]
