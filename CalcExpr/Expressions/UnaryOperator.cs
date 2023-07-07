@@ -8,7 +8,9 @@ public class UnaryOperator : IExpression
 
     public UnaryOperator(string op, bool is_prefix, IExpression expression)
     {
-        throw new NotImplementedException();
+        Identifier = op;
+        IsPrefix = is_prefix;
+        Inside = expression;
     }
 
     public IExpression Clone()
