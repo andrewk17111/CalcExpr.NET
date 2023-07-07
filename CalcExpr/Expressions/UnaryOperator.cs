@@ -14,7 +14,7 @@ public class UnaryOperator : IExpression
     }
 
     public IExpression Clone()
-        => throw new NotImplementedException();
+        => new UnaryOperator(Identifier, IsPrefix, Inside.Clone());
 
     public IExpression Evaluate()
         => throw new NotImplementedException();
