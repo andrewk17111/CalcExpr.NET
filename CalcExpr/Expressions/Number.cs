@@ -23,7 +23,10 @@ public class Number : IExpression
         => new Number(Value);
 
     public override string ToString()
-        => throw new NotImplementedException();
+        => ToString(null);
+
+    public string ToString(string? format)
+        => Value.ToString(format);
 
     public static explicit operator decimal(Number n)
         => (decimal)n.Value;

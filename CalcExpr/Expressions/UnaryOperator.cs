@@ -25,4 +25,10 @@ public class UnaryOperator : IExpression
 
     public IExpression StepSimplify()
         => throw new NotImplementedException();
+
+    public override string ToString()
+        => throw new NotImplementedException();
+
+    public string ToString(string? format)
+        => throw new NotImplementedException();
 }

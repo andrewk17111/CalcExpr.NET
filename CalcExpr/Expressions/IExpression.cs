@@ -1,4 +1,6 @@
-﻿namespace CalcExpr.Expressions;
+﻿using System.Globalization;
+
+namespace CalcExpr.Expressions;
 
 public interface IExpression
 {
@@ -13,4 +15,6 @@ public interface IExpression
     public IExpression Clone();
 
     public string ToString();
+
+    public string ToString(string? format);
 }
