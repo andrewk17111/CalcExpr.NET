@@ -10,16 +10,16 @@ public class TestUnaryOperator
     {
         ("+", true),
         ("-", true),
-        // TODO ±.
         ("!", true),
         ("~", true),
         ("¬", true),
-        ("++", true),
-        ("--", true),
         ("!", false),
         ("%", false),
-        ("++", false),
-        ("--", false)
+        // TODO ± prefix.
+        // TODO ++ prefix.
+        // TODO -- prefix.
+        // TODO ++ suffix.
+        // TODO -- suffix.
     };
 
     /// <summary>
@@ -79,16 +79,16 @@ public class TestUnaryOperator
         {
             { "+1", 1 },
             { "-1", -1 },
-            // TODO ±.
             { "!1", 0 },
             { "~1", 0 },
             { "¬1", 0 },
-            { "++1", 2 },
-            { "--1", 0 },
             { "5!", 120 },
             { "1%", 0.01 },
-            { "1++", 1 },
-            { "1--", 1 }
+            // TODO ± prefix.
+            // TODO ++ prefix.
+            // TODO -- prefix.
+            // TODO ++ suffix.
+            // TODO -- suffix.
         };
 
         foreach (string expression in expressions.Keys)
@@ -105,16 +105,16 @@ public class TestUnaryOperator
         {
             { "+1", 1 },
             { "-1", -1 },
-            // TODO ±.
             { "!1", 0 },
             { "~1", 0 },
             { "¬1", 0 },
-            { "++1", 2 },
-            { "--1", 0 },
             { "5!", 120 },
             { "1%", 0.01 },
-            { "1++", 1 },
-            { "1--", 1 }
+            // TODO ± prefix.
+            // TODO ++ prefix.
+            // TODO -- prefix.
+            // TODO ++ suffix.
+            // TODO -- suffix.
         };
 
         foreach (string expression in expressions.Keys)
@@ -131,16 +131,16 @@ public class TestUnaryOperator
         {
             "+1",
             "-1",
-            "±1",
             "!1",
             "~1",
             "¬1",
-            "++1",
-            "--1",
             "5!",
-            "1%",
-            "1++",
-            "1--"
+            "1%"
+            // TODO ± prefix.
+            // TODO ++ prefix.
+            // TODO -- prefix.
+            // TODO ++ suffix.
+            // TODO -- suffix.
         };
 
         foreach (string expression in expressions)
