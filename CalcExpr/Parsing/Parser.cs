@@ -11,6 +11,7 @@ public class Parser
     {
         _grammar = new List<Rule>()
         {
+            new Rule(@"[%!](?=\s*$)", ParsePostfix),
             new Rule(@"(?<=^\s*)[\+\-!~¬]", ParsePrefix),
             new Rule(@"(?<=^\s*)((\d+\.?\d*)|(\d*\.?\d+))(?=\s*$)", ParseNumber)
         };
@@ -42,4 +43,7 @@ public class Parser
 
     private IExpression ParsePrefix(string input, Token match)
         => new UnaryOperator(match.Value, true, Parse(input[match.Length..]));
+
+    private IExpression ParsePostfix(string input, Token match)
+        => new UnaryOperator(match.Value, false, Parse(input[..^match.Length]));
 }
