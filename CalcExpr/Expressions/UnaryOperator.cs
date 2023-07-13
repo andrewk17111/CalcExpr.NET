@@ -29,8 +29,10 @@ public class UnaryOperator : IExpression
         => throw new NotImplementedException();
 
     public override string ToString()
-        => throw new NotImplementedException();
+        => ToString(null);
 
     public string ToString(string? format)
-        => throw new NotImplementedException();
+        => IsPrefix
+            ? $"{Identifier}{Inside.ToString(format)}"
+            : $"{Inside.ToString(format)}{Identifier}";
 }
