@@ -17,7 +17,7 @@ public class UnaryOperator : IExpression
         = new Dictionary<string, Func<double, double>>
         {
             { "!", Factorial },
-            { "%", operand => operand / 10 }
+            { "%", operand => operand / 100 }
         };
 
     private Func<double, double> _operation
@@ -66,6 +66,6 @@ public class UnaryOperator : IExpression
         => x == 0
             ? 1
             : x > 0 && x == (int)x
-                ? Factorial(x - 1)
+                ? x * Factorial(x - 1)
                 : throw new ArgumentValueException(x);
 }
