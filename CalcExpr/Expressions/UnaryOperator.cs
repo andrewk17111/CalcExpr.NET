@@ -1,7 +1,28 @@
-﻿namespace CalcExpr.Expressions;
+﻿using CalcExpr.Exceptions;
+
+namespace CalcExpr.Expressions;
 
 public class UnaryOperator : IExpression
 {
+    private static readonly Dictionary<string, Func<double, double>> _prefixes
+        = new Dictionary<string, Func<double, double>>
+        {
+            { "+", operand => +operand },
+            { "-", operand => -operand },
+            { "!", operand => Not(operand) },
+            { "~", operand => Not(operand) },
+            { "¬", operand => Not(operand) },
+        };
+    private static readonly Dictionary<string, Func<double, double>> _postfixes
+        = new Dictionary<string, Func<double, double>>
+        {
+            { "!", Factorial },
+            { "%", operand => operand / 10 }
+        };
+
+    private Func<double, double> _operation
+        => IsPrefix ? _prefixes[Identifier] : _postfixes[Identifier];
+
     public readonly string Identifier;
     public readonly bool IsPrefix;
     public readonly IExpression Inside;
@@ -20,13 +41,15 @@ public class UnaryOperator : IExpression
         => throw new NotImplementedException();
 
     public IExpression Simplify()
-        => throw new NotImplementedException();
+        => new Number(_operation(((Number)Inside.Simplify()).Value));
 
     public IExpression StepEvaluate()
         => throw new NotImplementedException();
 
     public IExpression StepSimplify()
-        => throw new NotImplementedException();
+        => Inside is Number n
+            ? new Number(_operation(n.Value))
+            : new UnaryOperator(Identifier, IsPrefix, Inside.StepSimplify());
 
     public override string ToString()
         => ToString(null);
@@ -35,4 +58,14 @@ public class UnaryOperator : IExpression
         => IsPrefix
             ? $"{Identifier}{Inside.ToString(format)}"
             : $"{Inside.ToString(format)}{Identifier}";
+
+    private static double Not(double x)
+        => x == 0 ? 1 : 0;
+
+    private static double Factorial(double x)
+        => x == 0
+            ? 1
+            : x > 0 && x == (int)x
+                ? Factorial(x - 1)
+                : throw new ArgumentValueException(x);
 }
