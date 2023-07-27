@@ -38,13 +38,15 @@ public class UnaryOperator : IExpression
         => new UnaryOperator(Identifier, IsPrefix, Inside.Clone());
 
     public IExpression Evaluate()
-        => throw new NotImplementedException();
+        => new Number(_operation(((Number)Inside.Evaluate()).Value));
 
     public IExpression Simplify()
         => new Number(_operation(((Number)Inside.Simplify()).Value));
 
     public IExpression StepEvaluate()
-        => throw new NotImplementedException();
+        => Inside is Number n
+            ? new Number(_operation(n.Value))
+            : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate());
 
     public IExpression StepSimplify()
         => Inside is Number n
