@@ -27,6 +27,14 @@ public class UnaryOperator : IExpression
     public readonly bool IsPrefix;
     public readonly IExpression Inside;
 
+    /// <summary>
+    /// Initializes a new instance of the the <see cref="UnaryOperator"/> class.
+    /// </summary>
+    /// <param name="op">The identifier for the operator.</param>
+    /// <param name="is_prefix">
+    /// <c>true</c> if the operator is a prefix and <c>false</c> if the operator is a postfix.
+    /// </param>
+    /// <param name="expression">The <see cref="IExpression"/> operand for this operator.</param>
     public UnaryOperator(string op, bool is_prefix, IExpression expression)
     {
         Identifier = op;

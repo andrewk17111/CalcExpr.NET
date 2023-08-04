@@ -4,6 +4,10 @@ public class Number : IExpression
 {
     public double Value { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the the <see cref="Number"/> class.
+    /// </summary>
+    /// <param name="value">The numeric value.</param>
     public Number(double value)
         => Value = value;
 
