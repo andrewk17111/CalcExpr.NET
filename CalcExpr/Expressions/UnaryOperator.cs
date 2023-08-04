@@ -40,18 +40,10 @@ public class UnaryOperator : IExpression
     public IExpression Evaluate()
         => new Number(_operation(((Number)Inside.Evaluate()).Value));
 
-    public IExpression Simplify()
-        => new Number(_operation(((Number)Inside.Simplify()).Value));
-
     public IExpression StepEvaluate()
         => Inside is Number n
             ? new Number(_operation(n.Value))
             : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate());
-
-    public IExpression StepSimplify()
-        => Inside is Number n
-            ? new Number(_operation(n.Value))
-            : new UnaryOperator(Identifier, IsPrefix, Inside.StepSimplify());
 
     public override string ToString()
         => ToString(null);

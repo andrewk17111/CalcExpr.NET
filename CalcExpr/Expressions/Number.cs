@@ -10,13 +10,7 @@ public class Number : IExpression
     public IExpression Evaluate()
         => Clone();
 
-    public IExpression Simplify()
-        => Clone();
-
     public IExpression StepEvaluate()
-        => Clone();
-
-    public IExpression StepSimplify()
         => Clone();
 
     public IExpression Clone()
