@@ -19,6 +19,12 @@ public class Number : IExpression
     public override string ToString()
         => ToString(null);
 
+    public override bool Equals(object? obj)
+        => obj is not null && obj is Number n && n.Value == Value;
+
+    public override int GetHashCode()
+        => Value.GetHashCode();
+
     public string ToString(string? format)
         => Value.ToString(format);
 

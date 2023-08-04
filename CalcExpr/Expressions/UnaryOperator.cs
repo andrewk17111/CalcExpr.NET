@@ -48,6 +48,13 @@ public class UnaryOperator : IExpression
     public override string ToString()
         => ToString(null);
 
+    public override bool Equals(object? obj)
+        => obj is not null && obj is UnaryOperator uo && uo.IsPrefix == IsPrefix && uo.Identifier == Identifier &&
+            uo.Inside.Equals(Inside);
+
+    public override int GetHashCode()
+        => HashCode.Combine(Identifier, IsPrefix);
+
     public string ToString(string? format)
         => IsPrefix
             ? $"{Identifier}{Inside.ToString(format)}"

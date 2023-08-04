@@ -11,8 +11,8 @@ public class Parser
     {
         _grammar = new List<Rule>()
         {
-            new Rule(@"[%!](?=\s*$)", ParsePostfix),
             new Rule(@"(?<=^\s*)[\+\-!~¬]", ParsePrefix),
+            new Rule(@"[%!](?=\s*$)", ParsePostfix),
             new Rule(@"(?<=^\s*)((\d+\.?\d*)|(\d*\.?\d+))(?=\s*$)", ParseNumber)
         };
     }

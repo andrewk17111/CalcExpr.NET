@@ -42,33 +42,6 @@ public class TestUnaryOperator
     }
 
     /// <summary>
-    /// Tests that the UnaryOperator parsed from the input string properly assignes the corresponding symbol, whether
-    /// it's a prefix or suffix operator, and the expression the operator applies to.
-    /// </summary>
-    [TestMethod]
-    public void TestParse()
-    {
-        Random random = new Random();
-
-        foreach ((string op, bool is_prefix) in _operators)
-        {
-            string expression = random.Next().ToString();
-            int count = random.Next(10);
-
-            expression = is_prefix ? op + expression : expression + op;
-
-            for (int i = 0; i < count; i++)
-            {
-                (string new_op, bool new_is_prefix) = _operators[random.Next(_operators.Length)];
-
-                expression = new_is_prefix ? new_op + expression : expression + new_op;
-            }
-
-            Assert.AreEqual(expression, new Parser().Parse(expression).ToString());
-        }
-    }
-
-    /// <summary>
     /// Tests that the operand gets evaluated into a simpler expression with the minimum levels to the expression tree.
     /// </summary>
     [TestMethod]

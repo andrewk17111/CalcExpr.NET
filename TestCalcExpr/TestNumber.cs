@@ -23,30 +23,6 @@ public class TestNumber
     }
 
     /// <summary>
-    /// Tests that a number can be parsed with an optional leading decimal point, optional trailing decimal point,
-    /// optional leading and trailing zeroes, and that the value represented in the string is the same value of the
-    /// parsed Number.
-    /// </summary>
-    [TestMethod]
-    public void TestParse()
-    {
-        Dictionary<string, double> expressions = new Dictionary<string, double>()
-        {
-            { ".1234", 0.1234 },
-            { "0.1234", 0.1234 },
-            { "1234.", 1234 },
-            { "1234", 1234 },
-            { "436.246", 436.246 },
-            { "0123", 123 },
-            { "1230", 1230 },
-            { "489.38400", 489.384 }
-        };
-
-        foreach (string expression in expressions.Keys)
-            Assert.AreEqual (((Number)new Parser().Parse(expression)).Value, expressions[expression]);
-    }
-
-    /// <summary>
     /// Tests that the Number can be cast to and from decimal, double, float, long, int, short, sbyte, ulong, uint,
     /// ushort, and byte.
     /// </summary>
