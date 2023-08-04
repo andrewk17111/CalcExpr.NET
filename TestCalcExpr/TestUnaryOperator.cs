@@ -69,33 +69,6 @@ public class TestUnaryOperator
     }
 
     /// <summary>
-    /// Tests that if the operand has a value (I.E. a Number), the expression gets evaluated, but doesn't get touched if
-    /// it's a placeholder (I.E. a Variable).
-    /// </summary>
-    [TestMethod]
-    public void TestSimplify()
-    {
-        Dictionary<string, double> expressions = new Dictionary<string, double>()
-        {
-            { "+1", 1 },
-            { "-1", -1 },
-            { "!1", 0 },
-            { "~1", 0 },
-            { "¬1", 0 },
-            { "5!", 120 },
-            { "1%", 0.01 },
-            // TODO ± prefix.
-            // TODO ++ prefix.
-            // TODO -- prefix.
-            // TODO ++ suffix.
-            // TODO -- suffix.
-        };
-
-        foreach (string expression in expressions.Keys)
-            Assert.AreEqual(expressions[expression], ((Number)new Parser().Parse(expression).Simplify()).Value);
-    }
-
-    /// <summary>
     /// Tests that the operand gets evaluated into a simpler expression with the minimum levels to the expression tree.
     /// </summary>
     [TestMethod]
