@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CalcExpr.Parsing;
 
@@ -12,4 +13,16 @@ public readonly struct Rule
         RegularExpression = regex;
         Parse = parse;
     }
+
+    public override bool Equals([NotNullWhen(true)] object? obj)
+        => throw new NotImplementedException();
+
+    public override int GetHashCode()
+        => throw new NotImplementedException();
+
+    public static bool operator ==(Rule a, Rule b)
+        => a.Equals(b);
+
+    public static bool operator !=(Rule a, Rule b)
+        => !a.Equals(b);
 }
