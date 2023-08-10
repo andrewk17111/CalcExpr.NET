@@ -32,7 +32,7 @@ public class UnaryOperator : IExpression
     /// </summary>
     /// <param name="op">The identifier for the operator.</param>
     /// <param name="is_prefix">
-    /// <c>true</c> if the operator is a prefix and <c>false</c> if the operator is a postfix.
+    /// <see langword="true"/> if the operator is a prefix and <see langword="false"/> if the operator is a postfix.
     /// </param>
     /// <param name="expression">The <see cref="IExpression"/> operand for this operator.</param>
     public UnaryOperator(string op, bool is_prefix, IExpression expression)

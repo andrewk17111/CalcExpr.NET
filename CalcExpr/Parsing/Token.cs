@@ -8,6 +8,13 @@ public readonly struct Token
     public readonly int Index;
     public readonly int Length;
 
+    /// <summary>
+    /// Creates and initializes a new <see cref="Token"/> with the specified <paramref name="value"/>, 
+    /// <paramref name="index"/>, and <paramref name="index"/>.
+    /// </summary>
+    /// <param name="value">The <see cref="string"/> contained within the <see cref="Token"/>.</param>
+    /// <param name="index">The starting index within the containing <see cref="string"/>.</param>
+    /// <param name="length">The length of <paramref name="value"/>.</param>
     public Token(string value, int index, int length)
     {
         Value = value;

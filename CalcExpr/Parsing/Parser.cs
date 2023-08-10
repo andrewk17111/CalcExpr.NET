@@ -10,6 +10,9 @@ public class Parser
     public Rule[] Grammar
         => throw new NotImplementedException();
 
+    /// <summary>
+    /// Creates a <see cref="Parser"/> with the default grammar.
+    /// </summary>
     public Parser()
     {
         _grammar = new List<Rule>()
@@ -20,9 +23,22 @@ public class Parser
         };
     }
 
+    /// <summary>
+    /// Create a <see cref="Parser"/> using the specified grammar.
+    /// </summary>
+    /// <param name="grammar">
+    /// The specified <see cref="IEnumerable{Rule}"/> to be used as the grammar of the <see cref="Parser"/>.
+    /// </param>
     public Parser(IEnumerable<Rule> grammar)
         => _grammar = grammar.ToList();
 
+    /// <summary>
+    /// Parses an expression <see cref="string"/> into an <see cref="IExpression"/>.
+    /// </summary>
+    /// <param name="input">The expression <see cref="string"/> to parse.</param>
+    /// <returns>An <see cref="IExpression"/> parsed from the specified expression <see cref="string"/>.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="Exception"></exception>
     public IExpression Parse(string input)
     {
         if (input is null)
