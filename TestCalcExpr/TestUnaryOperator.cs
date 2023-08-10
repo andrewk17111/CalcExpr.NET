@@ -1,5 +1,4 @@
 ﻿using CalcExpr.Expressions;
-using CalcExpr.Parsing;
 
 namespace TestCalcExpr;
 
@@ -49,26 +48,26 @@ public class TestUnaryOperator
     [TestMethod]
     public void TestEvaluate()
     {
-        Dictionary<string, double> expressions = new Dictionary<string, double>()
+        Dictionary<UnaryOperator, double> expressions = new Dictionary<UnaryOperator, double>()
         {
-            { "+1", 1 },
-            { "-1", -1 },
-            { "~1", 0 },
-            { "¬1", 0 },
-            { "!5", 44 },
-            { "5!", 120 },
-            { "1%", 0.01 },
-            { "5!!", 15 },
-            { "5#", 30 },
+            { new UnaryOperator("+", true, new Number(1)), 1 },
+            { new UnaryOperator("-", true, new Number(1)), -1 },
+            { new UnaryOperator("~", true, new Number(1)), 0 },
+            { new UnaryOperator("¬", true, new Number(1)), 0 },
+            { new UnaryOperator("!", true, new Number(5)), 44 },
+            { new UnaryOperator("!", false, new Number(5)), 120 },
+            { new UnaryOperator("%", false, new Number(1)), 0.01 },
+            { new UnaryOperator("!!", false, new Number(5)), 15 },
+            { new UnaryOperator("#", false, new Number(5)), 30 },
             // TODO ± prefix.
             // TODO ++ prefix.
             // TODO -- prefix.
-            // TODO ++ suffix.
-            // TODO -- suffix.
+            // TODO ++ postfix.
+            // TODO -- postfix.
         };
 
-        foreach (string expression in expressions.Keys)
-            Assert.AreEqual(expressions[expression], ((Number)new Parser().Parse(expression).Evaluate()).Value);
+        foreach (UnaryOperator expression in expressions.Keys)
+            Assert.AreEqual(expressions[expression], ((Number)expression.Evaluate()).Value);
     }
 
     /// <summary>
