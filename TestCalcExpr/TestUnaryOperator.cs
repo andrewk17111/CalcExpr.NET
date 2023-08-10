@@ -77,17 +77,17 @@ public class TestUnaryOperator
     [TestMethod]
     public void TestToString()
     {
-        string[] expressions =
+        Dictionary<UnaryOperator, string> expressions = new Dictionary<UnaryOperator, string>()
         {
-            "+1",
-            "-1",
-            "~1",
-            "¬1",
-            "!5",
-            "5!",
-            "1%",
-            "5!!",
-            "5#",
+            { new UnaryOperator("+", true, new Number(1)), "+1" },
+            { new UnaryOperator("-", true, new Number(1)), "-1" },
+            { new UnaryOperator("~", true, new Number(1)), "~1" },
+            { new UnaryOperator("¬", true, new Number(1)), "¬1" },
+            { new UnaryOperator("!", true, new Number(5)), "!5" },
+            { new UnaryOperator("!", false, new Number(5)), "5!" },
+            { new UnaryOperator("%", false, new Number(1)), "1%" },
+            { new UnaryOperator("!!", false, new Number(5)), "5!!" },
+            { new UnaryOperator("#", false, new Number(5)), "5#" },
             // TODO ± prefix.
             // TODO ++ prefix.
             // TODO -- prefix.
@@ -95,7 +95,7 @@ public class TestUnaryOperator
             // TODO -- suffix.
         };
 
-        foreach (string expression in expressions)
-            Assert.AreEqual(expression, new Parser().Parse(expression).ToString());
+        foreach (UnaryOperator expression in expressions.Keys)
+            Assert.AreEqual(expressions[expression], expression.ToString());
     }
 }

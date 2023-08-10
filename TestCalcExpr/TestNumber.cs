@@ -60,19 +60,16 @@ public class TestNumber
     [TestMethod]
     public void TestToString()
     {
-        Dictionary<string, string> expressions = new Dictionary<string, string>()
+        Dictionary<Number, string> expressions = new Dictionary<Number, string>()
         {
-            { ".1234", "0.1234" },
-            { "0.1234", "0.1234" },
-            { "1234.", "1234" },
-            { "1234", "1234" },
-            { "436.246", "436.246" },
-            { "0123", "123" },
-            { "1230", "1230" },
-            { "489.38400", "489.384" }
+            { new Number(0.1234), "0.1234" },
+            { new Number(1234), "1234" },
+            { new Number(436.246), "436.246" },
+            { new Number(1230), "1230" },
+            { new Number(489.38400), "489.384" }
         };
 
-        foreach (string expression in expressions.Keys)
-            Assert.AreEqual(expressions[expression], new Parser().Parse(expression).ToString());
+        foreach (Number expression in expressions.Keys)
+            Assert.AreEqual(expressions[expression], expression.ToString());
     }
 }
