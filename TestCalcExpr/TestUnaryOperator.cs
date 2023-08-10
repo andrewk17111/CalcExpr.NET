@@ -10,11 +10,13 @@ public class TestUnaryOperator
     {
         ("+", true),
         ("-", true),
-        ("!", true),
         ("~", true),
         ("¬", true),
+        ("!", true),
         ("!", false),
         ("%", false),
+        ("!!", false),
+        ("#", false),
         // TODO ± prefix.
         // TODO ++ prefix.
         // TODO -- prefix.
@@ -51,11 +53,13 @@ public class TestUnaryOperator
         {
             { "+1", 1 },
             { "-1", -1 },
-            { "!1", 0 },
             { "~1", 0 },
             { "¬1", 0 },
+            { "!5", 44 },
             { "5!", 120 },
             { "1%", 0.01 },
+            { "5!!", 15 },
+            { "5#", 30 },
             // TODO ± prefix.
             // TODO ++ prefix.
             // TODO -- prefix.
@@ -77,11 +81,13 @@ public class TestUnaryOperator
         {
             "+1",
             "-1",
-            "!1",
             "~1",
             "¬1",
+            "!5",
             "5!",
-            "1%"
+            "1%",
+            "5!!",
+            "5#",
             // TODO ± prefix.
             // TODO ++ prefix.
             // TODO -- prefix.
