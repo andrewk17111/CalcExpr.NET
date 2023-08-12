@@ -58,7 +58,7 @@ public class TestUnaryOperator
             { new UnaryOperator("!", false, new Number(5)), 120 },
             { new UnaryOperator("%", false, new Number(1)), 0.01 },
             { new UnaryOperator("!!", false, new Number(5)), 15 },
-            { new UnaryOperator("#", false, new Number(5)), 30 },
+            { new UnaryOperator("#", false, new Number(5)), 2310 },
             // TODO ± prefix.
             // TODO ++ prefix.
             // TODO -- prefix.

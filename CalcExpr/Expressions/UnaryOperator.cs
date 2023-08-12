@@ -9,15 +9,17 @@ public class UnaryOperator : IExpression
         {
             { "+", operand => +operand },
             { "-", operand => -operand },
-            { "!", operand => Not(operand) },
             { "~", operand => Not(operand) },
             { "¬", operand => Not(operand) },
+            { "!", operand => Subfactorial(operand) },
         };
     private static readonly Dictionary<string, Func<double, double>> _postfixes
         = new Dictionary<string, Func<double, double>>
         {
             { "!", Factorial },
-            { "%", operand => operand / 100 }
+            { "%", operand => operand / 100 },
+            { "!!", DoubleFactorial },
+            { "#", Primorial },
         };
 
     private Func<double, double> _operation
@@ -68,13 +70,62 @@ public class UnaryOperator : IExpression
             ? $"{Identifier}{Inside.ToString(format)}"
             : $"{Inside.ToString(format)}{Identifier}";
 
+    private static double Subfactorial(double n)
+        => n == 0
+            ? 1
+            : n > 0 && n == (int)n
+                ? (int)(0.5 + Factorial(n) / Math.E)
+                : throw new ArgumentValueException(n);
+
     private static double Not(double x)
         => x == 0 ? 1 : 0;
 
-    private static double Factorial(double x)
-        => x == 0
+    private static double Factorial(double n)
+        => n == 0 || n == 1
             ? 1
-            : x > 0 && x == (int)x
-                ? x * Factorial(x - 1)
-                : throw new ArgumentValueException(x);
+            : n > 0 && n == (int)n
+                ? n * Factorial(n - 1)
+                : throw new ArgumentValueException(n);
+
+    private static double DoubleFactorial(double n)
+        => n == 0 || n == 1
+            ? 1
+            : n > 0 && n == (int)n
+                ? n % 2 == 0
+                    ? Math.Pow(2, n / 2) * Factorial(n / 2)
+                    : Factorial(n) / (Math.Pow(2, (n - 1) / 2) * Factorial((n - 1) / 2))
+                : throw new ArgumentValueException(n);
+
+    private static double Primorial(double n)
+        => n == 0
+            ? 1
+            : n > 0 && n == (int)n
+                ? GetNPrimes((int)n).Aggregate((a, b) => a * b)
+                : throw new ArgumentValueException(n);
+
+    private static int[] GetNPrimes(int length)
+    {
+        List<int> primes = new List<int>() { 2, 3 };
+
+        if (length < 2)
+            return primes.ToArray()[..length];
+
+        int i = primes.Last() + 2;
+
+        while (primes.Count < length)
+        {
+            bool is_prime = true;
+
+            for (int j = 1; j < primes.Count && is_prime; j++)
+                if (i % primes[j] == 0)
+                    is_prime = false;
+
+            if (is_prime)
+                primes.Add(i);
+
+            i += 2;
+        }
+
+        return primes.ToArray();
+    }
 }
