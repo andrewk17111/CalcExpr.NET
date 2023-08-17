@@ -19,11 +19,11 @@ public readonly struct Rule
         Parse = parse;
     }
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
-        => throw new NotImplementedException();
+    public override bool Equals(object? obj)
+        => obj is not null && obj is Rule a && RegularExpression == a.RegularExpression;
 
     public override int GetHashCode()
-        => throw new NotImplementedException();
+        => RegularExpression.GetHashCode();
 
     public static bool operator ==(Rule a, Rule b)
         => a.Equals(b);
