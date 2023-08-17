@@ -1,5 +1,4 @@
 ﻿using CalcExpr.Expressions;
-using System.Data;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
@@ -7,9 +6,13 @@ namespace CalcExpr.Parsing;
 public class Parser
 {
     private readonly List<Rule> _grammar = new List<Rule>();
+    private readonly Dictionary<string, IExpression> _cache = new Dictionary<string, IExpression>();
 
     public Rule[] Grammar
         => _grammar.ToArray();
+
+    public string[] Cache
+        => _cache.Keys.ToArray();
 
     /// <summary>
     /// Creates a <see cref="Parser"/> with the default grammar.
@@ -45,18 +48,33 @@ public class Parser
         if (input is null)
             throw new ArgumentNullException(nameof(input));
 
-        string clean_input = Regex.Replace(input, @"\s+", " ");
+        string clean_input = CleanExpressionString(input);
 
-        foreach (Rule rule in _grammar)
+        if (ContainsCache(clean_input))
         {
-            Match match = Regex.Match(input, rule.RegularExpression);
+            return _cache[clean_input].Clone();
+        }
+        else
+        {
+            foreach (Rule rule in _grammar)
+            {
+                Match match = Regex.Match(input, rule.RegularExpression);
 
-            if (match.Success)
-                return rule.Parse.Invoke(input, match);
+                if (match.Success)
+                {
+                    IExpression expression = rule.Parse.Invoke(input, match);
+
+                    AddCache(clean_input, expression);
+                    return expression;
+                }
+            }
         }
 
         throw new Exception($"The input was not in the correct format: '{input}'");
     }
+
+    private static string CleanExpressionString(string expression)
+        => Regex.Replace(expression, @"\s+", " ");
 
     /// <summary>
     /// Determines whether the cache of the <see cref="Parser"/> contains a specified expression <see cref="string"/>.
@@ -67,7 +85,7 @@ public class Parser
     /// <see langword="false"/>.
     /// </returns>
     public bool ContainsCache(string expression)
-        => throw new NotImplementedException();
+        => _cache.ContainsKey(CleanExpressionString(expression));
 
     /// <summary>
     /// Add expression <see cref="string"/> to the cache of the <see cref="Parser"/>.
@@ -79,7 +97,17 @@ public class Parser
     /// <see langword="false"/>.
     /// </returns>
     public bool AddCache(string key, IExpression value)
-        => throw new NotImplementedException();
+    {
+        try
+        {
+            _cache[CleanExpressionString(key)] = value.Clone();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     /// <summary>
     /// Removes a cached <see cref="IExpression"/> based on the specified expression <see cref="string"/>.
@@ -90,18 +118,11 @@ public class Parser
     /// <see langword="false"/>.
     /// </returns>
     public bool RemoveCache(string expression)
-        => throw new NotImplementedException();
+    {
+        string clean_expression = CleanExpressionString(expression);
 
-    /// <summary>
-    /// Removes a cached <see cref="IExpression"/> based on the index in the cache.
-    /// </summary>
-    /// <param name="index">The index in the cache of the <see cref="IExpression"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the <see cref="IExpression"/> was successfully removed from the cache; otherwise,
-    /// <see langword="false"/>.
-    /// </returns>
-    public bool RemoveCacheAt(int index)
-        => throw new NotImplementedException();
+        return _cache.ContainsKey(clean_expression) && _cache.Remove(clean_expression);
+    }
 
     /// <summary>
     /// Add <see cref="Rule"/> to the grammar of the <see cref="Parser"/>.

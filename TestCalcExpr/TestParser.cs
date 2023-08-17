@@ -80,7 +80,7 @@ public class TestParser
         
         parser.AddCache(pi.Item1, pi.Item2);
         Assert.IsTrue(parser.ContainsCache(pi.Item1));
-        parser.RemoveCacheAt(0);
+        parser.RemoveCache(pi.Item1);
         Assert.IsFalse(parser.ContainsCache(pi.Item1));
     }
 
