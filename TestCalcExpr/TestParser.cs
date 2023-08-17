@@ -96,14 +96,14 @@ public class TestParser
         
         Assert.IsFalse(parser.Grammar.Contains(CUSTOM_RULE));
         Assert.IsFalse(parser.Grammar.Contains(tau));
-        Assert.IsTrue(parser.AddGrammarRule(CUSTOM_RULE, -1));
+        Assert.IsTrue(parser.AddGrammarRule(CUSTOM_RULE, 0));
         Assert.IsTrue(parser.Grammar[0] == CUSTOM_RULE);
         Assert.IsTrue(parser.AddGrammarRule(tau.RegularExpression, tau.Parse, -1));
         Assert.IsTrue(parser.Grammar.Last() == tau);
         Assert.IsTrue(parser.GrammarContains(tau.RegularExpression));
         Assert.IsTrue(parser.RemoveGrammarRule(CUSTOM_RULE.RegularExpression));
         Assert.IsFalse(parser.GrammarContains(CUSTOM_RULE.RegularExpression));
-        Assert.IsTrue(parser.RemoveGrammarRuleAt(0));
+        Assert.IsTrue(parser.RemoveGrammarRuleAt(parser.Grammar.Length - 1));
         Assert.IsFalse(parser.GrammarContains(tau.RegularExpression));
     }
 }

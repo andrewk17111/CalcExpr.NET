@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using System.Data;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
@@ -8,7 +9,7 @@ public class Parser
     private readonly List<Rule> _grammar = new List<Rule>();
 
     public Rule[] Grammar
-        => throw new NotImplementedException();
+        => _grammar.ToArray();
 
     /// <summary>
     /// Creates a <see cref="Parser"/> with the default grammar.
@@ -112,7 +113,26 @@ public class Parser
     /// <see langword="false"/>.
     /// </returns>
     public bool AddGrammarRule(Rule rule, int index = -1)
-        => throw new NotImplementedException();
+    {
+        if (index < 0)
+            index += _grammar.Count + 1;
+
+        try
+        {
+            if (index <= 0)
+                _grammar.Insert(0, rule);
+            else if (index >= _grammar.Count)
+                _grammar.Insert(_grammar.Count, rule);
+            else
+                _grammar.Insert(index, rule);
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     /// <summary>
     /// Add <see cref="Rule"/> to the grammar of the <see cref="Parser"/>.
@@ -139,7 +159,13 @@ public class Parser
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
     public bool RemoveGrammarRule(string regex)
-        => throw new NotImplementedException();
+    {
+        for (int i = 0; i < _grammar.Count; i++)
+            if (_grammar[i].RegularExpression == regex)
+                return RemoveGrammarRuleAt(i);
+
+        return false;
+    }
 
     /// <summary>
     /// Removes the <see cref="Rule"/> at the specified index from the grammar of the <see cref="Parser"/>.
@@ -149,7 +175,17 @@ public class Parser
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
     public bool RemoveGrammarRuleAt(int index)
-        => throw new NotImplementedException();
+    {
+        try
+        {
+            _grammar.RemoveAt(index);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     /// <summary>
     /// Determines whether a rule with the specified regex <see cref="string"/> is in the grammar of the 
@@ -160,7 +196,13 @@ public class Parser
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully found; otherwise, <see langword="false"/>.
     /// </returns>
     public bool GrammarContains(string regex)
-        => throw new NotImplementedException();
+    {
+        foreach (Rule rule in _grammar)
+            if (rule.RegularExpression == regex)
+                return true;
+
+        return false;
+    }
 
     private static IExpression ParseNumber(string input, Token match)
         => new Number(Convert.ToDouble(match.Value));
