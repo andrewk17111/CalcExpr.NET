@@ -23,6 +23,12 @@ public class BinaryOperator : IExpression
     public IExpression StepEvaluate()
         => throw new NotImplementedException();
 
+    public override bool Equals(object? obj)
+        => throw new NotImplementedException();
+
+    public override int GetHashCode()
+        => throw new NotImplementedException();
+
     public override string ToString()
         => throw new NotImplementedException();
 
