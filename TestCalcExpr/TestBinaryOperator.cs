@@ -79,7 +79,10 @@ public class TestBinaryOperator
             { new BinaryOperator("%%", new Number(-13), new Number(-12)), -11 },
             { new BinaryOperator("%%", new Number(13.2), new Number(12.5)), 0.7 },
             { new BinaryOperator("%%", new Number(-13.2), new Number(-12.5)), -0.7 },
-            { new BinaryOperator("//", new Number(1), new Number(2)), 0 },  // TODO.
+            { new BinaryOperator("//", new Number(13), new Number(12)), 1 },
+            { new BinaryOperator("//", new Number(-13), new Number(-12)), 2 },
+            { new BinaryOperator("//", new Number(13.2), new Number(12.5)), 1 },
+            { new BinaryOperator("//", new Number(-13.2), new Number(-12.5)), 2 },
             { new BinaryOperator("&&", new Number(1), new Number(2)), 1 },
             { new BinaryOperator("&", new Number(0), new Number(2)), 0 },
             { new BinaryOperator("∧", new Number(0), new Number(0)), 0 },
@@ -128,10 +131,10 @@ public class TestBinaryOperator
             { new BinaryOperator("%%", new Number(-13), new Number(-12)), "-13%%-12" },
             { new BinaryOperator("%%", new Number(13.2), new Number(12.5)), "13.2%%12.5" },
             { new BinaryOperator("%%", new Number(-13.2), new Number(-12.5)), "-13.2%%-12.5" },
-            { new BinaryOperator("//", new Number(1), new Number(2)), "1//2" },  // TODO.
-            { new BinaryOperator("//", new Number(1), new Number(2)), "1//2" },  // TODO.
-            { new BinaryOperator("//", new Number(1), new Number(2)), "1//2" },  // TODO.
-            { new BinaryOperator("//", new Number(1), new Number(2)), "1//2" },  // TODO.
+            { new BinaryOperator("//", new Number(13), new Number(12)), "13//12" },
+            { new BinaryOperator("//", new Number(-13), new Number(-12)), "-13//-12" },
+            { new BinaryOperator("//", new Number(13.2), new Number(12.5)), "13.2//12.5" },
+            { new BinaryOperator("//", new Number(-13.2), new Number(-12.5)), "-13.2//-12.5" },
             { new BinaryOperator("&&", new Number(1), new Number(2)), "1&&2" },
             { new BinaryOperator("&", new Number(0), new Number(2)), "0&2" },
             { new BinaryOperator("∧", new Number(0), new Number(0)), "0∧0" },
