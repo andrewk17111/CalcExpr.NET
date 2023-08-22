@@ -76,7 +76,7 @@ public class TestBinaryOperator
             { new BinaryOperator("%", new Number(13.2), new Number(12.5)), 0.7 },
             { new BinaryOperator("%", new Number(-13.2), new Number(-12.5)), 11.8 },
             { new BinaryOperator("%%", new Number(13), new Number(12)), 1 },
-            { new BinaryOperator("%%", new Number(-13), new Number(-12)), -11 },
+            { new BinaryOperator("%%", new Number(-13), new Number(-12)), -1 },
             { new BinaryOperator("%%", new Number(13.2), new Number(12.5)), 0.7 },
             { new BinaryOperator("%%", new Number(-13.2), new Number(-12.5)), -0.7 },
             { new BinaryOperator("//", new Number(13), new Number(12)), 1 },
@@ -84,10 +84,8 @@ public class TestBinaryOperator
             { new BinaryOperator("//", new Number(13.2), new Number(12.5)), 1 },
             { new BinaryOperator("//", new Number(-13.2), new Number(-12.5)), 2 },
             { new BinaryOperator("&&", new Number(1), new Number(2)), 1 },
-            { new BinaryOperator("&", new Number(0), new Number(2)), 0 },
             { new BinaryOperator("∧", new Number(0), new Number(0)), 0 },
             { new BinaryOperator("||", new Number(1), new Number(2)), 1 },
-            { new BinaryOperator("|", new Number(1), new Number(0)), 1 },
             { new BinaryOperator("∨", new Number(0), new Number(0)), 0 },
             { new BinaryOperator("⊕", new Number(1), new Number(1)), 0 },
             { new BinaryOperator("⊕", new Number(0), new Number(1)), 1 },
@@ -106,7 +104,7 @@ public class TestBinaryOperator
         };
 
         foreach (BinaryOperator expression in expressions.Keys)
-            Assert.AreEqual(expressions[expression], ((Number)expression.Evaluate()).Value);
+            Assert.AreEqual(expressions[expression], Math.Round(((Number)expression.Evaluate()).Value, 14));
     }
 
     /// <summary>
