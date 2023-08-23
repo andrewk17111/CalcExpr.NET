@@ -39,6 +39,12 @@ public class BinaryOperator : IExpression
     public readonly IExpression Left;
     public readonly IExpression Right;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BinaryOperator"/> class.
+    /// </summary>
+    /// <param name="op">The identifier for the operator.</param>
+    /// <param name="left">The <see cref="IExpression"/> left operand for this operator.</param>
+    /// <param name="right">The <see cref="IExpression"/> right operand for this operator.</param>
     public BinaryOperator(string op, IExpression left, IExpression right)
     {
         Identifier = op;
