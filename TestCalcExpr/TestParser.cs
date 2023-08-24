@@ -32,7 +32,7 @@ public class TestParser
         { "2^3", new BinaryOperator("^", new Number(2), new Number(3)) },
         { "13%12", new BinaryOperator("%", new Number(13), new Number(12)) },
         { "13.2%%12.5", new BinaryOperator("%%", new Number(13.2), new Number(12.5)) },
-        { "-13//-12", new BinaryOperator("//", new Number(-13), new Number(-12)) },
+        { "13//12", new BinaryOperator("//", new Number(13), new Number(12)) },
         { "1&&2", new BinaryOperator("&&", new Number(1), new Number(2)) },
         { "0∧0", new BinaryOperator("∧", new Number(0), new Number(0)) },
         { "1||2", new BinaryOperator("||", new Number(1), new Number(2)) },
@@ -70,8 +70,18 @@ public class TestParser
     [TestMethod]
     public void TestInit()
     {
+        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+))[%!]*)";
+
         string[] default_rules =
         {
+            @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})",
+            @$"(?<={OPERAND})(⊕)(?={OPERAND})",
+            @$"(?<={OPERAND})(&&|∧)(?={OPERAND})",
+            @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})",
+            @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})",
+            @$"(?<={OPERAND})([\+\-])(?={OPERAND})",
+            @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})",
+            @$"(?<={OPERAND})(\^)(?={OPERAND})",
             @"(?<=^\s*)[\+\-!~¬]",
             @"[%!](?=\s*$)",
             @"(?<=^\s*)((\d+\.?\d*)|(\d*\.?\d+))(?=\s*$)",

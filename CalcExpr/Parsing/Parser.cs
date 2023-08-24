@@ -19,8 +19,18 @@ public class Parser
     /// </summary>
     public Parser()
     {
+        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+))[%!]*)";
+
         _grammar = new List<Rule>()
         {
+            new Rule(@$"(?<={OPERAND})(\|\||∨)(?={OPERAND})", ParseBinaryOperator),
+            new Rule(@$"(?<={OPERAND})(⊕)(?={OPERAND})", ParseBinaryOperator),
+            new Rule(@$"(?<={OPERAND})(&&|∧)(?={OPERAND})", ParseBinaryOperator),
+            new Rule(@$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})", ParseBinaryOperator),
+            new Rule(@$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})", ParseBinaryOperator),
+            new Rule(@$"(?<={OPERAND})([\+\-])(?={OPERAND})", ParseBinaryOperator),
+            new Rule(@$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})", ParseBinaryOperator),
+            new Rule(@$"(?<={OPERAND})(\^)(?={OPERAND})", ParseBinaryOperator),
             new Rule(@"(?<=^\s*)[\+\-!~¬]", ParsePrefix),
             new Rule(@"[%!](?=\s*$)", ParsePostfix),
             new Rule(@"(?<=^\s*)((\d+\.?\d*)|(\d*\.?\d+))(?=\s*$)", ParseNumber)
@@ -58,7 +68,7 @@ public class Parser
         {
             foreach (Rule rule in _grammar)
             {
-                Match match = Regex.Match(input, rule.RegularExpression);
+                Match match = Regex.Match(input, rule.RegularExpression, RegexOptions.RightToLeft);
 
                 if (match.Success)
                 {
@@ -225,12 +235,15 @@ public class Parser
         return false;
     }
 
-    private static IExpression ParseNumber(string input, Token match)
-        => new Number(Convert.ToDouble(match.Value));
+    private IExpression ParseBinaryOperator(string input, Token match)
+        => new BinaryOperator(match.Value, Parse(input[..match.Index]), Parse(input[(match.Index + match.Length)..]));
 
     private IExpression ParsePrefix(string input, Token match)
         => new UnaryOperator(match.Value, true, Parse(input[match.Length..]));
 
     private IExpression ParsePostfix(string input, Token match)
         => new UnaryOperator(match.Value, false, Parse(input[..^match.Length]));
+    
+    private static IExpression ParseNumber(string input, Token match)
+        => new Number(Convert.ToDouble(match.Value));
 }
