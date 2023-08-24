@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Parsing;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
 namespace TestCalcExpr;
 
@@ -62,6 +63,11 @@ public class TestParser
             new Number(1))), new UnaryOperator("!", false, new UnaryOperator("!", false, new Number(2)))) },
         { "-13!%!12%", new BinaryOperator("%", new UnaryOperator("-", true, new UnaryOperator("!", false,
             new Number(13))), new UnaryOperator("!", true, new UnaryOperator("%", false, new Number(12)))) },
+        { "1+((2-3)*(4/5))^7&&8||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("+",
+            new Number(1), new BinaryOperator("^", new Parentheses(new BinaryOperator("*", new Parentheses(
+                new BinaryOperator("-", new Number(2), new Number(3))), new Parentheses( new BinaryOperator("/",
+                    new Number(4), new Number(5))))), new Number(7))), new Number(8)), new BinaryOperator("⊕",
+                        new Number(9), new BinaryOperator("==", new Number(10), new Number(11)))) },
     };
 
     /// <summary>
