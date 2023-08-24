@@ -34,7 +34,8 @@ public class TestParentheses
             double a = random.NextDouble() + random.Next();
             double b = random.NextDouble() + random.Next();
 
-            Assert.AreEqual(a + b, new Parentheses(new BinaryOperator("+", new Number(a), new Number(b))));
+            Assert.AreEqual(new Number(a + b),
+                new Parentheses(new BinaryOperator("+", new Number(a), new Number(b))).Evaluate());
         }
     }
 
@@ -51,7 +52,7 @@ public class TestParentheses
             double a = random.NextDouble() + random.Next();
             double b = random.NextDouble() + random.Next();
 
-            Assert.AreEqual($"({a}+{b})", new Parentheses(new BinaryOperator("+", new Number(a), new Number(b))));
+            Assert.AreEqual($"({a}+{b})", new Parentheses(new BinaryOperator("+", new Number(a), new Number(b))).ToString());
         }
     }
 }

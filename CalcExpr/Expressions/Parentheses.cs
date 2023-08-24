@@ -12,23 +12,25 @@ public class Parentheses : IExpression
         => Inside = inside;
 
     public IExpression Clone()
-        => throw new NotImplementedException();
+        => new Parentheses(Inside.Clone());
 
     public IExpression Evaluate()
-        => throw new NotImplementedException();
+        => Inside.Evaluate();
 
     public IExpression StepEvaluate()
-        => throw new NotImplementedException();
+        => Inside is Number n
+            ? n.StepEvaluate()
+            : new Parentheses(Inside.StepEvaluate());
 
     public override bool Equals(object? obj)
-        => throw new NotImplementedException();
+        => obj is not null && obj is Parentheses paren && paren.Inside.Equals(Inside);
 
     public override int GetHashCode()
-        => throw new NotImplementedException();
+        => Inside.GetHashCode();
 
     public override string ToString()
         => ToString(null);
 
     public string ToString(string? format)
-        => throw new NotImplementedException();
+        => $"({Inside.ToString(format)})";
 }
