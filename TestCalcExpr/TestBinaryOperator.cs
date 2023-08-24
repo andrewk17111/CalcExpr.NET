@@ -1,5 +1,4 @@
 ﻿using CalcExpr.Expressions;
-using System;
 
 namespace TestCalcExpr;
 
