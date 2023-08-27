@@ -1,4 +1,5 @@
-﻿using CalcExpr.Expressions;
+﻿using CalcExpr.Exceptions;
+using CalcExpr.Expressions;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
@@ -133,7 +134,7 @@ public class Parser
             {
                 if (start < 0)
                 {
-                    throw new Exception(); // TODO.
+                    throw new UnbalancedParenthesesException(input);
                 }
                 else if (depth > 1)
                 {
@@ -152,7 +153,7 @@ public class Parser
                 if (start < 0)
                     output += current;
                 else if (i == input.Length - 1)
-                    throw new Exception(); // TODO.
+                    throw new UnbalancedParenthesesException(input);
             }
         }
 
