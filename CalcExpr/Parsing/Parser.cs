@@ -19,7 +19,7 @@ public class Parser
     /// </summary>
     public Parser()
     {
-        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+))[%!]*)";
+        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+)|\[\d+\])[%!]*)";
 
         _grammar = new List<Rule>()
         {
@@ -60,23 +60,22 @@ public class Parser
 
         string clean_input = CleanExpressionString(input);
 
+        if (Regex.IsMatch(input, @"\(|\)"))
+            return ParseWithParentheses(clean_input);
+
         if (ContainsCache(clean_input))
-        {
             return _cache[clean_input].Clone();
-        }
-        else
+
+        foreach (Rule rule in _grammar)
         {
-            foreach (Rule rule in _grammar)
+            Match match = Regex.Match(input, rule.RegularExpression, RegexOptions.RightToLeft);
+
+            if (match.Success)
             {
-                Match match = Regex.Match(input, rule.RegularExpression, RegexOptions.RightToLeft);
+                IExpression expression = rule.Parse.Invoke(input, match);
 
-                if (match.Success)
-                {
-                    IExpression expression = rule.Parse.Invoke(input, match);
-
-                    AddCache(clean_input, expression);
-                    return expression;
-                }
+                AddCache(clean_input, expression);
+                return expression;
             }
         }
 
@@ -84,7 +83,96 @@ public class Parser
     }
 
     private static string CleanExpressionString(string expression)
-        => Regex.Replace(expression, @"\s+", " ");
+        => Regex.Replace(expression, @"\s+", "");
+
+    private IExpression ParseWithParentheses(string input)
+    {
+        string tokenized_input = TokenizeInput(input, out Token[] tokens);
+
+        if (tokenized_input == "[0]")
+            return new Parentheses(Parse(input[1..^1]));
+
+        foreach (Rule rule in _grammar)
+        {
+            Match match = Regex.Match(tokenized_input, rule.RegularExpression, RegexOptions.RightToLeft);
+
+            if (match.Success)
+                return rule.Parse.Invoke(input,
+                    new Token(match.Value, DetokenizeIndex(match.Index, tokenized_input, tokens)));
+        }
+
+        throw new Exception($"The input was not in the correct format: '{input}'");
+    }
+
+    private static string TokenizeInput(string input, out Token[] tokens)
+    {
+        input = Regex.Replace(input, @"[\[\]\\]", match => @$"\{match.Value}");
+
+        List<Token> toks = new List<Token>();
+        string output = String.Empty;
+        int start = -1;
+        int depth = 0;
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            char current = input[i];
+
+            if (current == '(')
+            {
+                if (start == -1)
+                {
+                    start = i;
+                    depth = 1;
+                }
+                else
+                {
+                    depth++;
+                }
+            }
+            else if (current == ')')
+            {
+                if (start < 0)
+                {
+                    throw new Exception(); // TODO.
+                }
+                else if (depth > 1)
+                {
+                    depth--;
+                }
+                else
+                {
+                    output += $"[{toks.Count}]";
+                    toks.Add(new Token(input[start..(i + 1)], start));
+                    start = -1;
+                    depth = 0;
+                }
+            }
+            else
+            {
+                if (start < 0)
+                    output += current;
+                else if (i == input.Length - 1)
+                    throw new Exception(); // TODO.
+            }
+        }
+
+        tokens = toks.ToArray();
+        return output;
+    }
+
+    private static int DetokenizeIndex(int index, string tokenized_string, Token[] tokens)
+    {
+        Match[] matches = Regex.Matches(tokenized_string[..index], @"((?<=^|([^\\]([\\][\\])*))\[\d+\])|(\\[\[\]\\])")
+            .ToArray();
+
+        foreach (Match match in matches)
+            if (match.Value.StartsWith("\\"))
+                index -= 1;
+            else
+                index += tokens[Convert.ToInt32(match.Value[1..^1])].Length - 3;
+
+        return index;
+    }
 
     /// <summary>
     /// Determines whether the cache of the <see cref="Parser"/> contains a specified expression <see cref="string"/>.

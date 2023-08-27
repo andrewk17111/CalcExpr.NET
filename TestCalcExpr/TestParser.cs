@@ -1,6 +1,6 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Parsing;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace TestCalcExpr;
 
@@ -76,7 +76,7 @@ public class TestParser
     [TestMethod]
     public void TestInit()
     {
-        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+))[%!]*)";
+        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+)|\[\d+\])[%!]*)";
 
         string[] default_rules =
         {
@@ -126,9 +126,19 @@ public class TestParser
         foreach (string expression in EXPRESSIONS.Keys)
         {
             parser.Parse(expression);
-            Assert.IsTrue(parser.ContainsCache(expression));
-            parser.RemoveCache(expression);
-            Assert.IsFalse(parser.ContainsCache(expression));
+
+            bool cached = parser.ContainsCache(expression);
+
+            if (Regex.IsMatch(expression, @"\(|\)"))
+            {
+                Assert.IsFalse(cached);
+            }
+            else
+            {
+                Assert.IsTrue(cached);
+                parser.RemoveCache(expression);
+                Assert.IsFalse(parser.ContainsCache(expression));
+            }
         }
 
         (string, IExpression) pi = ("pi", new Number(3.1415926535));
