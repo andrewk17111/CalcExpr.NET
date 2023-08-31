@@ -69,11 +69,11 @@ public class Parser
 
         foreach (Rule rule in _grammar)
         {
-            Match match = Regex.Match(input, rule.RegularExpression, RegexOptions.RightToLeft);
+            Match match = Regex.Match(clean_input, rule.RegularExpression, RegexOptions.RightToLeft);
 
             if (match.Success)
             {
-                IExpression expression = rule.Parse.Invoke(input, match);
+                IExpression expression = rule.Parse.Invoke(clean_input, match);
 
                 AddCache(clean_input, expression);
                 return expression;

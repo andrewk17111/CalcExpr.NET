@@ -25,6 +25,7 @@ public class TestParser
         { "2!%", new UnaryOperator("%", false, new UnaryOperator("!", false, new Number(2))) },
         { "-5%", new UnaryOperator("-", true, new UnaryOperator("%", false, new Number(5))) },
         { "1+2.0", new BinaryOperator("+", new Number(1), new Number(2)) },
+        { "0 + 0 * 2", new BinaryOperator("+", new Number(0), new BinaryOperator("*", new Number(0), new Number(2))) },
         { "1.0-2", new BinaryOperator("-", new Number(1), new Number(2)) },
         { "2*3", new BinaryOperator("*", new Number(2), new Number(3)) },
         { "6×7", new BinaryOperator("×", new Number(6), new Number(7)) },
