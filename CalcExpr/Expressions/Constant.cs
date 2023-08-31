@@ -2,6 +2,20 @@
 
 public class Constant : IExpression
 {
+    private static readonly Dictionary<string, IExpression> _values = new Dictionary<string, IExpression>()
+    {
+        { "∞", new Constant("∞") },
+        { "inf", new Constant("inf") },
+        { "infinity", new Constant("infinity") },
+        { "π", new Number(Math.PI) },
+        { "pi", new Number(Math.PI) },
+        { "τ", new Number(Math.Tau) },
+        { "tau", new Number(Math.Tau) },
+        { "e", new Number(Math.E) },
+        { "true", new Number(1) },
+        { "false", new Number(0) },
+    };
+
     public readonly string Identifier;
 
     /// <summary>
@@ -15,10 +29,10 @@ public class Constant : IExpression
         => new Constant(Identifier);
 
     public IExpression Evaluate()
-        => throw new NotImplementedException();
+        => _values[Identifier].Clone();
 
     public IExpression StepEvaluate()
-        => throw new NotImplementedException();
+        => _values[Identifier].Clone();
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Constant c && c.Identifier == Identifier;
