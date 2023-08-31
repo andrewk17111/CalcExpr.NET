@@ -20,7 +20,11 @@ public class Parser
     /// </summary>
     public Parser()
     {
-        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+)|\[\d+\])[%!]*)";
+        const string CONSTANT = @$"(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)";
+        const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
+        const string PREFIX = @"[\+\-!~¬]";
+        const string POSTFIX = @"[%!]";
+        const string OPERAND = @$"({PREFIX}*({CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
 
         _grammar = new List<Rule>()
         {
@@ -32,9 +36,10 @@ public class Parser
             new Rule(@$"(?<={OPERAND})([\+\-])(?={OPERAND})", ParseBinaryOperator),
             new Rule(@$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})", ParseBinaryOperator),
             new Rule(@$"(?<={OPERAND})(\^)(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@"(?<=^\s*)[\+\-!~¬]", ParsePrefix),
-            new Rule(@"[%!](?=\s*$)", ParsePostfix),
-            new Rule(@"(?<=^\s*)((\d+\.?\d*)|(\d*\.?\d+))(?=\s*$)", ParseNumber)
+            new Rule(@$"(?<=^\s*){PREFIX}", ParsePrefix),
+            new Rule(@$"{POSTFIX}(?=\s*$)", ParsePostfix),
+            new Rule(@$"(?<=^\s*){CONSTANT}(?=\s*$)", ParseConstant),
+            new Rule(@$"(?<=^\s*){NUMBER}(?=\s*$)", ParseNumber)
         };
     }
 
@@ -332,7 +337,10 @@ public class Parser
 
     private IExpression ParsePostfix(string input, Token match)
         => new UnaryOperator(match.Value, false, Parse(input[..^match.Length]));
-    
+
+    private IExpression ParseConstant(string input, Token match)
+        => new Constant(match.Value);
+
     private static IExpression ParseNumber(string input, Token match)
         => new Number(Convert.ToDouble(match.Value));
 }

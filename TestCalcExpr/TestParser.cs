@@ -88,7 +88,11 @@ public class TestParser
     [TestMethod]
     public void TestInit()
     {
-        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+)|\[\d+\])[%!]*)";
+        const string CONSTANT = @$"(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)";
+        const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
+        const string PREFIX = @"[\+\-!~¬]";
+        const string POSTFIX = @"[%!]";
+        const string OPERAND = @$"({PREFIX}*({CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
 
         string[] default_rules =
         {
@@ -100,9 +104,10 @@ public class TestParser
             @$"(?<={OPERAND})([\+\-])(?={OPERAND})",
             @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})",
             @$"(?<={OPERAND})(\^)(?={OPERAND})",
-            @"(?<=^\s*)[\+\-!~¬]",
-            @"[%!](?=\s*$)",
-            @"(?<=^\s*)((\d+\.?\d*)|(\d*\.?\d+))(?=\s*$)",
+            @$"(?<=^\s*){PREFIX}",
+            @$"{POSTFIX}(?=\s*$)",
+            @$"(?<=^\s*){CONSTANT}(?=\s*$)",
+            @$"(?<=^\s*){NUMBER}(?=\s*$)",
         };
 
         Parser parser = new Parser();
