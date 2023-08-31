@@ -64,11 +64,22 @@ public class TestParser
             new Number(1))), new UnaryOperator("!", false, new UnaryOperator("!", false, new Number(2)))) },
         { "-13!%!12%", new BinaryOperator("%", new UnaryOperator("-", true, new UnaryOperator("!", false,
             new Number(13))), new UnaryOperator("!", true, new UnaryOperator("%", false, new Number(12)))) },
-        { "1+((2-3)*(4/5))^7&&8||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("+",
+        { "1+((2-τ)*(4/-pi))^7&&8||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("+",
             new Number(1), new BinaryOperator("^", new Parentheses(new BinaryOperator("*", new Parentheses(
-                new BinaryOperator("-", new Number(2), new Number(3))), new Parentheses( new BinaryOperator("/",
-                    new Number(4), new Number(5))))), new Number(7))), new Number(8)), new BinaryOperator("⊕",
-                        new Number(9), new BinaryOperator("==", new Number(10), new Number(11)))) },
+                new BinaryOperator("-", new Number(2), new Constant("τ"))), new Parentheses( new BinaryOperator("/",
+                    new Number(4), new UnaryOperator("-", true, new Constant("pi")))))), new Number(7))),
+            new Number(8)), new BinaryOperator("⊕", new Number(9), new BinaryOperator("==", new Number(10),
+                new Number(11)))) },
+        { "∞", new Constant("∞") },
+        { "inf", new Constant("inf") },
+        { "infinity", new Constant("infinity") },
+        { "π", new Constant("π") },
+        { "pi", new Constant("pi") },
+        { "τ", new Constant("τ") },
+        { "tau", new Constant("tau") },
+        { "e", new Constant("e") },
+        { "true", new Constant("true") },
+        { "false", new Constant("false") },
     };
 
     /// <summary>
@@ -77,7 +88,11 @@ public class TestParser
     [TestMethod]
     public void TestInit()
     {
-        const string OPERAND = @"([\+\-!~¬]*((\d+\.?\d*)|(\d*\.?\d+)|\[\d+\])[%!]*)";
+        const string CONSTANT = @$"(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)";
+        const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
+        const string PREFIX = @"[\+\-!~¬]";
+        const string POSTFIX = @"[%!]";
+        const string OPERAND = @$"({PREFIX}*({CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
 
         string[] default_rules =
         {
@@ -89,9 +104,10 @@ public class TestParser
             @$"(?<={OPERAND})([\+\-])(?={OPERAND})",
             @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})",
             @$"(?<={OPERAND})(\^)(?={OPERAND})",
-            @"(?<=^\s*)[\+\-!~¬]",
-            @"[%!](?=\s*$)",
-            @"(?<=^\s*)((\d+\.?\d*)|(\d*\.?\d+))(?=\s*$)",
+            @$"(?<=^\s*){PREFIX}",
+            @$"{POSTFIX}(?=\s*$)",
+            @$"(?<=^\s*){CONSTANT}(?=\s*$)",
+            @$"(?<=^\s*){NUMBER}(?=\s*$)",
         };
 
         Parser parser = new Parser();
