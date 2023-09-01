@@ -21,10 +21,11 @@ public class Parser
     public Parser()
     {
         const string CONSTANT = @$"(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)";
+        const string VARIABLE = @$"([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)";
         const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
         const string PREFIX = @"[\+\-!~¬]";
         const string POSTFIX = @"[%!]";
-        const string OPERAND = @$"({PREFIX}*({CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
+        const string OPERAND = @$"({PREFIX}*({VARIABLE}|{CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
 
         _grammar = new List<Rule>()
         {
@@ -39,6 +40,7 @@ public class Parser
             new Rule(@$"(?<=^\s*){PREFIX}", ParsePrefix),
             new Rule(@$"{POSTFIX}(?=\s*$)", ParsePostfix),
             new Rule(@$"(?<=^\s*){CONSTANT}(?=\s*$)", ParseConstant),
+            new Rule(@$"(?<=^\s*){VARIABLE}(?=\s*$)", ParseVariable),
             new Rule(@$"(?<=^\s*){NUMBER}(?=\s*$)", ParseNumber)
         };
     }
@@ -340,6 +342,9 @@ public class Parser
 
     private IExpression ParseConstant(string input, Token match)
         => new Constant(match.Value);
+
+    private IExpression ParseVariable(string input, Token match)
+        => new Variable(match.Value);
 
     private static IExpression ParseNumber(string input, Token match)
         => new Number(Convert.ToDouble(match.Value));

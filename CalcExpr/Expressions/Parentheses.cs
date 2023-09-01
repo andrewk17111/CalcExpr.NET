@@ -15,12 +15,18 @@ public class Parentheses : IExpression
         => new Parentheses(Inside.Clone());
 
     public IExpression Evaluate()
-        => Inside.Evaluate();
+        => Evaluate(null);
+
+    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
+        => Inside.Evaluate(variables);
 
     public IExpression StepEvaluate()
+        => StepEvaluate(null);
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
         => Inside is Number n
-            ? n.StepEvaluate()
-            : new Parentheses(Inside.StepEvaluate());
+            ? n.StepEvaluate(variables)
+            : new Parentheses(Inside.StepEvaluate(variables));
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Parentheses paren && paren.Inside.Equals(Inside);

@@ -5,7 +5,7 @@ namespace TestCalcExpr;
 [TestClass]
 public class TestConstant
 {
-    readonly string[] CONSTANTS =
+    static readonly string[] CONSTANTS =
     {
         "∞",
         "inf",

@@ -12,9 +12,15 @@ public class Number : IExpression
         => Value = value;
 
     public IExpression Evaluate()
+        => Evaluate(null);
+
+    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
         => Clone();
 
     public IExpression StepEvaluate()
+        => StepEvaluate(null);
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
         => Clone();
 
     public IExpression Clone()

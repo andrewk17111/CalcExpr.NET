@@ -64,11 +64,11 @@ public class TestParser
             new Number(1))), new UnaryOperator("!", false, new UnaryOperator("!", false, new Number(2)))) },
         { "-13!%!12%", new BinaryOperator("%", new UnaryOperator("-", true, new UnaryOperator("!", false,
             new Number(13))), new UnaryOperator("!", true, new UnaryOperator("%", false, new Number(12)))) },
-        { "1+((2-τ)*(4/-pi))^7&&8||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("+",
+        { "1+((2-τ)*(4/-pi))^7&&abc_1||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("+",
             new Number(1), new BinaryOperator("^", new Parentheses(new BinaryOperator("*", new Parentheses(
                 new BinaryOperator("-", new Number(2), new Constant("τ"))), new Parentheses( new BinaryOperator("/",
                     new Number(4), new UnaryOperator("-", true, new Constant("pi")))))), new Number(7))),
-            new Number(8)), new BinaryOperator("⊕", new Number(9), new BinaryOperator("==", new Number(10),
+            new Variable("abc_1")), new BinaryOperator("⊕", new Number(9), new BinaryOperator("==", new Number(10),
                 new Number(11)))) },
         { "∞", new Constant("∞") },
         { "inf", new Constant("inf") },
@@ -80,6 +80,13 @@ public class TestParser
         { "e", new Constant("e") },
         { "true", new Constant("true") },
         { "false", new Constant("false") },
+        { "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz",
+            new Variable("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz") },
+        { "ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω",
+            new Variable("ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω") },
+        { "abc_123", new Variable("abc_123") },
+        { "αβγ_123", new Variable("αβγ_123") },
+        { "abcd_αβγ_xyz", new Variable("abcd_αβγ_xyz") },
     };
 
     /// <summary>
@@ -89,10 +96,11 @@ public class TestParser
     public void TestInit()
     {
         const string CONSTANT = @$"(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)";
+        const string VARIABLE = @$"([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)";
         const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
         const string PREFIX = @"[\+\-!~¬]";
         const string POSTFIX = @"[%!]";
-        const string OPERAND = @$"({PREFIX}*({CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
+        const string OPERAND = @$"({PREFIX}*({VARIABLE}|{CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
 
         string[] default_rules =
         {
@@ -107,6 +115,7 @@ public class TestParser
             @$"(?<=^\s*){PREFIX}",
             @$"{POSTFIX}(?=\s*$)",
             @$"(?<=^\s*){CONSTANT}(?=\s*$)",
+            @$"(?<=^\s*){VARIABLE}(?=\s*$)",
             @$"(?<=^\s*){NUMBER}(?=\s*$)",
         };
 

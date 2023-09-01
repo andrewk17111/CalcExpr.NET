@@ -29,9 +29,15 @@ public class Constant : IExpression
         => new Constant(Identifier);
 
     public IExpression Evaluate()
+        => Evaluate(null);
+
+    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
         => _values[Identifier].Clone();
 
     public IExpression StepEvaluate()
+        => StepEvaluate(null);
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
         => _values[Identifier].Clone();
 
     public override bool Equals(object? obj)

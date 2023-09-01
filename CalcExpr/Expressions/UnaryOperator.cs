@@ -48,12 +48,18 @@ public class UnaryOperator : IExpression
         => new UnaryOperator(Identifier, IsPrefix, Inside.Clone());
 
     public IExpression Evaluate()
-        => new Number(_operation(((Number)Inside.Evaluate()).Value));
+        => Evaluate(null);
+
+    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
+        => new Number(_operation(((Number)Inside.Evaluate(variables)).Value));
 
     public IExpression StepEvaluate()
+        => StepEvaluate(null);
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
         => Inside is Number n
             ? new Number(_operation(n.Value))
-            : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate());
+            : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate(variables));
 
     public override string ToString()
         => ToString(null);
