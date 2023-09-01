@@ -68,7 +68,7 @@ public class TestParser
             new Number(1), new BinaryOperator("^", new Parentheses(new BinaryOperator("*", new Parentheses(
                 new BinaryOperator("-", new Number(2), new Constant("τ"))), new Parentheses( new BinaryOperator("/",
                     new Number(4), new UnaryOperator("-", true, new Constant("pi")))))), new Number(7))),
-            new Constant("abc_1")), new BinaryOperator("⊕", new Number(9), new BinaryOperator("==", new Number(10),
+            new Variable("abc_1")), new BinaryOperator("⊕", new Number(9), new BinaryOperator("==", new Number(10),
                 new Number(11)))) },
         { "∞", new Constant("∞") },
         { "inf", new Constant("inf") },
@@ -81,12 +81,12 @@ public class TestParser
         { "true", new Constant("true") },
         { "false", new Constant("false") },
         { "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz",
-            new Constant("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz") },
+            new Variable("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz") },
         { "ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω",
-            new Constant("ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω") },
-        { "abc_123", new Constant("abc_123") },
-        { "αβγ_123", new Constant("αβγ_123") },
-        { "abcd_αβγ_xyz", new Constant("abcd_αβγ_xyz") },
+            new Variable("ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω") },
+        { "abc_123", new Variable("abc_123") },
+        { "αβγ_123", new Variable("αβγ_123") },
+        { "abcd_αβγ_xyz", new Variable("abcd_αβγ_xyz") },
     };
 
     /// <summary>
