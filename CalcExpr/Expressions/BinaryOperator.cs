@@ -58,12 +58,18 @@ public class BinaryOperator : IExpression
     public IExpression Evaluate()
         => new Number(_operation(((Number)Left.Evaluate()).Value, ((Number)Right.Evaluate()).Value));
 
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
+
     public IExpression StepEvaluate()
         => Left is not Number a
             ? new BinaryOperator(Identifier, Left.StepEvaluate(), Right)
             : Right is not Number b 
                 ? new BinaryOperator(Identifier, Left, Right.StepEvaluate())
                 : new Number(_operation(a.Value, b.Value));
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
 
     public override bool Equals(object? obj)
         => obj is not null && obj is BinaryOperator bin_op && bin_op.Identifier == Identifier &&

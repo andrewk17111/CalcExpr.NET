@@ -64,11 +64,11 @@ public class TestParser
             new Number(1))), new UnaryOperator("!", false, new UnaryOperator("!", false, new Number(2)))) },
         { "-13!%!12%", new BinaryOperator("%", new UnaryOperator("-", true, new UnaryOperator("!", false,
             new Number(13))), new UnaryOperator("!", true, new UnaryOperator("%", false, new Number(12)))) },
-        { "1+((2-τ)*(4/-pi))^7&&8||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("+",
+        { "1+((2-τ)*(4/-pi))^7&&abc_1||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("+",
             new Number(1), new BinaryOperator("^", new Parentheses(new BinaryOperator("*", new Parentheses(
                 new BinaryOperator("-", new Number(2), new Constant("τ"))), new Parentheses( new BinaryOperator("/",
                     new Number(4), new UnaryOperator("-", true, new Constant("pi")))))), new Number(7))),
-            new Number(8)), new BinaryOperator("⊕", new Number(9), new BinaryOperator("==", new Number(10),
+            new Constant("abc_1")), new BinaryOperator("⊕", new Number(9), new BinaryOperator("==", new Number(10),
                 new Number(11)))) },
         { "∞", new Constant("∞") },
         { "inf", new Constant("inf") },
@@ -80,6 +80,13 @@ public class TestParser
         { "e", new Constant("e") },
         { "true", new Constant("true") },
         { "false", new Constant("false") },
+        { "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz",
+            new Constant("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz") },
+        { "ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω",
+            new Constant("ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω") },
+        { "abc_123", new Constant("abc_123") },
+        { "αβγ_123", new Constant("αβγ_123") },
+        { "abcd_αβγ_xyz", new Constant("abcd_αβγ_xyz") },
     };
 
     /// <summary>

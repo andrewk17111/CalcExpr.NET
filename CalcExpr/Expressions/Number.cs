@@ -14,8 +14,14 @@ public class Number : IExpression
     public IExpression Evaluate()
         => Clone();
 
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
+
     public IExpression StepEvaluate()
         => Clone();
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
 
     public IExpression Clone()
         => new Number(Value);

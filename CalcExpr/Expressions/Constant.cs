@@ -31,8 +31,14 @@ public class Constant : IExpression
     public IExpression Evaluate()
         => _values[Identifier].Clone();
 
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
+
     public IExpression StepEvaluate()
         => _values[Identifier].Clone();
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Constant c && c.Identifier == Identifier;

@@ -50,10 +50,16 @@ public class UnaryOperator : IExpression
     public IExpression Evaluate()
         => new Number(_operation(((Number)Inside.Evaluate()).Value));
 
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
+
     public IExpression StepEvaluate()
         => Inside is Number n
             ? new Number(_operation(n.Value))
             : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate());
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
 
     public override string ToString()
         => ToString(null);

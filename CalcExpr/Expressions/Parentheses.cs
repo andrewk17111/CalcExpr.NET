@@ -22,6 +22,12 @@ public class Parentheses : IExpression
             ? n.StepEvaluate()
             : new Parentheses(Inside.StepEvaluate());
 
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
+
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+        => throw new NotImplementedException();
+
     public override bool Equals(object? obj)
         => obj is not null && obj is Parentheses paren && paren.Inside.Equals(Inside);
 
