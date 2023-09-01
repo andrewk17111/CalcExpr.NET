@@ -9,10 +9,10 @@ public class Variable : IExpression
     /// </summary>
     /// <param name="name">The name of the <see cref="Variable"/> for reference.</param>
     public Variable(string name)
-        => throw new NotImplementedException();
+        => Name = name;
 
     public IExpression Clone()
-        => throw new NotImplementedException();
+        => new Variable(Name);
     
     public IExpression Evaluate()
         => throw new NotImplementedException();
@@ -27,14 +27,14 @@ public class Variable : IExpression
         => throw new NotImplementedException();
 
     public override bool Equals(object? obj)
-        => throw new NotImplementedException();
+        => obj is not null && obj is Variable v && v.Name == Name;
 
     public override int GetHashCode()
-        => throw new NotImplementedException();
+        => Name.GetHashCode();
 
     public override string ToString()
-        => throw new NotImplementedException();
+        => Name;
 
     public string ToString(string? format)
-        => throw new NotImplementedException();
+        => Name;
 }
