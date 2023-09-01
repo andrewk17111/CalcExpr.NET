@@ -40,7 +40,7 @@ public class TestVariable
         };
 
         foreach (string name in VALID_VARIABLES)
-            Assert.AreEqual(variables[name], ((Number)new Variable(name).Evaluate(variables)).Value);
+            Assert.AreEqual(variables[name], new Variable(name).Evaluate(variables));
     }
 
     /// <summary>

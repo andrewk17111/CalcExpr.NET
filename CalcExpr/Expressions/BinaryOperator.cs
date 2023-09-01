@@ -56,20 +56,20 @@ public class BinaryOperator : IExpression
         => new BinaryOperator(Identifier, Left.Clone(), Right.Clone());
 
     public IExpression Evaluate()
-        => new Number(_operation(((Number)Left.Evaluate()).Value, ((Number)Right.Evaluate()).Value));
+        => Evaluate(null);
 
-    public IExpression Evaluate(Dictionary<string, IExpression> variables)
-        => throw new NotImplementedException();
+    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
+        => new Number(_operation(((Number)Left.Evaluate(variables)).Value, ((Number)Right.Evaluate(variables)).Value));
 
     public IExpression StepEvaluate()
-        => Left is not Number a
-            ? new BinaryOperator(Identifier, Left.StepEvaluate(), Right)
-            : Right is not Number b 
-                ? new BinaryOperator(Identifier, Left, Right.StepEvaluate())
-                : new Number(_operation(a.Value, b.Value));
+        => StepEvaluate(null);
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
-        => throw new NotImplementedException();
+    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
+        => Left is not Number a
+            ? new BinaryOperator(Identifier, Left.StepEvaluate(variables), Right)
+            : Right is not Number b 
+                ? new BinaryOperator(Identifier, Left, Right.StepEvaluate(variables))
+                : new Number(_operation(a.Value, b.Value));
 
     public override bool Equals(object? obj)
         => obj is not null && obj is BinaryOperator bin_op && bin_op.Identifier == Identifier &&

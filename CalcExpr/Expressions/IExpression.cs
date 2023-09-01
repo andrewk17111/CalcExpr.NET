@@ -17,7 +17,7 @@ public interface IExpression
     /// <returns>
     /// A new <see cref="IExpression"/> containing the value of the current <see cref="IExpression"/>.
     /// </returns>
-    public IExpression Evaluate(Dictionary<string, IExpression> variables);
+    public IExpression Evaluate(Dictionary<string, IExpression>? variables);
 
     /// <summary>
     /// Evaluates and calculates one step towards the value of the <see cref="IExpression"/>.
@@ -36,7 +36,7 @@ public interface IExpression
     /// A new <see cref="IExpression"/> containing the partially evaluated value of the current 
     /// <see cref="IExpression"/>.
     /// </returns>
-    public IExpression StepEvaluate(Dictionary<string, IExpression> variables);
+    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables);
 
     /// <summary>
     /// Creates a new <see cref="IExpression"/> with the same values of the current <see cref="IExpression"/>.
