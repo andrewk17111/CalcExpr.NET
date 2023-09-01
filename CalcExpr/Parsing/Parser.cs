@@ -24,7 +24,7 @@ public class Parser
         const string VARIABLE = @$"([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)";
         const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
         const string PREFIX = @"[\+\-!~¬]";
-        const string POSTFIX = @"[%!]";
+        const string POSTFIX = @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%])";
         const string OPERAND = @$"({PREFIX}*({VARIABLE}|{CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
 
         _grammar = new List<Rule>()

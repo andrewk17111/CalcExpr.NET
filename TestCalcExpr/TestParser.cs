@@ -20,10 +20,12 @@ public class TestParser
         { "~2", new UnaryOperator("~", true, new Number(2)) },
         { "¬0", new UnaryOperator("¬", true, new Number(0)) },
         { "5!", new UnaryOperator("!", false, new Number(5)) },
+        { "5!!", new UnaryOperator("!!", false, new Number(5)) },
         { "1%", new UnaryOperator("%", false, new Number(1)) },
         { "~!1", new UnaryOperator("~", true, new UnaryOperator("!", true, new Number(1))) },
         { "2!%", new UnaryOperator("%", false, new UnaryOperator("!", false, new Number(2))) },
         { "-5%", new UnaryOperator("-", true, new UnaryOperator("%", false, new Number(5))) },
+        { "3!!!", new UnaryOperator("!", false, new UnaryOperator("!!", false, new Number(3))) },
         { "1+2.0", new BinaryOperator("+", new Number(1), new Number(2)) },
         { "0 + 0 * 2", new BinaryOperator("+", new Number(0), new BinaryOperator("*", new Number(0), new Number(2))) },
         { "1.0-2", new BinaryOperator("-", new Number(1), new Number(2)) },
@@ -61,7 +63,7 @@ public class TestParser
         { "!¬2*-+3", new BinaryOperator("*", new UnaryOperator("!", true, new UnaryOperator("¬", true, new Number(2))),
             new UnaryOperator("-", true, new UnaryOperator("+", true, new Number(3)))) },
         { "1%%/2!!", new BinaryOperator("/", new UnaryOperator("%", false, new UnaryOperator("%", false,
-            new Number(1))), new UnaryOperator("!", false, new UnaryOperator("!", false, new Number(2)))) },
+            new Number(1))), new UnaryOperator("!!", false, new Number(2))) },
         { "-13!%!12%", new BinaryOperator("%", new UnaryOperator("-", true, new UnaryOperator("!", false,
             new Number(13))), new UnaryOperator("!", true, new UnaryOperator("%", false, new Number(12)))) },
         { "1+((2-τ)*(4/-pi))^7&&abc_1||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("+",
@@ -99,7 +101,7 @@ public class TestParser
         const string VARIABLE = @$"([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)";
         const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
         const string PREFIX = @"[\+\-!~¬]";
-        const string POSTFIX = @"[%!]";
+        const string POSTFIX = @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%])";
         const string OPERAND = @$"({PREFIX}*({VARIABLE}|{CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
 
         string[] default_rules =
