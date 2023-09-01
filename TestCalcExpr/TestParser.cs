@@ -96,10 +96,11 @@ public class TestParser
     public void TestInit()
     {
         const string CONSTANT = @$"(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)";
+        const string VARIABLE = @$"([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)";
         const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
         const string PREFIX = @"[\+\-!~¬]";
         const string POSTFIX = @"[%!]";
-        const string OPERAND = @$"({PREFIX}*({CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
+        const string OPERAND = @$"({PREFIX}*({VARIABLE}|{CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
 
         string[] default_rules =
         {
@@ -114,6 +115,7 @@ public class TestParser
             @$"(?<=^\s*){PREFIX}",
             @$"{POSTFIX}(?=\s*$)",
             @$"(?<=^\s*){CONSTANT}(?=\s*$)",
+            @$"(?<=^\s*){VARIABLE}(?=\s*$)",
             @$"(?<=^\s*){NUMBER}(?=\s*$)",
         };
 
