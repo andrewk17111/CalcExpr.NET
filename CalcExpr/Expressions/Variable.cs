@@ -1,4 +1,6 @@
-﻿namespace CalcExpr.Expressions;
+﻿using CalcExpr.Exceptions;
+
+namespace CalcExpr.Expressions;
 
 public class Variable : IExpression
 {
@@ -20,7 +22,7 @@ public class Variable : IExpression
     public IExpression Evaluate(Dictionary<string, IExpression>? variables)
         => variables is not null && variables.ContainsKey(Name)
             ? variables[Name].Evaluate(variables)
-            : throw new Exception(); // TODO.
+            : throw new UnknownValueException(Name);
     
     public IExpression StepEvaluate()
         => StepEvaluate(null);
@@ -28,7 +30,7 @@ public class Variable : IExpression
     public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
         => variables is not null && variables.ContainsKey(Name)
             ? variables[Name].Evaluate(variables)
-            : throw new Exception(); // TODO.
+            : throw new UnknownValueException(Name);
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Variable v && v.Name == Name;
