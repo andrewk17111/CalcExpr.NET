@@ -63,7 +63,19 @@ public class RegexRule : Rule
     /// </returns>
     protected static Token? FindMatch(string input, string regex, RegexRuleOptions options)
     {
-        Match match = Regex.Match(input, regex, (RegexOptions)((int)options & 0x0000FFFF));
+        string trimmed_input = input;
+        int offset = 0;
+
+        if (options.HasFlag(RegexRuleOptions.TrimLeft))
+        {
+            trimmed_input = trimmed_input.TrimStart();
+            offset = input.Length - trimmed_input.Length;
+        }
+
+        if (options.HasFlag(RegexRuleOptions.TrimRight))
+            trimmed_input = trimmed_input.TrimEnd();
+
+        Match match = Regex.Match(trimmed_input, regex, (RegexOptions)((int)options & 0x0000FFFF));
 
         if (match.Success)
         {
@@ -90,7 +102,7 @@ public class RegexRule : Rule
 
                 foreach (Group group in match.Groups)
                 {
-                    if (group.Index + group.Length == input.Length)
+                    if (group.Index + group.Length == trimmed_input.Length)
                     {
                         right = true;
                         break;
@@ -101,7 +113,7 @@ public class RegexRule : Rule
                     return null;
             }
 
-            return match;
+            return new Token(match.Value, match.Index + offset);
         }
 
         return null;
@@ -203,4 +215,22 @@ public enum RegexRuleOptions
     /// <see cref="Left"/> and <see cref="Right"/> flags.)
     /// </summary>
     Only = 0x0003_0000,
+    /// <summary>
+    /// When used in a <see cref="NestedRegexRule"/>, white space selectors will be added before and after the
+    /// referenced regex.
+    /// </summary>
+    PadReferences = 0x0004_0000,
+    /// <summary>
+    /// Removes all of the leading whitespace from the beginning of the <see cref="string"/>.
+    /// </summary>
+    TrimLeft = 0x0008_0000,
+    /// <summary>
+    /// Removes all of the trailing whitespace from the end of the <see cref="string"/>.
+    /// </summary>
+    TrimRight = 0x0010_0000,
+    /// <summary>
+    /// Removes all of the leading and trailing whitespace from the beginning and end of the <see cref="string"/>. (Is
+    /// the same as setting both the <see cref="TrimLeft"/> and <see cref="TrimRight"/> flags.)
+    /// </summary>
+    Trim = 0x0018_0000
 }

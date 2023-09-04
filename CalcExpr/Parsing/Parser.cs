@@ -25,27 +25,31 @@ public class Parser
 
         _grammar = new List<Rule>()
         {
-            new NestedRegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})", RegexOptions.RightToLeft,
-                ParseBinaryOperator),
-            new NestedRegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})", RegexOptions.RightToLeft,
-                ParseBinaryOperator),
-            new NestedRegexRule("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})", RegexOptions.RightToLeft,
-                ParseBinaryOperator),
-            new NestedRegexRule("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})", RegexOptions.RightToLeft,
-                ParseBinaryOperator),
+            new NestedRegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+            new NestedRegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+            new NestedRegexRule("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+            new NestedRegexRule("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new NestedRegexRule("IneqBinOp", @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})",
-                RegexOptions.RightToLeft, ParseBinaryOperator),
-            new NestedRegexRule("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})", RegexOptions.RightToLeft,
-                ParseBinaryOperator),
-            new NestedRegexRule("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})", RegexOptions.RightToLeft,
-                ParseBinaryOperator),
-            new NestedRegexRule("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})", RegexOptions.RightToLeft,
-                ParseBinaryOperator),
-            new RegexRule("Prefix", @"[\+\-!~¬]", RegexRuleOptions.Left, ParsePrefix),
-            new RegexRule("Postfix", @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%])", RegexRuleOptions.RightToLeft | RegexRuleOptions.Right, ParsePostfix),
-            new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)", RegexRuleOptions.Only, ParseConstant),
-            new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)", RegexRuleOptions.Only, ParseVariable),
-            new RegexRule("Number", @"((\d+\.?\d*)|(\d*\.?\d+))", RegexRuleOptions.Only, ParseNumber)
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+            new NestedRegexRule("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+            new NestedRegexRule("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+            new NestedRegexRule("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+            new RegexRule("Prefix", @"[\+\-!~¬]", RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
+            new RegexRule("Postfix", @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%])",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParsePostfix),
+            new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)",
+                RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseConstant),
+            new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)",
+                RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseVariable),
+            new RegexRule("Number", @"((\d+\.?\d*)|(\d*\.?\d+))", RegexRuleOptions.Only | RegexRuleOptions.Trim,
+                ParseNumber)
         };
     }
 
@@ -70,23 +74,21 @@ public class Parser
         if (input is null)
             throw new ArgumentNullException(nameof(input));
 
-        string clean_input = CleanExpressionString(input);
-
         if (Regex.IsMatch(input, @"\(|\)"))
-            return ParseWithParentheses(clean_input);
+            return ParseWithParentheses(input);
 
-        if (ContainsCache(clean_input))
-            return _cache[clean_input].Clone();
+        if (ContainsCache(input))
+            return _cache[CleanExpressionString(input)].Clone();
 
         foreach (Rule rule in _grammar)
         {
-            Token? match = rule.Match(clean_input, Grammar);
+            Token? match = rule.Match(input, Grammar);
 
             if (match.HasValue)
             {
-                IExpression expression = rule.Parse.Invoke(clean_input, match.Value, this);
+                IExpression expression = rule.Parse.Invoke(input, match.Value, this);
 
-                AddCache(clean_input, expression);
+                AddCache(input, expression);
                 return expression;
             }
         }
@@ -322,10 +324,10 @@ public class Parser
         => new BinaryOperator(match.Value, Parse(input[..match.Index]), Parse(input[(match.Index + match.Length)..]));
 
     private IExpression ParsePrefix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, true, Parse(input[match.Length..]));
+        => new UnaryOperator(match.Value, true, Parse(input[(match.Index + match.Length)..]));
 
     private IExpression ParsePostfix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, false, Parse(input[..^match.Length]));
+        => new UnaryOperator(match.Value, false, Parse(input[..match.Index]));
 
     private IExpression ParseConstant(string input, Token match, Parser parser)
         => new Constant(match.Value);

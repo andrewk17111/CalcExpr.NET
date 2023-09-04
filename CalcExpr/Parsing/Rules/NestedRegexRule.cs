@@ -44,7 +44,7 @@ public class NestedRegexRule : RegexRule
         return FindMatch(input, regex, Options);
     }
 
-    private static string ReplaceRules(string regular_expression, IEnumerable<Rule> rules,
+    private static string ReplaceRules(string regular_expression, IEnumerable<Rule> rules, RegexRuleOptions options,
         ref Dictionary<string, string> preprocessed_rules)
     {
         List<Match> matches = Regex.Matches(regular_expression, @"(?<=[^\\](\\\\)*{)\w+(?=})").Distinct().ToList();
@@ -86,6 +86,9 @@ public class NestedRegexRule : RegexRule
                 {
                     continue;
                 }
+
+                if (options.HasFlag(RegexRuleOptions.PadReferences))
+                    sub_regex = $@"(\s*{sub_regex}\s*)";
 
                 regex = Regex.Replace(regex, @$"(?<=[^\\](\\\\)*){{{match.Value}}}", sub_regex);
             }
