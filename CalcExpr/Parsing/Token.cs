@@ -6,7 +6,9 @@ public readonly struct Token
 {
     public readonly string Value;
     public readonly int Index;
-    public readonly int Length;
+
+    public int Length
+        => Value.Length;
 
     /// <summary>
     /// Creates and initializes a new <see cref="Token"/> with the specified <paramref name="value"/>, 
@@ -18,9 +20,11 @@ public readonly struct Token
     {
         Value = value;
         Index = index;
-        Length = value.Length;
     }
 
     public static implicit operator Token(Match match)
         => new Token(match.Value, match.Index);
+
+    public static implicit operator string(Token token)
+        => token.Value;
 }

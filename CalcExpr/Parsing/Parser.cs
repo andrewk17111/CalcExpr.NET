@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
+using CalcExpr.Parsing.Rules;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
@@ -20,28 +21,31 @@ public class Parser
     /// </summary>
     public Parser()
     {
-        const string CONSTANT = @$"(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)";
-        const string VARIABLE = @$"([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)";
-        const string NUMBER = @"((\d+\.?\d*)|(\d*\.?\d+))";
-        const string PREFIX = @"[\+\-!~¬]";
-        const string POSTFIX = @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%])";
-        const string OPERAND = @$"({PREFIX}*({VARIABLE}|{CONSTANT}|{NUMBER}|\[\d+\]){POSTFIX}*)";
+        const string OPERAND = @"({Prefix}*({Variable}|{Constant}|{Number}|\[\d+\]){Postfix}*)";
 
         _grammar = new List<Rule>()
         {
-            new Rule(@$"(?<={OPERAND})(\|\||∨)(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@$"(?<={OPERAND})(⊕)(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@$"(?<={OPERAND})(&&|∧)(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@$"(?<={OPERAND})([\+\-])(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@$"(?<={OPERAND})(\^)(?={OPERAND})", ParseBinaryOperator),
-            new Rule(@$"(?<=^\s*){PREFIX}", ParsePrefix),
-            new Rule(@$"{POSTFIX}(?=\s*$)", ParsePostfix),
-            new Rule(@$"(?<=^\s*){CONSTANT}(?=\s*$)", ParseConstant),
-            new Rule(@$"(?<=^\s*){VARIABLE}(?=\s*$)", ParseVariable),
-            new Rule(@$"(?<=^\s*){NUMBER}(?=\s*$)", ParseNumber)
+            new NestedRegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})", RegexOptions.RightToLeft,
+                ParseBinaryOperator),
+            new NestedRegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})", RegexOptions.RightToLeft,
+                ParseBinaryOperator),
+            new NestedRegexRule("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})", RegexOptions.RightToLeft,
+                ParseBinaryOperator),
+            new NestedRegexRule("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})", RegexOptions.RightToLeft,
+                ParseBinaryOperator),
+            new NestedRegexRule("IneqBinOp", @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})",
+                RegexOptions.RightToLeft, ParseBinaryOperator),
+            new NestedRegexRule("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})", RegexOptions.RightToLeft,
+                ParseBinaryOperator),
+            new NestedRegexRule("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})", RegexOptions.RightToLeft,
+                ParseBinaryOperator),
+            new NestedRegexRule("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})", RegexOptions.RightToLeft,
+                ParseBinaryOperator),
+            new RegexRule("Prefix", @"[\+\-!~¬]", RegexRuleOptions.Left, ParsePrefix),
+            new RegexRule("Postfix", @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%])", RegexRuleOptions.RightToLeft | RegexRuleOptions.Right, ParsePostfix),
+            new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)", RegexRuleOptions.Only, ParseConstant),
+            new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)", RegexRuleOptions.Only, ParseVariable),
+            new RegexRule("Number", @"((\d+\.?\d*)|(\d*\.?\d+))", RegexRuleOptions.Only, ParseNumber)
         };
     }
 
@@ -76,11 +80,11 @@ public class Parser
 
         foreach (Rule rule in _grammar)
         {
-            Match match = Regex.Match(clean_input, rule.RegularExpression, RegexOptions.RightToLeft);
+            Token? match = rule.Match(clean_input, Grammar);
 
-            if (match.Success)
+            if (match.HasValue)
             {
-                IExpression expression = rule.Parse.Invoke(clean_input, match);
+                IExpression expression = rule.Parse.Invoke(clean_input, match.Value, this);
 
                 AddCache(clean_input, expression);
                 return expression;
@@ -102,11 +106,12 @@ public class Parser
 
         foreach (Rule rule in _grammar)
         {
-            Match match = Regex.Match(tokenized_input, rule.RegularExpression, RegexOptions.RightToLeft);
+            Token? match = rule.Match(tokenized_input, Grammar);
 
-            if (match.Success)
+            if (match.HasValue)
                 return rule.Parse.Invoke(input,
-                    new Token(match.Value, DetokenizeIndex(match.Index, tokenized_input, tokens)));
+                    new Token(match.Value, DetokenizeIndex(match.Value.Index, tokenized_input, tokens)),
+                    this);
         }
 
         throw new Exception($"The input was not in the correct format: '{input}'");
@@ -262,33 +267,16 @@ public class Parser
     }
 
     /// <summary>
-    /// Add <see cref="Rule"/> to the grammar of the <see cref="Parser"/>.
+    /// Removes the <see cref="Rule"/> with the specified name from the grammar of the <see cref="Parser"/>.
     /// </summary>
-    /// <param name="regex">The regular expression to match for the new <see cref="Rule"/>.</param>
-    /// <param name="parse_func">
-    /// The <see cref="Func{string, Token, IExpression}"/> of the new <see cref="Rule"/> to parse the matched 
-    /// <see cref="Token"/>.
-    /// </param>
-    /// <param name="index">The index to put the <see cref="Rule"/> in the grammar.</param>
-    /// <returns>
-    /// <see langword="true"/> if the <see cref="Rule"/> was successfully added to the grammar; otherwise, 
-    /// <see langword="false"/>.
-    /// </returns>
-    public bool AddGrammarRule(string regex, Func<string, Token, IExpression> parse_func, int index = -1)
-        => AddGrammarRule(new Rule(regex, parse_func), index);
-
-    /// <summary>
-    /// Removes the <see cref="Rule"/> with the specified regex <see cref="string"/> from the grammar of the 
-    /// <see cref="Parser"/>.
-    /// </summary>
-    /// <param name="regex">The regex <see cref="string"/> for the <see cref="Rule"/> to be removed.</param>
+    /// <param name="name">The name of the <see cref="Rule"/> to be removed.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool RemoveGrammarRule(string regex)
+    public bool RemoveGrammarRule(string name)
     {
         for (int i = 0; i < _grammar.Count; i++)
-            if (_grammar[i].RegularExpression == regex)
+            if (_grammar[i].Name == name)
                 return RemoveGrammarRuleAt(i);
 
         return false;
@@ -315,37 +303,36 @@ public class Parser
     }
 
     /// <summary>
-    /// Determines whether a rule with the specified regex <see cref="string"/> is in the grammar of the 
-    /// <see cref="Parser"/>.
+    /// Determines whether a rule with the specified name is in the grammar of the <see cref="Parser"/>.
     /// </summary>
-    /// <param name="regex">The regex <see cref="string"/> of the <see cref="Rule"/> to find.</param>
+    /// <param name="name">The name of the <see cref="Rule"/> to find.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully found; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool GrammarContains(string regex)
+    public bool GrammarContains(string name)
     {
         foreach (Rule rule in _grammar)
-            if (rule.RegularExpression == regex)
+            if (rule.Name == name)
                 return true;
 
         return false;
     }
 
-    private IExpression ParseBinaryOperator(string input, Token match)
+    private IExpression ParseBinaryOperator(string input, Token match, Parser parser)
         => new BinaryOperator(match.Value, Parse(input[..match.Index]), Parse(input[(match.Index + match.Length)..]));
 
-    private IExpression ParsePrefix(string input, Token match)
+    private IExpression ParsePrefix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, true, Parse(input[match.Length..]));
 
-    private IExpression ParsePostfix(string input, Token match)
+    private IExpression ParsePostfix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, false, Parse(input[..^match.Length]));
 
-    private IExpression ParseConstant(string input, Token match)
+    private IExpression ParseConstant(string input, Token match, Parser parser)
         => new Constant(match.Value);
 
-    private IExpression ParseVariable(string input, Token match)
+    private IExpression ParseVariable(string input, Token match, Parser parser)
         => new Variable(match.Value);
 
-    private static IExpression ParseNumber(string input, Token match)
+    private static IExpression ParseNumber(string input, Token match, Parser parser)
         => new Number(Convert.ToDouble(match.Value));
 }
