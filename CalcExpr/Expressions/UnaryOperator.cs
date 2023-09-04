@@ -87,11 +87,24 @@ public class UnaryOperator : IExpression
         => x == 0 ? 1 : 0;
 
     private static double Factorial(double n)
-        => n == 0 || n == 1
-            ? 1
-            : n > 0 && n == (int)n
-                ? n * Factorial(n - 1)
-                : throw new ArgumentValueException(n);
+    {
+        if (n == 0 || n == 1)
+            return 1;
+
+        if (n > 0 && n == (int)n)
+        {
+            double output = 1;
+
+            for (int i = 2; i <= n; i++)
+                output *= i;
+
+            return output;
+        }
+        else
+        {
+            throw new ArgumentValueException(n);
+        }
+    }
 
     private static double DoubleFactorial(double n)
         => n == 0 || n == 1

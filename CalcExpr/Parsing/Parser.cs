@@ -42,7 +42,7 @@ public class Parser
             new NestedRegexRule("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new RegexRule("Prefix", @"[\+\-!~¬]", RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
-            new RegexRule("Postfix", @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%])",
+            new RegexRule("Postfix", @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParsePostfix),
             new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseConstant),
