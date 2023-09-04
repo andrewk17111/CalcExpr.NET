@@ -14,6 +14,7 @@ public class RegexRule : Rule
     /// <summary>
     /// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
     /// </summary>
+    /// <param name="name">The name of the <see cref="RegexRule"/>.</param>
     /// <param name="regex">The regex <see cref="string"/> to match an expression <see cref="string"/> to.</param>
     /// <param name="options">The options for the regular expression.</param>
     /// <param name="parse">
@@ -27,6 +28,7 @@ public class RegexRule : Rule
     /// <summary>
     /// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
     /// </summary>
+    /// <param name="name">The name of the <see cref="RegexRule"/>.</param>
     /// <param name="regex">The regex <see cref="string"/> to match an expression <see cref="string"/> to.</param>
     /// <param name="options">
     /// The options for the regular expression along with additional options finding a match.

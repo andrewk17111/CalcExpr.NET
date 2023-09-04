@@ -12,6 +12,7 @@ public class Rule
     /// <summary>
     /// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
     /// </summary>
+    /// <param name="name">The name of the <see cref="Rule"/>.</param>
     /// <param name="parse">The function to use to parse a input <see cref="string"/>.</param>
     /// <param name="match">The function to use to find a match in the input <see cref="string"/>.</param>
     public Rule(string name, Func<string, Token, Parser, IExpression> parse,
