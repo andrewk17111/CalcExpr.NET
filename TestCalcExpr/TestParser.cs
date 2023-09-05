@@ -67,8 +67,9 @@ public class TestParser
             new UnaryOperator("-", true, new UnaryOperator("+", true, new Number(3)))) },
         { "1%%/2!!", new BinaryOperator("/", new UnaryOperator("%", false, new UnaryOperator("%", false,
             new Number(1))), new UnaryOperator("!!", false, new Number(2))) },
-        { "-13!%!12%", new BinaryOperator("%", new UnaryOperator("-", true, new UnaryOperator("!", false,
-            new Number(13))), new UnaryOperator("!", true, new UnaryOperator("%", false, new Number(12)))) },
+        { "-13!%(!12)%", new BinaryOperator("%", new UnaryOperator("-", true, new UnaryOperator("!", false,
+            new Number(13))), new UnaryOperator("%", false, new Parentheses(new UnaryOperator("!", true,
+                new Number(12))))) },
         { "1+((2-τ)*(4 /-pi))^7&& abc_1||9⊕10==  11", new BinaryOperator("||", new BinaryOperator("&&",
             new BinaryOperator("+", new Number(1), new BinaryOperator("^", new Parentheses(new BinaryOperator("*",
                 new Parentheses(new BinaryOperator("-", new Number(2), new Constant("τ"))), new Parentheses(
