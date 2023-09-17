@@ -57,8 +57,7 @@ public class UnaryOperator : IExpression
         => StepEvaluate(null);
 
     public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
-        => Inside is Number || (Inside is Constant c && (c == Constant.INFINITY || c == Constant.UNDEFINED)) ||
-            (Inside is UnaryOperator uo && uo.Identifier == "-" && uo.Inside == Constant.INFINITY)
+        => Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside)
             ? _operation(Inside)
             : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate(variables));
 
@@ -86,20 +85,18 @@ public class UnaryOperator : IExpression
         {
             return new Number(-n.Value);
         }
-        else if (x is Constant c)
+        else if (Constant.INFINITY.Equals(x))
         {
-            if (c == Constant.INFINITY)
-                return new UnaryOperator("-", true, Constant.INFINITY);
+            return Constant.NEGATIVE_INFINITY;
             
             // Other constants (except for undefined) should evaluate to a Number.
         }
-        else if (x is UnaryOperator uo)
+        else if (x is UnaryOperator uo && uo.IsPrefix && uo.Identifier == "-")
         {
-            if (uo.IsPrefix && uo.Identifier == "-")
-                return uo.Inside.Clone();
+            return uo.Inside.Clone();
             
-            // UnaryOperators should evaluate to a Number unless it's a negative operator with an Inside value of
-            // infinity, but if for some reason it doesn't, negative operators will still cancel out.
+            // If for some reason the inside expression didn't evaluate to a Number or infinity, negative operators will
+            // still cancel out.
         }
 
         // Other IExpressions should evaluate to either a Number, Constant, or UnaryOperator dealt with previously.
@@ -110,7 +107,7 @@ public class UnaryOperator : IExpression
     private static IExpression Not(IExpression x)
         => x is Number n && n.Value == 0
             ? new Number(1)
-            : x is Constant c && c == Constant.UNDEFINED
+            : x is Constant c && Constant.UNDEFINED.Equals(c)
                 ? Constant.UNDEFINED
                 // Any value that is not 0 or undefined should result in 0.
                 : new Number(0);
@@ -129,14 +126,14 @@ public class UnaryOperator : IExpression
 
                 if (n_fact is Number n_fact_n)
                     return new Number((int)(0.5 + n_fact_n.Value / Math.E));
-                else if (n_fact is Constant n_fact_c && n_fact_c == Constant.INFINITY)
+                else if (n_fact is Constant n_fact_c && Constant.INFINITY.Equals(n_fact_c))
                     return Constant.INFINITY;
 
                 // Factorial should only return a Number, infinity, or undefined and therefore subfactorial should only
                 // result in a Number, infinity, or be undefined.
             }
         }
-        else if (x is Constant c && c == Constant.INFINITY)
+        else if (x is Constant c && Constant.INFINITY.Equals(c))
         {
             return Constant.INFINITY;
 
@@ -169,7 +166,7 @@ public class UnaryOperator : IExpression
                     : new Number(output);
             }
         }
-        else if (x is Constant c && c == Constant.INFINITY)
+        else if (x is Constant c && Constant.INFINITY.Equals(c))
         {
             return Constant.INFINITY;
             
@@ -185,10 +182,10 @@ public class UnaryOperator : IExpression
     private static IExpression Percent(IExpression x)
         => x is Number n
             ? new Number(n.Value / 100)
-            : x is Constant c && c == Constant.INFINITY
+            : x is Constant c && Constant.INFINITY.Equals(c)
                 ? Constant.INFINITY
                 // Other constants (except for undefined) should evaluate to a Number.
-                : x is UnaryOperator uo && uo.Inside == Constant.INFINITY
+                : x is UnaryOperator uo && Constant.INFINITY.Equals(uo.Inside)
                     ? uo.Clone()
                     // Other IExpressions should evaluate to either a Number, Constant, or UnaryOperator dealt with
                     // previously, or result in an undefined value.
@@ -216,7 +213,7 @@ public class UnaryOperator : IExpression
                             ? Constant.INFINITY
                             : new Number(output);
                     }
-                    else if (n_fact is Constant n_fact_c && n_fact_c == Constant.INFINITY)
+                    else if (n_fact is Constant n_fact_c && Constant.INFINITY.Equals(n_fact_c))
                     {
                         return Constant.INFINITY;
                     }
@@ -230,13 +227,13 @@ public class UnaryOperator : IExpression
                     {
                         return new Number(n_fact_n.Value / (Math.Pow(2, (n.Value - 1) / 2) * n_less_fact_n.Value));
                     }
-                    else if (n_fact is Constant n_fact_c && n_fact_c == Constant.INFINITY &&
+                    else if (n_fact is Constant n_fact_c && Constant.INFINITY.Equals(n_fact_c) &&
                         n_less_fact is not Constant)
                     {
                         // If the numerator contains infinity, then the resulting output is infinity.
                         return Constant.INFINITY;
                     }
-                    else if (n_less_fact is Constant n_less_fact_c && n_less_fact_c == Constant.INFINITY &&
+                    else if (n_less_fact is Constant n_less_fact_c && Constant.INFINITY.Equals(n_less_fact_c) &&
                         n_fact is not Constant)
                     {
                         // If the denominator contains infinity, then the resulting output is 0.
@@ -245,7 +242,7 @@ public class UnaryOperator : IExpression
                 }
             }
         }
-        else if (x is Constant c && c == Constant.INFINITY)
+        else if (x is Constant c && Constant.INFINITY.Equals(c))
         {
             return Constant.INFINITY;
 
@@ -275,7 +272,7 @@ public class UnaryOperator : IExpression
                     : new Number(output);
             }
         }
-        else if (x is Constant c && c == Constant.INFINITY)
+        else if (x is Constant c && Constant.INFINITY.Equals(c))
         {
             return Constant.INFINITY;
 
