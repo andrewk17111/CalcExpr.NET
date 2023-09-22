@@ -25,30 +25,12 @@ public class TestVariable
     }
 
     /// <summary>
-    /// Tests that the variable gets evaluated to the proper value.
-    /// </summary>
-    [TestMethod]
-    public void TestEvaluate()
-    {
-        Dictionary<string, IExpression> variables = new Dictionary<string, IExpression>()
-        {
-            { "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz", new Number(1) },
-            { "ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω", new Number(2) },
-            { "abc_123", new Number(3) },
-            { "αβγ_123", new Number(4) },
-            { "abcd_αβγ_xyz", new Number(5) },
-        };
-
-        foreach (string name in VALID_VARIABLES)
-            Assert.AreEqual(variables[name], new Variable(name).Evaluate(variables));
-    }
-
-    /// <summary>
     /// Tests that the UnaryOperator converts to a string properly.
     /// </summary>
     [TestMethod]
     public void TestToString()
     {
+        // TODO Variable ToString.
         Dictionary<UnaryOperator, string> expressions = new Dictionary<UnaryOperator, string>()
         {
             { new UnaryOperator("+", true, new Number(1)), "+1" },
@@ -60,11 +42,6 @@ public class TestVariable
             { new UnaryOperator("%", false, new Number(1)), "1%" },
             { new UnaryOperator("!!", false, new Number(5)), "5!!" },
             { new UnaryOperator("#", false, new Number(5)), "5#" },
-            // TODO ± prefix.
-            // TODO ++ prefix.
-            // TODO -- prefix.
-            // TODO ++ suffix.
-            // TODO -- suffix.
         };
 
         foreach (UnaryOperator expression in expressions.Keys)

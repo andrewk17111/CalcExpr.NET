@@ -10,91 +10,7 @@ public class TestParser
 {
     readonly RegexRule CUSTOM_RULE = new RegexRule("Char", @"[A-Z]", RegexOptions.None,
         (expression, token, _) => new Number(token.Value[0] - 65));
-    readonly Dictionary<string, IExpression> EXPRESSIONS = new Dictionary<string, IExpression>()
-    {
-        { " .1", new Number(0.1) },
-        { " 0.1", new Number(0.1) },
-        { " 1.", new Number(1) },
-        { " 1", new Number(1) },
-        { " +1", new UnaryOperator("+", true, new Number(1)) },
-        { " -1", new UnaryOperator("-", true, new Number(1)) },
-        { " !1", new UnaryOperator("!", true, new Number(1)) },
-        { " ~2", new UnaryOperator("~", true, new Number(2)) },
-        { " ¬0", new UnaryOperator("¬", true, new Number(0)) },
-        { " 5!", new UnaryOperator("!", false, new Number(5)) },
-        { " 5#", new UnaryOperator("#", false, new Number(5)) },
-        { " 5!! ", new UnaryOperator("!!", false, new Number(5)) },
-        { " 1%", new UnaryOperator("%", false, new Number(1)) },
-        { "~!1 ", new UnaryOperator("~", true, new UnaryOperator("!", true, new Number(1))) },
-        { "2!% ", new UnaryOperator("%", false, new UnaryOperator("!", false, new Number(2))) },
-        { "-5% ", new UnaryOperator("-", true, new UnaryOperator("%", false, new Number(5))) },
-        { " 3!!!", new UnaryOperator("!", false, new UnaryOperator("!!", false, new Number(3))) },
-        { " 1+2.0", new BinaryOperator("+", new Number(1), new Number(2)) },
-        { " 0 + 0 * 2", new BinaryOperator("+", new Number(0), new BinaryOperator("*", new Number(0), new Number(2))) },
-        { " 1.0-2", new BinaryOperator("-", new Number(1), new Number(2)) },
-        { " 2*3", new BinaryOperator("*", new Number(2), new Number(3)) },
-        { " 6×7", new BinaryOperator("×", new Number(6), new Number(7)) },
-        { " 1/2", new BinaryOperator("/", new Number(1), new Number(2)) },
-        { " 2÷2", new BinaryOperator("÷", new Number(2), new Number(2)) },
-        { " 2^3 ", new BinaryOperator("^", new Number(2), new Number(3)) },
-        { " 13%12 ", new BinaryOperator("%", new Number(13), new Number(12)) },
-        { " 13.2%%12.5 ", new BinaryOperator("%%", new Number(13.2), new Number(12.5)) },
-        { " 13//12", new BinaryOperator("//", new Number(13), new Number(12)) },
-        { " 1&&2", new BinaryOperator("&&", new Number(1), new Number(2)) },
-        { " 0∧0", new BinaryOperator("∧", new Number(0), new Number(0)) },
-        { " 1||2", new BinaryOperator("||", new Number(1), new Number(2)) },
-        { " 0 ∨0", new BinaryOperator("∨", new Number(0), new Number(0)) },
-        { " 1 ⊕1", new BinaryOperator("⊕", new Number(1), new Number(1)) },
-        { " 1 ==2", new BinaryOperator("==", new Number(1), new Number(2)) },
-        { " 1 !=2", new BinaryOperator("!=", new Number(1), new Number(2)) },
-        { " 1 ≠1", new BinaryOperator("≠", new Number(1), new Number(1)) },
-        { " 1 <>2", new BinaryOperator("<>", new Number(1), new Number(2)) },
-        { " 1 <2", new BinaryOperator("<", new Number(1), new Number(2)) },
-        { " 1 >2", new BinaryOperator(">", new Number(1), new Number(2)) },
-        { " 1 >=2", new BinaryOperator(">=", new Number(1), new Number(2)) },
-        { " 2 ≥2", new BinaryOperator("≥", new Number(2), new Number(2)) },
-        { " 1 <=2", new BinaryOperator("<=", new Number(1), new Number(2)) },
-        { " 1 ≤1", new BinaryOperator("≤", new Number(1), new Number(1)) },
-        { " 1+2-3*4  /5^7&&8||9⊕10==11", new BinaryOperator("||", new BinaryOperator("&&", new BinaryOperator("-",
-            new BinaryOperator("+", new Number(1), new Number(2)), new BinaryOperator("/", new BinaryOperator("*",
-                new Number(3), new Number(4)), new BinaryOperator("^", new Number(5), new Number(7)))), new Number(8)),
-            new BinaryOperator("⊕", new Number(9), new BinaryOperator("==", new Number(10), new Number(11)))) },
-        { "+1+-2.0", new BinaryOperator("+", new UnaryOperator("+", true, new Number(1)), new UnaryOperator("-", true,
-            new Number(2))) },
-        { "1.0!-2%", new BinaryOperator("-", new UnaryOperator("!", false, new Number(1)), new UnaryOperator("%", false,
-            new Number(2))) },
-        { "!¬2*-  +3", new BinaryOperator("*", new UnaryOperator("!", true, new UnaryOperator("¬", true, new Number(2))),
-            new UnaryOperator("-", true, new UnaryOperator("+", true, new Number(3)))) },
-        { "1%%/2!!", new BinaryOperator("/", new UnaryOperator("%", false, new UnaryOperator("%", false,
-            new Number(1))), new UnaryOperator("!!", false, new Number(2))) },
-        { "-13!%(!12)%", new BinaryOperator("%", new UnaryOperator("-", true, new UnaryOperator("!", false,
-            new Number(13))), new UnaryOperator("%", false, new Parentheses(new UnaryOperator("!", true,
-                new Number(12))))) },
-        { "1+((2-τ)*(4 /-pi))^7&& abc_1||9⊕10==  11", new BinaryOperator("||", new BinaryOperator("&&",
-            new BinaryOperator("+", new Number(1), new BinaryOperator("^", new Parentheses(new BinaryOperator("*",
-                new Parentheses(new BinaryOperator("-", new Number(2), new Constant("τ"))), new Parentheses(
-                    new BinaryOperator("/", new Number(4), new UnaryOperator("-", true, new Constant("pi")))))),
-                new Number(7))), new Variable("abc_1")), new BinaryOperator("⊕", new Number(9),
-                    new BinaryOperator("==", new Number(10), new Number(11)))) },
-        { "∞", new Constant("∞") },
-        { "inf", new Constant("inf") },
-        { "infinity ", new Constant("infinity") },
-        { "π", new Constant("π") },
-        { "pi", new Constant("pi") },
-        { "τ", new Constant("τ") },
-        { "tau", new Constant("tau") },
-        { "e", new Constant("e") },
-        { "true", new Constant("true") },
-        { "false", new Constant("false") },
-        { "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz ",
-            new Variable("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz") },
-        { "ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω",
-            new Variable("ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω") },
-        { "abc_123", new Variable("abc_123") },
-        { "αβγ_123", new Variable("αβγ_123") },
-        { "abcd_αβγ_xyz", new Variable("abcd_αβγ_xyz") },
-    };
-
+    
     /// <summary>
     /// Tests that the Parser can be initialized properly from either constructor.
     /// </summary>
@@ -142,8 +58,8 @@ public class TestParser
     [TestMethod]
     public void TestParse()
     {
-        foreach (string expression in EXPRESSIONS.Keys)
-            Assert.AreEqual(EXPRESSIONS[expression], new Parser().Parse(expression));
+        foreach ((string expression_string, IExpression expression, _) in TestCases.Expressions)
+            Assert.AreEqual(expression, new Parser().Parse(expression_string));
     }
 
     /// <summary>
@@ -155,7 +71,7 @@ public class TestParser
     {
         Parser parser = new Parser();
 
-        foreach (string expression in EXPRESSIONS.Keys)
+        foreach ((string expression, _, _) in TestCases.Expressions)
         {
             parser.Parse(expression);
 

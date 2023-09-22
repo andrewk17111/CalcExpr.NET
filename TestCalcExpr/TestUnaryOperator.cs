@@ -43,34 +43,6 @@ public class TestUnaryOperator
     }
 
     /// <summary>
-    /// Tests that the operand gets evaluated into a simpler expression with the minimum levels to the expression tree.
-    /// </summary>
-    [TestMethod]
-    public void TestEvaluate()
-    {
-        Dictionary<UnaryOperator, double> expressions = new Dictionary<UnaryOperator, double>()
-        {
-            { new UnaryOperator("+", true, new Number(1)), 1 },
-            { new UnaryOperator("-", true, new Number(1)), -1 },
-            { new UnaryOperator("~", true, new Number(1)), 0 },
-            { new UnaryOperator("¬", true, new Number(1)), 0 },
-            { new UnaryOperator("!", true, new Number(5)), 44 },
-            { new UnaryOperator("!", false, new Number(5)), 120 },
-            { new UnaryOperator("%", false, new Number(1)), 0.01 },
-            { new UnaryOperator("!!", false, new Number(5)), 15 },
-            { new UnaryOperator("#", false, new Number(5)), 2310 },
-            // TODO ± prefix.
-            // TODO ++ prefix.
-            // TODO -- prefix.
-            // TODO ++ postfix.
-            // TODO -- postfix.
-        };
-
-        foreach (UnaryOperator expression in expressions.Keys)
-            Assert.AreEqual(expressions[expression], ((Number)expression.Evaluate()).Value);
-    }
-
-    /// <summary>
     /// Tests that the UnaryOperator converts to a string properly.
     /// </summary>
     [TestMethod]
