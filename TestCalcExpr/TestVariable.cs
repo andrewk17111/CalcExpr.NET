@@ -30,21 +30,7 @@ public class TestVariable
     [TestMethod]
     public void TestToString()
     {
-        // TODO Variable ToString.
-        Dictionary<UnaryOperator, string> expressions = new Dictionary<UnaryOperator, string>()
-        {
-            { new UnaryOperator("+", true, new Number(1)), "+1" },
-            { new UnaryOperator("-", true, new Number(1)), "-1" },
-            { new UnaryOperator("~", true, new Number(1)), "~1" },
-            { new UnaryOperator("¬", true, new Number(1)), "¬1" },
-            { new UnaryOperator("!", true, new Number(5)), "!5" },
-            { new UnaryOperator("!", false, new Number(5)), "5!" },
-            { new UnaryOperator("%", false, new Number(1)), "1%" },
-            { new UnaryOperator("!!", false, new Number(5)), "5!!" },
-            { new UnaryOperator("#", false, new Number(5)), "5#" },
-        };
-
-        foreach (UnaryOperator expression in expressions.Keys)
-            Assert.AreEqual(expressions[expression], expression.ToString());
+        foreach (string variable in VALID_VARIABLES)
+            Assert.AreEqual(variable, new Variable(variable).ToString());
     }
 }
