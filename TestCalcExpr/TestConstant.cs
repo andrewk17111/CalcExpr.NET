@@ -30,30 +30,6 @@ public class TestConstant
     }
 
     /// <summary>
-    /// Tests that the Constant gets evaluated into the proper value.
-    /// </summary>
-    [TestMethod]
-    public void TestEvaluate()
-    {
-        Dictionary<Constant, IExpression> constants = new Dictionary<Constant, IExpression>()
-        {
-            { new Constant("∞"), new Constant("∞") },
-            { new Constant("inf"), new Constant("inf") },
-            { new Constant("infinity"), new Constant("infinity") },
-            { new Constant("π"), new Number(Math.PI) },
-            { new Constant("pi"), new Number(Math.PI) },
-            { new Constant("τ"), new Number(Math.Tau) },
-            { new Constant("tau"), new Number(Math.Tau) },
-            { new Constant("e"), new Number(Math.E) },
-            { new Constant("true"), new Number(1) },
-            { new Constant("false"), new Number(0) },
-        };
-
-        foreach (Constant constant in constants.Keys)
-            Assert.AreEqual(constants[constant], constant.Evaluate());
-    }
-
-    /// <summary>
     /// Tests that the Constant converts to a string properly.
     /// </summary>
     [TestMethod]

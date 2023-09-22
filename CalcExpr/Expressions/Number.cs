@@ -15,13 +15,19 @@ public class Number : IExpression
         => Evaluate(null);
 
     public IExpression Evaluate(Dictionary<string, IExpression>? variables)
-        => Clone();
+        => Value switch
+        {
+            Double.PositiveInfinity => Constant.INFINITY,
+            Double.NegativeInfinity => new UnaryOperator("-", true, Constant.INFINITY),
+            Double.NaN => Constant.UNDEFINED,
+            _ => Clone()
+        };
 
     public IExpression StepEvaluate()
         => StepEvaluate(null);
 
     public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
-        => Clone();
+        => Evaluate(variables);
 
     public IExpression Clone()
         => new Number(Value);

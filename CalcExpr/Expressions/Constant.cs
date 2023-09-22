@@ -14,7 +14,36 @@ public class Constant : IExpression
         { "e", new Number(Math.E) },
         { "true", new Number(1) },
         { "false", new Number(0) },
+        { "undefined", new Constant("undefined") },
+        { "dne", new Constant("dne") },
+        { "-∞", new Constant("-∞") },
+        { "-inf", new Constant("-inf") },
+        { "-infinity", new Constant("-infinity") },
     };
+
+    public static Constant INFINITY
+        => new Constant("∞");
+
+    public static Constant PI
+        => new Constant("π");
+
+    public static Constant TAU
+        => new Constant("τ");
+
+    public static Constant E
+        => new Constant("e");
+
+    public static Constant TRUE
+        => new Constant("true");
+
+    public static Constant FALSE
+        => new Constant("false");
+
+    public static Constant UNDEFINED
+        => new Constant("undefined");
+
+    public static Constant NEGATIVE_INFINITY
+        => new Constant("-∞");
 
     public readonly string Identifier;
 
@@ -41,7 +70,18 @@ public class Constant : IExpression
         => _values[Identifier].Clone();
 
     public override bool Equals(object? obj)
-        => obj is not null && obj is Constant c && c.Identifier == Identifier;
+        => obj is not null && obj is Constant c && Identifier switch
+            {
+                "∞" or "inf" or "infinity" => c.Identifier == "∞" || c.Identifier == "inf" ||
+                    c.Identifier == "infinity",
+                "π" or "pi" => c.Identifier == "π" || c.Identifier == "pi",
+                "τ" or "tau" => c.Identifier == "τ" || c.Identifier == "tau",
+                "e" or "true" or "false" => c.Identifier == Identifier,
+                "undefined" or "dne" => c.Identifier == "undefined" || c.Identifier == "dne",
+                "-∞" or "-inf" or "-infinity" => c.Identifier == "-∞" || c.Identifier == "-inf" ||
+                    c.Identifier == "-infinity",
+                _ => false,
+            };
 
     public override int GetHashCode()
         => Identifier.GetHashCode();
