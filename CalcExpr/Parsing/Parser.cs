@@ -25,6 +25,8 @@ public class Parser
 
         _grammar = new List<Rule>()
         {
+            new NestedRegexRule("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new NestedRegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new NestedRegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})",

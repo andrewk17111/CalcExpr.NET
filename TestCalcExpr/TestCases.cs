@@ -229,7 +229,7 @@ public class TestCases
         (" infinity ≠inf", new BinaryOperator("≠", new Constant("infinity"), new Constant("inf")), new Number(0)),
         (" 2 <>2", new BinaryOperator("<>", new Number(2), new Number(2)), new Number(0)),
         (" 1 <2", new BinaryOperator("<", new Number(1), new Number(2)), new Number(1)),
-        (" 1 >2", new BinaryOperator(">", new Number(1), new Number(2)), new Number(0)),
+        (" 1>2", new BinaryOperator(">", new Number(1), new Number(2)), new Number(0)),
         (" 1 <=2", new BinaryOperator("<=", new Number(1), new Number(2)), new Number(1)),
         (" 1 ≤1", new BinaryOperator("≤", new Number(1), new Number(1)), new Number(1)),
         (" 1 >=2", new BinaryOperator(">=", new Number(1), new Number(2)), new Number(0)),
@@ -279,6 +279,11 @@ public class TestCases
         ("abc_123", new Variable("abc_123"), new Number(4)),
         ("αβγ_123", new Variable("αβγ_123"), new Number(5)),
         ("abcd_αβγ_xyz", new Variable("abcd_αβγ_xyz"), new Number(6)),
+        ("abcd_αβγ_xyz=3", new BinaryOperator("=", new Variable("abcd_αβγ_xyz"), new Number(3)), new Number(3)),
+        ("abcd_αβγ_xyz=π", new BinaryOperator("=", new Variable("abcd_αβγ_xyz"), new Constant("π")),
+            new Number(Math.PI)),
+        ("abcd_αβγ_xyz=inf", new BinaryOperator("=", new Variable("abcd_αβγ_xyz"), new Constant("inf")),
+            new Constant("inf")),
     };
 
     public readonly static Dictionary<string, IExpression> Variables = new Dictionary<string, IExpression>()

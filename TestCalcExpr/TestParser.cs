@@ -21,6 +21,7 @@ public class TestParser
 
         (string, string)[] default_rules =
         {
+            ("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})"),
             ("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})"),
             ("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})"),
             ("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})"),
@@ -59,7 +60,10 @@ public class TestParser
     public void TestParse()
     {
         foreach ((string expression_string, IExpression expression, _) in TestCases.Expressions)
+        {
+            Console.WriteLine(expression_string);
             Assert.AreEqual(expression, new Parser().Parse(expression_string));
+        }
     }
 
     /// <summary>

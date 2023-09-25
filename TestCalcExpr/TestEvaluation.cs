@@ -10,10 +10,10 @@ public class TestEvaluation
     [TestMethod]
     public void TestEvaluate()
     {
-        foreach ((_, IExpression expression, IExpression result) in TestCases.Expressions)
+        foreach ((string expr_string, IExpression expression, IExpression result) in TestCases.Expressions)
         {
             IExpression evaluated = expression.Evaluate(TestCases.Variables);
-
+            Console.WriteLine(expression);
             if (result is Number result_num && evaluated is Number evaluated_num)
                 Assert.AreEqual(Math.Round(result_num.Value, DIGITS), Math.Round(evaluated_num.Value, DIGITS));
             else
