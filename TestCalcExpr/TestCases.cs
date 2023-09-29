@@ -284,6 +284,12 @@ public class TestCases
             new Number(Math.PI)),
         ("abcd_αβγ_xyz=inf", new BinaryOperator("=", new Variable("abcd_αβγ_xyz"), new Constant("inf")),
             new Constant("inf")),
+        ("--1", new UnaryOperator("--", true, new Number(1)), new Number(0)),
+        ("++1", new UnaryOperator("++", true, new Number(1)), new Number(2)),
+        ("1--", new UnaryOperator("--", false, new Number(1)), new Number(1)),
+        ("1++", new UnaryOperator("++", false, new Number(1)), new Number(1)),
+        ("---1", new UnaryOperator("--", true, new UnaryOperator("-", true, new Number(1))), new Number(-2)),
+        ("+++1", new UnaryOperator("++", true, new UnaryOperator("+", true, new Number(1))), new Number(2)),
     };
 
     public readonly static Dictionary<string, IExpression> Variables = new Dictionary<string, IExpression>()

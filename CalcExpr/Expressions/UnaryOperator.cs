@@ -1,28 +1,30 @@
-﻿using CalcExpr.Exceptions;
-
-namespace CalcExpr.Expressions;
+﻿namespace CalcExpr.Expressions;
 
 public class UnaryOperator : IExpression
 {
-    private static readonly Dictionary<string, Func<IExpression, IExpression>> _prefixes
-        = new Dictionary<string, Func<IExpression, IExpression>>
+    private static readonly Dictionary<string, Func<IExpression, Dictionary<string, IExpression>?, IExpression>> _prefixes
+        = new Dictionary<string, Func<IExpression, Dictionary<string, IExpression>?, IExpression>>
         {
             { "+", Positive },
             { "-", Negative },
             { "~", Not },
             { "¬", Not },
             { "!", Subfactorial },
+            { "--", PreDecrement },
+            { "++", PreIncrement },
         };
-    private static readonly Dictionary<string, Func<IExpression, IExpression>> _postfixes
-        = new Dictionary<string, Func<IExpression, IExpression>>
+    private static readonly Dictionary<string, Func<IExpression, Dictionary<string, IExpression>?, IExpression>> _postfixes
+        = new Dictionary<string, Func<IExpression, Dictionary<string, IExpression>?, IExpression>>
         {
             { "!", Factorial },
             { "%", Percent },
             { "!!", DoubleFactorial },
             { "#", Primorial },
+            { "--", PostDecrement },
+            { "++", PostIncrement },
         };
 
-    private Func<IExpression, IExpression> _operation
+    private Func<IExpression, Dictionary<string, IExpression>?, IExpression> _operation
         => IsPrefix ? _prefixes[Identifier] : _postfixes[Identifier];
 
     public readonly string Identifier;
@@ -51,14 +53,14 @@ public class UnaryOperator : IExpression
         => Evaluate(null);
 
     public IExpression Evaluate(Dictionary<string, IExpression>? variables)
-        => _operation(Inside.Evaluate(variables));
+        => _operation(Inside, variables);
 
     public IExpression StepEvaluate()
         => StepEvaluate(null);
 
     public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
         => Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside)
-            ? _operation(Inside)
+            ? _operation(Inside, variables)
             : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate(variables));
 
     public override string ToString()
@@ -76,22 +78,24 @@ public class UnaryOperator : IExpression
             ? $"{Identifier}{Inside.ToString(format)}"
             : $"{Inside.ToString(format)}{Identifier}";
 
-    private static IExpression Positive(IExpression x)
-        => x;
+    private static IExpression Positive(IExpression x, Dictionary<string, IExpression>? variables)
+        => x.Evaluate(variables);
 
-    private static IExpression Negative(IExpression x)
+    private static IExpression Negative(IExpression x, Dictionary<string, IExpression>? variables)
     {
-        if (x is Number n)
+        IExpression x_eval = x.Evaluate(variables);
+
+        if (x_eval is Number n)
         {
             return new Number(-n.Value);
         }
-        else if (Constant.INFINITY.Equals(x))
+        else if (Constant.INFINITY.Equals(x_eval))
         {
             return Constant.NEGATIVE_INFINITY;
             
             // Other constants (except for undefined) should evaluate to a Number.
         }
-        else if (x is UnaryOperator uo && uo.IsPrefix && uo.Identifier == "-")
+        else if (x_eval is UnaryOperator uo && uo.IsPrefix && uo.Identifier == "-")
         {
             return uo.Inside.Clone();
             
@@ -104,17 +108,23 @@ public class UnaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Not(IExpression x)
-        => x is Number n && n.Value == 0
+    private static IExpression Not(IExpression x, Dictionary<string, IExpression>? variables)
+    {
+        IExpression x_eval = x.Evaluate(variables);
+
+        return x_eval is Number n && n.Value == 0
             ? new Number(1)
-            : x is Constant c && Constant.UNDEFINED.Equals(c)
+            : x_eval is Constant c && Constant.UNDEFINED.Equals(c)
                 ? Constant.UNDEFINED
                 // Any value that is not 0 or undefined should result in 0.
                 : new Number(0);
+    }
 
-    private static IExpression Subfactorial(IExpression x)
+    private static IExpression Subfactorial(IExpression x, Dictionary<string, IExpression>? variables)
     {
-        if (x is Number n && n.Value % 1 == 0)
+        IExpression x_eval = x.Evaluate(variables);
+
+        if (x_eval is Number n && n.Value % 1 == 0)
         {
             if (n.Value == 0)
             {
@@ -122,7 +132,7 @@ public class UnaryOperator : IExpression
             }
             else if (n.Value > 0)
             {
-                IExpression n_fact = Factorial(n);
+                IExpression n_fact = Factorial(n, variables);
 
                 if (n_fact is Number n_fact_n)
                     return new Number((int)(0.5 + n_fact_n.Value / Math.E));
@@ -133,7 +143,7 @@ public class UnaryOperator : IExpression
                 // result in a Number, infinity, or be undefined.
             }
         }
-        else if (x is Constant c && Constant.INFINITY.Equals(c))
+        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
         {
             return Constant.INFINITY;
 
@@ -146,9 +156,11 @@ public class UnaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Factorial(IExpression x)
+    private static IExpression Factorial(IExpression x, Dictionary<string, IExpression>? variables)
     {
-        if (x is Number n && n.Value % 1 == 0)
+        IExpression x_eval = x.Evaluate(variables);
+
+        if (x_eval is Number n && n.Value % 1 == 0)
         {
             if (n.Value == 0 || n.Value == 1)
             {
@@ -166,7 +178,7 @@ public class UnaryOperator : IExpression
                     : new Number(output);
             }
         }
-        else if (x is Constant c && Constant.INFINITY.Equals(c))
+        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
         {
             return Constant.INFINITY;
             
@@ -179,21 +191,27 @@ public class UnaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Percent(IExpression x)
-        => x is Number n
+    private static IExpression Percent(IExpression x, Dictionary<string, IExpression>? variables)
+    {
+        IExpression x_eval = x.Evaluate(variables);
+
+        return x_eval is Number n
             ? new Number(n.Value / 100)
-            : x is Constant c && Constant.INFINITY.Equals(c)
+            : x_eval is Constant c && Constant.INFINITY.Equals(c)
                 ? Constant.INFINITY
                 // Other constants (except for undefined) should evaluate to a Number.
-                : x is UnaryOperator uo && Constant.INFINITY.Equals(uo.Inside)
+                : x_eval is UnaryOperator uo && Constant.INFINITY.Equals(uo.Inside)
                     ? uo.Clone()
                     // Other IExpressions should evaluate to either a Number, Constant, or UnaryOperator dealt with
                     // previously, or result in an undefined value.
                     : Constant.UNDEFINED;
+    }
 
-    private static IExpression DoubleFactorial(IExpression x)
+    private static IExpression DoubleFactorial(IExpression x, Dictionary<string, IExpression>? variables)
     {
-        if (x is Number n && n.Value % 1 == 0)
+        IExpression x_eval = x.Evaluate(variables);
+
+        if (x_eval is Number n && n.Value % 1 == 0)
         {
             if (n.Value == 0 || n.Value == 1)
             {
@@ -203,7 +221,7 @@ public class UnaryOperator : IExpression
             {
                 if (n.Value % 2 == 0)
                 {
-                    IExpression n_fact = Factorial(new Number(n.Value / 2));
+                    IExpression n_fact = Factorial(new Number(n.Value / 2), variables);
 
                     if (n_fact is Number n_fact_n)
                     {
@@ -220,8 +238,8 @@ public class UnaryOperator : IExpression
                 }
                 else
                 {
-                    IExpression n_fact = Factorial(n);
-                    IExpression n_less_fact = Factorial(new Number((n.Value - 1) / 2));
+                    IExpression n_fact = Factorial(n, variables);
+                    IExpression n_less_fact = Factorial(new Number((n.Value - 1) / 2), variables);
 
                     if (n_fact is Number n_fact_n && n_less_fact is Number n_less_fact_n)
                     {
@@ -242,7 +260,7 @@ public class UnaryOperator : IExpression
                 }
             }
         }
-        else if (x is Constant c && Constant.INFINITY.Equals(c))
+        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
         {
             return Constant.INFINITY;
 
@@ -255,9 +273,11 @@ public class UnaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Primorial(IExpression x)
+    private static IExpression Primorial(IExpression x, Dictionary<string, IExpression>? variables)
     {
-        if (x is Number n && n.Value % 1 == 0)
+        IExpression x_eval = x.Evaluate(variables);
+
+        if (x_eval is Number n && n.Value % 1 == 0)
         {
             if (n.Value == 0)
             {
@@ -272,7 +292,7 @@ public class UnaryOperator : IExpression
                     : new Number(output);
             }
         }
-        else if (x is Constant c && Constant.INFINITY.Equals(c))
+        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
         {
             return Constant.INFINITY;
 
@@ -309,5 +329,57 @@ public class UnaryOperator : IExpression
         }
 
         return primes.ToArray();
+    }
+
+    private static IExpression PreDecrement(IExpression x, Dictionary<string, IExpression>? variables)
+    {
+        IExpression x_eval = x.Evaluate(variables);
+        IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(variables);
+
+        variables ??= new Dictionary<string, IExpression>();
+
+        if (x is Variable v)
+            variables[v.Name] = new_val;
+
+        return new_val;
+    }
+
+    private static IExpression PreIncrement(IExpression x, Dictionary<string, IExpression>? variables)
+    {
+        IExpression x_eval = x.Evaluate(variables);
+        IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(variables);
+
+        variables ??= new Dictionary<string, IExpression>();
+
+        if (x is Variable v)
+            variables[v.Name] = new_val;
+
+        return new_val;
+    }
+
+    private static IExpression PostDecrement(IExpression x, Dictionary<string, IExpression>? variables)
+    {
+        IExpression x_eval = x.Evaluate(variables);
+        IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(variables);
+
+        variables ??= new Dictionary<string, IExpression>();
+
+        if (x is Variable v)
+            variables[v.Name] = new_val;
+
+        return x_eval;
+    }
+
+    private static IExpression PostIncrement(IExpression x, Dictionary<string, IExpression>? variables)
+    {
+        IExpression x_eval = x.Evaluate(variables);
+        IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(variables);
+
+        variables ??= new Dictionary<string, IExpression>();
+
+        if (x is Variable v)
+            variables[v.Name] = new_val;
+
+        return x_eval;
     }
 }
