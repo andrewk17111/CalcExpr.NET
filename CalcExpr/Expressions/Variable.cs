@@ -17,20 +17,20 @@ public class Variable : IExpression
         => new Variable(Name);
 
     public IExpression Evaluate()
-        => Evaluate(null);
+        => Evaluate(new Dictionary<string, IExpression>());
 
-    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
-        => variables is not null && variables.ContainsKey(Name)
-            ? variables[Name].Evaluate(variables)
-            : throw new UnknownValueException(Name);
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+        => variables.ContainsKey(Name)
+            ? variables[Name]
+            : Constant.UNDEFINED;
     
     public IExpression StepEvaluate()
-        => StepEvaluate(null);
+        => StepEvaluate(new Dictionary<string, IExpression>());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
-        => variables is not null && variables.ContainsKey(Name)
-            ? variables[Name].Evaluate(variables)
-            : throw new UnknownValueException(Name);
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+        => variables.ContainsKey(Name)
+            ? variables[Name]
+            : Constant.UNDEFINED;
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Variable v && v.Name == Name;

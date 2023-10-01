@@ -85,7 +85,7 @@ public class RegexRule : Rule
 
                 foreach (Group group in match.Groups)
                 {
-                    if (group.Index == 0)
+                    if (!String.IsNullOrEmpty(group.Value) && group.Index == 0)
                     {
                         left = true;
                         break;
@@ -102,7 +102,7 @@ public class RegexRule : Rule
 
                 foreach (Group group in match.Groups)
                 {
-                    if (group.Index + group.Length == trimmed_input.Length)
+                    if (!String.IsNullOrEmpty(group.Value) && group.Index + group.Length == trimmed_input.Length)
                     {
                         right = true;
                         break;

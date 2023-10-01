@@ -10,7 +10,7 @@ public class TestEvaluation
     [TestMethod]
     public void TestEvaluate()
     {
-        foreach ((_, IExpression expression, IExpression result) in TestCases.Expressions)
+        foreach ((string expr_string, IExpression expression, IExpression result) in TestCases.Expressions)
         {
             IExpression evaluated = expression.Evaluate(TestCases.Variables);
 

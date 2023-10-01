@@ -25,6 +25,8 @@ public class Parser
 
         _grammar = new List<Rule>()
         {
+            new NestedRegexRule("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})",
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new NestedRegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new NestedRegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})",
@@ -41,8 +43,9 @@ public class Parser
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new NestedRegexRule("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new RegexRule("Prefix", @"[\+\-!~¬]", RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
-            new RegexRule("Postfix", @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
+            new RegexRule("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])",
+                RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
+            new RegexRule("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParsePostfix),
             new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseConstant),

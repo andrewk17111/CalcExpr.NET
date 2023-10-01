@@ -16,11 +16,11 @@ public class TestUnaryOperator
         ("%", false),
         ("!!", false),
         ("#", false),
+        ("--", true),
+        ("++", true),
+        ("--", false),
+        ("++", false),
         // TODO ± prefix.
-        // TODO ++ prefix.
-        // TODO -- prefix.
-        // TODO ++ suffix.
-        // TODO -- suffix.
     };
 
     /// <summary>
@@ -30,10 +30,10 @@ public class TestUnaryOperator
     public void TestInit()
     {
         Random random = new Random();
-        Number num = new Number(1);
 
         foreach ((string op, bool is_prefix) in _operators)
         {
+            Number num = new Number(random.NextDouble() + random.Next());
             UnaryOperator unop = new UnaryOperator(op, is_prefix, num);
 
             Assert.AreEqual(op, unop.Identifier);
@@ -59,11 +59,11 @@ public class TestUnaryOperator
             { new UnaryOperator("%", false, new Number(1)), "1%" },
             { new UnaryOperator("!!", false, new Number(5)), "5!!" },
             { new UnaryOperator("#", false, new Number(5)), "5#" },
+            { new UnaryOperator("--", true, new Variable("abc")), "--abc" },
+            { new UnaryOperator("++", true, new Variable("abc")), "++abc" },
+            { new UnaryOperator("--", false, new Variable("abc")), "abc--" },
+            { new UnaryOperator("++", false, new Variable("abc")), "abc++" },
             // TODO ± prefix.
-            // TODO ++ prefix.
-            // TODO -- prefix.
-            // TODO ++ suffix.
-            // TODO -- suffix.
         };
 
         foreach (UnaryOperator expression in expressions.Keys)

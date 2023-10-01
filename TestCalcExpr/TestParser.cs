@@ -21,6 +21,7 @@ public class TestParser
 
         (string, string)[] default_rules =
         {
+            ("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})"),
             ("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})"),
             ("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})"),
             ("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})"),
@@ -29,8 +30,8 @@ public class TestParser
             ("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})"),
             ("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})"),
             ("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})"),
-            ("Prefix", @"[\+\-!~¬]"),
-            ("Postfix", @"(((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
+            ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
+            ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
             ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)"),
             ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
             ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),

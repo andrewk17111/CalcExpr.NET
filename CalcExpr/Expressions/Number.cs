@@ -12,9 +12,9 @@ public class Number : IExpression
         => Value = value;
 
     public IExpression Evaluate()
-        => Evaluate(null);
+        => Evaluate(new Dictionary<string, IExpression>());
 
-    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
         => Value switch
         {
             Double.PositiveInfinity => Constant.INFINITY,
@@ -24,9 +24,9 @@ public class Number : IExpression
         };
 
     public IExpression StepEvaluate()
-        => StepEvaluate(null);
+        => StepEvaluate(new Dictionary<string, IExpression>());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
         => Evaluate(variables);
 
     public IExpression Clone()
