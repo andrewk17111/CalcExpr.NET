@@ -290,6 +290,9 @@ public class TestCases
         ("1++", new UnaryOperator("++", false, new Number(1)), new Number(1)),
         ("---1", new UnaryOperator("--", true, new UnaryOperator("-", true, new Number(1))), new Number(-2)),
         ("+++1", new UnaryOperator("++", true, new UnaryOperator("+", true, new Number(1))), new Number(2)),
+        ("(x=3)-x", new BinaryOperator("-", new Parentheses(new BinaryOperator("=", new Variable("x"), new Number(3))),
+                new Variable("x")),
+            new Number(0)),
     };
 
     public readonly static Dictionary<string, IExpression> Variables = new Dictionary<string, IExpression>()

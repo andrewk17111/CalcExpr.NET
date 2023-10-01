@@ -15,15 +15,15 @@ public class Parentheses : IExpression
         => new Parentheses(Inside.Clone());
 
     public IExpression Evaluate()
-        => Evaluate(null);
+        => Evaluate(new Dictionary<string, IExpression>());
 
-    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
         => Inside.Evaluate(variables);
 
     public IExpression StepEvaluate()
-        => StepEvaluate(null);
+        => StepEvaluate(new Dictionary<string, IExpression>());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
         => Inside is Number n
             ? n.StepEvaluate(variables)
             : new Parentheses(Inside.StepEvaluate(variables));

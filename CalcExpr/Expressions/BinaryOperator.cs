@@ -4,8 +4,8 @@ namespace CalcExpr.Expressions;
 
 public class BinaryOperator : IExpression
 {
-    private static readonly Dictionary<string, Func<IExpression, IExpression, Dictionary<string, IExpression>?, IExpression>> _operators
-        = new Dictionary<string, Func<IExpression, IExpression, Dictionary<string, IExpression>?, IExpression>>
+    private static readonly Dictionary<string, Func<IExpression, IExpression, Dictionary<string, IExpression>, IExpression>> _operators
+        = new Dictionary<string, Func<IExpression, IExpression, Dictionary<string, IExpression>, IExpression>>
         {
             { "+", Add },
             { "-", Subtract },
@@ -35,7 +35,7 @@ public class BinaryOperator : IExpression
             { "=", Assignment },
         };
 
-    private Func<IExpression, IExpression, Dictionary<string, IExpression>?, IExpression> _operation
+    private Func<IExpression, IExpression, Dictionary<string, IExpression>, IExpression> _operation
         => (a, b, vars) => Constant.UNDEFINED.Equals(a) || Constant.UNDEFINED.Equals(b)
             ? Constant.UNDEFINED
             : _operators[Identifier](a, b, vars);
@@ -61,15 +61,15 @@ public class BinaryOperator : IExpression
         => new BinaryOperator(Identifier, Left.Clone(), Right.Clone());
 
     public IExpression Evaluate()
-        => Evaluate(null);
+        => Evaluate(new Dictionary<string, IExpression>());
 
-    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
         => _operation(Left, Right, variables);
 
     public IExpression StepEvaluate()
-        => StepEvaluate(null);
+        => StepEvaluate(new Dictionary<string, IExpression>());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
         => Left is not Number a
             ? new BinaryOperator(Identifier, Left.StepEvaluate(variables), Right)
             : Right is not Number b
@@ -89,7 +89,7 @@ public class BinaryOperator : IExpression
     public string ToString(string? format)
         => $"{Left.ToString(format)}{Identifier}{Right.ToString(format)}";
 
-    private static IExpression Add(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression Add(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
@@ -108,7 +108,7 @@ public class BinaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Subtract(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression Subtract(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
@@ -125,7 +125,7 @@ public class BinaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Multiply(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression Multiply(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
@@ -144,7 +144,7 @@ public class BinaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Divide(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression Divide(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
@@ -161,7 +161,7 @@ public class BinaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Exponent(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression Exponent(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
@@ -203,34 +203,34 @@ public class BinaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression EuclideanModulus(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression EuclideanModulus(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
         => a.Evaluate(variables) is Number a_num && b.Evaluate(variables) is Number b_num && b_num.Value != 0
             ? new Number(a_num.Value - Math.Abs(b_num.Value) * Math.Floor(a_num.Value / Math.Abs(b_num.Value)))
             : Constant.UNDEFINED;
 
-    private static IExpression TruncatedModulus(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression TruncatedModulus(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
         => a.Evaluate(variables) is Number a_num && b.Evaluate(variables) is Number b_num && b_num.Value != 0
             ? new Number(a_num.Value % b_num.Value)
             : Constant.UNDEFINED;
 
-    private static IExpression IntDivide(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression IntDivide(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
         => a.Evaluate(variables) is Number a_num && b.Evaluate(variables) is Number b_num
             ? new Number(Math.Sign(b_num.Value) * Math.Floor(a_num.Value / Math.Abs(b_num.Value)))
             : Constant.UNDEFINED;
 
-    private static IExpression And(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression And(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
         => (a.Evaluate(variables) is Number a_num && a_num.Value == 0) ||
             (b.Evaluate(variables) is Number b_num && b_num.Value == 0)
             ? new Number(0)
             : new Number(1);
 
-    private static IExpression Or(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression Or(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
         => a.Evaluate(variables) is Number a_num && a_num.Value == 0 &&
             b.Evaluate(variables) is Number b_num && b_num.Value == 0
             ? new Number(0)
             : new Number(1);
 
-    private static IExpression Xor(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression Xor(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         bool a_bool = a.Evaluate(variables) is Number a_num && a_num.Value != 0;
         bool b_bool = b.Evaluate(variables) is Number b_num && b_num.Value != 0;
@@ -238,7 +238,7 @@ public class BinaryOperator : IExpression
         return new Number((a_bool || b_bool) && !(a_bool && b_bool) ? 1 : 0);
     }
 
-    private static IExpression IsEqual(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression IsEqual(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
@@ -252,12 +252,12 @@ public class BinaryOperator : IExpression
                     : Constant.UNDEFINED;
     }
 
-    private static IExpression IsNotEqual(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression IsNotEqual(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
         => IsEqual(a, b, variables) is Number equals
             ? new Number((equals.Value - 1) * -1)
             : Constant.UNDEFINED;
 
-    private static IExpression IsLessThan(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression IsLessThan(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
@@ -273,14 +273,14 @@ public class BinaryOperator : IExpression
     }
 
     private static IExpression IsLessThanOrEqualTo(IExpression a, IExpression b,
-        Dictionary<string, IExpression>? variables)
+        Dictionary<string, IExpression> variables)
         => IsEqual(a, b, variables) is Number eq_num
             ? eq_num.Value == 1
                 ? eq_num.Clone()
                 : IsLessThan(a, b, variables).Clone()
             : Constant.UNDEFINED;
 
-    private static IExpression IsGreaterThan(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression IsGreaterThan(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
@@ -296,14 +296,14 @@ public class BinaryOperator : IExpression
     }
 
     private static IExpression IsGreaterThanOrEqualTo(IExpression a, IExpression b,
-        Dictionary<string, IExpression>? variables)
+        Dictionary<string, IExpression> variables)
         => IsEqual(a, b, variables) is Number eq_num
             ? eq_num.Value == 1
                 ? eq_num.Clone()
                 : IsGreaterThan(a, b, variables).Clone()
             : Constant.UNDEFINED;
 
-    private static IExpression Assignment(IExpression a, IExpression b, Dictionary<string, IExpression>? variables)
+    private static IExpression Assignment(IExpression a, IExpression b, Dictionary<string, IExpression> variables)
     {
         IExpression b_eval = b.Evaluate(variables);
 

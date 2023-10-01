@@ -2,8 +2,8 @@
 
 public class UnaryOperator : IExpression
 {
-    private static readonly Dictionary<string, Func<IExpression, Dictionary<string, IExpression>?, IExpression>> _prefixes
-        = new Dictionary<string, Func<IExpression, Dictionary<string, IExpression>?, IExpression>>
+    private static readonly Dictionary<string, Func<IExpression, Dictionary<string, IExpression>, IExpression>> _prefixes
+        = new Dictionary<string, Func<IExpression, Dictionary<string, IExpression>, IExpression>>
         {
             { "+", Positive },
             { "-", Negative },
@@ -13,8 +13,8 @@ public class UnaryOperator : IExpression
             { "--", PreDecrement },
             { "++", PreIncrement },
         };
-    private static readonly Dictionary<string, Func<IExpression, Dictionary<string, IExpression>?, IExpression>> _postfixes
-        = new Dictionary<string, Func<IExpression, Dictionary<string, IExpression>?, IExpression>>
+    private static readonly Dictionary<string, Func<IExpression, Dictionary<string, IExpression>, IExpression>> _postfixes
+        = new Dictionary<string, Func<IExpression, Dictionary<string, IExpression>, IExpression>>
         {
             { "!", Factorial },
             { "%", Percent },
@@ -24,7 +24,7 @@ public class UnaryOperator : IExpression
             { "++", PostIncrement },
         };
 
-    private Func<IExpression, Dictionary<string, IExpression>?, IExpression> _operation
+    private Func<IExpression, Dictionary<string, IExpression>, IExpression> _operation
         => IsPrefix ? _prefixes[Identifier] : _postfixes[Identifier];
 
     public readonly string Identifier;
@@ -50,15 +50,15 @@ public class UnaryOperator : IExpression
         => new UnaryOperator(Identifier, IsPrefix, Inside.Clone());
 
     public IExpression Evaluate()
-        => Evaluate(null);
+        => Evaluate(new Dictionary<string, IExpression>());
 
-    public IExpression Evaluate(Dictionary<string, IExpression>? variables)
+    public IExpression Evaluate(Dictionary<string, IExpression> variables)
         => _operation(Inside, variables);
 
     public IExpression StepEvaluate()
-        => StepEvaluate(null);
+        => StepEvaluate(new Dictionary<string, IExpression>());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression>? variables)
+    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
         => Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside)
             ? _operation(Inside, variables)
             : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate(variables));
@@ -78,10 +78,10 @@ public class UnaryOperator : IExpression
             ? $"{Identifier}{Inside.ToString(format)}"
             : $"{Inside.ToString(format)}{Identifier}";
 
-    private static IExpression Positive(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression Positive(IExpression x, Dictionary<string, IExpression> variables)
         => x.Evaluate(variables);
 
-    private static IExpression Negative(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression Negative(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
 
@@ -108,7 +108,7 @@ public class UnaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Not(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression Not(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
 
@@ -120,7 +120,7 @@ public class UnaryOperator : IExpression
                 : new Number(0);
     }
 
-    private static IExpression Subfactorial(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression Subfactorial(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
 
@@ -156,7 +156,7 @@ public class UnaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Factorial(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression Factorial(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
 
@@ -191,7 +191,7 @@ public class UnaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Percent(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression Percent(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
 
@@ -207,7 +207,7 @@ public class UnaryOperator : IExpression
                     : Constant.UNDEFINED;
     }
 
-    private static IExpression DoubleFactorial(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression DoubleFactorial(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
 
@@ -273,7 +273,7 @@ public class UnaryOperator : IExpression
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Primorial(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression Primorial(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
 
@@ -331,7 +331,7 @@ public class UnaryOperator : IExpression
         return primes.ToArray();
     }
 
-    private static IExpression PreDecrement(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression PreDecrement(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
         IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(variables);
@@ -344,7 +344,7 @@ public class UnaryOperator : IExpression
         return new_val;
     }
 
-    private static IExpression PreIncrement(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression PreIncrement(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
         IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(variables);
@@ -357,7 +357,7 @@ public class UnaryOperator : IExpression
         return new_val;
     }
 
-    private static IExpression PostDecrement(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression PostDecrement(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
         IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(variables);
@@ -370,7 +370,7 @@ public class UnaryOperator : IExpression
         return x_eval;
     }
 
-    private static IExpression PostIncrement(IExpression x, Dictionary<string, IExpression>? variables)
+    private static IExpression PostIncrement(IExpression x, Dictionary<string, IExpression> variables)
     {
         IExpression x_eval = x.Evaluate(variables);
         IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(variables);
