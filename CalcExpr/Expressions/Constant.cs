@@ -1,4 +1,6 @@
-﻿namespace CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+
+namespace CalcExpr.Expressions;
 
 public class Constant : IExpression
 {
@@ -58,15 +60,15 @@ public class Constant : IExpression
         => new Constant(Identifier);
 
     public IExpression Evaluate()
-        => Evaluate(new Dictionary<string, IExpression>());
+        => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+    public IExpression Evaluate(ExpressionContext variables)
         => _values[Identifier].Clone();
 
     public IExpression StepEvaluate()
-        => StepEvaluate(new Dictionary<string, IExpression>());
+        => StepEvaluate(new ExpressionContext());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+    public IExpression StepEvaluate(ExpressionContext variables)
         => _values[Identifier].Clone();
 
     public override bool Equals(object? obj)

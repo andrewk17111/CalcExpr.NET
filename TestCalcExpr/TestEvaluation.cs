@@ -1,4 +1,5 @@
-﻿using CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+using CalcExpr.Expressions;
 
 namespace TestCalcExpr;
 
@@ -10,9 +11,9 @@ public class TestEvaluation
     [TestMethod]
     public void TestEvaluate()
     {
-        foreach ((string expr_string, IExpression expression, IExpression result) in TestCases.Expressions)
+        foreach ((_, IExpression expression, IExpression result) in TestCases.Expressions)
         {
-            IExpression evaluated = expression.Evaluate(TestCases.Variables);
+            IExpression evaluated = expression.Evaluate(new ExpressionContext(TestCases.Variables));
 
             if (result is Number result_num && evaluated is Number evaluated_num)
                 Assert.AreEqual(Math.Round(result_num.Value, DIGITS), Math.Round(evaluated_num.Value, DIGITS));

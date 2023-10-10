@@ -1,4 +1,6 @@
-﻿namespace CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+
+namespace CalcExpr.Expressions;
 
 public class Parentheses : IExpression
 {
@@ -15,15 +17,15 @@ public class Parentheses : IExpression
         => new Parentheses(Inside.Clone());
 
     public IExpression Evaluate()
-        => Evaluate(new Dictionary<string, IExpression>());
+        => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+    public IExpression Evaluate(ExpressionContext variables)
         => Inside.Evaluate(variables);
 
     public IExpression StepEvaluate()
-        => StepEvaluate(new Dictionary<string, IExpression>());
+        => StepEvaluate(new ExpressionContext());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+    public IExpression StepEvaluate(ExpressionContext variables)
         => Inside is Number n
             ? n.StepEvaluate(variables)
             : new Parentheses(Inside.StepEvaluate(variables));

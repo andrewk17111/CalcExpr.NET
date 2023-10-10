@@ -1,4 +1,6 @@
-﻿namespace CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+
+namespace CalcExpr.Expressions;
 
 public class Number : IExpression
 {
@@ -12,9 +14,9 @@ public class Number : IExpression
         => Value = value;
 
     public IExpression Evaluate()
-        => Evaluate(new Dictionary<string, IExpression>());
+        => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(Dictionary<string, IExpression> variables)
+    public IExpression Evaluate(ExpressionContext variables)
         => Value switch
         {
             Double.PositiveInfinity => Constant.INFINITY,
@@ -24,9 +26,9 @@ public class Number : IExpression
         };
 
     public IExpression StepEvaluate()
-        => StepEvaluate(new Dictionary<string, IExpression>());
+        => StepEvaluate(new ExpressionContext());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
+    public IExpression StepEvaluate(ExpressionContext variables)
         => Evaluate(variables);
 
     public IExpression Clone()

@@ -1,4 +1,5 @@
-﻿using CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+using CalcExpr.Expressions;
 using CalcExpr.Parsing;
 
 namespace TestCalcExpr;
@@ -27,7 +28,7 @@ public class TestVariable
 
     public void TestAssignment()
     {
-        Dictionary<string, IExpression> variables = new Dictionary<string, IExpression>();
+        ExpressionContext context = new ExpressionContext();
         Parser parser = new Parser();
         Random random = new Random();
 
@@ -35,9 +36,9 @@ public class TestVariable
         {
             double value = random.Next() + random.NextDouble();
 
-            parser.Parse($"{name}={value}").Evaluate(variables);
-            Assert.IsTrue(variables.ContainsKey(name));
-            Assert.AreEqual(new Number(value), variables[name]);
+            parser.Parse($"{name}={value}").Evaluate(context);
+            Assert.IsTrue(context.ContainsVariable(name));
+            Assert.AreEqual(new Number(value), context[name]);
         }
     }
 

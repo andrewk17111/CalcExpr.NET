@@ -1,4 +1,4 @@
-﻿using CalcExpr.Exceptions;
+﻿using CalcExpr.Context;
 
 namespace CalcExpr.Expressions;
 
@@ -17,20 +17,16 @@ public class Variable : IExpression
         => new Variable(Name);
 
     public IExpression Evaluate()
-        => Evaluate(new Dictionary<string, IExpression>());
+        => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(Dictionary<string, IExpression> variables)
-        => variables.ContainsKey(Name)
-            ? variables[Name]
-            : Constant.UNDEFINED;
+    public IExpression Evaluate(ExpressionContext variables)
+        => variables[Name];
     
     public IExpression StepEvaluate()
-        => StepEvaluate(new Dictionary<string, IExpression>());
+        => StepEvaluate(new ExpressionContext());
 
-    public IExpression StepEvaluate(Dictionary<string, IExpression> variables)
-        => variables.ContainsKey(Name)
-            ? variables[Name]
-            : Constant.UNDEFINED;
+    public IExpression StepEvaluate(ExpressionContext variables)
+        => variables[Name];
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Variable v && v.Name == Name;
