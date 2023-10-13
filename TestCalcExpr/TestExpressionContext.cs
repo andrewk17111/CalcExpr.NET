@@ -25,7 +25,7 @@ public class TestExpressionContext
 
         foreach (string variable in TestCases.Variables.Keys)
         {
-            context.AddVariable(variable, TestCases.Variables[variable]);
+            context.SetVariable(variable, TestCases.Variables[variable]);
             Assert.IsTrue(context.ContainsVariable(variable));
             Assert.AreEqual(TestCases.Variables[variable], context[variable]);
             context.RemoveVariable(variable);

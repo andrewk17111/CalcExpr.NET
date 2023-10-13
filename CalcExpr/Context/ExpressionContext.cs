@@ -4,24 +4,32 @@ namespace CalcExpr.Context;
 
 public class ExpressionContext
 {
+    private Dictionary<string, IExpression> _variables;
+
     public IExpression this[string variable]
     {
-        get => throw new NotImplementedException();
-        set => throw new NotImplementedException();
+        get => _variables.ContainsKey(variable) ? _variables[variable] : Constant.UNDEFINED;
+        set => _variables[variable] = value;
     }
 
-    public ExpressionContext()
-        => throw new NotImplementedException();
+    public ExpressionContext() : this(new Dictionary<string, IExpression>())
+    { }
 
     public ExpressionContext(Dictionary<string, IExpression> variables)
-        => throw new NotImplementedException();
+        => _variables = variables ?? new Dictionary<string, IExpression>();
 
-    public bool AddVariable(string variable, IExpression expression)
-        => throw new NotImplementedException();
+    public bool SetVariable(string variable, IExpression expression)
+    {
+        if (expression is null)
+            return _variables.Remove(variable);
+
+        _variables[variable] = expression;
+        return true;
+    }
 
     public bool RemoveVariable(string variable)
-        => throw new NotImplementedException();
+        => _variables.Remove(variable);
 
     public bool ContainsVariable(string variable)
-        => throw new NotImplementedException();
+        => _variables.ContainsKey(variable);
 }
