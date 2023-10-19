@@ -17,19 +17,18 @@ public class TestParser
     [TestMethod]
     public void TestInit()
     {
-        const string OPERAND = @"({Prefix}*({Variable}|{Constant}|{Number}|\[\d+\]){Postfix}*)";
-
         (string, string)[] default_rules =
         {
-            ("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})"),
-            ("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})"),
-            ("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})"),
-            ("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})"),
-            ("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})"),
-            ("IneqBinOp", @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})"),
-            ("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})"),
-            ("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})"),
-            ("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})"),
+            ("Operand", @"({Prefix}*({Variable}|{Constant}|{Number}|\[\d+\]){Postfix}*)"),
+            ("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})"),
+            ("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})"),
+            ("XorBinOp", @"(?<={Operand})(⊕)(?={Operand})"),
+            ("AndBinOp", @"(?<={Operand})(&&|∧)(?={Operand})"),
+            ("EqBinOp", @"(?<={Operand})(==|!=|<>|≠)(?={Operand})"),
+            ("IneqBinOp", @"(?<={Operand})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={Operand})"),
+            ("AddBinOp", @"(?<={Operand})([\+\-])(?={Operand})"),
+            ("MultBinOp", @"(?<={Operand})(%%|//|[*×/÷%])(?={Operand})"),
+            ("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})"),
             ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
             ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
             ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)"),

@@ -1,6 +1,8 @@
-﻿using CalcExpr.Exceptions;
+﻿using CalcExpr.Attributes;
+using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
 using CalcExpr.Parsing.Rules;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
@@ -21,27 +23,26 @@ public class Parser
     /// </summary>
     public Parser()
     {
-        const string OPERAND = @"({Prefix}*({Variable}|{Constant}|{Number}|\[\d+\]){Postfix}*)";
-
         _grammar = new List<Rule>()
         {
-            new NestedRegexRule("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})",
+            new ReferenceRegexRule("Operand", @"({Prefix}*({Variable}|{Constant}|{Number}|\[\d+\]){Postfix}*)"),
+            new NestedRegexRule("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})",
+            new NestedRegexRule("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})",
+            new NestedRegexRule("XorBinOp", @"(?<={Operand})(⊕)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})",
+            new NestedRegexRule("AndBinOp", @"(?<={Operand})(&&|∧)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})",
+            new NestedRegexRule("EqBinOp", @"(?<={Operand})(==|!=|<>|≠)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("IneqBinOp", @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})",
+            new NestedRegexRule("IneqBinOp", @"(?<={Operand})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})",
+            new NestedRegexRule("AddBinOp", @"(?<={Operand})([\+\-])(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})",
+            new NestedRegexRule("MultBinOp", @"(?<={Operand})(%%|//|[*×/÷%])(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})",
+            new NestedRegexRule("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new RegexRule("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])",
                 RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
@@ -85,6 +86,9 @@ public class Parser
 
         foreach (Rule rule in _grammar)
         {
+            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
+                continue;
+
             Token? match = rule.Match(input, Grammar);
 
             if (match.HasValue)
@@ -111,6 +115,9 @@ public class Parser
 
         foreach (Rule rule in _grammar)
         {
+            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
+                continue;
+
             Token? match = rule.Match(tokenized_input, Grammar);
 
             if (match.HasValue)
