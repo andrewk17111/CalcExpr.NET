@@ -17,9 +17,12 @@ public class TestParser
     [TestMethod]
     public void TestInit()
     {
-        (string, string)[] default_rules =
+        (string Name, string? Regex)[] default_rules =
         {
-            ("Operand", @"({Prefix}*({Variable}|{Constant}|{Number}|\[\d+\]){Postfix}*)"),
+            ("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            ("Token", @"\[\d+\]"),
+            ("Parentheses", null),
+            ("WithParentheses", @"\(|\)"),
             ("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})"),
             ("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})"),
             ("XorBinOp", @"(?<={Operand})(⊕)(?={Operand})"),
@@ -40,10 +43,10 @@ public class TestParser
 
         for (int i = 0; i < default_rules.Length; i++)
         {
-            RegexRule rr = (RegexRule)parser.Grammar[i];
+            Rule rule = parser.Grammar[i];
 
-            Assert.AreEqual(rr.Name, default_rules[i].Item1);
-            Assert.AreEqual(rr.RegularExpression, default_rules[i].Item2);
+            Assert.AreEqual(rule.Name, default_rules[i].Name);
+            Assert.AreEqual(default_rules[i].Regex, rule is RegexRule regex_rule ? regex_rule.RegularExpression : null);
         }
 
         parser = new Parser(new Rule[] { CUSTOM_RULE });
@@ -74,19 +77,9 @@ public class TestParser
         foreach ((string expression, _, _) in TestCases.Expressions)
         {
             parser.Parse(expression);
-
-            bool cached = parser.ContainsCache(expression);
-
-            if (Regex.IsMatch(expression, @"\(|\)"))
-            {
-                Assert.IsFalse(cached);
-            }
-            else
-            {
-                Assert.IsTrue(cached);
-                parser.RemoveCache(expression);
-                Assert.IsFalse(parser.ContainsCache(expression));
-            }
+            Assert.IsTrue(parser.ContainsCache(expression));
+            parser.RemoveCache(expression);
+            Assert.IsFalse(parser.ContainsCache(expression));
         }
 
         (string, IExpression) pi = ("pi", new Number(3.1415926535));
