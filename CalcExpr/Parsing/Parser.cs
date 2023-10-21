@@ -1,6 +1,8 @@
-﻿using CalcExpr.Exceptions;
+﻿using CalcExpr.Attributes;
+using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
 using CalcExpr.Parsing.Rules;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
@@ -21,27 +23,29 @@ public class Parser
     /// </summary>
     public Parser()
     {
-        const string OPERAND = @"({Prefix}*({Variable}|{Constant}|{Number}|\[\d+\]){Postfix}*)";
-
         _grammar = new List<Rule>()
         {
-            new NestedRegexRule("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})",
+            new ReferenceRegexRule("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            new ReferenceRegexRule("Token", @"\[\d+\]"),
+            new Rule("Parentheses", ParseParentheses, MatchParentheses),
+            new RegexRule("WithParentheses", @"\(|\)", RegexOptions.None, ParseWithParentheses),
+            new NestedRegexRule("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})",
+            new NestedRegexRule("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})",
+            new NestedRegexRule("XorBinOp", @"(?<={Operand})(⊕)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})",
+            new NestedRegexRule("AndBinOp", @"(?<={Operand})(&&|∧)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})",
+            new NestedRegexRule("EqBinOp", @"(?<={Operand})(==|!=|<>|≠)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("IneqBinOp", @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})",
+            new NestedRegexRule("IneqBinOp", @"(?<={Operand})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})",
+            new NestedRegexRule("AddBinOp", @"(?<={Operand})([\+\-])(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})",
+            new NestedRegexRule("MultBinOp", @"(?<={Operand})(%%|//|[*×/÷%])(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
-            new NestedRegexRule("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})",
+            new NestedRegexRule("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new RegexRule("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])",
                 RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
@@ -77,14 +81,14 @@ public class Parser
         if (input is null)
             throw new ArgumentNullException(nameof(input));
 
-        if (Regex.IsMatch(input, @"\(|\)"))
-            return ParseWithParentheses(input);
-
         if (ContainsCache(input))
             return _cache[CleanExpressionString(input)].Clone();
 
         foreach (Rule rule in _grammar)
         {
+            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
+                continue;
+
             Token? match = rule.Match(input, Grammar);
 
             if (match.HasValue)
@@ -101,26 +105,6 @@ public class Parser
 
     private static string CleanExpressionString(string expression)
         => Regex.Replace(expression, @"\s+", "");
-
-    private IExpression ParseWithParentheses(string input)
-    {
-        string tokenized_input = TokenizeInput(input, out Token[] tokens);
-
-        if (tokenized_input == "[0]")
-            return new Parentheses(Parse(input[1..^1]));
-
-        foreach (Rule rule in _grammar)
-        {
-            Token? match = rule.Match(tokenized_input, Grammar);
-
-            if (match.HasValue)
-                return rule.Parse.Invoke(input,
-                    new Token(match.Value, DetokenizeIndex(match.Value.Index, tokenized_input, tokens)),
-                    this);
-        }
-
-        throw new Exception($"The input was not in the correct format: '{input}'");
-    }
 
     private static string TokenizeInput(string input, out Token[] tokens)
     {
@@ -321,6 +305,61 @@ public class Parser
                 return true;
 
         return false;
+    }
+
+    private Token? MatchParentheses(string input, IEnumerable<Rule> rules)
+    {
+        input = input.Trim();
+
+        if (input[0] == '(' && input[^1] == ')')
+        {
+            int depth = 0;
+
+            for (int i = 1; i < input.Length - 1; i++)
+            {
+                char current = input[i];
+
+                if (current == '(')
+                {
+                    depth++;
+                }
+                else if (current == ')')
+                {
+                    if (depth == 0)
+                        return null;
+
+                    depth--;
+                }
+            }
+
+            if (depth == 0)
+                return new Token(input[1..^1], 1);
+        }
+
+        return null;
+    }
+
+    private IExpression ParseParentheses(string input, Token token, Parser parser)
+        => new Parentheses(Parse(token));
+
+    private IExpression ParseWithParentheses(string input, Token _, Parser parser)
+    {
+        string tokenized_input = TokenizeInput(input, out Token[] tokens);
+
+        foreach (Rule rule in parser.Grammar)
+        {
+            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
+                continue;
+
+            Token? match = rule.Match(tokenized_input, Grammar);
+
+            if (match.HasValue)
+                return rule.Parse.Invoke(input,
+                    new Token(match.Value, DetokenizeIndex(match.Value.Index, tokenized_input, tokens)),
+                    this);
+        }
+
+        throw new Exception($"The input was not in the correct format: '{input}'");
     }
 
     private IExpression ParseBinaryOperator(string input, Token match, Parser parser)
