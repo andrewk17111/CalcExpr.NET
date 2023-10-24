@@ -17,19 +17,21 @@ public class TestParser
     [TestMethod]
     public void TestInit()
     {
-        const string OPERAND = @"({Prefix}*({Variable}|{Constant}|{Number}|\[\d+\]){Postfix}*)";
-
-        (string, string)[] default_rules =
+        (string Name, string? Regex)[] default_rules =
         {
-            ("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})"),
-            ("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})"),
-            ("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})"),
-            ("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})"),
-            ("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})"),
-            ("IneqBinOp", @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})"),
-            ("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})"),
-            ("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})"),
-            ("ExpBinOp", @$"(?<={OPERAND})(\^)(?={OPERAND})"),
+            ("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            ("Token", @"\[\d+\]"),
+            ("Parentheses", null),
+            ("WithParentheses", @"\(|\)"),
+            ("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})"),
+            ("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})"),
+            ("XorBinOp", @"(?<={Operand})(⊕)(?={Operand})"),
+            ("AndBinOp", @"(?<={Operand})(&&|∧)(?={Operand})"),
+            ("EqBinOp", @"(?<={Operand})(==|!=|<>|≠)(?={Operand})"),
+            ("IneqBinOp", @"(?<={Operand})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={Operand})"),
+            ("AddBinOp", @"(?<={Operand})([\+\-])(?={Operand})"),
+            ("MultBinOp", @"(?<={Operand})(%%|//|[*×/÷%])(?={Operand})"),
+            ("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})"),
             ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
             ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
             ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)"),
@@ -41,10 +43,10 @@ public class TestParser
 
         for (int i = 0; i < default_rules.Length; i++)
         {
-            RegexRule rr = (RegexRule)parser.Grammar[i];
+            Rule rule = parser.Grammar[i];
 
-            Assert.AreEqual(rr.Name, default_rules[i].Item1);
-            Assert.AreEqual(rr.RegularExpression, default_rules[i].Item2);
+            Assert.AreEqual(rule.Name, default_rules[i].Name);
+            Assert.AreEqual(default_rules[i].Regex, rule is RegexRule regex_rule ? regex_rule.RegularExpression : null);
         }
 
         parser = new Parser(new Rule[] { CUSTOM_RULE });
@@ -75,19 +77,9 @@ public class TestParser
         foreach ((string expression, _, _) in TestCases.Expressions)
         {
             parser.Parse(expression);
-
-            bool cached = parser.ContainsCache(expression);
-
-            if (Regex.IsMatch(expression, @"\(|\)"))
-            {
-                Assert.IsFalse(cached);
-            }
-            else
-            {
-                Assert.IsTrue(cached);
-                parser.RemoveCache(expression);
-                Assert.IsFalse(parser.ContainsCache(expression));
-            }
+            Assert.IsTrue(parser.ContainsCache(expression));
+            parser.RemoveCache(expression);
+            Assert.IsFalse(parser.ContainsCache(expression));
         }
 
         (string, IExpression) pi = ("pi", new Number(3.1415926535));
