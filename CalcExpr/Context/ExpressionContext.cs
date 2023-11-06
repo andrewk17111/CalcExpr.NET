@@ -5,6 +5,7 @@ namespace CalcExpr.Context;
 public class ExpressionContext
 {
     private Dictionary<string, IExpression> _variables;
+    private Dictionary<string, Function> _functions;
 
     public IExpression this[string variable]
     {
@@ -12,24 +13,31 @@ public class ExpressionContext
         set => _variables[variable] = value;
     }
 
-    public ExpressionContext() : this(new Dictionary<string, IExpression>())
-    { }
-
-    public ExpressionContext(Dictionary<string, IExpression> variables)
+    public ExpressionContext(Dictionary<string, IExpression>? variables = null,
+        Dictionary<string, Function>? functions = null)
         => _variables = variables ?? new Dictionary<string, IExpression>();
 
-    public bool SetVariable(string variable, IExpression expression)
+    public bool SetVariable(string name, IExpression expression)
     {
         if (expression is null)
-            return _variables.Remove(variable);
+            return _variables.Remove(name);
 
-        _variables[variable] = expression;
+        _variables[name] = expression;
         return true;
     }
 
-    public bool RemoveVariable(string variable)
-        => _variables.Remove(variable);
+    public bool RemoveVariable(string name)
+        => _variables.Remove(name);
 
-    public bool ContainsVariable(string variable)
-        => _variables.ContainsKey(variable);
+    public bool ContainsVariable(string name)
+        => _variables.ContainsKey(name);
+
+    public bool SetFunction(string name, Function functions)
+        => throw new NotImplementedException();
+
+    public bool RemoveFunction(string name)
+        => throw new NotImplementedException();
+
+    public bool ContainsFunction(string name)
+        => throw new NotImplementedException();
 }

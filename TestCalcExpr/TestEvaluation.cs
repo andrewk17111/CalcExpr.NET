@@ -13,7 +13,8 @@ public class TestEvaluation
     {
         foreach ((_, IExpression expression, IExpression result) in TestCases.Expressions)
         {
-            IExpression evaluated = expression.Evaluate(new ExpressionContext(TestCases.Variables));
+            ExpressionContext context = new ExpressionContext(TestCases.Variables, TestCases.Functions);
+            IExpression evaluated = expression.Evaluate(context);
 
             if (result is Number result_num && evaluated is Number evaluated_num)
                 Assert.AreEqual(Math.Round(result_num.Value, DIGITS), Math.Round(evaluated_num.Value, DIGITS));
