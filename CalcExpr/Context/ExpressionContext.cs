@@ -13,6 +13,12 @@ public class ExpressionContext
         set => _variables[variable] = value;
     }
 
+    public IExpression this[string function, IEnumerable<IExpression> args]
+        => (_functions.ContainsKey(function)
+            ? (IExpression?)_functions[function].Body.Method.Invoke(function, args.ToArray<object?>())
+            : null)
+                ?? Constant.UNDEFINED;
+
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
         Dictionary<string, Function>? functions = null)
         => _variables = variables ?? new Dictionary<string, IExpression>();

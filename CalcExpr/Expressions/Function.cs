@@ -15,32 +15,36 @@ public class Function : IExpression
     { }
 
     public Function(IEnumerable<string> parameters, Delegate body)
-        => throw new NotImplementedException();
+    {
+        _parameters = parameters.ToArray() ?? Array.Empty<string>();
+        Body = body;
+    }
 
     public IExpression Evaluate()
-        => throw new NotImplementedException();
+        => Clone();
 
-    public IExpression Evaluate(ExpressionContext variables)
-        => throw new NotImplementedException();
+    public IExpression Evaluate(ExpressionContext context)
+        => Clone();
 
     public IExpression StepEvaluate()
-        => throw new NotImplementedException();
+        => Clone();
 
-    public IExpression StepEvaluate(ExpressionContext variables)
-        => throw new NotImplementedException();
+    public IExpression StepEvaluate(ExpressionContext context)
+        => Clone();
 
     public IExpression Clone()
-        => throw new NotImplementedException();
+        => new Function(Parameters, Body);
 
     public override bool Equals(object? obj)
-        => throw new NotImplementedException();
+        => obj is not null && obj is Function func && func.Body.Equals(Body) &&
+            func.Parameters.Select((p, i) => p.Equals(Parameters[i])).Aggregate((a, b) => a && b);
 
     public override int GetHashCode()
-        => throw new NotImplementedException();
+        => HashCode.Combine(Parameters, Body);
 
     public override string ToString()
         => ToString(null);
 
     public string ToString(string? format)
-        => throw new NotImplementedException();
+        => $"";
 }
