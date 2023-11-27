@@ -27,6 +27,7 @@ public class Parser
         {
             new ReferenceRegexRule("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
+            new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall),
             new Rule("Parentheses", ParseParentheses, MatchParentheses),
             new RegexRule("WithParentheses", @"\(|\)", RegexOptions.None, ParseWithParentheses),
             new NestedRegexRule("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})",
@@ -311,6 +312,9 @@ public class Parser
     {
         input = input.Trim();
 
+        if (String.IsNullOrWhiteSpace(input))
+            return null;
+
         if (input[0] == '(' && input[^1] == ')')
         {
             int depth = 0;
@@ -337,6 +341,43 @@ public class Parser
         }
 
         return null;
+    }
+
+    private Token? MatchFunctionCall(string input, IEnumerable<Rule> rules)
+    {
+        input = input.Trim();
+
+        if (String.IsNullOrWhiteSpace(input))
+            return null;
+
+        Match function_name = Regex.Match(input, @"^([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
+
+        if (function_name.Success)
+        {
+            Token? parentheses = MatchParentheses(input[function_name.Length..], rules);
+
+            if (parentheses is not null)
+                return new Token(
+                    input[..(function_name.Length + parentheses.Value.Index + parentheses.Value.Length + 1)],
+                    0);
+        }
+
+        return null;
+    }
+
+    private IExpression ParseFunctionCall(string input, Token token, Parser parser)
+    {
+        Match function_name = Regex.Match(input, "^([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
+        string tokenized_args = TokenizeInput(token.Value[(function_name.Length + 1)..^1], out Token[] tokens);
+
+        string[] args = tokenized_args
+            .Split(",")
+            .Select(arg => !arg.Contains('[')
+                ? arg
+                : Regex.Replace(arg, @"\[\d+\]", match => tokens[Convert.ToInt32(match.Value[1..^1])]))
+            .ToArray();
+
+        return new FunctionCall(function_name.Value, args.Select(arg => parser.Parse(arg)));
     }
 
     private IExpression ParseParentheses(string input, Token token, Parser parser)

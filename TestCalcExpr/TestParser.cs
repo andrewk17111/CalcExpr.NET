@@ -21,6 +21,7 @@ public class TestParser
         {
             ("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
             ("Token", @"\[\d+\]"),
+            ("FunctionCall", null),
             ("Parentheses", null),
             ("WithParentheses", @"\(|\)"),
             ("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})"),
@@ -62,7 +63,10 @@ public class TestParser
     public void TestParse()
     {
         foreach ((string expression_string, IExpression expression, _) in TestCases.Expressions)
+        {
+            Console.WriteLine(expression_string);
             Assert.AreEqual(expression, new Parser().Parse(expression_string));
+        }
     }
 
     /// <summary>

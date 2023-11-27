@@ -11,7 +11,7 @@ public class FunctionCall : IExpression
     public IExpression[] Arguments
         => _arguments.ToArray();
 
-    public FunctionCall(string name, IExpression[] arguments)
+    public FunctionCall(string name, IEnumerable<IExpression> arguments)
     {
         Name = name;
         _arguments = arguments.ToArray();
