@@ -9,8 +9,12 @@ public class ExpressionContext
 
     public IExpression this[string variable]
     {
-        get => _variables.ContainsKey(variable) ? _variables[variable] : Constant.UNDEFINED;
-        set => _variables[variable] = value;
+        get => _variables.ContainsKey(variable)
+            ? _variables[variable]
+            : _functions.ContainsKey(variable)
+                ? _functions[variable]
+                : Constant.UNDEFINED;
+        set => SetVariable(variable, value);
     }
 
     public IExpression this[string function, IEnumerable<IExpression> arguments]
@@ -63,24 +67,37 @@ public class ExpressionContext
     public bool SetVariable(string name, IExpression expression)
     {
         if (expression is null)
-            return _variables.Remove(name);
+            return RemoveVariable(name);
 
-        _variables[name] = expression;
-        return true;
+        if (expression is not Function function)
+        {
+            _variables[name] = expression;
+            return true;
+        }
+        else
+        {
+            return SetFunction(name, function);
+        }
     }
 
     public bool RemoveVariable(string name)
-        => _variables.Remove(name);
+        => _variables.Remove(name) || _functions.Remove(name);
 
     public bool ContainsVariable(string name)
-        => _variables.ContainsKey(name);
+        => _variables.ContainsKey(name) || ContainsFunction(name);
+    
+    public bool SetFunction(string name, Function function)
+    {
+        if (function is null)
+            return _functions.Remove(name);
 
-    public bool SetFunction(string name, Function functions)
-        => throw new NotImplementedException();
+        _functions[name] = function;
+        return true;
+    }
 
     public bool RemoveFunction(string name)
-        => throw new NotImplementedException();
+        => _functions.Remove(name);
 
     public bool ContainsFunction(string name)
-        => throw new NotImplementedException();
+        => _functions.ContainsKey(name);
 }

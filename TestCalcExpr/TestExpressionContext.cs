@@ -53,20 +53,20 @@ public class TestExpressionContext
 
         foreach (string function in TestCases.Functions.Keys)
         {
-            context.SetVariable(function, TestCases.Variables[function]);
+            Assert.IsTrue(context.SetVariable(function, TestCases.Functions[function]));
             Assert.IsTrue(context.ContainsVariable(function));
             Assert.IsTrue(context.ContainsFunction(function));
             Assert.AreEqual(TestCases.Functions[function], context[function]);
-            context.RemoveVariable(function);
+            Assert.IsTrue(context.RemoveVariable(function));
             Assert.IsFalse(context.ContainsVariable(function));
             Assert.IsFalse(context.ContainsFunction(function));
             Assert.AreEqual(Constant.UNDEFINED, context[function]);
 
-            context.SetFunction(function, TestCases.Functions[function]);
+            Assert.IsTrue(context.SetFunction(function, TestCases.Functions[function]));
             Assert.IsTrue(context.ContainsVariable(function));
             Assert.IsTrue(context.ContainsFunction(function));
             Assert.AreEqual(TestCases.Functions[function], context[function]);
-            context.RemoveFunction(function);
+            Assert.IsTrue(context.RemoveFunction(function));
             Assert.IsFalse(context.ContainsVariable(function));
             Assert.IsFalse(context.ContainsFunction(function));
             Assert.AreEqual(Constant.UNDEFINED, context[function]);
