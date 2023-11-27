@@ -7,6 +7,7 @@ public class Function : IExpression
     private readonly IReadOnlyList<string> _parameters;
 
     public readonly Delegate Body;
+    public readonly bool RequiresContext;
 
     public string[] Parameters
         => _parameters.ToArray();
@@ -17,6 +18,8 @@ public class Function : IExpression
     public Function(IEnumerable<string> parameters, Delegate body)
     {
         _parameters = parameters.ToArray() ?? Array.Empty<string>();
+        RequiresContext = body.Method.GetParameters().Select(p => p.ParameterType == typeof(ExpressionContext))
+            .Contains(true);
         Body = body;
     }
 

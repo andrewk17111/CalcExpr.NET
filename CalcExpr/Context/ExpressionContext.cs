@@ -13,15 +13,52 @@ public class ExpressionContext
         set => _variables[variable] = value;
     }
 
-    public IExpression this[string function, IEnumerable<IExpression> args]
-        => (_functions.ContainsKey(function)
-            ? (IExpression?)_functions[function].Body.Method.Invoke(function, args.ToArray<object?>())
-            : null)
-                ?? Constant.UNDEFINED;
+    public IExpression this[string function, IEnumerable<IExpression> arguments]
+    {
+        get
+        {
+            if (!_functions.ContainsKey(function))
+                return Constant.UNDEFINED;
+
+            Function func = _functions[function];
+            List<object?> args = new List<object?>();
+
+            if (func.RequiresContext)
+            {
+                bool[] is_context = func.Body.Method.GetParameters()
+                    .Select(p => p.ParameterType == typeof(ExpressionContext))
+                    .ToArray();
+                int arg_i = 0;
+
+                for (int i = 0; i < is_context.Length; i++)
+                    args.Add(is_context[i] ? this : arguments.ElementAt(arg_i++));
+            }
+            else
+            {
+                args.AddRange(arguments.Select(arg => arg.Evaluate(this)));
+            }
+
+            return (IExpression?)func.Body.Method.Invoke(func, args.ToArray()) ?? Constant.UNDEFINED;
+        }
+    }
 
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
         Dictionary<string, Function>? functions = null)
-        => _variables = variables ?? new Dictionary<string, IExpression>();
+    {
+        Dictionary<string, IExpression> vars = new Dictionary<string, IExpression>();
+        Dictionary<string, Function> funcs = functions?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+            ?? new Dictionary<string, Function>();
+
+        if (variables is not null)
+            foreach (string var in variables.Keys)
+                if (variables[var] is Function func)
+                    funcs.Add(var, func);
+                else
+                    vars.Add(var, variables[var]);
+
+        _variables = vars;
+        _functions = funcs;
+    }
 
     public bool SetVariable(string name, IExpression expression)
     {

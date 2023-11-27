@@ -1,5 +1,4 @@
 ﻿using CalcExpr.Context;
-using System.Collections.Immutable;
 
 namespace CalcExpr.Expressions;
 
@@ -13,32 +12,36 @@ public class FunctionCall : IExpression
         => _arguments.ToArray();
 
     public FunctionCall(string name, IExpression[] arguments)
-        => throw new NotImplementedException();
+    {
+        Name = name;
+        _arguments = arguments.ToArray();
+    }
 
     public IExpression Evaluate()
-        => throw new NotImplementedException();
+        => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => context[Name, _arguments].Evaluate(context);
 
     public IExpression StepEvaluate()
-        => throw new NotImplementedException();
+        => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
         => throw new NotImplementedException();
 
     public IExpression Clone()
-        => throw new NotImplementedException();
+        => new FunctionCall(Name, Arguments);
 
     public override bool Equals(object? obj)
-        => throw new NotImplementedException();
+        => obj is not null && obj is FunctionCall call && call.Name == Name &&
+            call._arguments.Select((a, i) => a.Equals(_arguments[i])).Aggregate((a, b) => a && b);
 
     public override int GetHashCode()
-        => throw new NotImplementedException();
+        => HashCode.Combine(Name, _arguments);
 
     public override string ToString()
         => ToString(null);
 
     public string ToString(string? format)
-        => throw new NotImplementedException();
+        => $"{Name}({String.Join(", ", Arguments.Select(arg => arg.ToString(format)))})";
 }
