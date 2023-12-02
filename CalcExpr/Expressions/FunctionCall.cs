@@ -27,7 +27,23 @@ public class FunctionCall : IExpression
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+    {
+        IExpression variable = context[Name];
+
+        if (!(variable is Function function && function.RequiresContext))
+        {
+            for (int i = 0; i < _arguments.Count; i++)
+            {
+                IExpression arg = _arguments[i];
+                IExpression eval_arg = arg.StepEvaluate(context);
+
+                if (!eval_arg.Equals(arg))
+                    return new FunctionCall(Name, Arguments.Select((a, j) => (j == i) ? eval_arg : a));
+            }
+        }
+
+        return context[Name, _arguments].Evaluate(context);
+    }
 
     public IExpression Clone()
         => new FunctionCall(Name, Arguments);
