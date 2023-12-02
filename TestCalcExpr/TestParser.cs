@@ -62,11 +62,8 @@ public class TestParser
     [TestMethod]
     public void TestParse()
     {
-        foreach ((string expression_string, IExpression expression, _) in TestCases.Expressions)
-        {
-            Console.WriteLine(expression_string);
-            Assert.AreEqual(expression, new Parser().Parse(expression_string));
-        }
+        foreach (TestCase test_case in TestCases.Expressions)
+            Assert.AreEqual(test_case.Parsed, new Parser().Parse(test_case.ExpressionString));
     }
 
     /// <summary>
@@ -78,12 +75,12 @@ public class TestParser
     {
         Parser parser = new Parser();
 
-        foreach ((string expression, _, _) in TestCases.Expressions)
+        foreach (TestCase test_case in TestCases.Expressions)
         {
-            parser.Parse(expression);
-            Assert.IsTrue(parser.ContainsCache(expression));
-            parser.RemoveCache(expression);
-            Assert.IsFalse(parser.ContainsCache(expression));
+            parser.Parse(test_case.ExpressionString);
+            Assert.IsTrue(parser.ContainsCache(test_case.ExpressionString));
+            parser.RemoveCache(test_case.ExpressionString);
+            Assert.IsFalse(parser.ContainsCache(test_case.ExpressionString));
         }
 
         (string, IExpression) pi = ("pi", new Number(3.1415926535));

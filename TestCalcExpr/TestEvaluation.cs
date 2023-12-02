@@ -11,15 +11,41 @@ public class TestEvaluation
     [TestMethod]
     public void TestEvaluate()
     {
-        foreach ((_, IExpression expression, IExpression result) in TestCases.Expressions)
+        foreach (TestCase test_case in TestCases.Expressions)
         {
             ExpressionContext context = new ExpressionContext(TestCases.Variables, TestCases.Functions);
-            IExpression evaluated = expression.Evaluate(context);
+            IExpression evaluated = test_case.Parsed.Evaluate(context);
 
-            if (result is Number result_num && evaluated is Number evaluated_num)
+            if (test_case.Evaluated is Number result_num && evaluated is Number evaluated_num)
                 Assert.AreEqual(Math.Round(result_num.Value, DIGITS), Math.Round(evaluated_num.Value, DIGITS));
             else
-                Assert.AreEqual(result, evaluated);
+                Assert.AreEqual(test_case.Evaluated, evaluated);
+        }
+    }
+
+    [TestMethod]
+    public void TestStepEvaluate()
+    {
+        foreach (TestCase test_case in TestCases.Expressions)
+        {
+            ExpressionContext context = new ExpressionContext(TestCases.Variables, TestCases.Functions);
+            IExpression start = test_case.Parsed;
+
+            Console.WriteLine(test_case.ExpressionString);
+
+            for (int i = 0; i < test_case.StepEvaluated.Length; i++)
+            {
+                IExpression evaluated = start.StepEvaluate(context);
+
+                // Console.WriteLine($"\t{start} | {evaluated} `{test_case.StepEvaluated[i]}`");
+                
+                if (test_case.StepEvaluated[i] is Number result_num && evaluated is Number evaluated_num)
+                    Assert.AreEqual(Math.Round(result_num.Value, DIGITS), Math.Round(evaluated_num.Value, DIGITS));
+                else
+                    Assert.AreEqual(test_case.StepEvaluated[i], evaluated);
+
+                start = evaluated;
+            }
         }
     }
 }

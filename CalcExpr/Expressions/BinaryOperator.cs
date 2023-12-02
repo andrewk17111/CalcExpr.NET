@@ -71,11 +71,18 @@ public class BinaryOperator : IExpression
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext variables)
-        => Left is not Number a
-            ? new BinaryOperator(Identifier, Left.StepEvaluate(variables), Right)
-            : Right is not Number b
-                ? new BinaryOperator(Identifier, Left, Right.StepEvaluate(variables))
-                : _operation(a, b, variables);
+    {
+        IExpression l = Left.StepEvaluate(variables);
+
+        if (l.Equals(Left))
+        {
+            IExpression r = Right.StepEvaluate(variables);
+
+            return r.Equals(Right) ? _operation(l, r, variables) : new BinaryOperator(Identifier, Left, r);
+        }
+
+        return new BinaryOperator(Identifier, l, Right);
+    }
 
     public override bool Equals(object? obj)
         => obj is not null && obj is BinaryOperator bin_op && bin_op.Identifier == Identifier &&
