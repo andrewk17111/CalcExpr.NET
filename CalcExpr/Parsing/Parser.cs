@@ -31,7 +31,7 @@ public class Parser
             new Rule("Parentheses", ParseParentheses, MatchParentheses),
             new RegexRule("WithParentheses", @"\(|\)", RegexOptions.None, ParseWithParentheses),
             new NestedRegexRule("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseAssignmentOperator),
             new NestedRegexRule("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
             new NestedRegexRule("XorBinOp", @"(?<={Operand})(⊕)(?={Operand})",
@@ -402,6 +402,10 @@ public class Parser
 
         throw new Exception($"The input was not in the correct format: '{input}'");
     }
+
+    private IExpression ParseAssignmentOperator(string input, Token match, Parser parser)
+        => new AssignmentOperator((Parse(input[..match.Index]) as Variable)!,
+            Parse(input[(match.Index + match.Length)..]));
 
     private IExpression ParseBinaryOperator(string input, Token match, Parser parser)
         => new BinaryOperator(match.Value, Parse(input[..match.Index]), Parse(input[(match.Index + match.Length)..]));

@@ -32,7 +32,6 @@ public class TestBinaryOperator
         "≥",
         "<=",
         "≤",
-        // TODO = operator.
     };
 
     /// <summary>
@@ -101,7 +100,6 @@ public class TestBinaryOperator
             { new BinaryOperator("≥", new Number(2), new Number(2)), "2≥2" },
             { new BinaryOperator("<=", new Number(1), new Number(2)), "1<=2" },
             { new BinaryOperator("≤", new Number(1), new Number(1)), "1≤1" },
-            // TODO = operator.
         };
 
         foreach (BinaryOperator expression in expressions.Keys)

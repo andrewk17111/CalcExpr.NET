@@ -8,8 +8,8 @@ public class InvalidAssignmentException : Exception
     /// Initializes a new instance of the <see cref="InvalidAssignmentException"/> class using the specified invalid
     /// expression.
     /// </summary>
-    /// <param name="expression">The invalide expression.</param>
+    /// <param name="expression">The invalide <see cref="Variable"/> expression.</param>
     public InvalidAssignmentException(IExpression expression)
-        : base($"The expression '{expression}' is not a valid assignment expression.")
+        : base($"'{expression}' is not a variable and therefore cannot use the assignment operator.")
     { }
 }

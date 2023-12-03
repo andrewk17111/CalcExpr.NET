@@ -33,7 +33,6 @@ public class BinaryOperator : IExpression
             { ">", IsGreaterThan },
             { ">=", IsGreaterThanOrEqualTo },
             { "≥", IsGreaterThanOrEqualTo },
-            { "=", Assignment },
         };
 
     private Func<IExpression, IExpression, ExpressionContext, IExpression> _operation
@@ -308,20 +307,4 @@ public class BinaryOperator : IExpression
                 ? eq_num.Clone()
                 : IsGreaterThan(a, b, variables).Clone()
             : Constant.UNDEFINED;
-
-    private static IExpression Assignment(IExpression a, IExpression b, ExpressionContext variables)
-    {
-        IExpression b_eval = b.Evaluate(variables);
-
-        if (a is Variable v)
-        {
-            variables ??= new ExpressionContext();
-            variables[v.Name] = b_eval;
-            return b_eval.Clone();
-        }
-        else
-        {
-            throw new InvalidAssignmentException(new BinaryOperator("=", a, b));
-        }
-    }
 }
