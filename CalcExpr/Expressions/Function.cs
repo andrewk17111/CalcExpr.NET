@@ -2,7 +2,7 @@
 
 namespace CalcExpr.Expressions;
 
-public class Function : IExpression
+public class Function : IFunction
 {
     private readonly IReadOnlyList<string> _parameters;
 
@@ -50,4 +50,9 @@ public class Function : IExpression
 
     public string ToString(string? format)
         => $"";
+}
+
+public interface IFunction : IExpression
+{
+    public string[] Parameters { get; }
 }

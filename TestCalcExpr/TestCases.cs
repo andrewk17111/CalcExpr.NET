@@ -506,6 +506,25 @@ public class TestCases
             new Number(0)),
         new TestCase("is_num(3+4)", new FunctionCall("is_num",
             new IExpression[] { new BinaryOperator("+", new Number(3), new Number(4)) }), new Number(0)),
+        new TestCase("l(1, 2, 3, 4)", new FunctionCall("l",
+            new IExpression[] { new Number(1), new Number(2), new Number(3), new Number(4) }), new Number(10)),
+        new TestCase("triangle(4)", new FunctionCall("triangle", new IExpression[] { new Number(4) }), new Number(10)),
+        new TestCase("dist = (x, y) => (((x - 0)^2)+((y)^2)) ^ (1/2)", new AssignmentOperator(new Variable("dist"),
+            new LambdaFunction(new string[] { "x", "y" }, new BinaryOperator("^", new Parentheses(
+                new BinaryOperator("+", new Parentheses(new BinaryOperator("^", new Parentheses(new BinaryOperator("-",
+                        new Variable("x"), new Number(0))), new Number(2))), new Parentheses(new BinaryOperator("^",
+                    new Parentheses(new Variable("y")), new Number(2))))), new Parentheses(new BinaryOperator("/",
+                        new Number(1), new Number(2)))))), new LambdaFunction(new string[] { "x", "y" },
+            new BinaryOperator("^", new Parentheses(new BinaryOperator("+", new Parentheses(new BinaryOperator("^",
+                    new Parentheses(new BinaryOperator("-", new Variable("x"), new Number(0))), new Number(2))),
+                new Parentheses(new BinaryOperator("^", new Parentheses(new Variable("y")), new Number(2))))),
+                    new Parentheses(new BinaryOperator("/", new Number(1), new Number(2)))))),
+        new TestCase("get_pi = () => pi", new AssignmentOperator(new Variable("get_pi"),
+            new LambdaFunction(Array.Empty<string>(), new Constant("pi"))), new LambdaFunction(Array.Empty<string>(),
+            new Constant("pi"))),
+        new TestCase("trig = n => triangle(n)", new LambdaFunction(new string[] { "x", "y" },
+            new FunctionCall("triangle", new IExpression[] { new Variable("n") })), new FunctionCall("triangle",
+            new IExpression[] { new Variable("n") })),
     };
 
     public readonly static Dictionary<string, IExpression> Variables = new Dictionary<string, IExpression>()

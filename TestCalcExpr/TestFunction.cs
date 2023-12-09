@@ -36,6 +36,29 @@ public class TestFunction
     }
 
     /// <summary>
+    /// Tests that the values of the LambdaFunction are the same as the values passed into its constructor.
+    /// </summary>
+    [TestMethod]
+    public void TestLambdaFunctionInit()
+    {
+        (string[] args, IExpression)[] test_cases = new(string[], IExpression)[]
+        {
+            (new string[] { "x" }, new BinaryOperator("+", new Variable("x"), new Number(1))),
+            (new string[] { "x", "y" }, new BinaryOperator("+", new Variable("x"), new Variable("y"))),
+            (new string[] { "x", "y", "z" }, new BinaryOperator("+", new BinaryOperator("+", new Variable("x"),
+                new Variable("y")), new Variable("z"))),
+        };
+
+        foreach ((string[] args, IExpression body) in test_cases)
+        {
+            LambdaFunction lambda_function = new LambdaFunction(args, body);
+
+            Assert.AreEqual(args, lambda_function.Parameters);
+            Assert.AreEqual(body, lambda_function.Body);
+        }
+    }
+
+    /// <summary>
     /// Tests that the values of the FunctionCall are the same as the values passed into the FunctionCall's constructor.
     /// </summary>
     [TestMethod]
@@ -54,6 +77,26 @@ public class TestFunction
             for (int i = 0; i < args.Length; i++)
                 Assert.AreEqual(args[i], function_call.Arguments[i]);
         }
+    }
+
+    /// <summary>
+    /// Tests that the LambdaFunction converts to a string properly.
+    /// </summary>
+    [TestMethod]
+    public void TestLambdaFunctionToString()
+    {
+        Dictionary<LambdaFunction, string> test_cases = new Dictionary<LambdaFunction, string>
+        {
+            { new LambdaFunction(new string[] { "x" }, new BinaryOperator("+", new Variable("x"), new Number(1))),
+                "(x)=>x+1" },
+            { new LambdaFunction(new string[] { "x", "y" }, new BinaryOperator("+", new Variable("x"),
+                new Variable("y"))), "(x,y)=>x+y" },
+            { new LambdaFunction(new string[] { "x", "y", "z" }, new BinaryOperator("+", new BinaryOperator("+",
+                new Variable("x"), new Variable("y")), new Variable("z"))), "(x,y,z)=>x+y+z" },
+        };
+
+        foreach (LambdaFunction func in test_cases.Keys)
+            Assert.AreEqual(test_cases[func], func.ToString());
     }
 
     /// <summary>
