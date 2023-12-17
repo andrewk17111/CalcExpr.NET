@@ -53,7 +53,9 @@ public class TestFunction
         {
             LambdaFunction lambda_function = new LambdaFunction(args, body);
 
-            Assert.AreEqual(args, lambda_function.Parameters);
+            for (int i = 0; i < args.Length; i++)
+                Assert.AreEqual(args[i], lambda_function.Parameters[i]);
+            
             Assert.AreEqual(body, lambda_function.Body);
         }
     }

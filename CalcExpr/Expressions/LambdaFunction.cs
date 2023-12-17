@@ -36,10 +36,12 @@ public class LambdaFunction : IFunction
         => throw new NotImplementedException();
 
     public override bool Equals(object? obj)
-        => throw new NotImplementedException();
+        => obj is LambdaFunction lambda && lambda.Parameters.Length == Parameters.Length &&
+            lambda.Parameters.Select((arg, i) => arg == Parameters[i]).Aggregate((a, b) => a && b) &&
+            lambda.Body == Body;
 
     public override int GetHashCode()
-        => throw new NotImplementedException();
+        => Parameters.GetHashCode();
 
     public override string ToString()
         => throw new NotImplementedException();
