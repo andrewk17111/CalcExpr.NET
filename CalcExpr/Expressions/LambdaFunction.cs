@@ -44,8 +44,8 @@ public class LambdaFunction : IFunction
         => Parameters.GetHashCode();
 
     public override string ToString()
-        => throw new NotImplementedException();
+        => ToString(null);
 
     public string ToString(string? format)
-        => throw new NotImplementedException();
+        => $"({String.Join(",", Parameters)})=>{Body.ToString(format)}";
 }

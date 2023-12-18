@@ -97,8 +97,8 @@ public class TestFunction
                 new Variable("x"), new Variable("y")), new Variable("z"))), "(x,y,z)=>x+y+z" },
         };
 
-        foreach (LambdaFunction func in test_cases.Keys)
-            Assert.AreEqual(test_cases[func], func.ToString());
+        foreach (KeyValuePair<LambdaFunction, string> func in test_cases)
+            Assert.AreEqual(func.Value, func.Key.ToString());
     }
 
     /// <summary>
