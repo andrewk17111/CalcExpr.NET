@@ -22,6 +22,7 @@ public class TestParser
             ("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
             ("Token", @"\[\d+\]"),
             ("FunctionCall", null),
+            ("LambdaFunction", @"({Variable}|\(\s*((\s*{Variable}\s*,)*\s*{Variable}\s*)?\))\s*=>"),
             ("Parentheses", null),
             ("WithParentheses", @"\(|\)"),
             ("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})"),
@@ -48,6 +49,8 @@ public class TestParser
 
             Assert.AreEqual(rule.Name, default_rules[i].Name);
             Assert.AreEqual(default_rules[i].Regex, rule is RegexRule regex_rule ? regex_rule.RegularExpression : null);
+            Assert.AreEqual(parser.GetGrammarRule(rule.Name), rule);
+            Assert.AreEqual(parser.GetGrammarRule(i), rule);
         }
 
         parser = new Parser(new Rule[] { CUSTOM_RULE });
@@ -77,6 +80,7 @@ public class TestParser
 
         foreach (TestCase test_case in TestCases.Expressions)
         {
+            Console.WriteLine(test_case.Parsed);
             parser.Parse(test_case.ExpressionString);
             Assert.IsTrue(parser.ContainsCache(test_case.ExpressionString));
             parser.RemoveCache(test_case.ExpressionString);

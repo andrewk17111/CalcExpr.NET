@@ -11,9 +11,9 @@ public class LambdaFunction : IFunction
     public string[] Parameters
         => _parameters.ToArray();
 
-    public LambdaFunction(string[] parameters, IExpression body)
+    public LambdaFunction(IEnumerable<string> parameters, IExpression body)
     {
-        _parameters = parameters;
+        _parameters = parameters.ToArray();
         Body = body;
     }
 
@@ -36,9 +36,9 @@ public class LambdaFunction : IFunction
         => throw new NotImplementedException();
 
     public override bool Equals(object? obj)
-        => obj is LambdaFunction lambda && lambda.Parameters.Length == Parameters.Length &&
-            lambda.Parameters.Select((arg, i) => arg == Parameters[i]).Aggregate((a, b) => a && b) &&
-            lambda.Body == Body;
+        => obj is not null && obj is LambdaFunction lambda && lambda.Parameters.Length == Parameters.Length &&
+            (!Parameters.Any() || lambda.Parameters.Select((arg, i) => arg == Parameters[i])
+                .Aggregate((a, b) => a && b)) && lambda.Body.Equals(Body);
 
     public override int GetHashCode()
         => Parameters.GetHashCode();

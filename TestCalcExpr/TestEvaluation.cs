@@ -31,14 +31,10 @@ public class TestEvaluation
             ExpressionContext context = new ExpressionContext(TestCases.Variables, TestCases.Functions);
             IExpression start = test_case.Parsed;
 
-            Console.WriteLine(test_case.ExpressionString);
-
             for (int i = 0; i < test_case.StepEvaluated.Length; i++)
             {
                 IExpression evaluated = start.StepEvaluate(context);
 
-                // Console.WriteLine($"\t{start} | {evaluated} `{test_case.StepEvaluated[i]}`");
-                
                 if (test_case.StepEvaluated[i] is Number result_num && evaluated is Number evaluated_num)
                     Assert.AreEqual(Math.Round(result_num.Value, DIGITS), Math.Round(evaluated_num.Value, DIGITS));
                 else

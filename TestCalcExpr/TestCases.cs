@@ -522,9 +522,10 @@ public class TestCases
         new TestCase("get_pi = () => pi", new AssignmentOperator(new Variable("get_pi"),
             new LambdaFunction(Array.Empty<string>(), new Constant("pi"))), new LambdaFunction(Array.Empty<string>(),
             new Constant("pi"))),
-        new TestCase("trig = n => triangle(n)", new LambdaFunction(new string[] { "x", "y" },
-            new FunctionCall("triangle", new IExpression[] { new Variable("n") })), new FunctionCall("triangle",
-            new IExpression[] { new Variable("n") })),
+        new TestCase("trig = n => triangle(n)", new AssignmentOperator(new Variable("trig"),
+            new LambdaFunction(new string[] { "n" }, new FunctionCall("triangle",
+                new IExpression[] { new Variable("n") }))),
+            new FunctionCall("triangle", new IExpression[] { new Variable("n") })),
     };
 
     public readonly static Dictionary<string, IExpression> Variables = new Dictionary<string, IExpression>()

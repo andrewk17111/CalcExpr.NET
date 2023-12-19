@@ -28,6 +28,8 @@ public class Parser
             new ReferenceRegexRule("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
             new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall),
+            new NestedRegexRule("LambdaFunction", @"({Variable}|\(\s*((\s*{Variable}\s*,)*\s*{Variable}\s*)?\))\s*=>",
+                RegexRuleOptions.Left | RegexRuleOptions.PadReferences | RegexRuleOptions.Trim, ParseLambdaFunction),
             new Rule("Parentheses", ParseParentheses, MatchParentheses),
             new RegexRule("WithParentheses", @"\(|\)", RegexOptions.None, ParseWithParentheses),
             new NestedRegexRule("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})",
@@ -308,6 +310,29 @@ public class Parser
         return false;
     }
 
+    /// <summary>
+    /// Gets a <see cref="Rule"/> from the grammar based on the specified name.
+    /// </summary>
+    /// <param name="name">The name of the grammar rule.</param>
+    /// <returns>The <see cref="Rule"/> in the grammar with the name <paramref name="name"/>.</returns>
+    public Rule? GetGrammarRule(string name)
+    {
+        int idx = 0;
+
+        while (idx < _grammar.Count && _grammar[idx].Name != name)
+            idx++;
+
+        return GetGrammarRule(idx);
+    }
+
+    /// <summary>
+    /// Gets a <see cref="Rule"/> from the grammar based on the specified index.
+    /// </summary>
+    /// <param name="index">The index of the grammar rule.</param>
+    /// <returns>The <see cref="Rule"/> in the grammar at the index of <paramref name="index"/>.</returns>
+    public Rule? GetGrammarRule(int index)
+        => index >= 0 && index < _grammar.Count ? _grammar[index] : null;
+
     private Token? MatchParentheses(string input, IEnumerable<Rule> rules)
     {
         input = input.Trim();
@@ -367,11 +392,11 @@ public class Parser
 
     private IExpression ParseFunctionCall(string input, Token token, Parser parser)
     {
-        Match function_name = Regex.Match(input, "^([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
+        Match function_name = Regex.Match(input, @"(?<=^\s*)([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
         string tokenized_args = TokenizeInput(token.Value[(function_name.Length + 1)..^1], out Token[] tokens);
 
         string[] args = tokenized_args
-            .Split(",")
+            .Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Select(arg => !arg.Contains('[')
                 ? arg
                 : Regex.Replace(arg, @"\[\d+\]", match => tokens[Convert.ToInt32(match.Value[1..^1])]))
@@ -379,6 +404,11 @@ public class Parser
 
         return new FunctionCall(function_name.Value, args.Select(arg => parser.Parse(arg)));
     }
+
+    private IExpression ParseLambdaFunction(string input, Token token, Parser parser)
+        => new LambdaFunction(Regex.Match(token.Value.Trim(), @"(?<=^\(?)[^\(]*?(?=\)?\s*=>)").Value
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+            parser.Parse(input[(token.Index + token.Length)..]));
 
     private IExpression ParseParentheses(string input, Token token, Parser parser)
         => new Parentheses(Parse(token));
