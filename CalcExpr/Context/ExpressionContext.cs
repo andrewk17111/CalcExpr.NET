@@ -1,4 +1,7 @@
-﻿using CalcExpr.Expressions;
+﻿using CalcExpr.Attributes;
+using CalcExpr.Expressions;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace CalcExpr.Context;
 
@@ -41,6 +44,31 @@ public class ExpressionContext
                     funcs.Add(var, func);
                 else
                     vars.Add(var, variables[var]);
+
+        if (functions is null)
+        {
+            foreach (Type t in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (!t.IsClass || t.Namespace != "CalcExpr.BuiltInFunctions")
+                    continue;
+
+                foreach (MethodInfo method in t.GetMethods())
+                {
+                    BuiltInFunctionAttribute? bif = (BuiltInFunctionAttribute?)method.GetCustomAttribute(typeof(BuiltInFunctionAttribute));
+
+                    if (bif is null || method.ReturnType != typeof(IExpression) ||
+                        method.GetParameters().Any(p => !(p.ParameterType == typeof(IExpression) ||
+                            p.ParameterType == typeof(ExpressionContext))))
+                        continue;
+                    
+                    funcs.Add(bif.Name, new Function(method.CreateDelegate(Expression.GetDelegateType(method
+                        .GetParameters()
+                        .Select(p => p.ParameterType)
+                        .Append(method.ReturnType)
+                        .ToArray()))));
+                }
+            }
+        }
 
         _variables = vars;
         _functions = funcs;

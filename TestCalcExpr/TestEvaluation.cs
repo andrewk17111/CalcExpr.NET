@@ -13,7 +13,12 @@ public class TestEvaluation
     {
         foreach (TestCase test_case in TestCases.Expressions)
         {
-            ExpressionContext context = new ExpressionContext(TestCases.Variables, TestCases.Functions);
+            Console.WriteLine(test_case.ExpressionString);
+            ExpressionContext context = new ExpressionContext(TestCases.Variables);
+
+            foreach (string func in TestCases.Functions.Keys)
+                context[func] = TestCases.Functions[func];
+
             IExpression evaluated = test_case.Parsed.Evaluate(context);
 
             if (test_case.Evaluated is Number result_num && evaluated is Number evaluated_num)
@@ -28,7 +33,11 @@ public class TestEvaluation
     {
         foreach (TestCase test_case in TestCases.Expressions)
         {
-            ExpressionContext context = new ExpressionContext(TestCases.Variables, TestCases.Functions);
+            ExpressionContext context = new ExpressionContext(TestCases.Variables);
+
+            foreach (string func in TestCases.Functions.Keys)
+                context[func] = TestCases.Functions[func];
+
             IExpression start = test_case.Parsed;
 
             for (int i = 0; i < test_case.StepEvaluated.Length; i++)

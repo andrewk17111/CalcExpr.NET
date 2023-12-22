@@ -1,4 +1,5 @@
-﻿using CalcExpr.Context;
+﻿using CalcExpr.BuiltInFunctions;
+using CalcExpr.Context;
 using CalcExpr.Exceptions;
 
 namespace CalcExpr.Expressions;
@@ -18,11 +19,11 @@ public class BinaryOperator : IExpression
             { "%", EuclideanModulus },
             { "%%", TruncatedModulus },
             { "//", IntDivide },
-            { "&&", And },
-            { "∧", And },
-            { "||", Or },
-            { "∨", Or },
-            { "⊕", Xor },
+            { "&&", (a, b, cxt) => LogicalFunctions.And(a.Evaluate(cxt), b.Evaluate(cxt)) },
+            { "∧", (a, b, cxt) => LogicalFunctions.And(a.Evaluate(cxt), b.Evaluate(cxt)) },
+            { "||", (a, b, cxt) => LogicalFunctions.Or(a.Evaluate(cxt), b.Evaluate(cxt)) },
+            { "∨", (a, b, cxt) => LogicalFunctions.Or(a.Evaluate(cxt), b.Evaluate(cxt)) },
+            { "⊕", (a, b, cxt) => LogicalFunctions.Xor(a.Evaluate(cxt), b.Evaluate(cxt)) },
             { "==", IsEqual },
             { "!=", IsNotEqual },
             { "≠", IsNotEqual },
@@ -224,26 +225,6 @@ public class BinaryOperator : IExpression
         => a.Evaluate(variables) is Number a_num && b.Evaluate(variables) is Number b_num
             ? new Number(Math.Sign(b_num.Value) * Math.Floor(a_num.Value / Math.Abs(b_num.Value)))
             : Constant.UNDEFINED;
-
-    private static IExpression And(IExpression a, IExpression b, ExpressionContext variables)
-        => (a.Evaluate(variables) is Number a_num && a_num.Value == 0) ||
-            (b.Evaluate(variables) is Number b_num && b_num.Value == 0)
-            ? new Number(0)
-            : new Number(1);
-
-    private static IExpression Or(IExpression a, IExpression b, ExpressionContext variables)
-        => a.Evaluate(variables) is Number a_num && a_num.Value == 0 &&
-            b.Evaluate(variables) is Number b_num && b_num.Value == 0
-            ? new Number(0)
-            : new Number(1);
-
-    private static IExpression Xor(IExpression a, IExpression b, ExpressionContext variables)
-    {
-        bool a_bool = a.Evaluate(variables) is Number a_num && a_num.Value != 0;
-        bool b_bool = b.Evaluate(variables) is Number b_num && b_num.Value != 0;
-
-        return new Number((a_bool || b_bool) && !(a_bool && b_bool) ? 1 : 0);
-    }
 
     private static IExpression IsEqual(IExpression a, IExpression b, ExpressionContext variables)
     {

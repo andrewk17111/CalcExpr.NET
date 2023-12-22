@@ -531,6 +531,25 @@ public class TestCases
         new TestCase("inc(1)+n", new BinaryOperator("+", new FunctionCall("inc", new IExpression[] { new Number(1) }),
                 new Variable("n")), new Number(7), new BinaryOperator("+", new Number(2), new Variable("n")),
             new BinaryOperator("+", new Number(2), new Number(5))),
+        new TestCase("and(1, 2)", new FunctionCall("and", new IExpression[] { new Number(1), new Number(2) }),
+            new Number(1)),
+        new TestCase("or(1, 2)", new FunctionCall("or", new IExpression[] { new Number(1), new Number(2) }),
+            new Number(1)),
+        new TestCase("xor(1, 2)", new FunctionCall("xor", new IExpression[] { new Number(1), new Number(2) }),
+            new Number(0)),
+        new TestCase("not(1)", new FunctionCall("not", new IExpression[] { new Number(1) }),
+            new Number(0)),
+        new TestCase("if(1, 2, 3)", new FunctionCall("if", new IExpression[] { new Number(1), new Number(2),
+                new Number(3) }),
+            new Number(2)),
+        new TestCase("is_na(dne)", new FunctionCall("is_na", new IExpression[] { new Constant("dne") }),
+            new Number(1)),
+        new TestCase("is_na(1)", new FunctionCall("is_na", new IExpression[] { new Number(1) }),
+            new Number(0)),
+        new TestCase("is_num(1)", new FunctionCall("is_num", new IExpression[] { new Number(1) }),
+            new Number(1)),
+        new TestCase("is_num(abcd)", new FunctionCall("is_num", new IExpression[] { new Variable("abcd") }),
+            new Number(0)),
     };
 
     public readonly static Dictionary<string, IExpression> Variables = new Dictionary<string, IExpression>()
@@ -549,7 +568,6 @@ public class TestCases
     {
         { "f", new Function(F) },
         { "g", new Function(G) },
-        { "is_num", new Function(IsNum) },
         { "l", new LambdaFunction(new string[] { "a", "b", "c", "d" }, new BinaryOperator("+", new BinaryOperator("+",
             new BinaryOperator("+", new Variable("a"), new Variable("b")), new Variable("c")), new Variable("d"))) },
         { "triangle", new LambdaFunction(new string[] { "n" }, new BinaryOperator("/", new BinaryOperator("*",
@@ -564,9 +582,6 @@ public class TestCases
 
     public static IExpression G(IExpression m, IExpression x, IExpression b)
         => new BinaryOperator("+", new BinaryOperator("*", m, x), b).Evaluate();
-
-    public static IExpression IsNum(IExpression x, ExpressionContext _)
-        => x is Number ? Constant.TRUE : Constant.FALSE;
 
     public static IExpression P(IExpression x)
         => x is Number n ? new Number(n.Value + 1) : Constant.UNDEFINED;
