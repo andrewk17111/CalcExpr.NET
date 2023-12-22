@@ -33,7 +33,7 @@ public class LambdaFunction : IFunction
         => throw new NotImplementedException();
 
     public IExpression Clone()
-        => throw new NotImplementedException();
+        => new LambdaFunction(Parameters, Body.Clone());
 
     public override bool Equals(object? obj)
         => obj is not null && obj is LambdaFunction lambda && lambda.Parameters.Length == Parameters.Length &&
