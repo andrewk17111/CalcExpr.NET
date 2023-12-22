@@ -18,19 +18,24 @@ public class LambdaFunction : IFunction
     }
 
     public static IExpression Invoke(IExpression body, ExpressionContext context, IExpression[] arguments)
-        => throw new NotImplementedException();
+    {
+        ExpressionContext inner_context = new ExpressionContext();
+        IExpression result = body.Evaluate(inner_context);
+
+        return result;
+    }
 
     public IExpression Evaluate()
-        => throw new NotImplementedException();
+        => Clone();
 
     public IExpression Evaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => Clone();
 
     public IExpression StepEvaluate()
-        => throw new NotImplementedException();
+        => Clone();
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => Clone();
 
     public IExpression Clone()
         => new LambdaFunction(Parameters, Body.Clone());
