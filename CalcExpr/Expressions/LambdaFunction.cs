@@ -17,10 +17,21 @@ public class LambdaFunction : IFunction
         Body = body;
     }
 
-    public static IExpression Invoke(IExpression body, ExpressionContext context, IExpression[] arguments)
+    public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
-        ExpressionContext inner_context = new ExpressionContext();
-        IExpression result = body.Evaluate(inner_context);
+        if (Parameters.Length != arguments.Length)
+            return Constant.UNDEFINED;
+
+        ExpressionContext inner_context = context.Clone();
+
+        foreach ((string parameter, IExpression argument) in Parameters.Zip(arguments))
+            inner_context[parameter] = argument;
+
+        IExpression result = Body.Evaluate(inner_context);
+
+        foreach (string variable in inner_context.Variables)
+            if (!Parameters.Contains(variable))
+                context[variable] = inner_context[variable];
 
         return result;
     }

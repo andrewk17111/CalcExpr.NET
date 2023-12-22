@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Context;
+using System;
 
 namespace CalcExpr.Expressions;
 
@@ -23,8 +24,29 @@ public class Function : IFunction
         Body = body;
     }
 
+    public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
+    {
+        List<object?> args = new List<object?>();
+
+        if (RequiresContext)
+        {
+            bool[] is_context = Body.Method.GetParameters()
+                .Select(p => p.ParameterType == typeof(ExpressionContext))
+                .ToArray();
+            int arg_i = 0;
+
+            for (int i = 0; i < is_context.Length; i++)
+                args.Add(is_context[i] ? context : arguments.ElementAt(arg_i++));
+        }
+        else
+        {
+            args.AddRange(arguments.Select(arg => arg.Evaluate(context)));
+        }
+
+        return (IExpression?)Body.Method.Invoke(this, args.ToArray()) ?? Constant.UNDEFINED;
+    }
     public IExpression Evaluate()
-        => Clone();
+    => Clone();
 
     public IExpression Evaluate(ExpressionContext context)
         => Clone();
@@ -55,4 +77,15 @@ public class Function : IFunction
 public interface IFunction : IExpression
 {
     public string[] Parameters { get; }
+
+    public static ExpressionContext ContextReconciliation(ExpressionContext outer_context,
+        ExpressionContext inner_context, IEnumerable<string> parameters)
+    {
+        foreach (string variable in inner_context.Variables.Except(parameters))
+            outer_context[variable] = inner_context[variable];
+
+        return outer_context;
+    }
+
+    public IExpression Invoke(IExpression[] arguments, ExpressionContext context);
 }

@@ -524,8 +524,11 @@ public class TestCases
             new Constant("pi"))),
         new TestCase("trig = n => triangle(n)", new AssignmentOperator(new Variable("trig"),
             new LambdaFunction(new string[] { "n" }, new FunctionCall("triangle",
-                new IExpression[] { new Variable("n") }))),
-            new FunctionCall("triangle", new IExpression[] { new Variable("n") })),
+                new IExpression[] { new Variable("n") }))), new LambdaFunction(new string[] { "n" },
+                    new FunctionCall("triangle", new IExpression[] { new Variable("n") }))),
+        new TestCase("inc(1)+n", new BinaryOperator("+", new FunctionCall("inc", new IExpression[] { new Number(1) }),
+                new Variable("n")), new Number(7), new BinaryOperator("+", new Number(2), new Variable("n")),
+            new BinaryOperator("+", new Number(2), new Number(5))),
     };
 
     public readonly static Dictionary<string, IExpression> Variables = new Dictionary<string, IExpression>()
@@ -537,13 +540,21 @@ public class TestCases
         { "αβγ_123", new Number(5) },
         { "abcd_αβγ_xyz", new Number(6) },
         { "p", new Function(P) },
+        { "n", new Number(5) }
     };
 
-    public readonly static Dictionary<string, Function> Functions = new Dictionary<string, Function>()
+    public readonly static Dictionary<string, IFunction> Functions = new Dictionary<string, IFunction>()
     {
         { "f", new Function(F) },
         { "g", new Function(G) },
         { "is_num", new Function(IsNum) },
+        { "l", new LambdaFunction(new string[] { "a", "b", "c", "d" }, new BinaryOperator("+", new BinaryOperator("+",
+            new BinaryOperator("+", new Variable("a"), new Variable("b")), new Variable("c")), new Variable("d"))) },
+        { "triangle", new LambdaFunction(new string[] { "n" }, new BinaryOperator("/", new BinaryOperator("*",
+            new Variable("n"), new Parentheses(new BinaryOperator("+", new Variable("n"), new Number(1)))),
+            new Number(2))) },
+        { "inc", new LambdaFunction(new string[] { "n" }, new AssignmentOperator(new Variable("n"),
+            new BinaryOperator("+", new Variable("n"), new Number(1)))) }
     };
 
     public static IExpression F(IExpression x)
