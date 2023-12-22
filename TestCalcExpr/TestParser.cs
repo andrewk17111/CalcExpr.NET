@@ -36,7 +36,7 @@ public class TestParser
             ("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})"),
             ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
             ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
-            ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)"),
+            ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false|undefined|dne)"),
             ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
             ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),
         };

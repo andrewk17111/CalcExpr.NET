@@ -462,6 +462,8 @@ public class TestCases
         new TestCase("e", new Constant("e"), new Number(Math.E)),
         new TestCase("true", new Constant("true"), new Number(1)),
         new TestCase("false", new Constant("false"), new Number(0)),
+        new TestCase("undefined", new Constant("undefined")),
+        new TestCase("dne", new Constant("dne")),
         new TestCase("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz ",
             new Variable("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"), new Number(2)),
         new TestCase("ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω",
