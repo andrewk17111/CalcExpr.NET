@@ -61,11 +61,12 @@ public class ExpressionContext
                             p.ParameterType == typeof(ExpressionContext))))
                         continue;
                     
-                    funcs.Add(bif.Name, new Function(method.CreateDelegate(Expression.GetDelegateType(method
-                        .GetParameters()
-                        .Select(p => p.ParameterType)
-                        .Append(method.ReturnType)
-                        .ToArray()))));
+                    foreach (string alias in bif.Aliases)
+                        funcs.Add(alias, new Function(method.CreateDelegate(Expression.GetDelegateType(method
+                            .GetParameters()
+                            .Select(p => p.ParameterType)
+                            .Append(method.ReturnType)
+                            .ToArray()))));
                 }
             }
         }

@@ -2,10 +2,10 @@
 
 public class BuiltInFunctionAttribute : Attribute
 {
-    public string Name { get; }
+    public string[] Aliases { get; }
 
-    public BuiltInFunctionAttribute(string name)
+    public BuiltInFunctionAttribute(params string[] aliases)
     {
-        Name = name;
+        Aliases = aliases;
     }
 }
