@@ -2,7 +2,11 @@
 
 namespace CalcExpr.Expressions;
 
-public class Constant : IExpression
+/// <summary>
+/// Initializes a new instance of the the <see cref="Constant"/> class.
+/// </summary>
+/// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Constant"/>.</param>
+public class Constant(string identifier) : IExpression
 {
     private static readonly Dictionary<string, IExpression> _values = new Dictionary<string, IExpression>()
     {
@@ -47,14 +51,7 @@ public class Constant : IExpression
     public static Constant NEGATIVE_INFINITY
         => new Constant("-∞");
 
-    public readonly string Identifier;
-
-    /// <summary>
-    /// Initializes a new instance of the the <see cref="Constant"/> class.
-    /// </summary>
-    /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Constant"/>.</param>
-    public Constant(string identifier)
-        => Identifier = identifier;
+    public readonly string Identifier = identifier;
 
     public IExpression Clone()
         => new Constant(Identifier);

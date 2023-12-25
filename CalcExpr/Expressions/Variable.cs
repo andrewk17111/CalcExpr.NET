@@ -2,16 +2,13 @@
 
 namespace CalcExpr.Expressions;
 
-public class Variable : IExpression
+/// <summary>
+/// Initializes a new instance of the the <see cref="Variable"/> class.
+/// </summary>
+/// <param name="name">The name of the <see cref="Variable"/> for reference.</param>
+public class Variable(string name) : IExpression
 {
-    public readonly string Name;
-
-    /// <summary>
-    /// Initializes a new instance of the the <see cref="Variable"/> class.
-    /// </summary>
-    /// <param name="name">The name of the <see cref="Variable"/> for reference.</param>
-    public Variable(string name)
-        => Name = name;
+    public readonly string Name = name;
 
     public IExpression Clone()
         => new Variable(Name);
