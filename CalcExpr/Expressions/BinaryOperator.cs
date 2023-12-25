@@ -3,7 +3,13 @@ using CalcExpr.Exceptions;
 
 namespace CalcExpr.Expressions;
 
-public class BinaryOperator : IExpression
+/// <summary>
+/// Initializes a new instance of the <see cref="BinaryOperator"/> class.
+/// </summary>
+/// <param name="op">The identifier for the operator.</param>
+/// <param name="left">The <see cref="IExpression"/> left operand for this operator.</param>
+/// <param name="right">The <see cref="IExpression"/> right operand for this operator.</param>
+public class BinaryOperator(string op, IExpression left, IExpression right) : IExpression
 {
     private static readonly Dictionary<string, Func<IExpression, IExpression, ExpressionContext, IExpression>> _operators
         = new Dictionary<string, Func<IExpression, IExpression, ExpressionContext, IExpression>>
@@ -41,22 +47,9 @@ public class BinaryOperator : IExpression
             ? Constant.UNDEFINED
             : _operators[Identifier](a, b, vars);
 
-    public readonly string Identifier;
-    public readonly IExpression Left;
-    public readonly IExpression Right;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BinaryOperator"/> class.
-    /// </summary>
-    /// <param name="op">The identifier for the operator.</param>
-    /// <param name="left">The <see cref="IExpression"/> left operand for this operator.</param>
-    /// <param name="right">The <see cref="IExpression"/> right operand for this operator.</param>
-    public BinaryOperator(string op, IExpression left, IExpression right)
-    {
-        Identifier = op;
-        Left = left;
-        Right = right;
-    }
+    public readonly string Identifier = op;
+    public readonly IExpression Left = left;
+    public readonly IExpression Right = right;
 
     public IExpression Clone()
         => new BinaryOperator(Identifier, Left.Clone(), Right.Clone());
@@ -131,14 +124,15 @@ public class BinaryOperator : IExpression
         IExpression a_eval = a.Evaluate(variables);
         IExpression b_eval = b.Evaluate(variables);
 
-        if (a_eval is Number && b_eval is Number)
-            return new Number(((Number)a_eval).Value * ((Number)b_eval).Value).Evaluate();
+        if (a_eval is Number num_a && b_eval is Number num_b)
+            return new Number(num_a.Value * num_b.Value).Evaluate();
         else if ((a_eval is Number a_num && a_num.Value != 0 && Constant.INFINITY.Equals(b_eval)) ||
             (b_eval is Number b_num && b_num.Value != 0 && Constant.INFINITY.Equals(a_eval)) ||
             (Constant.INFINITY.Equals(a_eval) && Constant.INFINITY.Equals(b_eval)) ||
             (Constant.NEGATIVE_INFINITY.Equals(a_eval) && Constant.NEGATIVE_INFINITY.Equals(b_eval)))
             return Constant.INFINITY;
-        else if ((Constant.NEGATIVE_INFINITY.Equals(a_eval) && (b_eval is Number || Constant.INFINITY.Equals(b_eval))) ||
+        else if ((Constant.NEGATIVE_INFINITY.Equals(a_eval) && (b_eval is Number ||
+                Constant.INFINITY.Equals(b_eval))) ||
             (Constant.NEGATIVE_INFINITY.Equals(b_eval) && (a_eval is Number || Constant.INFINITY.Equals(a_eval))))
             return new UnaryOperator("-", true, Constant.INFINITY);
 

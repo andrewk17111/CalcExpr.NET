@@ -2,7 +2,15 @@
 
 namespace CalcExpr.Expressions;
 
-public class UnaryOperator : IExpression
+/// <summary>
+/// Initializes a new instance of the the <see cref="UnaryOperator"/> class.
+/// </summary>
+/// <param name="op">The identifier for the operator.</param>
+/// <param name="is_prefix">
+/// <see langword="true"/> if the operator is a prefix and <see langword="false"/> if the operator is a postfix.
+/// </param>
+/// <param name="expression">The <see cref="IExpression"/> operand for this operator.</param>
+public class UnaryOperator(string op, bool is_prefix, IExpression expression) : IExpression
 {
     private static readonly Dictionary<string, Func<IExpression, ExpressionContext, IExpression>> _prefixes
         = new Dictionary<string, Func<IExpression, ExpressionContext, IExpression>>
@@ -29,24 +37,9 @@ public class UnaryOperator : IExpression
     private Func<IExpression, ExpressionContext, IExpression> _operation
         => IsPrefix ? _prefixes[Identifier] : _postfixes[Identifier];
 
-    public readonly string Identifier;
-    public readonly bool IsPrefix;
-    public readonly IExpression Inside;
-
-    /// <summary>
-    /// Initializes a new instance of the the <see cref="UnaryOperator"/> class.
-    /// </summary>
-    /// <param name="op">The identifier for the operator.</param>
-    /// <param name="is_prefix">
-    /// <see langword="true"/> if the operator is a prefix and <see langword="false"/> if the operator is a postfix.
-    /// </param>
-    /// <param name="expression">The <see cref="IExpression"/> operand for this operator.</param>
-    public UnaryOperator(string op, bool is_prefix, IExpression expression)
-    {
-        Identifier = op;
-        IsPrefix = is_prefix;
-        Inside = expression;
-    }
+    public readonly string Identifier = op;
+    public readonly bool IsPrefix = is_prefix;
+    public readonly IExpression Inside = expression;
 
     public IExpression Clone()
         => new UnaryOperator(Identifier, IsPrefix, Inside.Clone());
@@ -309,7 +302,7 @@ public class UnaryOperator : IExpression
 
     private static int[] GetNPrimes(int length)
     {
-        List<int> primes = new List<int>() { 2, 3 };
+        List<int> primes = [2, 3];
 
         if (length < 2)
             return primes.ToArray()[..length];
@@ -330,7 +323,7 @@ public class UnaryOperator : IExpression
             i += 2;
         }
 
-        return primes.ToArray();
+        return [.. primes];
     }
 
     private static IExpression PreDecrement(IExpression x, ExpressionContext variables)

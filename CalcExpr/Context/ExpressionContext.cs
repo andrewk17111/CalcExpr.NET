@@ -2,21 +2,18 @@
 
 namespace CalcExpr.Context;
 
-public class ExpressionContext
+public class ExpressionContext(Dictionary<string, IExpression> variables)
 {
-    private Dictionary<string, IExpression> _variables;
+    private readonly Dictionary<string, IExpression> _variables = variables ?? [];
 
     public IExpression this[string variable]
     {
-        get => _variables.ContainsKey(variable) ? _variables[variable] : Constant.UNDEFINED;
+        get => _variables.TryGetValue(variable, out IExpression? value) ? value : Constant.UNDEFINED;
         set => _variables[variable] = value;
     }
 
-    public ExpressionContext() : this(new Dictionary<string, IExpression>())
+    public ExpressionContext() : this([])
     { }
-
-    public ExpressionContext(Dictionary<string, IExpression> variables)
-        => _variables = variables ?? new Dictionary<string, IExpression>();
 
     public bool SetVariable(string variable, IExpression expression)
     {

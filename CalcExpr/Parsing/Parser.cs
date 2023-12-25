@@ -9,8 +9,8 @@ namespace CalcExpr.Parsing;
 
 public class Parser
 {
-    private readonly List<Rule> _grammar = new List<Rule>();
-    private readonly Dictionary<string, IExpression> _cache = new Dictionary<string, IExpression>();
+    private readonly List<Rule> _grammar = [];
+    private readonly Dictionary<string, IExpression> _cache = [];
 
     public Rule[] Grammar
         => _grammar.ToArray();
@@ -23,8 +23,8 @@ public class Parser
     /// </summary>
     public Parser()
     {
-        _grammar = new List<Rule>()
-        {
+        _grammar =
+        [
             new ReferenceRegexRule("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
             new Rule("Parentheses", ParseParentheses, MatchParentheses),
@@ -57,7 +57,7 @@ public class Parser
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseVariable),
             new RegexRule("Number", @"((\d+\.?\d*)|(\d*\.?\d+))", RegexRuleOptions.Only | RegexRuleOptions.Trim,
                 ParseNumber)
-        };
+        ];
     }
 
     /// <summary>
@@ -78,8 +78,7 @@ public class Parser
     /// <exception cref="Exception"></exception>
     public IExpression Parse(string input)
     {
-        if (input is null)
-            throw new ArgumentNullException(nameof(input));
+        ArgumentNullException.ThrowIfNull(input);
 
         if (ContainsCache(input))
             return _cache[CleanExpressionString(input)].Clone();
@@ -110,7 +109,7 @@ public class Parser
     {
         input = Regex.Replace(input, @"[\[\]\\]", match => @$"\{match.Value}");
 
-        List<Token> toks = new List<Token>();
+        List<Token> toks = [];
         string output = String.Empty;
         int start = -1;
         int depth = 0;
@@ -158,20 +157,21 @@ public class Parser
             }
         }
 
-        tokens = toks.ToArray();
+        tokens = [.. toks];
         return output;
     }
 
     private static int DetokenizeIndex(int index, string tokenized_string, Token[] tokens)
     {
-        Match[] matches = Regex.Matches(tokenized_string[..index], @"((?<=^|([^\\]([\\][\\])*))\[\d+\])|(\\[\[\]\\])")
-            .ToArray();
+        string[] matches =
+            [.. Regex.Matches(tokenized_string[..index], @"((?<=^|([^\\]([\\][\\])*))\[\d+\])|(\\[\[\]\\])")
+                .Select(m => m.Value)];
 
-        foreach (Match match in matches)
-            if (match.Value.StartsWith("\\"))
+        foreach (string match in matches)
+            if (match.StartsWith('\\'))
                 index -= 1;
             else
-                index += tokens[Convert.ToInt32(match.Value[1..^1])].Length - 3;
+                index += tokens[Convert.ToInt32(match[1..^1])].Length - 3;
 
         return index;
     }
@@ -339,7 +339,7 @@ public class Parser
         return null;
     }
 
-    private IExpression ParseParentheses(string input, Token token, Parser parser)
+    private Parentheses ParseParentheses(string input, Token token, Parser parser)
         => new Parentheses(Parse(token));
 
     private IExpression ParseWithParentheses(string input, Token _, Parser parser)
@@ -362,21 +362,21 @@ public class Parser
         throw new Exception($"The input was not in the correct format: '{input}'");
     }
 
-    private IExpression ParseBinaryOperator(string input, Token match, Parser parser)
+    private BinaryOperator ParseBinaryOperator(string input, Token match, Parser parser)
         => new BinaryOperator(match.Value, Parse(input[..match.Index]), Parse(input[(match.Index + match.Length)..]));
 
-    private IExpression ParsePrefix(string input, Token match, Parser parser)
+    private UnaryOperator ParsePrefix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, true, Parse(input[(match.Index + match.Length)..]));
 
-    private IExpression ParsePostfix(string input, Token match, Parser parser)
+    private UnaryOperator ParsePostfix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, false, Parse(input[..match.Index]));
 
-    private IExpression ParseConstant(string input, Token match, Parser parser)
+    private Constant ParseConstant(string input, Token match, Parser parser)
         => new Constant(match.Value);
 
-    private IExpression ParseVariable(string input, Token match, Parser parser)
+    private Variable ParseVariable(string input, Token match, Parser parser)
         => new Variable(match.Value);
 
-    private static IExpression ParseNumber(string input, Token match, Parser parser)
+    private static Number ParseNumber(string input, Token match, Parser parser)
         => new Number(Convert.ToDouble(match.Value));
 }

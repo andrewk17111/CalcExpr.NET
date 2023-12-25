@@ -2,16 +2,13 @@
 
 namespace CalcExpr.Expressions;
 
-public class Number : IExpression
+/// <summary>
+/// Initializes a new instance of the the <see cref="Number"/> class.
+/// </summary>
+/// <param name="value">The numeric value.</param>
+public class Number(double value) : IExpression
 {
-    public double Value { get; private set; }
-
-    /// <summary>
-    /// Initializes a new instance of the the <see cref="Number"/> class.
-    /// </summary>
-    /// <param name="value">The numeric value.</param>
-    public Number(double value)
-        => Value = value;
+    public double Value { get; private set; } = value;
 
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
