@@ -2,16 +2,13 @@
 
 namespace CalcExpr.Expressions;
 
-public class Parentheses : IExpression
+/// <summary>
+/// Initializes a new instance of the <see cref="Parentheses"/> class.
+/// </summary>
+/// <param name="inside">The <see cref="IExpression"/> inside of this <see cref="Parentheses"/>.</param>
+public class Parentheses(IExpression inside) : IExpression
 {
-    public readonly IExpression Inside;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Parentheses"/> class.
-    /// </summary>
-    /// <param name="inside">The <see cref="IExpression"/> inside of this <see cref="Parentheses"/>.</param>
-    public Parentheses(IExpression inside)
-        => Inside = inside;
+    public readonly IExpression Inside = inside;
 
     public IExpression Clone()
         => new Parentheses(Inside.Clone());

@@ -3,10 +3,22 @@ using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing.Rules;
 
-public class RegexRule : Rule
+/// <summary>
+/// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
+/// </summary>
+/// <param name="name">The name of the <see cref="RegexRule"/>.</param>
+/// <param name="regex">The regex <see cref="string"/> to match an expression <see cref="string"/> to.</param>
+/// <param name="options">
+/// The options for the regular expression along with additional options finding a match.
+/// </param>
+/// <param name="parse">
+/// The function to use to parse a <see cref="string"/> into an <see cref="IExpression"/>.
+/// </param>
+public class RegexRule(string name, string regex, RegexRuleOptions options,
+    Func<string, Token, Parser, IExpression> parse) : Rule(name, parse, null!)
 {
-    public readonly string RegularExpression;
-    public readonly RegexRuleOptions Options;
+    public readonly string RegularExpression = regex;
+    public readonly RegexRuleOptions Options = options;
     
     public RegexOptions RegularOptions
         => (RegexOptions)((int)Options & 0x0000FFFF);
@@ -24,25 +36,6 @@ public class RegexRule : Rule
         Func<string, Token, Parser, IExpression> parse)
         : this(name, regex, (RegexRuleOptions)options, parse)
     { }
-
-    /// <summary>
-    /// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
-    /// </summary>
-    /// <param name="name">The name of the <see cref="RegexRule"/>.</param>
-    /// <param name="regex">The regex <see cref="string"/> to match an expression <see cref="string"/> to.</param>
-    /// <param name="options">
-    /// The options for the regular expression along with additional options finding a match.
-    /// </param>
-    /// <param name="parse">
-    /// The function to use to parse a <see cref="string"/> into an <see cref="IExpression"/>.
-    /// </param>
-    public RegexRule(string name, string regex, RegexRuleOptions options,
-        Func<string, Token, Parser, IExpression> parse)
-        : base(name, parse, null!)
-    {
-        RegularExpression = regex;
-        Options = options;
-    }
 
     public override Token? Match(string input, IEnumerable<Rule> rules)
         => FindMatch(input, RegularExpression, Options);

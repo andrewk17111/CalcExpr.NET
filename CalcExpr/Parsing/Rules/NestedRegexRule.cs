@@ -4,7 +4,19 @@ using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing.Rules;
 
-public class NestedRegexRule : RegexRule
+/// <summary>
+/// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
+/// </summary>
+/// <param name="name">The name of the <see cref="NestedRegexRule"/>.</param>
+/// <param name="regex">The regex <see cref="string"/> to match an expression <see cref="string"/> to.</param>
+/// <param name="options">
+/// The options for the regular expression along with additional options finding a match.
+/// </param>
+/// <param name="parse">
+/// The function to use to parse a <see cref="string"/> into an <see cref="IExpression"/>.
+/// </param>
+public class NestedRegexRule(string name, string regex, RegexRuleOptions options,
+    Func<string, Token, Parser, IExpression> parse) : RegexRule(name, regex, options, parse)
 {
     /// <summary>
     /// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
@@ -20,25 +32,9 @@ public class NestedRegexRule : RegexRule
         : this(name, regex, (RegexRuleOptions)options, parse)
     { }
 
-    /// <summary>
-    /// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
-    /// </summary>
-    /// <param name="name">The name of the <see cref="NestedRegexRule"/>.</param>
-    /// <param name="regex">The regex <see cref="string"/> to match an expression <see cref="string"/> to.</param>
-    /// <param name="options">
-    /// The options for the regular expression along with additional options finding a match.
-    /// </param>
-    /// <param name="parse">
-    /// The function to use to parse a <see cref="string"/> into an <see cref="IExpression"/>.
-    /// </param>
-    public NestedRegexRule(string name, string regex, RegexRuleOptions options,
-        Func<string, Token, Parser, IExpression> parse)
-        : base(name, regex, options, parse)
-    { }
-
     public override Token? Match(string input, IEnumerable<Rule> rules)
     {
-        Dictionary<string, string> preprocessed_rules = new Dictionary<string, string>();
+        Dictionary<string, string> preprocessed_rules = [];
         string regex = ReplaceRules(RegularExpression, rules, Options, ref preprocessed_rules);
 
         return FindMatch(input, regex, Options);
@@ -49,7 +45,7 @@ public class NestedRegexRule : RegexRule
     {
         List<Match> matches = Regex.Matches(regular_expression, @"(?<=(^|[^\\](\\\\)*){)\w+(?=})").Distinct().ToList();
 
-        if (matches.Any())
+        if (matches.Count > 0)
         {
             string regex = regular_expression;
             Dictionary<string, int> rule_names = rules.Select((r, i) => new KeyValuePair<string, int>(r.Name, i))
@@ -59,24 +55,24 @@ public class NestedRegexRule : RegexRule
             {
                 string sub_regex;
 
-                if (preprocessed_rules.ContainsKey(match.Value))
+                if (preprocessed_rules.TryGetValue(match.Value, out string? value))
                 {
-                    sub_regex = preprocessed_rules[match.Value];
+                    sub_regex = value;
                 }
-                else if (rule_names.ContainsKey(match.Value))
+                else if (rule_names.TryGetValue(match.Value, out int idx))
                 {
-                    if (rules.ElementAt(rule_names[match.Value]) is NestedRegexRule nrr)
+                    if (rules.ElementAt(idx) is NestedRegexRule nrr)
                     {
                         sub_regex = ReplaceRules(nrr.RegularExpression, rules, options, ref preprocessed_rules);
                         preprocessed_rules.Add(match.Value, sub_regex);
                     }
-                    else if (rules.ElementAt(rule_names[match.Value]) is RegexRule rr)
+                    else if (rules.ElementAt(idx) is RegexRule rr)
                     {
                         sub_regex = rr.RegularExpression;
                     }
                     else
                     {
-                        throw new NonRegexRuleException(match.Value, rules.ElementAt(rule_names[match.Value]).GetType());
+                        throw new NonRegexRuleException(match.Value, rules.ElementAt(idx).GetType());
                     }
 
                     rule_names.Remove(match.Value);
