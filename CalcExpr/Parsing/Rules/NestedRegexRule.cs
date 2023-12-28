@@ -45,7 +45,7 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
     {
         List<Match> matches = Regex.Matches(regular_expression, @"(?<=(^|[^\\](\\\\)*){)\w+(?=})").Distinct().ToList();
 
-        if (matches.Count == 0)
+        if (matches.Count > 0)
         {
             string regex = regular_expression;
             Dictionary<string, int> rule_names = rules.Select((r, i) => new KeyValuePair<string, int>(r.Name, i))
