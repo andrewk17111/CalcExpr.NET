@@ -107,6 +107,11 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
     private static IExpression Subfactorial(IExpression x, ExpressionContext variables)
     {
         IExpression x_eval = x.Evaluate(variables);
+        
+        if (Constant.TRUE.Equals(x_eval))
+            x_eval = new Number(1);
+        else if (Constant.FALSE.Equals(x_eval))
+            x_eval = new Number(0);
 
         if (x_eval is Number n && n.Value % 1 == 0)
         {

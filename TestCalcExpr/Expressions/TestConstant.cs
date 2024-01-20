@@ -1,6 +1,6 @@
 ﻿using CalcExpr.Expressions;
 
-namespace TestCalcExpr;
+namespace TestCalcExpr.Expressions;
 
 [TestClass]
 public class TestConstant

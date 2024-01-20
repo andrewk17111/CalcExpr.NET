@@ -1,8 +1,9 @@
 ﻿using CalcExpr.Expressions;
 using System.Linq.Expressions;
 using System.Reflection;
+using TestCalcExpr.TestData;
 
-namespace TestCalcExpr;
+namespace TestCalcExpr.Expressions;
 
 [TestClass]
 public class TestFunction
@@ -41,7 +42,7 @@ public class TestFunction
     [TestMethod]
     public void TestLambdaFunctionInit()
     {
-        (string[] args, IExpression)[] test_cases = new(string[], IExpression)[]
+        (string[] args, IExpression)[] test_cases = new (string[], IExpression)[]
         {
             (new string[] { "x" }, new BinaryOperator("+", new Variable("x"), new Number(1))),
             (new string[] { "x", "y" }, new BinaryOperator("+", new Variable("x"), new Variable("y"))),
@@ -55,7 +56,7 @@ public class TestFunction
 
             for (int i = 0; i < args.Length; i++)
                 Assert.AreEqual(args[i], lambda_function.Parameters[i]);
-            
+
             Assert.AreEqual(body, lambda_function.Body);
         }
     }
@@ -68,12 +69,12 @@ public class TestFunction
     {
         Random random = new Random();
 
-        foreach (string function_name in TestCases.Functions.Keys)
+        foreach (string function_name in TestCases.ContextFunctions.Keys)
         {
-            IExpression[] args = new IExpression[TestCases.Functions[function_name].Parameters.Length]
+            IExpression[] args = new IExpression[TestCases.ContextFunctions[function_name].Parameters.Length]
                 .Select((x) => new Number(random.NextDouble() + random.Next())).ToArray();
             FunctionCall function_call = new FunctionCall(function_name, args);
-            
+
             Assert.AreEqual(function_name, function_call.Name);
 
             for (int i = 0; i < args.Length; i++)

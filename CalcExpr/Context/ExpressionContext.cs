@@ -31,9 +31,6 @@ public class ExpressionContext
             ? _functions[function].Invoke(arguments.ToArray(), this)
             : Constant.UNDEFINED;
 
-    public ExpressionContext() : this([], [])
-    { }
-
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
         Dictionary<string, IFunction>? functions = null)
     {

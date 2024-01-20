@@ -1,5 +1,8 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions;
+using System.Reflection;
+using TestCalcExpr.TestData;
+using TestCalcExpr.TestUtils;
 
 namespace TestCalcExpr;
 
@@ -13,11 +16,10 @@ public class TestEvaluation
     {
         foreach (TestCase test_case in TestCases.Expressions)
         {
-            Console.WriteLine(test_case.ExpressionString);
-            ExpressionContext context = new ExpressionContext(TestCases.Variables);
+            ExpressionContext context = new ExpressionContext(TestCases.ContextVariables);
 
-            foreach (string func in TestCases.Functions.Keys)
-                context[func] = TestCases.Functions[func];
+            foreach (string func in TestCases.ContextFunctions.Keys)
+                context[func] = TestCases.ContextFunctions[func];
 
             IExpression evaluated = test_case.Parsed.Evaluate(context);
 
@@ -33,10 +35,10 @@ public class TestEvaluation
     {
         foreach (TestCase test_case in TestCases.Expressions)
         {
-            ExpressionContext context = new ExpressionContext(TestCases.Variables);
+            ExpressionContext context = new ExpressionContext(TestCases.ContextVariables);
 
-            foreach (string func in TestCases.Functions.Keys)
-                context[func] = TestCases.Functions[func];
+            foreach (string func in TestCases.ContextFunctions.Keys)
+                context[func] = TestCases.ContextFunctions[func];
 
             IExpression start = test_case.Parsed;
 
@@ -50,6 +52,36 @@ public class TestEvaluation
                     Assert.AreEqual(test_case.StepEvaluated[i], evaluated);
 
                 start = evaluated;
+            }
+        }
+    }
+
+    [TestMethod]
+    public void TestEvaluateFunctions()
+    {
+        IEnumerable<FunctionTestCase[]?> test_case_groups = typeof(TestCases)
+            .GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Where(field => field.FieldType == typeof(FunctionTestCase[]))
+            .Select(field => (FunctionTestCase[]?)field.GetValue(null));
+
+        foreach (FunctionTestCase[]? test_cases in test_case_groups)
+        {
+            if (test_cases is null)
+                continue;
+
+            foreach (FunctionTestCase test_case in test_cases)
+            {
+                int i = 0;
+
+                foreach ((IExpression[] args, IExpression evaluated) in test_case.Evaluated)
+                {
+                    int j = i++ % test_case.FunctionAliases.Length;
+
+                    IExpression result = new FunctionCall(test_case.FunctionAliases[j], args)
+                        .Evaluate(test_case.Context ?? new ExpressionContext());
+
+                    Assert.AreEqual(evaluated, result);
+                }
             }
         }
     }

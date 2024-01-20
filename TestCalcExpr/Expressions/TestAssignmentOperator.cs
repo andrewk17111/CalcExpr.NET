@@ -1,7 +1,7 @@
 ﻿using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
 
-namespace TestCalcExpr;
+namespace TestCalcExpr.Expressions;
 
 [TestClass]
 public class TestAssignmentOperator

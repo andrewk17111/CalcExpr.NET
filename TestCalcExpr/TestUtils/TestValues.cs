@@ -1,0 +1,28 @@
+﻿using CalcExpr.Expressions;
+
+namespace TestCalcExpr.TestUtils;
+
+public static class TestValues
+{
+    public static readonly Constant UNDEFINED = Constant.UNDEFINED;
+    public static readonly Constant INFINITY = Constant.INFINITY;
+    public static readonly Constant NEGATIVE_INFINITY = Constant.NEGATIVE_INFINITY;
+    public static readonly Number ZERO = new Number(0);
+    public static readonly Number ONE = new Number(1);
+    public static readonly Number NEGATIVE_ONE = new Number(-1);
+    public static readonly Number INTEGER = new Number(42);
+    public static readonly Number NEGATIVE_INTEGER = new Number(-42);
+    public static readonly Number SMALL_DECIMAL = new Number(0.2468);
+    public static readonly Number NEGATIVE_SMALL_DECIMAL = new Number(-0.2468);
+    public static readonly Number DECIMAL = new Number(42.42);
+    public static readonly Number NEGATIVE_DECIMAL = new Number(-42.42);
+
+    public static IExpression F(IExpression x)
+        => x;
+
+    public static IExpression G(IExpression m, IExpression x, IExpression b)
+        => new BinaryOperator("+", new BinaryOperator("*", m, x), b).Evaluate();
+
+    public static IExpression P(IExpression x)
+        => x is Number n ? new Number(n.Value + 1) : Constant.UNDEFINED;
+}

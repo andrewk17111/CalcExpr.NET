@@ -8,46 +8,63 @@ public static class LogicalFunctions
 {
     [BuiltInFunction("and")]
     public static IExpression And(IExpression a, IExpression b)
-        => ((Number)Bool(a)).Value == 0 || ((Number)Bool(b)).Value == 0
-            ? new Number(0)
-            : new Number(1);
+        => Constant.UNDEFINED.Equals(a) || Constant.UNDEFINED.Equals(b)
+            ? Constant.UNDEFINED
+            : Constant.FALSE.Equals(Bool(a)) || Constant.FALSE.Equals(Bool(b))
+                ? Constant.FALSE
+                : Constant.TRUE;
 
     [BuiltInFunction("or")]
     public static IExpression Or(IExpression a, IExpression b)
-        => ((Number)Bool(a)).Value == 0 && ((Number)Bool(b)).Value == 0
-            ? new Number(0)
-            : new Number(1);
+        => Constant.UNDEFINED.Equals(a) || Constant.UNDEFINED.Equals(b)
+            ? Constant.UNDEFINED
+            : Constant.TRUE.Equals(Bool(a)) || Constant.TRUE.Equals(Bool(b))
+                ? Constant.TRUE
+                : Constant.FALSE;
 
     [BuiltInFunction("xor")]
     public static IExpression Xor(IExpression a, IExpression b)
     {
-        bool a_bool = ((Number)Bool(a)).Value != 0;
-        bool b_bool = ((Number)Bool(b)).Value != 0;
+        IExpression a_eval = Bool(a);
+        IExpression b_eval = Bool(b);
 
-        return new Number((a_bool || b_bool) && !(a_bool && b_bool) ? 1 : 0);
+        if (Constant.UNDEFINED.Equals(a_eval) || Constant.UNDEFINED.Equals(b_eval))
+            return Constant.UNDEFINED;
+
+        bool a_bool = Constant.TRUE.Equals(a_eval);
+        bool b_bool = Constant.TRUE.Equals(b_eval);
+
+        return (a_bool || b_bool) && !(a_bool && b_bool)
+            ? Constant.TRUE
+            : Constant.FALSE;
     }
 
     [BuiltInFunction("not")]
     public static IExpression Not(IExpression x)
         => Constant.UNDEFINED.Equals(x)
             ? Constant.UNDEFINED
-            : x is Number n && n.Value == 0
-                ? new Number(1)
-                // Any value that is not 0 or undefined should result in 0.
-                : new Number(0);
+            : Constant.TRUE.Equals(Bool(x))
+                ? Constant.FALSE
+                : Constant.TRUE;
 
     [BuiltInFunction("bool")]
     public static IExpression Bool(IExpression x)
         => Constant.UNDEFINED.Equals(x)
             ? Constant.UNDEFINED
-            : x is Number n && n.Value == 0
-                ? new Number(0)
-                // Any value that is not 0 or undefined should result in 1.
-                : new Number(1);
+            : Constant.TRUE.Equals(x) || Constant.FALSE.Equals(x)
+                ? x.Clone()
+                : x is Number n && n.Value == 0
+                    ? Constant.FALSE
+                    // Any value that is not 0 or undefined should result in 1.
+                    : Constant.TRUE;
 
     [BuiltInFunction("if")]
     public static IExpression If(IExpression condition, IExpression is_true, IExpression is_false)
-        => new Number(1).Equals(Bool(condition)) ? is_true.Clone() : is_false.Clone();
+        => Constant.UNDEFINED.Equals(condition)
+            ? Constant.UNDEFINED
+            : Constant.TRUE.Equals(Bool(condition))
+                ? is_true.Clone()
+                : is_false.Clone();
 
     [BuiltInFunction("is_na")]
     public static IExpression IsNa(IExpression x, ExpressionContext _)

@@ -1,6 +1,6 @@
 ﻿using CalcExpr.Expressions;
 
-namespace TestCalcExpr;
+namespace TestCalcExpr.Expressions;
 
 [TestClass]
 public class TestNumber
@@ -15,7 +15,7 @@ public class TestNumber
 
         for (int i = 0; i < 100; i++)
         {
-            double val = random.NextDouble() * (Double.MaxValue - Double.MinValue) + Double.MinValue;
+            double val = random.NextDouble() * (double.MaxValue - double.MinValue) + double.MinValue;
 
             Assert.AreEqual(val, new Number(val).Value);
         }
@@ -33,12 +33,12 @@ public class TestNumber
         Assert.AreEqual(-5648.0549f, (float)new Number(-5648.0549f));
         Assert.AreEqual(-123157L, (long)new Number(-123157L));
         Assert.AreEqual(-1234853, (int)new Number(-1234853));
-        Assert.AreEqual((short)-4364, (short)new Number((short)-4364));
-        Assert.AreEqual((sbyte)-127, (sbyte)new Number((sbyte)-127));
+        Assert.AreEqual((short)-4364, (short)new Number(-4364));
+        Assert.AreEqual((sbyte)-127, (sbyte)new Number(-127));
         Assert.AreEqual(123475UL, (ulong)new Number(123475UL));
         Assert.AreEqual(1237488U, (uint)new Number(1237488U));
-        Assert.AreEqual((ushort)4364, (ushort)new Number((ushort)4364));
-        Assert.AreEqual((byte)255, (byte)new Number((byte)255));
+        Assert.AreEqual((ushort)4364, (ushort)new Number(4364));
+        Assert.AreEqual((byte)255, (byte)new Number(255));
 
         Assert.AreEqual(new Number((double)decimal.MaxValue).Value, ((Number)decimal.MaxValue).Value);
         Assert.AreEqual(new Number(double.MaxValue).Value, ((Number)double.MaxValue).Value);

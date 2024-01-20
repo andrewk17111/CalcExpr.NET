@@ -2,6 +2,8 @@
 using CalcExpr.Parsing;
 using CalcExpr.Parsing.Rules;
 using System.Text.RegularExpressions;
+using TestCalcExpr.TestData;
+using TestCalcExpr.TestUtils;
 
 namespace TestCalcExpr;
 
