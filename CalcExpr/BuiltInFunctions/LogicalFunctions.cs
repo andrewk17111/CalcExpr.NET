@@ -70,7 +70,51 @@ public static class LogicalFunctions
     public static IExpression IsNa(IExpression x, ExpressionContext _)
         => Constant.UNDEFINED.Equals(x) ? Constant.TRUE : Constant.FALSE;
 
-    [BuiltInFunction("is_num")]
+    [BuiltInFunction("is_num", "is_number")]
     public static IExpression IsNum(IExpression x, ExpressionContext _)
         => x is Number ? Constant.TRUE : Constant.FALSE;
+
+    [BuiltInFunction("is_int", "is_integer")]
+    public static IExpression IsInt(IExpression x, ExpressionContext _)
+        => x is Number num && num.Value % 1 == 0
+            ? Constant.TRUE
+            : Constant.FALSE;
+
+    [BuiltInFunction("is_logical")]
+    public static IExpression IsLogical(IExpression x, ExpressionContext _)
+        => Constant.TRUE.Equals(x) || Constant.FALSE.Equals(x)
+            ? Constant.TRUE
+            : Constant.FALSE;
+
+    [BuiltInFunction("is_even")]
+    public static IExpression IsEven(IExpression x)
+        => x is Number num
+            ? num.Value % 2 == 0
+                ? Constant.TRUE
+                : Constant.FALSE
+            : Constant.UNDEFINED;
+
+    [BuiltInFunction("is_odd")]
+    public static IExpression IsOdd(IExpression x)
+        => x is Number num
+            ? Math.Abs(num.Value % 2) == 1
+                ? Constant.TRUE
+                : Constant.FALSE
+            : Constant.UNDEFINED;
+
+    [BuiltInFunction("is_positive")]
+    public static IExpression IsPositive(IExpression x)
+        => (x is Number num && num.Value > 0) || Constant.INFINITY.Equals(x)
+            ? Constant.TRUE
+            : !Constant.UNDEFINED.Equals(x)
+                ? Constant.FALSE
+                : Constant.UNDEFINED;
+
+    [BuiltInFunction("is_negative")]
+    public static IExpression IsNegative(IExpression x, ExpressionContext _)
+        => (x is Number num && num.Value < 0) || Constant.NEGATIVE_INFINITY.Equals(x)
+            ? Constant.TRUE
+            : !Constant.UNDEFINED.Equals(x)
+                ? Constant.FALSE
+                : Constant.UNDEFINED;
 }
