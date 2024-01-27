@@ -16,6 +16,18 @@ public static class TestValues
     public static readonly Number NEGATIVE_SMALL_DECIMAL = new Number(-0.2468);
     public static readonly Number DECIMAL = new Number(42.42);
     public static readonly Number NEGATIVE_DECIMAL = new Number(-42.42);
+    public static readonly Number PI = new Number(Math.PI);
+    public static readonly Number NEGATIVE_PI = new Number(-Math.PI);
+    public static readonly Number PI_OVER_FOUR = new Number(Math.PI / 4);
+    public static readonly Number NEGATIVE_PI_OVER_FOUR = new Number(-Math.PI / 4);
+    public static readonly Number PI_OVER_TWO = new Number(Math.PI / 2);
+    public static readonly Number NEGATIVE_PI_OVER_TWO = new Number(-Math.PI / 2);
+    public static readonly Number TAU = new Number(Math.Tau);
+    public static readonly Number NEGATIVE_TAU = new Number(-Math.Tau);
+    public static readonly Number THREE_PI_OVER_TWO = new Number(3 * Math.PI / 2);
+    public static readonly Number NEGATIVE_THREE_PI_OVER_TWO = new Number(-3 * Math.PI / 2);
+    public static readonly Number THREE_PI_OVER_FOUR = new Number(3 * Math.PI / 4);
+    public static readonly Number NEGATIVE_THREE_PI_OVER_FOUR = new Number(-3 * Math.PI / 4);
 
     public static IExpression F(IExpression x)
         => x;

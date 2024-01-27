@@ -15,7 +15,11 @@ public static class TrigonometricFunctions
 
     [BuiltInFunction("tan")]
     public static IExpression Tan(IExpression x)
-        => x is Number num ? new Number(Math.Tan(num.Value)).Evaluate() : Constant.UNDEFINED;
+        => x is not Number num
+            ? Constant.UNDEFINED
+            : (num.Value / Math.PI - 0.5) % 1 == 0
+                ? Constant.UNDEFINED
+                : new Number(Math.Tan(num.Value)).Evaluate();
 
     [BuiltInFunction("asin", "arcsin", "arsin")]
     public static IExpression Asin(IExpression x)
@@ -37,15 +41,27 @@ public static class TrigonometricFunctions
 
     [BuiltInFunction("csc")]
     public static IExpression Csc(IExpression x)
-        => x is Number num ? new Number(1 / Math.Sin(num.Value)).Evaluate() : Constant.UNDEFINED;
+        => x is not Number num
+            ? Constant.UNDEFINED
+            : num.Value / Math.PI % 1 == 0
+                ? Constant.UNDEFINED
+                : new Number(1 / Math.Sin(num.Value)).Evaluate();
 
     [BuiltInFunction("sec")]
     public static IExpression Sec(IExpression x)
-        => x is Number num ? new Number(1 / Math.Cos(num.Value)).Evaluate() : Constant.UNDEFINED;
+        => x is not Number num
+            ? Constant.UNDEFINED
+            : (num.Value / Math.PI - 0.5) % 1 == 0
+                ? Constant.UNDEFINED
+                : new Number(1 / Math.Cos(num.Value)).Evaluate();
 
     [BuiltInFunction("cot")]
     public static IExpression Cot(IExpression x)
-        => x is Number num ? new Number(1 / Math.Tan(num.Value)).Evaluate() : Constant.UNDEFINED;
+        => x is not Number num
+            ? Constant.UNDEFINED
+            : num.Value / Math.PI % 1 == 0
+                ? Constant.UNDEFINED
+                : new Number(1 / Math.Tan(num.Value)).Evaluate();
 
     [BuiltInFunction("acsc", "arccsc", "arcsc")]
     public static IExpression Acsc(IExpression x)
@@ -67,9 +83,11 @@ public static class TrigonometricFunctions
     public static IExpression Acot(IExpression x)
         => x is Number num
             ? new Number(Math.PI / 2 - Math.Atan(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
+            : Constant.INFINITY.Equals(x)
                 ? new Number(0)
-                : Constant.UNDEFINED;
+                : Constant.NEGATIVE_INFINITY.Equals(x)
+                    ? new Number(Math.PI)
+                    : Constant.UNDEFINED;
 
     [BuiltInFunction("sinh")]
     public static IExpression Sinh(IExpression x)
@@ -122,7 +140,9 @@ public static class TrigonometricFunctions
     [BuiltInFunction("csch")]
     public static IExpression Csch(IExpression x)
         => x is Number num
-            ? new Number(1 / Math.Sinh(num.Value)).Evaluate()
+            ? num.Value == 0
+                ? Constant.UNDEFINED
+                : new Number(1 / Math.Sinh(num.Value)).Evaluate()
             : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
                 ? new Number(0)
                 : Constant.UNDEFINED;
@@ -138,7 +158,9 @@ public static class TrigonometricFunctions
     [BuiltInFunction("coth")]
     public static IExpression Coth(IExpression x)
         => x is Number num
-            ? new Number(1 / Math.Cosh(num.Value)).Evaluate()
+            ? num.Value == 0
+                ? Constant.UNDEFINED
+                : new Number(Math.Cosh(num.Value) / Math.Sinh(num.Value)).Evaluate()
             : Constant.INFINITY.Equals(x)
                 ? new Number(1)
                 : Constant.NEGATIVE_INFINITY.Equals(x)
@@ -148,7 +170,9 @@ public static class TrigonometricFunctions
     [BuiltInFunction("acsch", "arccsch", "arcsch")]
     public static IExpression Acsch(IExpression x)
         => x is Number num
-            ? new Number(Math.Sinh(1 / num.Value)).Evaluate()
+            ? num.Value == 0
+                ? Constant.UNDEFINED
+                : Asinh(new Number(1 / num.Value))
             : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
                 ? new Number(0)
                 : Constant.UNDEFINED;
@@ -156,13 +180,18 @@ public static class TrigonometricFunctions
     [BuiltInFunction("asech", "arcsech", "arsech")]
     public static IExpression Asech(IExpression x)
         => x is Number num && num.Value >= 0 && num.Value <= 1
-            ? new Number(Math.Cosh(1 / num.Value)).Evaluate()
+            ? Acosh(new Number(1 / num.Value))
             : Constant.UNDEFINED;
 
     [BuiltInFunction("acoth", "arccoth", "arcoth")]
     public static IExpression Acoth(IExpression x)
         => x is Number num
-            ? new Number(Math.Tanh(1 / num.Value)).Evaluate()
+            ? num.Value switch
+            {
+                1 => Constant.INFINITY,
+                -1 => Constant.NEGATIVE_INFINITY,
+                _ => Atanh(new Number(1 / num.Value))
+            }
             : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
                 ? new Number(0)
                 : Constant.UNDEFINED;

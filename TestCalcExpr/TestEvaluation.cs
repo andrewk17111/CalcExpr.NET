@@ -80,7 +80,10 @@ public class TestEvaluation
                     IExpression result = new FunctionCall(test_case.FunctionAliases[j], args)
                         .Evaluate(test_case.Context ?? new ExpressionContext());
 
-                    Assert.AreEqual(evaluated, result);
+                    if (evaluated is Number eval_num && result is Number result_num)
+                        Assert.AreEqual(Math.Round(eval_num.Value, DIGITS), Math.Round(result_num.Value, DIGITS));
+                    else
+                        Assert.AreEqual(evaluated, result);
                 }
             }
         }
