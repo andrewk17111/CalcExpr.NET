@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Expressions.Components;
 using System.Linq.Expressions;
 using System.Reflection;
 using TestCalcExpr.TestData;
@@ -20,7 +21,7 @@ public class TestFunction
                 .Select(p => p.ParameterType)
                 .Concat(new Type[] { method.ReturnType })
                 .ToArray()));
-            string[] parameters = method.GetParameters().Select(p => p.Name ?? "").ToArray();
+            Parameter[] parameters = method.GetParameters().Select(p => (Parameter)p).ToArray();
             Function function = new Function(del);
 
             Assert.AreEqual(method, function.Body.Method);
@@ -42,15 +43,15 @@ public class TestFunction
     [TestMethod]
     public void TestLambdaFunctionInit()
     {
-        (string[] args, IExpression)[] test_cases = new (string[], IExpression)[]
+        (Parameter[] args, IExpression)[] test_cases = new (Parameter[], IExpression)[]
         {
-            (new string[] { "x" }, new BinaryOperator("+", new Variable("x"), new Number(1))),
-            (new string[] { "x", "y" }, new BinaryOperator("+", new Variable("x"), new Variable("y"))),
-            (new string[] { "x", "y", "z" }, new BinaryOperator("+", new BinaryOperator("+", new Variable("x"),
+            ([ "x" ], new BinaryOperator("+", new Variable("x"), new Number(1))),
+            ([ "x", "y" ], new BinaryOperator("+", new Variable("x"), new Variable("y"))),
+            ([ "x", "y", "z" ], new BinaryOperator("+", new BinaryOperator("+", new Variable("x"),
                 new Variable("y")), new Variable("z"))),
         };
 
-        foreach ((string[] args, IExpression body) in test_cases)
+        foreach ((Parameter[] args, IExpression body) in test_cases)
         {
             LambdaFunction lambda_function = new LambdaFunction(args, body);
 
@@ -90,12 +91,11 @@ public class TestFunction
     {
         Dictionary<LambdaFunction, string> test_cases = new Dictionary<LambdaFunction, string>
         {
-            { new LambdaFunction(new string[] { "x" }, new BinaryOperator("+", new Variable("x"), new Number(1))),
-                "(x)=>x+1" },
-            { new LambdaFunction(new string[] { "x", "y" }, new BinaryOperator("+", new Variable("x"),
-                new Variable("y"))), "(x,y)=>x+y" },
-            { new LambdaFunction(new string[] { "x", "y", "z" }, new BinaryOperator("+", new BinaryOperator("+",
-                new Variable("x"), new Variable("y")), new Variable("z"))), "(x,y,z)=>x+y+z" },
+            { new LambdaFunction([ "x" ], new BinaryOperator("+", new Variable("x"), new Number(1))),"(x)=>x+1" },
+            { new LambdaFunction([ "x", "y" ], new BinaryOperator("+", new Variable("x"), new Variable("y"))),
+                "(x,y)=>x+y" },
+            { new LambdaFunction([ "x", "y", "z" ], new BinaryOperator("+", new BinaryOperator("+", new Variable("x"),
+                new Variable("y")), new Variable("z"))), "(x,y,z)=>x+y+z" },
         };
 
         foreach (KeyValuePair<LambdaFunction, string> func in test_cases)
@@ -110,9 +110,9 @@ public class TestFunction
     {
         Dictionary<FunctionCall, string> expressions = new Dictionary<FunctionCall, string>()
         {
-            { new FunctionCall("f", new IExpression[] { new Number(1) }), "f(1)" },
-            { new FunctionCall("g", new IExpression[] { new Number(1), new Number(2), new Number(3) }), "g(1, 2, 3)" },
-            { new FunctionCall("p", new IExpression[] { new Number(1) }), "p(1)" },
+            { new FunctionCall("f", [ new Number(1) ]), "f(1)" },
+            { new FunctionCall("g", [ new Number(1), new Number(2), new Number(3) ]), "g(1, 2, 3)" },
+            { new FunctionCall("p", [ new Number(1) ]), "p(1)" },
         };
 
         foreach (FunctionCall expression in expressions.Keys)

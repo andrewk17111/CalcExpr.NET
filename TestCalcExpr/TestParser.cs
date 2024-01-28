@@ -20,9 +20,10 @@ public class TestParser
     public void TestInit()
     {
         (string Name, string? Regex)[] default_rules =
-        {
+        [
             ("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
             ("Token", @"\[\d+\]"),
+            ("Parameter", @"(\[{Variable}(,{Variable})*\])?{Variable}"),
             ("FunctionCall", null),
             ("LambdaFunction", @"({Variable}|\(\s*((\s*{Variable}\s*,)*\s*{Variable}\s*)?\))\s*=>"),
             ("Parentheses", null),
@@ -41,7 +42,7 @@ public class TestParser
             ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false|undefined|dne)"),
             ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
             ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),
-        };
+        ];
 
         Parser parser = new Parser();
 

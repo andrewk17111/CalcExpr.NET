@@ -2,20 +2,14 @@
 
 namespace CalcExpr.Expressions;
 
-public class FunctionCall : IExpression
+public class FunctionCall(string name, IEnumerable<IExpression> arguments) : IExpression
 {
-    private readonly IReadOnlyList<IExpression> _arguments;
+    private readonly IReadOnlyList<IExpression> _arguments = arguments.ToArray();
 
-    public readonly string Name;
+    public readonly string Name = name;
 
     public IExpression[] Arguments
         => _arguments.ToArray();
-
-    public FunctionCall(string name, IEnumerable<IExpression> arguments)
-    {
-        Name = name;
-        _arguments = arguments.ToArray();
-    }
 
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());

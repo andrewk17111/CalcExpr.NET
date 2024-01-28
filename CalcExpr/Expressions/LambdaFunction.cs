@@ -1,36 +1,29 @@
 ﻿using CalcExpr.Context;
+using CalcExpr.Expressions.Components;
 
 namespace CalcExpr.Expressions;
 
-public class LambdaFunction : IFunction
+public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body) : IFunction
 {
-    private readonly IReadOnlyList<string> _parameters;
+    private readonly IReadOnlyList<Parameter> _parameters = parameters.ToArray();
 
-    public readonly IExpression Body;
+    public readonly IExpression Body = body;
 
-    public string[] Parameters
+    public Parameter[] Parameters
         => _parameters.ToArray();
-
-    public LambdaFunction(IEnumerable<string> parameters, IExpression body)
-    {
-        _parameters = parameters.ToArray();
-        Body = body;
-    }
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
-        if (Parameters.Length != arguments.Length)
-            return Constant.UNDEFINED;
-
         ExpressionContext inner_context = context.Clone();
 
-        foreach ((string parameter, IExpression argument) in Parameters.Zip(arguments))
-            inner_context[parameter] = argument;
+        foreach ((Parameter parameter, IExpression argument) in Parameters.Zip(arguments))
+            inner_context[parameter.Name] = argument;
 
         IExpression result = Body.Evaluate(inner_context);
+        string[] parameters = Parameters.Select(p => p.Name).ToArray();
 
         foreach (string variable in inner_context.Variables)
-            if (!Parameters.Contains(variable))
+            if (!parameters.Contains(variable))
                 context[variable] = inner_context[variable];
 
         return result;
@@ -53,7 +46,7 @@ public class LambdaFunction : IFunction
 
     public override bool Equals(object? obj)
         => obj is not null && obj is LambdaFunction lambda && lambda.Parameters.Length == Parameters.Length &&
-            (!Parameters.Any() || lambda.Parameters.Select((arg, i) => arg == Parameters[i])
+            (Parameters.Length == 0 || lambda.Parameters.Select((arg, i) => arg == Parameters[i])
                 .Aggregate((a, b) => a && b)) && lambda.Body.Equals(Body);
 
     public override int GetHashCode()

@@ -1,6 +1,7 @@
 ﻿using CalcExpr.Attributes;
 using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
+using CalcExpr.Expressions.Components;
 using CalcExpr.Parsing.Rules;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -27,6 +28,8 @@ public class Parser
         [
             new ReferenceRegexRule("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
+            new ReferenceRegexRule("Parameter", @"(\[{Variable}(,{Variable})*\])?{Variable}",
+                RegexRuleOptions.Only | RegexRuleOptions.PadReferences),
             new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall),
             new NestedRegexRule("LambdaFunction", @"({Variable}|\(\s*((\s*{Variable}\s*,)*\s*{Variable}\s*)?\))\s*=>",
                 RegexRuleOptions.Left | RegexRuleOptions.PadReferences | RegexRuleOptions.Trim, ParseLambdaFunction),
@@ -390,7 +393,7 @@ public class Parser
         return null;
     }
 
-    private IExpression ParseFunctionCall(string input, Token token, Parser parser)
+    private FunctionCall ParseFunctionCall( string input, Token token, Parser parser)
     {
         Match function_name = Regex.Match(input, @"(?<=^\s*)([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
         string tokenized_args = TokenizeInput(token.Value[(function_name.Length + 1)..^1], out Token[] tokens);
@@ -405,10 +408,13 @@ public class Parser
         return new FunctionCall(function_name.Value, args.Select(arg => parser.Parse(arg)));
     }
 
-    private IExpression ParseLambdaFunction(string input, Token token, Parser parser)
-        => new LambdaFunction(Regex.Match(token.Value.Trim(), @"(?<=^\(?)[^\(]*?(?=\)?\s*=>)").Value
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+    private LambdaFunction ParseLambdaFunction(string input, Token token, Parser parser)
+    {
+        return new LambdaFunction(Regex.Match(token.Value.Trim(), @"(?<=^\(?)[^\(]*?(?=\)?\s*=>)").Value
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(p => (Parameter)p),
             parser.Parse(input[(token.Index + token.Length)..]));
+    }
 
     private Parentheses ParseParentheses(string input, Token token, Parser parser)
         => new Parentheses(Parse(token));
@@ -433,7 +439,7 @@ public class Parser
         throw new Exception($"The input was not in the correct format: '{input}'");
     }
 
-    private IExpression ParseAssignmentOperator(string input, Token match, Parser parser)
+    private AssignmentOperator ParseAssignmentOperator(string input, Token match, Parser parser)
         => new AssignmentOperator((Parse(input[..match.Index]) as Variable)!,
             Parse(input[(match.Index + match.Length)..]));
 

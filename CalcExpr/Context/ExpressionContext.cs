@@ -7,8 +7,8 @@ namespace CalcExpr.Context;
 
 public class ExpressionContext
 {
-    private Dictionary<string, IExpression> _variables;
-    private Dictionary<string, IFunction> _functions;
+    private readonly Dictionary<string, IExpression> _variables;
+    private readonly Dictionary<string, IFunction> _functions;
 
     public string[] Variables
         => _variables.Keys.Concat(Functions).ToArray();
@@ -18,25 +18,40 @@ public class ExpressionContext
 
     public IExpression this[string variable]
     {
-        get => _variables.ContainsKey(variable)
-            ? _variables[variable]
-            : _functions.ContainsKey(variable)
-                ? _functions[variable]
+        get => _variables.TryGetValue(variable, out IExpression? var_value)
+            ? var_value
+            : _functions.TryGetValue(variable, out IFunction? func_value)
+                ? func_value
                 : Constant.UNDEFINED;
         set => SetVariable(variable, value);
     }
 
     public IExpression this[string function, IEnumerable<IExpression> arguments]
-        => ContainsFunction(function)
-            ? _functions[function].Invoke(arguments.ToArray(), this)
-            : Constant.UNDEFINED;
+    {
+        get
+        {
+            if (ContainsFunction(function))
+            {
+                IFunction func = _functions[function];
+
+                if (arguments.Count() != func.Parameters.Where(p => !p.IsContext).Count())
+                    return Constant.UNDEFINED;
+
+                IExpression[]? args = func.ProcessArguments(arguments);
+
+                if (args is not null)
+                    return func.Invoke(args, this);
+            }
+
+            return Constant.UNDEFINED;
+        }
+    }
 
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
         Dictionary<string, IFunction>? functions = null)
     {
-        Dictionary<string, IExpression> vars = new Dictionary<string, IExpression>();
-        Dictionary<string, IFunction> funcs = functions?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
-            ?? new Dictionary<string, IFunction>();
+        Dictionary<string, IExpression> vars = [];
+        Dictionary<string, IFunction> funcs = functions?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value) ?? [];
 
         if (variables is not null)
             foreach (string var in variables.Keys)
@@ -77,8 +92,8 @@ public class ExpressionContext
 
     public ExpressionContext Clone()
     {
-        Dictionary<string, IExpression> vars = new Dictionary<string, IExpression>();
-        Dictionary<string, IFunction> funcs = new Dictionary<string, IFunction>();
+        Dictionary<string, IExpression> vars = [];
+        Dictionary<string, IFunction> funcs = [];
 
         foreach (string var in _variables.Keys)
             vars.Add(var, _variables[var].Clone());
