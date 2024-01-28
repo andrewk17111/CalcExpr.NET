@@ -2,7 +2,7 @@
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
-public class ConditionAttribute(Func<IExpression, bool> condition) : FunctionAttribute
+public abstract class ConditionAttribute : FunctionAttribute
 {
-    public readonly Func<IExpression, bool> CheckCondition = condition;
+    public abstract bool CheckCondition(IExpression expression);
 }

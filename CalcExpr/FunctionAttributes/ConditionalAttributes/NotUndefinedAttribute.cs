@@ -2,8 +2,8 @@
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
-public class NotUndefinedAttribute() : ConditionAttribute(TestCondition)
+public class NotUndefinedAttribute : ConditionAttribute
 {
-    private static bool TestCondition(IExpression expression)
+    public override bool CheckCondition(IExpression expression)
         => !Constant.UNDEFINED.Equals(expression);
 }

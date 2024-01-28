@@ -3,18 +3,16 @@
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
 public class RangeAttribute(double minimum, double maximum, bool allow_undefined = false, bool inclusive = true)
-    : ConditionAttribute(expression => TestCondition(expression, ((Number)minimum).Evaluate(),
-        new Number(maximum).Evaluate(), allow_undefined, inclusive))
+    : ConditionAttribute
 {
     public readonly IExpression Minimum = ((Number)minimum).Evaluate();
     public readonly IExpression Maximum = ((Number)maximum).Evaluate();
     public readonly bool AllowUndefined = allow_undefined;
     public readonly bool Inclusive = inclusive;
 
-    private static bool TestCondition(IExpression expression, IExpression minimum, IExpression maximum,
-        bool allow_undefined, bool inclusive)
+    public override bool CheckCondition(IExpression expression)
     {
-        IExpression lower_condition_result = new BinaryOperator(inclusive ? ">=" : ">", expression, minimum).Evaluate();
+        IExpression lower_condition_result = new BinaryOperator(Inclusive ? ">=" : ">", expression, Minimum).Evaluate();
 
         if (lower_condition_result is Number low_num)
         {
@@ -23,13 +21,13 @@ public class RangeAttribute(double minimum, double maximum, bool allow_undefined
                 return false;
             }
         }
-        else if (!allow_undefined)
+        else if (!AllowUndefined)
         {
             return false;
         }
 
-        IExpression upper_condition_result = new BinaryOperator(inclusive ? "<=" : "<", expression, maximum).Evaluate();
+        IExpression upper_condition_result = new BinaryOperator(Inclusive ? "<=" : "<", expression, Maximum).Evaluate();
 
-        return upper_condition_result is Number high_num ? high_num.Value != 0 : allow_undefined;
+        return upper_condition_result is Number high_num ? high_num.Value != 0 : AllowUndefined;
     }
 }

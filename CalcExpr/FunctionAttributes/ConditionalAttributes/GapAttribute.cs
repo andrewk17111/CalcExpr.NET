@@ -3,18 +3,16 @@
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
 public class GapAttribute(double start, double end, bool allow_undefined = false, bool inclusive = false)
-    : ConditionAttribute(expression => TestCondition(expression, ((Number)start).Evaluate(),
-        new Number(end).Evaluate(), allow_undefined, inclusive))
+    : ConditionAttribute
 {
     public readonly IExpression Start = ((Number)start).Evaluate();
     public readonly IExpression End = ((Number)end).Evaluate();
     public readonly bool AllowUndefined = allow_undefined;
     public readonly bool Inclusive = inclusive;
 
-    private static bool TestCondition(IExpression expression, IExpression start, IExpression end,
-        bool allow_undefined, bool inclusive)
+    public override bool CheckCondition(IExpression expression)
     {
-        IExpression lower_condition_result = new BinaryOperator(inclusive ? "<" : "<=", expression, start).Evaluate();
+        IExpression lower_condition_result = new BinaryOperator(Inclusive ? "<" : "<=", expression, Start).Evaluate();
 
         if (lower_condition_result is Number low_num)
         {
@@ -23,13 +21,13 @@ public class GapAttribute(double start, double end, bool allow_undefined = false
                 return true;
             }
         }
-        else if (!allow_undefined)
+        else if (!AllowUndefined)
         {
             return false;
         }
 
-        IExpression upper_condition_result = new BinaryOperator(inclusive ? ">" : ">=", expression, end).Evaluate();
+        IExpression upper_condition_result = new BinaryOperator(Inclusive ? ">" : ">=", expression, End).Evaluate();
 
-        return upper_condition_result is Number high_num ? high_num.Value == 1 : allow_undefined;
+        return upper_condition_result is Number high_num ? high_num.Value == 1 : AllowUndefined;
     }
 }

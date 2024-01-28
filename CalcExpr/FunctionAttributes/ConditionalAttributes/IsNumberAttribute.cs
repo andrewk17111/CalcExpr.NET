@@ -2,8 +2,8 @@
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
-public class IsNumberAttribute() : ConditionAttribute(TestCondition)
+public class IsNumberAttribute : ConditionAttribute
 {
-    private static bool TestCondition(IExpression expression)
+    public override bool CheckCondition(IExpression expression)
         => expression is Number;
 }
