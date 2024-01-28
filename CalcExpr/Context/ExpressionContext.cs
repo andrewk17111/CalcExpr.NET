@@ -37,10 +37,7 @@ public class ExpressionContext
                 if (arguments.Count() != func.Parameters.Where(p => !p.IsContext).Count())
                     return Constant.UNDEFINED;
 
-                IExpression[]? args = func.ProcessArguments(arguments);
-
-                if (args is not null)
-                    return func.Invoke(args, this);
+                return func.Invoke([.. arguments], this);
             }
 
             return Constant.UNDEFINED;

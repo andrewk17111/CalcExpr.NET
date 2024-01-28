@@ -1,5 +1,8 @@
-﻿namespace CalcExpr.FunctionAttributes.PreprocessAttributes;
+﻿using CalcExpr.Expressions;
 
-public class PreprocessAttribute : FunctionAttribute
+namespace CalcExpr.FunctionAttributes.PreprocessAttributes;
+
+public abstract class PreprocessAttribute : FunctionAttribute
 {
+    public abstract IExpression Preprocess(IExpression expression);
 }

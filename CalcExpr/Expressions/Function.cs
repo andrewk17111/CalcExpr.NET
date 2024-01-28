@@ -3,6 +3,7 @@ using CalcExpr.Expressions.Components;
 using CalcExpr.FunctionAttributes;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
+using System.Linq;
 
 namespace CalcExpr.Expressions;
 
@@ -23,27 +24,35 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body) : IFunct
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
-        List<object?> args = [];
+        object?[] args;
 
         if (RequiresContext)
         {
-            bool[] is_context = Body.Method.GetParameters()
-                .Select(p => p.ParameterType == typeof(ExpressionContext))
-                .ToArray();
-            int arg_i = 0;
+            IExpression[]? processed_args = ((IFunction)this).ProcessArguments(arguments);
 
-            for (int i = 0; i < is_context.Length; i++)
-                args.Add(is_context[i] ? context : arguments.ElementAt(arg_i++));
+            if (processed_args is null)
+                return Constant.UNDEFINED;
+
+            int i = 0;
+
+            args = [.. Parameters.Select(p => (object?)(p.IsContext ? context : processed_args[i++]))];
         }
         else
-        {
-            args.AddRange(arguments.Select(arg => arg.Evaluate(context)));
-        }
+        {            
+            IExpression[]? processed_args = ((IFunction)this)
+                .ProcessArguments(arguments.Select(arg => arg.Evaluate(context)));
 
-        return (IExpression?)Body.Method.Invoke(this, [.. args]) ?? Constant.UNDEFINED;
+            if (processed_args is null)
+                return Constant.UNDEFINED;
+
+            args = [.. processed_args];
+        }
+        
+        return (IExpression?)Body.Method.Invoke(this, args) ?? Constant.UNDEFINED;
     }
+
     public IExpression Evaluate()
-    => Clone();
+        => Clone();
 
     public IExpression Evaluate(ExpressionContext context)
         => Clone();
@@ -103,7 +112,7 @@ public interface IFunction : IExpression
                 }
                 else if (attribute is PreprocessAttribute preprocess)
                 {
-                    // TODO: Preprocess.
+                    argument = preprocess.Preprocess(argument);
                 }
             }
 

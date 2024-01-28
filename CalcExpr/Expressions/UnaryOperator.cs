@@ -18,8 +18,8 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         {
             { "+", Positive },
             { "-", Negative },
-            { "~", (expr, cxt) => LogicalFunctions.Not(expr.Evaluate(cxt)) },
-            { "¬", (expr, cxt) => LogicalFunctions.Not(expr.Evaluate(cxt)) },
+            { "~", (expr, cxt) => new Function(LogicalFunctions.Not).Invoke([expr], cxt) },
+            { "¬", (expr, cxt) => new Function(LogicalFunctions.Not).Invoke([expr], cxt) },
             { "!", Subfactorial },
             { "--", PreDecrement },
             { "++", PreIncrement },

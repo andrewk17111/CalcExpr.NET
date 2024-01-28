@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Components;
+using System;
 
 namespace CalcExpr.Expressions;
 
@@ -15,8 +16,12 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
         ExpressionContext inner_context = context.Clone();
+        IExpression[]? args = ((IFunction)this).ProcessArguments(arguments);
 
-        foreach ((Parameter parameter, IExpression argument) in Parameters.Zip(arguments))
+        if (args is null)
+            return Constant.UNDEFINED;
+
+        foreach ((Parameter parameter, IExpression argument) in Parameters.Zip(args))
             inner_context[parameter.Name] = argument;
 
         IExpression result = Body.Evaluate(inner_context);
