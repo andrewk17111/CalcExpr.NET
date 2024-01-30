@@ -26,12 +26,14 @@ public class Parser
     {
         _grammar =
         [
-            new ReferenceRegexRule("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            new ReferenceRegexRule("Operand",
+                "(({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)|{Parameter})"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
-            new ReferenceRegexRule("Parameter", @"(\[{Variable}(,{Variable})*\])?{Variable}",
-                RegexRuleOptions.Only | RegexRuleOptions.PadReferences),
+            new ReferenceRegexRule("Attribute", @"([A-Za-z][A-Za-z_0-9]*)"),
+            new ReferenceRegexRule("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})",
+                RegexRuleOptions.PadReferences),
             new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall),
-            new NestedRegexRule("LambdaFunction", @"({Variable}|\(\s*((\s*{Variable}\s*,)*\s*{Variable}\s*)?\))\s*=>",
+            new NestedRegexRule("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>",
                 RegexRuleOptions.Left | RegexRuleOptions.PadReferences | RegexRuleOptions.Trim, ParseLambdaFunction),
             new Rule("Parentheses", ParseParentheses, MatchParentheses),
             new RegexRule("WithParentheses", @"\(|\)", RegexOptions.None, ParseWithParentheses),
@@ -393,7 +395,7 @@ public class Parser
         return null;
     }
 
-    private FunctionCall ParseFunctionCall( string input, Token token, Parser parser)
+    private FunctionCall ParseFunctionCall(string input, Token token, Parser parser)
     {
         Match function_name = Regex.Match(input, @"(?<=^\s*)([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
         string tokenized_args = TokenizeInput(token.Value[(function_name.Length + 1)..^1], out Token[] tokens);
@@ -410,9 +412,29 @@ public class Parser
 
     private LambdaFunction ParseLambdaFunction(string input, Token token, Parser parser)
     {
-        return new LambdaFunction(Regex.Match(token.Value.Trim(), @"(?<=^\(?)[^\(]*?(?=\)?\s*=>)").Value
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(p => (Parameter)p),
+        RegexRule? parameter_rule = (RegexRule?)parser.GetGrammarRule("Parameter");
+        string parameters_string = Regex.Match(token.Value.Trim(), @"(?<=^\(?)[^\(]*?(?=\)?\s*=>)").Value;
+        IEnumerable<string> parameters;
+    
+        if (parameter_rule is not null)
+        {
+            parameters = parameter_rule.Matches(parameters_string, parser.Grammar)
+                .Select(t => Regex.Replace(t.Value, @"[\[\]]", ",").Trim());
+        }
+        else
+        {
+            parameters = parameters_string
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        }
+
+        return new LambdaFunction(parameters.Select(p =>
+            {
+                IEnumerable<string> attributes = p.Split(',')
+                    .Select(p => p.Trim())
+                    .Where(p => !String.IsNullOrWhiteSpace(p));
+
+                return new Parameter(attributes.Last(), attributes.Take(attributes.Count() - 1));
+            }),
             parser.Parse(input[(token.Index + token.Length)..]));
     }
 

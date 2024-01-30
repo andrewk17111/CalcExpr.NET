@@ -43,7 +43,10 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
     private static string ReplaceRules(string regular_expression, IEnumerable<Rule> rules, RegexRuleOptions options,
         ref Dictionary<string, string> preprocessed_rules)
     {
-        List<Match> matches = Regex.Matches(regular_expression, @"(?<=(^|[^\\](\\\\)*){)\w+(?=})").Distinct().ToList();
+        List<string> matches = Regex.Matches(regular_expression, @"(?<=(^|[^\\](\\\\)*){)\w+(?=})")
+            .Select(m => m.Value)
+            .Distinct()
+            .ToList();
 
         if (matches.Count > 0)
         {
@@ -51,20 +54,21 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
             Dictionary<string, int> rule_names = rules.Select((r, i) => new KeyValuePair<string, int>(r.Name, i))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            foreach (Match match in matches.ToArray())
+            while (matches.Count > 0)
             {
+                string match = matches.First();
                 string sub_regex;
 
-                if (preprocessed_rules.TryGetValue(match.Value, out string? value))
+                if (preprocessed_rules.TryGetValue(match, out string? value))
                 {
                     sub_regex = value;
                 }
-                else if (rule_names.TryGetValue(match.Value, out int idx))
+                else if (rule_names.TryGetValue(match, out int idx))
                 {
                     if (rules.ElementAt(idx) is NestedRegexRule nrr)
                     {
                         sub_regex = ReplaceRules(nrr.RegularExpression, rules, options, ref preprocessed_rules);
-                        preprocessed_rules.Add(match.Value, sub_regex);
+                        preprocessed_rules.Add(match, sub_regex);
                     }
                     else if (rules.ElementAt(idx) is RegexRule rr)
                     {
@@ -72,10 +76,10 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
                     }
                     else
                     {
-                        throw new NonRegexRuleException(match.Value, rules.ElementAt(idx).GetType());
+                        throw new NonRegexRuleException(match, rules.ElementAt(idx).GetType());
                     }
 
-                    rule_names.Remove(match.Value);
+                    rule_names.Remove(match);
                     matches.Remove(match);
                 }
                 else
@@ -86,7 +90,7 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
                 if (options.HasFlag(RegexRuleOptions.PadReferences))
                     sub_regex = $@"(\s*{sub_regex}\s*)";
 
-                regex = Regex.Replace(regex, @$"(?<=^|[^\\](\\\\)*){{{match.Value}}}", sub_regex);
+                regex = Regex.Replace(regex, @$"(?<=^|[^\\](\\\\)*){{{match}}}", sub_regex);
             }
 
             return regex;

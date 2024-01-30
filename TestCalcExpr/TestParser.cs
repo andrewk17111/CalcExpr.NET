@@ -21,11 +21,12 @@ public class TestParser
     {
         (string Name, string? Regex)[] default_rules =
         [
-            ("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            ("Operand", "(({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)|{Parameter})"),
             ("Token", @"\[\d+\]"),
-            ("Parameter", @"(\[{Variable}(,{Variable})*\])?{Variable}"),
+            ("Attribute", @"([A-Za-z][A-Za-z_0-9]*)"),
+            ("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})"),
             ("FunctionCall", null),
-            ("LambdaFunction", @"({Variable}|\(\s*((\s*{Variable}\s*,)*\s*{Variable}\s*)?\))\s*=>"),
+            ("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>"),
             ("Parentheses", null),
             ("WithParentheses", @"\(|\)"),
             ("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})"),
@@ -50,10 +51,10 @@ public class TestParser
         {
             Rule rule = parser.Grammar[i];
 
-            Assert.AreEqual(rule.Name, default_rules[i].Name);
+            Assert.AreEqual(default_rules[i].Name, rule.Name);
             Assert.AreEqual(default_rules[i].Regex, rule is RegexRule regex_rule ? regex_rule.RegularExpression : null);
-            Assert.AreEqual(parser.GetGrammarRule(rule.Name), rule);
-            Assert.AreEqual(parser.GetGrammarRule(i), rule);
+            Assert.AreEqual(rule, parser.GetGrammarRule(rule.Name));
+            Assert.AreEqual(rule, parser.GetGrammarRule(i));
         }
 
         parser = new Parser(new Rule[] { CUSTOM_RULE });
@@ -69,7 +70,11 @@ public class TestParser
     public void TestParse()
     {
         foreach (TestCase test_case in TestCases.Expressions)
-            Assert.AreEqual(test_case.Parsed, new Parser().Parse(test_case.ExpressionString));
+        {
+            IExpression parsed = new Parser().Parse(test_case.ExpressionString);
+
+            Assert.AreEqual(test_case.Parsed, parsed);
+        }
     }
 
     /// <summary>

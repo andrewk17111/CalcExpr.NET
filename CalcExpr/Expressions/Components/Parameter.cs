@@ -16,14 +16,40 @@ public readonly struct Parameter(string name, IEnumerable<FunctionAttribute> att
     public Parameter(string name, IEnumerable<FunctionAttribute> attributes) : this(name, attributes, false)
     { }
 
+    public Parameter(string name, IEnumerable<string> attributes)
+        : this(name, attributes.Select(a => GetAttribute(a)), false)
+    { }
+
     public Parameter(string name, bool is_context) : this(name, [], is_context)
     { }
+
+    private static FunctionAttribute GetAttribute(string name)
+    {
+        Type? attribute_type = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a => a.GetTypes())
+            .FirstOrDefault(t => t.Name == name + "Attribute");
+        
+        if (attribute_type is not null && attribute_type.BaseType != typeof(FunctionAttribute))
+        {
+            FunctionAttribute? result = (FunctionAttribute?)Activator.CreateInstance(attribute_type);
+
+            if (result is not null)
+                return result;
+        }
+
+        throw new Exception($"Cannot find FunctionAttribute type '{name}' with a constructor that takes no arguments");
+    }
 
     public override int GetHashCode()
         => Name.GetHashCode();
 
     public override bool Equals(object? obj)
-        => obj is not null && obj is Parameter parameter && parameter.Name == Name;
+    {
+        if (obj is not null && obj is Parameter parameter)
+            return parameter.Name == Name && (parameter.IsContext == IsContext);
+
+        return false;
+    }
 
     public override string ToString()
         => (Attributes.Length == 0

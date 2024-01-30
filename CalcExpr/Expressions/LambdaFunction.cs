@@ -50,9 +50,18 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
         => new LambdaFunction(Parameters, Body.Clone());
 
     public override bool Equals(object? obj)
-        => obj is not null && obj is LambdaFunction lambda && lambda.Parameters.Length == Parameters.Length &&
-            (Parameters.Length == 0 || lambda.Parameters.Select((arg, i) => arg == Parameters[i])
-                .Aggregate((a, b) => a && b)) && lambda.Body.Equals(Body);
+    {
+        if (obj is not null && obj is LambdaFunction lambda)
+        {
+            bool parameters_equal = lambda.Parameters.Length == Parameters.Length &&
+                (Parameters.Length == 0 || !lambda.Parameters.Select((arg, i) => arg == Parameters[i]).Any(x => !x));
+            bool bodies_equal = lambda.Body.Equals(Body);
+
+            return parameters_equal && bodies_equal;
+        }
+
+        return false;
+    }
 
     public override int GetHashCode()
         => Parameters.GetHashCode();

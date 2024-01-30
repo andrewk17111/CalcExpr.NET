@@ -1,4 +1,6 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Expressions.Components;
+using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using TestCalcExpr.TestUtils;
 
 namespace TestCalcExpr.TestData;
@@ -488,7 +490,7 @@ public static partial class TestCases
         new TestCase("l(1, 2, 3, 4)", new FunctionCall("l",
             [new Number(1), new Number(2), new Number(3), new Number(4)]), new Number(10)),
         new TestCase("triangle(4)", new FunctionCall("triangle", [new Number(4)]), new Number(10)),
-        new TestCase("dist = (x, y) => (((x - 0)^2)+((y)^2)) ^ (1/2)", new AssignmentOperator(new Variable("dist"),
+        new TestCase("dist = ([IsNumber]x, [NotUndefined  ]  y) => (((x - 0)^2)+((y)^2)) ^ (1/2)", new AssignmentOperator(new Variable("dist"),
             new LambdaFunction(["x", "y"], new BinaryOperator("^", new Parentheses(
                 new BinaryOperator("+", new Parentheses(new BinaryOperator("^", new Parentheses(new BinaryOperator("-",
                         new Variable("x"), new Number(0))), new Number(2))), new Parentheses(new BinaryOperator("^",
@@ -500,8 +502,9 @@ public static partial class TestCases
                     new Parentheses(new BinaryOperator("/", new Number(1), new Number(2)))))),
         new TestCase("get_pi = () => pi", new AssignmentOperator(new Variable("get_pi"),
             new LambdaFunction([], new Constant("pi"))), new LambdaFunction([], new Constant("pi"))),
-        new TestCase("trig = n => triangle(n)", new AssignmentOperator(new Variable("trig"),
-                new LambdaFunction(["n"], new FunctionCall("triangle", [new Variable("n")]))),
+        new TestCase("trig = [IsNumber] n => triangle(n)", new AssignmentOperator(new Variable("trig"),
+                new LambdaFunction([new Parameter("n", [new IsNumberAttribute()])], new FunctionCall("triangle",
+                    [new Variable("n")]))),
             new LambdaFunction(["n"], new FunctionCall("triangle", [new Variable("n")]))),
         new TestCase("inc(1)+n", new BinaryOperator("+", new FunctionCall("inc", [new Number(1)]),
                 new Variable("n")), new Number(7), new BinaryOperator("+", new Number(2), new Variable("n")),

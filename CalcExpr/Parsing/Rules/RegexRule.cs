@@ -40,6 +40,25 @@ public class RegexRule(string name, string regex, RegexRuleOptions options,
     public override Token? Match(string input, IEnumerable<Rule> rules)
         => FindMatch(input, RegularExpression, Options);
 
+    public virtual IEnumerable<Token> Matches(string input, IEnumerable<Rule> rules)
+    {
+        bool rtl = Options.HasFlag((RegexRuleOptions)RegexOptions.RightToLeft);
+        int start = rtl ? input.Length - 1 : 0;
+        int stop = rtl ? 0 : input.Length - 1;
+        int index = start;
+
+        while ((!rtl && index <= stop) || (rtl && index >= stop))
+        {
+            Token? match = Match(input[(rtl ? 0 : index)..(rtl ? index : input.Length)], rules);
+
+            if (!match.HasValue)
+                break;
+
+            yield return match.Value;
+            index = rtl ? match.Value.Index : (index + match.Value.Index + match.Value.Length);
+        }
+    }
+
     /// <summary>
     /// Find a matching substring in the input <see cref="string"/> using the provided regular expression along with the
     /// additional <see cref="RegexRuleOptions"/>.
