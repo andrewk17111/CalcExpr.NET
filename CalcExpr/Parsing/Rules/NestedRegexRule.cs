@@ -62,6 +62,7 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
                 if (preprocessed_rules.TryGetValue(match, out string? value))
                 {
                     sub_regex = value;
+                    matches.Remove(match);
                 }
                 else if (rule_names.TryGetValue(match, out int idx))
                 {

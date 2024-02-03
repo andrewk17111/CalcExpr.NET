@@ -21,9 +21,10 @@ public class TestParser
     {
         (string Name, string? Regex)[] default_rules =
         [
-            ("Operand", "(({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)|{Parameter})"),
+            ("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            ("Operand", "({DiscreteOperand}|{Parameter})"),
             ("Token", @"\[\d+\]"),
-            ("Attribute", @"([A-Za-z][A-Za-z_0-9]*)"),
+            ("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({DiscreteOperand}(,{DiscreteOperand})*\))?)"),
             ("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})"),
             ("FunctionCall", null),
             ("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>"),
@@ -88,7 +89,6 @@ public class TestParser
 
         foreach (TestCase test_case in TestCases.Expressions)
         {
-            Console.WriteLine(test_case.Parsed);
             parser.Parse(test_case.ExpressionString);
             Assert.IsTrue(parser.ContainsCache(test_case.ExpressionString));
             parser.RemoveCache(test_case.ExpressionString);
@@ -124,5 +124,44 @@ public class TestParser
         Assert.IsFalse(parser.GrammarContains(CUSTOM_RULE.Name));
         Assert.IsTrue(parser.RemoveGrammarRuleAt(parser.Grammar.Length - 1));
         Assert.IsFalse(parser.GrammarContains(tau.Name));
+    }
+
+    [TestMethod]
+    public void TestTokenizer()
+    {
+        string input = "(0) [1234] {12{cs}34} <dfsg{dfg}dsa[234]54>";
+        Dictionary<Brackets, string> expected = new Dictionary<Brackets, string>
+        {
+            { Brackets.None, input },
+            { Brackets.Parenthesis, @"[0] \[1234\] {12{cs}34} <dfsg{dfg}dsa\[234\]54>" },
+            { Brackets.Square, @"(0) [0] {12{cs}34} <dfsg{dfg}dsa[1]54>" },
+            { Brackets.Curly, @"(0) \[1234\] [0] <dfsg[1]dsa\[234\]54>" },
+            { Brackets.Angle, @"(0) \[1234\] {12{cs}34} [0]" },
+            { Brackets.All, @"[0] [1] [2] [3]" },
+        };
+
+        foreach (Brackets bracket in expected.Keys)
+        {
+            string tokenized = input.TokenizeInput(out Token[] tokens, bracket);
+            Assert.AreEqual(expected[bracket], tokenized);
+
+            if (tokens.Length > 0)
+            {
+                MatchCollection matches = Regex.Matches(tokenized, @"\[\d+\]");
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    int index = matches[i].Index;
+                    int dindex = ContextFreeUtils.DetokenizeIndex(index, tokenized, tokens);
+
+                    Assert.AreEqual(tokens[i].Index, dindex);
+                }
+
+                int[] dindexes = ContextFreeUtils.DetokenizeIndexes(matches.Select(m => m.Index), tokenized, tokens)
+                    .ToArray();
+
+                for (int i = 0; i < tokens.Length; i++)
+                    Assert.AreEqual(tokens[i].Index, dindexes[i]);
+            }
+        }
     }
 }

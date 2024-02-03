@@ -26,10 +26,11 @@ public class Parser
     {
         _grammar =
         [
-            new ReferenceRegexRule("Operand",
-                "(({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)|{Parameter})"),
+            new ReferenceRegexRule("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            new ReferenceRegexRule("Operand", "({DiscreteOperand}|{Parameter})"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
-            new ReferenceRegexRule("Attribute", @"([A-Za-z][A-Za-z_0-9]*)"),
+            new ReferenceRegexRule("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({DiscreteOperand}(,{DiscreteOperand})*\))?)",
+                RegexRuleOptions.PadReferences),
             new ReferenceRegexRule("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})",
                 RegexRuleOptions.PadReferences),
             new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall),
@@ -112,77 +113,6 @@ public class Parser
 
     private static string CleanExpressionString(string expression)
         => Regex.Replace(expression, @"\s+", "");
-
-    private static string TokenizeInput(string input, out Token[] tokens)
-    {
-        input = Regex.Replace(input, @"[\[\]\\]", match => @$"\{match.Value}");
-
-        List<Token> toks = [];
-        string output = String.Empty;
-        int start = -1;
-        int depth = 0;
-
-        for (int i = 0; i < input.Length; i++)
-        {
-            char current = input[i];
-
-            if (current == '(')
-            {
-                if (start == -1)
-                {
-                    start = i;
-                    depth = 1;
-                }
-                else
-                {
-                    depth++;
-                }
-            }
-            else if (current == ')')
-            {
-                if (start < 0)
-                {
-                    throw new UnbalancedParenthesesException(input);
-                }
-                else if (depth > 1)
-                {
-                    depth--;
-                }
-                else
-                {
-                    output += $"[{toks.Count}]";
-                    toks.Add(new Token(input[start..(i + 1)], start));
-                    start = -1;
-                    depth = 0;
-                }
-            }
-            else
-            {
-                if (start < 0)
-                    output += current;
-                else if (i == input.Length - 1)
-                    throw new UnbalancedParenthesesException(input);
-            }
-        }
-
-        tokens = [.. toks];
-        return output;
-    }
-
-    private static int DetokenizeIndex(int index, string tokenized_string, Token[] tokens)
-    {
-        string[] matches =
-            [.. Regex.Matches(tokenized_string[..index], @"((?<=^|([^\\]([\\][\\])*))\[\d+\])|(\\[\[\]\\])")
-                .Select(m => m.Value)];
-
-        foreach (string match in matches)
-            if (match.StartsWith('\\'))
-                index -= 1;
-            else
-                index += tokens[Convert.ToInt32(match[1..^1])].Length - 3;
-
-        return index;
-    }
 
     /// <summary>
     /// Determines whether the cache of the <see cref="Parser"/> contains a specified expression <see cref="string"/>.
@@ -398,7 +328,7 @@ public class Parser
     private FunctionCall ParseFunctionCall(string input, Token token, Parser parser)
     {
         Match function_name = Regex.Match(input, @"(?<=^\s*)([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
-        string tokenized_args = TokenizeInput(token.Value[(function_name.Length + 1)..^1], out Token[] tokens);
+        string tokenized_args = token.Value[(function_name.Length + 1)..^1].TokenizeInput(out Token[] tokens);
 
         string[] args = tokenized_args
             .Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -414,6 +344,8 @@ public class Parser
     {
         RegexRule? parameter_rule = (RegexRule?)parser.GetGrammarRule("Parameter");
         string parameters_string = Regex.Match(token.Value.Trim(), @"(?<=^\(?)[^\(]*?(?=\)?\s*=>)").Value;
+        string tokenized_parameters_string = input.TokenizeInput(out Token[] tokens,
+            Brackets.Parenthesis | Brackets.Square);
         IEnumerable<string> parameters;
     
         if (parameter_rule is not null)
@@ -443,7 +375,7 @@ public class Parser
 
     private IExpression ParseWithParentheses(string input, Token _, Parser parser)
     {
-        string tokenized_input = TokenizeInput(input, out Token[] tokens);
+        string tokenized_input = input.TokenizeInput(out Token[] tokens, Brackets.Parenthesis);
 
         foreach (Rule rule in parser.Grammar)
         {
@@ -454,7 +386,8 @@ public class Parser
 
             if (match.HasValue)
                 return rule.Parse.Invoke(input,
-                    new Token(match.Value, DetokenizeIndex(match.Value.Index, tokenized_input, tokens)),
+                    new Token(match.Value, ContextFreeUtils.DetokenizeIndex(match.Value.Index, tokenized_input,
+                        tokens)),
                     this);
         }
 
