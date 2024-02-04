@@ -27,11 +27,16 @@ public class Parser
         _grammar =
         [
             new ReferenceRegexRule("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
-            new ReferenceRegexRule("Operand", "({DiscreteOperand}|{Parameter})"),
+            new ReferenceRegexRule("Operand", "({DiscreteOperand}|{Parameter}|{TokenizedParameter})"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
-            new ReferenceRegexRule("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({DiscreteOperand}(,{DiscreteOperand})*\))?)",
+            new ReferenceRegexRule("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)",
                 RegexRuleOptions.PadReferences),
             new ReferenceRegexRule("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})",
+                RegexRuleOptions.PadReferences),
+            new ReferenceRegexRule("TokenizedAttribute", @"([A-Za-z][A-Za-z_0-9]*({Token})?)",
+                RegexRuleOptions.PadReferences),
+            new ReferenceRegexRule("TokenizedParameter",
+                @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})",
                 RegexRuleOptions.PadReferences),
             new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall),
             new NestedRegexRule("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>",
@@ -342,32 +347,27 @@ public class Parser
 
     private LambdaFunction ParseLambdaFunction(string input, Token token, Parser parser)
     {
-        RegexRule? parameter_rule = (RegexRule?)parser.GetGrammarRule("Parameter");
-        string parameters_string = Regex.Match(token.Value.Trim(), @"(?<=^\(?)[^\(]*?(?=\)?\s*=>)").Value;
-        string tokenized_parameters_string = input.TokenizeInput(out Token[] tokens,
-            Brackets.Parenthesis | Brackets.Square);
-        IEnumerable<string> parameters;
-    
-        if (parameter_rule is not null)
-        {
-            parameters = parameter_rule.Matches(parameters_string, parser.Grammar)
-                .Select(t => Regex.Replace(t.Value, @"[\[\]]", ",").Trim());
-        }
-        else
-        {
-            parameters = parameters_string
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        }
-
-        return new LambdaFunction(parameters.Select(p =>
+        string parameters_string = Regex.Match(token.Value.Trim(), @"(?<=^\(?).*?(?=\)?\s*=>)").Value.TrimStart('(');
+        string tokenized_parameters_string = parameters_string.TokenizeInput(out Token[] attribute_tokens,
+            Brackets.Square);
+        IEnumerable<Parameter> parameters = tokenized_parameters_string
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(p =>
             {
-                IEnumerable<string> attributes = p.Split(',')
-                    .Select(p => p.Trim())
-                    .Where(p => !String.IsNullOrWhiteSpace(p));
+                Match attribute_match = Regex.Match(p, @"(?<=^\s*\[)\d+(?=\])");
+                string? attribute_string = attribute_match.Success
+                    ? attribute_tokens[Convert.ToInt32(attribute_match.Value)].Value[1..^1]
+                    : null;
+                IEnumerable<string> attributes = attribute_string is null
+                    ? Enumerable.Empty<string>()
+                    : Regex.Split(attribute_string, @"(?<!\([^\)]*?),(?![^\(]*?\))");
 
-                return new Parameter(attributes.Last(), attributes.Take(attributes.Count() - 1));
-            }),
-            parser.Parse(input[(token.Index + token.Length)..]));
+                return new Parameter(Regex.Match(p,
+                    @$"(?<=\]?\s*){((RegexRule?)parser.GetGrammarRule("Variable"))!.RegularExpression}(?=\s*$)").Value,
+                    attributes);
+            }).ToArray();
+
+        return new LambdaFunction(parameters, parser.Parse(input[(token.Index + token.Length)..]));
     }
 
     private Parentheses ParseParentheses(string input, Token token, Parser parser)

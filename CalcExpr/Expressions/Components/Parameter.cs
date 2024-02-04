@@ -1,6 +1,9 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.FunctionAttributes;
+using CalcExpr.Parsing.Rules;
+using CalcExpr.Parsing;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace CalcExpr.Expressions.Components;
 
@@ -17,27 +20,56 @@ public readonly struct Parameter(string name, IEnumerable<FunctionAttribute> att
     { }
 
     public Parameter(string name, IEnumerable<string> attributes)
-        : this(name, attributes.Select(a => GetAttribute(a)), false)
+        : this(name, attributes.Select(GetAttribute), false)
     { }
 
     public Parameter(string name, bool is_context) : this(name, [], is_context)
     { }
 
-    private static FunctionAttribute GetAttribute(string name)
+    private static FunctionAttribute GetAttribute(string attribute)
     {
+        string attribute_name = Regex.Match(attribute, @"(?<=^\s*)[A-Za-z][A-Za-z_0-9]*").Value;
         Type? attribute_type = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(a => a.GetTypes())
-            .FirstOrDefault(t => t.Name == name + "Attribute");
+            .FirstOrDefault(t => t.Name == attribute_name + "Attribute");
         
         if (attribute_type is not null && attribute_type.BaseType != typeof(FunctionAttribute))
         {
-            FunctionAttribute? result = (FunctionAttribute?)Activator.CreateInstance(attribute_type);
+            double[] parameters = attribute.Contains('(')
+                ? Regex.Match(attribute, @"(?<=\().*?(?=\))").Value.Split(',')
+                    .Select(p => Convert.ToDouble(p.Trim().TrimStart('+'))).ToArray()
+                : [];
+            var constructors = attribute_type.GetConstructors()
+                .Select(c => new
+                {
+                    Constructor = c,
+                    Parameters = c.GetParameters(),
+                    MinParameters = c.GetParameters().Where(p => !p.HasDefaultValue).Count()
+                })
+                .Where(c => parameters.Length >= c.MinParameters && parameters.Length <= c.Parameters.Length);
+            FunctionAttribute? result = null; // = (FunctionAttribute?)Activator.CreateInstance(attribute_type);
+
+            foreach (var constructor in constructors)
+            {
+                try
+                {
+                    object[] constructor_parameters = [.. constructor.Parameters
+                        .Select((p, i) => i < parameters.Length
+                            ? (object?)Convert.ChangeType(parameters[i], p.ParameterType)
+                            : p.DefaultValue)];
+
+                    result = (FunctionAttribute?)constructor.Constructor.Invoke(constructor_parameters);
+                    break;
+                }
+                catch
+                { }
+            }
 
             if (result is not null)
                 return result;
         }
 
-        throw new Exception($"Cannot find FunctionAttribute type '{name}' with a constructor that takes no arguments");
+        throw new Exception($"Cannot find FunctionAttribute type '{attribute}'.");
     }
 
     public override int GetHashCode()
