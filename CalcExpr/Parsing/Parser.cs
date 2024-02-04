@@ -1,5 +1,4 @@
 ﻿using CalcExpr.Attributes;
-using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Components;
 using CalcExpr.Parsing.Rules;
@@ -165,6 +164,18 @@ public class Parser
         string clean_expression = CleanExpressionString(expression);
 
         return _cache.ContainsKey(clean_expression) && _cache.Remove(clean_expression);
+    }
+
+    /// <summary>
+    /// Clears the cache of the parser.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if the cache was successfully cleared; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool ClearCache()
+    {
+        _cache.Clear();
+        return _cache.Count == 0;
     }
 
     /// <summary>

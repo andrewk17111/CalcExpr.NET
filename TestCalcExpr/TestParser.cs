@@ -72,11 +72,14 @@ public class TestParser
     [TestMethod]
     public void TestParse()
     {
+        Parser parser = new Parser();
+
         foreach (TestCase test_case in TestCases.Expressions)
         {
-            IExpression parsed = new Parser().Parse(test_case.ExpressionString);
+            IExpression parsed = parser.Parse(test_case.ExpressionString);
 
             Assert.AreEqual(test_case.Parsed, parsed);
+            parser.ClearCache();
         }
     }
 
@@ -101,7 +104,7 @@ public class TestParser
         
         parser.AddCache(pi.Item1, pi.Item2);
         Assert.IsTrue(parser.ContainsCache(pi.Item1));
-        parser.RemoveCache(pi.Item1);
+        parser.ClearCache();
         Assert.IsFalse(parser.ContainsCache(pi.Item1));
     }
 
