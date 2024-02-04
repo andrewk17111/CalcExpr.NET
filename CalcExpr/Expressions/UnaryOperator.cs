@@ -1,4 +1,5 @@
-﻿using CalcExpr.Context;
+﻿using CalcExpr.BuiltInFunctions;
+using CalcExpr.Context;
 
 namespace CalcExpr.Expressions;
 
@@ -17,8 +18,8 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         {
             { "+", Positive },
             { "-", Negative },
-            { "~", Not },
-            { "¬", Not },
+            { "~", (expr, cxt) => new Function(LogicalFunctions.Not).Invoke([expr], cxt) },
+            { "¬", (expr, cxt) => new Function(LogicalFunctions.Not).Invoke([expr], cxt) },
             { "!", Subfactorial },
             { "--", PreDecrement },
             { "++", PreIncrement },
@@ -103,21 +104,14 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Not(IExpression x, ExpressionContext variables)
-    {
-        IExpression x_eval = x.Evaluate(variables);
-
-        return x_eval is Number n && n.Value == 0
-            ? new Number(1)
-            : x_eval is Constant c && Constant.UNDEFINED.Equals(c)
-                ? Constant.UNDEFINED
-                // Any value that is not 0 or undefined should result in 0.
-                : new Number(0);
-    }
-
     private static IExpression Subfactorial(IExpression x, ExpressionContext variables)
     {
         IExpression x_eval = x.Evaluate(variables);
+        
+        if (Constant.TRUE.Equals(x_eval))
+            x_eval = new Number(1);
+        else if (Constant.FALSE.Equals(x_eval))
+            x_eval = new Number(0);
 
         if (x_eval is Number n && n.Value % 1 == 0)
         {

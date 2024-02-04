@@ -11,7 +11,7 @@ public class Number(double value) : IExpression
     public double Value { get; private set; } = value;
 
     public IExpression Evaluate()
-        => Evaluate(new ExpressionContext());
+        => Evaluate(null!);
 
     public IExpression Evaluate(ExpressionContext variables)
         => Value switch

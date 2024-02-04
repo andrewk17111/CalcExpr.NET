@@ -1,4 +1,5 @@
-﻿using CalcExpr.Context;
+﻿using CalcExpr.BuiltInFunctions;
+using CalcExpr.Context;
 using CalcExpr.Exceptions;
 
 namespace CalcExpr.Expressions;
@@ -24,11 +25,11 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
             { "%", EuclideanModulus },
             { "%%", TruncatedModulus },
             { "//", IntDivide },
-            { "&&", And },
-            { "∧", And },
-            { "||", Or },
-            { "∨", Or },
-            { "⊕", Xor },
+            { "&&", (a, b, cxt) => new Function(LogicalFunctions.And).Invoke([a, b], cxt) },
+            { "∧", (a, b, cxt) => new Function(LogicalFunctions.And).Invoke([a, b], cxt) },
+            { "||", (a, b, cxt) => new Function(LogicalFunctions.Or).Invoke([a, b], cxt) },
+            { "∨", (a, b, cxt) => new Function(LogicalFunctions.Or).Invoke([a, b], cxt) },
+            { "⊕", (a, b, cxt) => new Function(LogicalFunctions.Xor).Invoke([a, b], cxt) },
             { "==", IsEqual },
             { "!=", IsNotEqual },
             { "≠", IsNotEqual },
@@ -39,7 +40,6 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
             { ">", IsGreaterThan },
             { ">=", IsGreaterThanOrEqualTo },
             { "≥", IsGreaterThanOrEqualTo },
-            { "=", Assignment },
         };
 
     private Func<IExpression, IExpression, ExpressionContext, IExpression> _operation
@@ -64,11 +64,18 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext variables)
-        => Left is not Number a
-            ? new BinaryOperator(Identifier, Left.StepEvaluate(variables), Right)
-            : Right is not Number b
-                ? new BinaryOperator(Identifier, Left, Right.StepEvaluate(variables))
-                : _operation(a, b, variables);
+    {
+        IExpression l = Left.StepEvaluate(variables);
+
+        if (l.Equals(Left))
+        {
+            IExpression r = Right.StepEvaluate(variables);
+
+            return r.Equals(Right) ? _operation(l, r, variables) : new BinaryOperator(Identifier, Left, r);
+        }
+
+        return new BinaryOperator(Identifier, l, Right);
+    }
 
     public override bool Equals(object? obj)
         => obj is not null && obj is BinaryOperator bin_op && bin_op.Identifier == Identifier &&
@@ -213,26 +220,6 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
             ? new Number(Math.Sign(b_num.Value) * Math.Floor(a_num.Value / Math.Abs(b_num.Value)))
             : Constant.UNDEFINED;
 
-    private static IExpression And(IExpression a, IExpression b, ExpressionContext variables)
-        => (a.Evaluate(variables) is Number a_num && a_num.Value == 0) ||
-            (b.Evaluate(variables) is Number b_num && b_num.Value == 0)
-            ? new Number(0)
-            : new Number(1);
-
-    private static IExpression Or(IExpression a, IExpression b, ExpressionContext variables)
-        => a.Evaluate(variables) is Number a_num && a_num.Value == 0 &&
-            b.Evaluate(variables) is Number b_num && b_num.Value == 0
-            ? new Number(0)
-            : new Number(1);
-
-    private static IExpression Xor(IExpression a, IExpression b, ExpressionContext variables)
-    {
-        bool a_bool = a.Evaluate(variables) is Number a_num && a_num.Value != 0;
-        bool b_bool = b.Evaluate(variables) is Number b_num && b_num.Value != 0;
-
-        return new Number((a_bool || b_bool) && !(a_bool && b_bool) ? 1 : 0);
-    }
-
     private static IExpression IsEqual(IExpression a, IExpression b, ExpressionContext variables)
     {
         IExpression a_eval = a.Evaluate(variables);
@@ -295,20 +282,4 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
                 ? eq_num.Clone()
                 : IsGreaterThan(a, b, variables).Clone()
             : Constant.UNDEFINED;
-
-    private static IExpression Assignment(IExpression a, IExpression b, ExpressionContext variables)
-    {
-        IExpression b_eval = b.Evaluate(variables);
-
-        if (a is Variable v)
-        {
-            variables ??= new ExpressionContext();
-            variables[v.Name] = b_eval;
-            return b_eval.Clone();
-        }
-        else
-        {
-            throw new InvalidAssignmentException(new BinaryOperator("=", a, b));
-        }
-    }
 }

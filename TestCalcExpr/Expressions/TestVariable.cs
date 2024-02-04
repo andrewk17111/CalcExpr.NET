@@ -2,7 +2,7 @@
 using CalcExpr.Expressions;
 using CalcExpr.Parsing;
 
-namespace TestCalcExpr;
+namespace TestCalcExpr.Expressions;
 
 [TestClass]
 public class TestVariable

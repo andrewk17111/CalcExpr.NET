@@ -8,5 +8,5 @@ namespace CalcExpr.Exceptions;
 /// </summary>
 /// <param name="expression">The invalide expression.</param>
 public class InvalidAssignmentException(IExpression expression)
-    : Exception($"The expression '{expression}' is not a valid assignment expression.")
+    : Exception($"'{expression}' is not a variable and therefore cannot use the assignment operator.")
 { }

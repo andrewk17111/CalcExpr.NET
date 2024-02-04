@@ -2,6 +2,8 @@
 using CalcExpr.Parsing;
 using CalcExpr.Parsing.Rules;
 using System.Text.RegularExpressions;
+using TestCalcExpr.TestData;
+using TestCalcExpr.TestUtils;
 
 namespace TestCalcExpr;
 
@@ -18,9 +20,16 @@ public class TestParser
     public void TestInit()
     {
         (string Name, string? Regex)[] default_rules =
-        {
-            ("Operand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+        [
+            ("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            ("Operand", "({DiscreteOperand}|{Parameter}|{TokenizedParameter})"),
             ("Token", @"\[\d+\]"),
+            ("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)"),
+            ("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})"),
+            ("TokenizedAttribute", @"([A-Za-z][A-Za-z_0-9]*({Token})?)"),
+            ("TokenizedParameter", @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})"),
+            ("FunctionCall", null),
+            ("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>"),
             ("Parentheses", null),
             ("WithParentheses", @"\(|\)"),
             ("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})"),
@@ -34,10 +43,10 @@ public class TestParser
             ("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})"),
             ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
             ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
-            ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false)"),
+            ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false|undefined|dne)"),
             ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
             ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),
-        };
+        ];
 
         Parser parser = new Parser();
 
@@ -45,8 +54,10 @@ public class TestParser
         {
             Rule rule = parser.Grammar[i];
 
-            Assert.AreEqual(rule.Name, default_rules[i].Name);
+            Assert.AreEqual(default_rules[i].Name, rule.Name);
             Assert.AreEqual(default_rules[i].Regex, rule is RegexRule regex_rule ? regex_rule.RegularExpression : null);
+            Assert.AreEqual(rule, parser.GetGrammarRule(rule.Name));
+            Assert.AreEqual(rule, parser.GetGrammarRule(i));
         }
 
         parser = new Parser(new Rule[] { CUSTOM_RULE });
@@ -61,8 +72,12 @@ public class TestParser
     [TestMethod]
     public void TestParse()
     {
-        foreach ((string expression_string, IExpression expression, _) in TestCases.Expressions)
-            Assert.AreEqual(expression, new Parser().Parse(expression_string));
+        foreach (TestCase test_case in TestCases.Expressions)
+        {
+            IExpression parsed = new Parser().Parse(test_case.ExpressionString);
+
+            Assert.AreEqual(test_case.Parsed, parsed);
+        }
     }
 
     /// <summary>
@@ -74,12 +89,12 @@ public class TestParser
     {
         Parser parser = new Parser();
 
-        foreach ((string expression, _, _) in TestCases.Expressions)
+        foreach (TestCase test_case in TestCases.Expressions)
         {
-            parser.Parse(expression);
-            Assert.IsTrue(parser.ContainsCache(expression));
-            parser.RemoveCache(expression);
-            Assert.IsFalse(parser.ContainsCache(expression));
+            parser.Parse(test_case.ExpressionString);
+            Assert.IsTrue(parser.ContainsCache(test_case.ExpressionString));
+            parser.RemoveCache(test_case.ExpressionString);
+            Assert.IsFalse(parser.ContainsCache(test_case.ExpressionString));
         }
 
         (string, IExpression) pi = ("pi", new Number(3.1415926535));
@@ -111,5 +126,44 @@ public class TestParser
         Assert.IsFalse(parser.GrammarContains(CUSTOM_RULE.Name));
         Assert.IsTrue(parser.RemoveGrammarRuleAt(parser.Grammar.Length - 1));
         Assert.IsFalse(parser.GrammarContains(tau.Name));
+    }
+
+    [TestMethod]
+    public void TestTokenizer()
+    {
+        string input = "(0) [1234] {12{cs}34} <dfsg{dfg}dsa[234]54>";
+        Dictionary<Brackets, string> expected = new Dictionary<Brackets, string>
+        {
+            { Brackets.None, input },
+            { Brackets.Parenthesis, @"[0] \[1234\] {12{cs}34} <dfsg{dfg}dsa\[234\]54>" },
+            { Brackets.Square, @"(0) [0] {12{cs}34} <dfsg{dfg}dsa[1]54>" },
+            { Brackets.Curly, @"(0) \[1234\] [0] <dfsg[1]dsa\[234\]54>" },
+            { Brackets.Angle, @"(0) \[1234\] {12{cs}34} [0]" },
+            { Brackets.All, @"[0] [1] [2] [3]" },
+        };
+
+        foreach (Brackets bracket in expected.Keys)
+        {
+            string tokenized = input.TokenizeInput(out Token[] tokens, bracket);
+            Assert.AreEqual(expected[bracket], tokenized);
+
+            if (tokens.Length > 0)
+            {
+                MatchCollection matches = Regex.Matches(tokenized, @"\[\d+\]");
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    int index = matches[i].Index;
+                    int dindex = ContextFreeUtils.DetokenizeIndex(index, tokenized, tokens);
+
+                    Assert.AreEqual(tokens[i].Index, dindex);
+                }
+
+                int[] dindexes = ContextFreeUtils.DetokenizeIndexes(matches.Select(m => m.Index), tokenized, tokens)
+                    .ToArray();
+
+                for (int i = 0; i < tokens.Length; i++)
+                    Assert.AreEqual(tokens[i].Index, dindexes[i]);
+            }
+        }
     }
 }
