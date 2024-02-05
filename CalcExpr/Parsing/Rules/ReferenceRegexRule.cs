@@ -32,7 +32,7 @@ public class ReferenceRegexRule(string name, string regex, RegexRuleOptions opti
         => obj is not null && obj is RegexRule a && RegularExpression == a.RegularExpression;
 
     public override int GetHashCode()
-        => RegularExpression.GetHashCode();
+        => RegularExpressionTemplate.GetHashCode();
 
     public static bool operator ==(ReferenceRegexRule a, ReferenceRegexRule b)
         => a.Equals(b);

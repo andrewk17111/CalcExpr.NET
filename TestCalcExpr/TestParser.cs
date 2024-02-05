@@ -55,7 +55,12 @@ public class TestParser
             Rule rule = parser.Grammar[i];
 
             Assert.AreEqual(default_rules[i].Name, rule.Name);
-            Assert.AreEqual(default_rules[i].Regex, rule is RegexRule regex_rule ? regex_rule.RegularExpression : null);
+
+            if (rule is NestedRegexRule nested_regex_rule)
+                Assert.AreEqual(default_rules[i].Regex, nested_regex_rule.RegularExpressionTemplate);
+            else if (rule is RegexRule regex_rule)
+                Assert.AreEqual(default_rules[i].Regex, regex_rule.RegularExpression);
+            
             Assert.AreEqual(rule, parser.GetGrammarRule(rule.Name));
             Assert.AreEqual(rule, parser.GetGrammarRule(i));
         }

@@ -25,7 +25,8 @@ public class Parser
     {
         _grammar =
         [
-            new ReferenceRegexRule("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            new ReferenceRegexRule("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)",
+                RegexRuleOptions.PadReferences),
             new ReferenceRegexRule("Operand", "({DiscreteOperand}|{Parameter}|{TokenizedParameter})"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
             new ReferenceRegexRule("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)",
@@ -71,6 +72,8 @@ public class Parser
             new RegexRule("Number", @"((\d+\.?\d*)|(\d*\.?\d+))", RegexRuleOptions.Only | RegexRuleOptions.Trim,
                 ParseNumber)
         ];
+
+        BuildGrammarRules(_grammar);
     }
 
     /// <summary>
@@ -80,7 +83,10 @@ public class Parser
     /// The specified <see cref="IEnumerable{Rule}"/> to be used as the grammar of the <see cref="Parser"/>.
     /// </param>
     public Parser(IEnumerable<Rule> grammar)
-        => _grammar = grammar.ToList();
+    {
+        _grammar = grammar.ToList();
+        BuildGrammarRules(_grammar);
+    }
 
     /// <summary>
     /// Parses an expression <see cref="string"/> into an <see cref="IExpression"/>.
@@ -283,6 +289,16 @@ public class Parser
     /// <returns>The <see cref="Rule"/> in the grammar at the index of <paramref name="index"/>.</returns>
     public Rule? GetGrammarRule(int index)
         => index >= 0 && index < _grammar.Count ? _grammar[index] : null;
+
+    public void RebuildGrammarRules()
+        => BuildGrammarRules(_grammar);
+
+    private static void BuildGrammarRules(IEnumerable<Rule> rules)
+    {
+        foreach (Rule rule in rules)
+            if (rule is NestedRegexRule regex_rule)
+                regex_rule.Build(rules);
+    }
 
     private Token? MatchParentheses(string input, IEnumerable<Rule> rules)
     {
