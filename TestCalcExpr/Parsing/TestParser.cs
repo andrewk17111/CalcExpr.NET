@@ -5,14 +5,14 @@ using System.Text.RegularExpressions;
 using TestCalcExpr.TestData;
 using TestCalcExpr.TestUtils;
 
-namespace TestCalcExpr;
+namespace TestCalcExpr.Parsing;
 
 [TestClass]
 public class TestParser
 {
     readonly RegexRule CUSTOM_RULE = new RegexRule("Char", @"[A-Z]", RegexOptions.None,
         (expression, token, _) => new Number(token.Value[0] - 65));
-    
+
     /// <summary>
     /// Tests that the Parser can be initialized properly from either constructor.
     /// </summary>
@@ -60,7 +60,7 @@ public class TestParser
                 Assert.AreEqual(default_rules[i].Regex, nested_regex_rule.RegularExpressionTemplate);
             else if (rule is RegexRule regex_rule)
                 Assert.AreEqual(default_rules[i].Regex, regex_rule.RegularExpression);
-            
+
             Assert.AreEqual(rule, parser.GetGrammarRule(rule.Name));
             Assert.AreEqual(rule, parser.GetGrammarRule(i));
         }
@@ -106,7 +106,7 @@ public class TestParser
         }
 
         (string, IExpression) pi = ("pi", new Number(3.1415926535));
-        
+
         parser.AddCache(pi.Item1, pi.Item2);
         Assert.IsTrue(parser.ContainsCache(pi.Item1));
         parser.ClearCache();
@@ -122,7 +122,7 @@ public class TestParser
     {
         Parser parser = new Parser();
         RegexRule tau = new RegexRule("tau", "tau", RegexOptions.None, (expression, token, _) => new Number(6.28));
-        
+
         Assert.IsFalse(parser.Grammar.Contains(CUSTOM_RULE));
         Assert.IsFalse(parser.Grammar.Contains(tau));
         Assert.IsTrue(parser.AddGrammarRule(CUSTOM_RULE, 0));
@@ -136,6 +136,9 @@ public class TestParser
         Assert.IsFalse(parser.GrammarContains(tau.Name));
     }
 
+    /// <summary>
+    /// Tests the tokenizing and detokenizing of varying types of brackets.
+    /// </summary>
     [TestMethod]
     public void TestTokenizer()
     {

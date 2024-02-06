@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
 
@@ -21,4 +22,16 @@ public readonly struct Token(string value, int index)
 
     public static implicit operator string(Token token)
         => token.Value;
+
+    public override bool Equals([NotNullWhen(true)] object? obj)
+        => obj is not null && obj is Token token && token.Value == Value;
+
+    public override int GetHashCode()
+        => Value.GetHashCode();
+
+    public static bool operator ==(Token a, Token b)
+        => a.Equals(b);
+
+    public static bool operator !=(Token a, Token b)
+        => !a.Equals(b);
 }
