@@ -8,40 +8,55 @@ namespace CalcExpr.Parsing.Rules;
 /// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
 /// </summary>
 /// <param name="name">The name of the <see cref="NestedRegexRule"/>.</param>
-/// <param name="regex">The regex <see cref="string"/> to match an expression <see cref="string"/> to.</param>
+/// <param name="regex_template">
+/// The regex template <see cref="string"/> to match an expression <see cref="string"/> to.
+/// </param>
 /// <param name="options">
 /// The options for the regular expression along with additional options finding a match.
 /// </param>
 /// <param name="parse">
 /// The function to use to parse a <see cref="string"/> into an <see cref="IExpression"/>.
 /// </param>
-public class NestedRegexRule(string name, string regex, RegexRuleOptions options,
-    Func<string, Token, Parser, IExpression> parse) : RegexRule(name, regex, options, parse)
+public class NestedRegexRule(string name, string regex_template, RegexRuleOptions options,
+    Func<string, Token, Parser, IExpression> parse) : RegexRule(name, null, options, parse)
 {
+    private string? _regex = null;
+
+    public readonly string RegularExpressionTemplate = regex_template;
+
+    public new string? RegularExpression
+        => _regex;
+
     /// <summary>
     /// A rule to be used to parse a <see cref="string"/> into an <see cref="IExpression"/>.
     /// </summary>
     /// <param name="name">The name of the <see cref="NestedRegexRule"/>.</param>
-    /// <param name="regex">The regex <see cref="string"/> to match an expression <see cref="string"/> to.</param>
+    /// <param name="regex">
+    /// The regex template <see cref="string"/> to match an expression <see cref="string"/> to.
+    /// </param>
     /// <param name="options">The options for the regular expression.</param>
     /// <param name="parse">
     /// The function to use to parse a <see cref="string"/> into an <see cref="IExpression"/>.
     /// </param>
-    public NestedRegexRule(string name, string regex, RegexOptions options,
+    public NestedRegexRule(string name, string regex_template, RegexOptions options,
         Func<string, Token, Parser, IExpression> parse)
-        : this(name, regex, (RegexRuleOptions)options, parse)
+        : this(name, regex_template, (RegexRuleOptions)options, parse)
     { }
 
     public override Token? Match(string input, IEnumerable<Rule> rules)
     {
-        Dictionary<string, string> preprocessed_rules = [];
-        string regex = ReplaceRules(RegularExpression, rules, Options, ref preprocessed_rules);
+        if (RegularExpression is null)
+            Build(rules);
 
-        return FindMatch(input, regex, Options);
+        return FindMatch(input, RegularExpression!, Options);
     }
 
-    private static string ReplaceRules(string regular_expression, IEnumerable<Rule> rules, RegexRuleOptions options,
-        ref Dictionary<string, string> preprocessed_rules)
+    public void Build(IEnumerable<Rule> rules)
+    {
+        _regex = ReplaceRules(RegularExpressionTemplate, rules, Options);
+    }
+
+    private static string ReplaceRules(string regular_expression, IEnumerable<Rule> rules, RegexRuleOptions options)
     {
         List<string> matches = Regex.Matches(regular_expression, @"(?<=(^|[^\\](\\\\)*){)\w+(?=})")
             .Select(m => m.Value)
@@ -59,17 +74,14 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
                 string match = matches.First();
                 string sub_regex;
 
-                if (preprocessed_rules.TryGetValue(match, out string? value))
-                {
-                    sub_regex = value;
-                    matches.Remove(match);
-                }
-                else if (rule_names.TryGetValue(match, out int idx))
+                if (rule_names.TryGetValue(match, out int idx))
                 {
                     if (rules.ElementAt(idx) is NestedRegexRule nrr)
                     {
-                        sub_regex = ReplaceRules(nrr.RegularExpression, rules, options, ref preprocessed_rules);
-                        preprocessed_rules.Add(match, sub_regex);
+                        if (nrr.RegularExpression is null)
+                            nrr.Build(rules);
+
+                        sub_regex = ReplaceRules(nrr.RegularExpression!, rules, options);
                     }
                     else if (rules.ElementAt(idx) is RegexRule rr)
                     {
@@ -81,10 +93,11 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
                     }
 
                     rule_names.Remove(match);
-                    matches.Remove(match);
+                    matches.RemoveAt(0);
                 }
                 else
                 {
+                    matches.RemoveAt(0);
                     continue;
                 }
 
@@ -104,7 +117,7 @@ public class NestedRegexRule(string name, string regex, RegexRuleOptions options
         => obj is not null && obj is RegexRule a && RegularExpression == a.RegularExpression;
 
     public override int GetHashCode()
-        => RegularExpression.GetHashCode();
+        => RegularExpressionTemplate.GetHashCode();
 
     public static bool operator ==(NestedRegexRule a, NestedRegexRule b)
         => a.Equals(b);

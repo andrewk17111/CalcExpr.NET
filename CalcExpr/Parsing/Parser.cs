@@ -1,5 +1,4 @@
 ﻿using CalcExpr.Attributes;
-using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Components;
 using CalcExpr.Parsing.Rules;
@@ -22,11 +21,11 @@ public class Parser
     /// <summary>
     /// Creates a <see cref="Parser"/> with the default grammar.
     /// </summary>
-    public Parser()
-    {
-        _grammar =
-        [
-            new ReferenceRegexRule("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+    /// <param name="build_rules">Whether or not grammar rules should be prebuilt.</param>
+    public Parser(bool build_rules = true)
+        : this ([
+            new ReferenceRegexRule("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)",
+                RegexRuleOptions.PadReferences),
             new ReferenceRegexRule("Operand", "({DiscreteOperand}|{Parameter}|{TokenizedParameter})"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
             new ReferenceRegexRule("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)",
@@ -71,8 +70,9 @@ public class Parser
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseVariable),
             new RegexRule("Number", @"((\d+\.?\d*)|(\d*\.?\d+))", RegexRuleOptions.Only | RegexRuleOptions.Trim,
                 ParseNumber)
-        ];
-    }
+        ],
+        build_rules)
+    { }
 
     /// <summary>
     /// Create a <see cref="Parser"/> using the specified grammar.
@@ -80,8 +80,14 @@ public class Parser
     /// <param name="grammar">
     /// The specified <see cref="IEnumerable{Rule}"/> to be used as the grammar of the <see cref="Parser"/>.
     /// </param>
-    public Parser(IEnumerable<Rule> grammar)
-        => _grammar = grammar.ToList();
+    /// <param name="build_rules">Whether or not grammar rules should be prebuilt.</param>
+    public Parser(IEnumerable<Rule> grammar, bool build_rules = true)
+    {
+        _grammar = grammar.ToList();
+
+        if (build_rules)
+            BuildGrammarRules(_grammar);
+    }
 
     /// <summary>
     /// Parses an expression <see cref="string"/> into an <see cref="IExpression"/>.
@@ -168,15 +174,28 @@ public class Parser
     }
 
     /// <summary>
+    /// Clears the cache of the parser.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if the cache was successfully cleared; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool ClearCache()
+    {
+        _cache.Clear();
+        return _cache.Count == 0;
+    }
+
+    /// <summary>
     /// Add <see cref="Rule"/> to the grammar of the <see cref="Parser"/>.
     /// </summary>
     /// <param name="rule">The <see cref="Rule"/> to be added to the grammar.</param>
     /// <param name="index">The index to put the <see cref="Rule"/> in the grammar.</param>
+    /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully added to the grammar; otherwise, 
     /// <see langword="false"/>.
     /// </returns>
-    public bool AddGrammarRule(Rule rule, int index = -1)
+    public bool AddGrammarRule(Rule rule, int index = -1, bool build_rules = true)
     {
         if (index < 0)
             index += _grammar.Count + 1;
@@ -190,6 +209,9 @@ public class Parser
             else
                 _grammar.Insert(index, rule);
 
+            if (build_rules)
+                RebuildGrammarRules();
+
             return true;
         }
         catch
@@ -202,14 +224,15 @@ public class Parser
     /// Removes the <see cref="Rule"/> with the specified name from the grammar of the <see cref="Parser"/>.
     /// </summary>
     /// <param name="name">The name of the <see cref="Rule"/> to be removed.</param>
+    /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool RemoveGrammarRule(string name)
+    public bool RemoveGrammarRule(string name, bool build_rules = true)
     {
         for (int i = 0; i < _grammar.Count; i++)
             if (_grammar[i].Name == name)
-                return RemoveGrammarRuleAt(i);
+                return RemoveGrammarRuleAt(i, build_rules);
 
         return false;
     }
@@ -218,14 +241,19 @@ public class Parser
     /// Removes the <see cref="Rule"/> at the specified index from the grammar of the <see cref="Parser"/>.
     /// </summary>
     /// <param name="index">The index for the <see cref="Rule"/> to be removed.</param>
+    /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool RemoveGrammarRuleAt(int index)
+    public bool RemoveGrammarRuleAt(int index, bool build_rules = true)
     {
         try
         {
             _grammar.RemoveAt(index);
+
+            if (build_rules)
+                RebuildGrammarRules();
+
             return true;
         }
         catch
@@ -273,7 +301,20 @@ public class Parser
     public Rule? GetGrammarRule(int index)
         => index >= 0 && index < _grammar.Count ? _grammar[index] : null;
 
-    private Token? MatchParentheses(string input, IEnumerable<Rule> rules)
+    /// <summary>
+    /// Rebuilds all of the grammar rules in the <see cref="Parser"/>.
+    /// </summary>
+    public void RebuildGrammarRules()
+        => BuildGrammarRules(_grammar);
+
+    private static void BuildGrammarRules(IEnumerable<Rule> rules)
+    {
+        foreach (Rule rule in rules)
+            if (rule is NestedRegexRule regex_rule)
+                regex_rule.Build(rules);
+    }
+
+    private static Token? MatchParentheses(string input, IEnumerable<Rule> rules)
     {
         input = input.Trim();
 
@@ -308,7 +349,7 @@ public class Parser
         return null;
     }
 
-    private Token? MatchFunctionCall(string input, IEnumerable<Rule> rules)
+    private static Token? MatchFunctionCall(string input, IEnumerable<Rule> rules)
     {
         input = input.Trim();
 
@@ -330,7 +371,7 @@ public class Parser
         return null;
     }
 
-    private FunctionCall ParseFunctionCall(string input, Token token, Parser parser)
+    private static FunctionCall ParseFunctionCall(string input, Token token, Parser parser)
     {
         Match function_name = Regex.Match(input, @"(?<=^\s*)([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
         string tokenized_args = token.Value[(function_name.Length + 1)..^1].TokenizeInput(out Token[] tokens);
@@ -345,7 +386,7 @@ public class Parser
         return new FunctionCall(function_name.Value, args.Select(arg => parser.Parse(arg)));
     }
 
-    private LambdaFunction ParseLambdaFunction(string input, Token token, Parser parser)
+    private static LambdaFunction ParseLambdaFunction(string input, Token token, Parser parser)
     {
         string parameters_string = Regex.Match(token.Value.Trim(), @"(?<=^\(?).*?(?=\)?\s*=>)").Value.TrimStart('(');
         string tokenized_parameters_string = parameters_string.TokenizeInput(out Token[] attribute_tokens,
@@ -370,10 +411,10 @@ public class Parser
         return new LambdaFunction(parameters, parser.Parse(input[(token.Index + token.Length)..]));
     }
 
-    private Parentheses ParseParentheses(string input, Token token, Parser parser)
-        => new Parentheses(Parse(token));
+    private static Parentheses ParseParentheses(string input, Token token, Parser parser)
+        => new Parentheses(parser.Parse(token));
 
-    private IExpression ParseWithParentheses(string input, Token _, Parser parser)
+    private static IExpression ParseWithParentheses(string input, Token _, Parser parser)
     {
         string tokenized_input = input.TokenizeInput(out Token[] tokens, Brackets.Parenthesis);
 
@@ -382,35 +423,36 @@ public class Parser
             if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
                 continue;
 
-            Token? match = rule.Match(tokenized_input, Grammar);
+            Token? match = rule.Match(tokenized_input, parser.Grammar);
 
             if (match.HasValue)
                 return rule.Parse.Invoke(input,
                     new Token(match.Value, ContextFreeUtils.DetokenizeIndex(match.Value.Index, tokenized_input,
                         tokens)),
-                    this);
+                    parser);
         }
 
         throw new Exception($"The input was not in the correct format: '{input}'");
     }
 
-    private AssignmentOperator ParseAssignmentOperator(string input, Token match, Parser parser)
-        => new AssignmentOperator((Parse(input[..match.Index]) as Variable)!,
-            Parse(input[(match.Index + match.Length)..]));
+    private static AssignmentOperator ParseAssignmentOperator(string input, Token match, Parser parser)
+        => new AssignmentOperator((parser.Parse(input[..match.Index]) as Variable)!,
+            parser.Parse(input[(match.Index + match.Length)..]));
 
-    private BinaryOperator ParseBinaryOperator(string input, Token match, Parser parser)
-        => new BinaryOperator(match.Value, Parse(input[..match.Index]), Parse(input[(match.Index + match.Length)..]));
+    private static BinaryOperator ParseBinaryOperator(string input, Token match, Parser parser)
+        => new BinaryOperator(match.Value, parser.Parse(input[..match.Index]),
+            parser.Parse(input[(match.Index + match.Length)..]));
 
-    private UnaryOperator ParsePrefix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, true, Parse(input[(match.Index + match.Length)..]));
+    private static UnaryOperator ParsePrefix(string input, Token match, Parser parser)
+        => new UnaryOperator(match.Value, true, parser.Parse(input[(match.Index + match.Length)..]));
 
-    private UnaryOperator ParsePostfix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, false, Parse(input[..match.Index]));
+    private static UnaryOperator ParsePostfix(string input, Token match, Parser parser)
+        => new UnaryOperator(match.Value, false, parser.Parse(input[..match.Index]));
 
-    private Constant ParseConstant(string input, Token match, Parser parser)
+    private static Constant ParseConstant(string input, Token match, Parser parser)
         => new Constant(match.Value);
 
-    private Variable ParseVariable(string input, Token match, Parser parser)
+    private static Variable ParseVariable(string input, Token match, Parser parser)
         => new Variable(match.Value);
 
     private static Number ParseNumber(string input, Token match, Parser parser)

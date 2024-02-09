@@ -38,7 +38,7 @@ public class RegexRule(string name, string regex, RegexRuleOptions options,
     { }
 
     public override Token? Match(string input, IEnumerable<Rule> rules)
-        => FindMatch(input, RegularExpression, Options);
+        => RegularExpression is null ? null : FindMatch(input, RegularExpression, Options);
 
     public virtual IEnumerable<Token> Matches(string input, IEnumerable<Rule> rules)
     {
@@ -135,7 +135,7 @@ public class RegexRule(string name, string regex, RegexRuleOptions options,
         => obj is not null && obj is RegexRule a && RegularExpression == a.RegularExpression;
 
     public override int GetHashCode()
-        => RegularExpression.GetHashCode();
+        => RegularExpression?.GetHashCode() ?? 0;
 
     public static bool operator ==(RegexRule a, RegexRule b)
         => a.Equals(b);
