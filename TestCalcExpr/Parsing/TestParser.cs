@@ -77,9 +77,23 @@ public class TestParser
     [TestMethod]
     public void TestParse()
     {
+        ParseTestCases(TestCases.Expressions);
+    }
+
+    /// <summary>
+    /// Tests that the Parser is able to properly parse strings into IExpressions.
+    /// </summary>
+    [TestMethod]
+    public void TestParseCollections()
+    {
+        ParseTestCases(TestCases.Collections);
+    }
+
+    private static void ParseTestCases(IEnumerable<TestCase> test_cases)
+    {
         Parser parser = new Parser();
 
-        foreach (TestCase test_case in TestCases.Expressions)
+        foreach (TestCase test_case in test_cases)
         {
             IExpression parsed = parser.Parse(test_case.ExpressionString);
 
