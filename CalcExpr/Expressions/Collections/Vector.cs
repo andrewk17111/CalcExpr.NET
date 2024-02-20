@@ -23,13 +23,23 @@ public class Vector(IEnumerable<IExpression> elements) : IEnumerableExpression
         => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => new Vector(this.Select(x => x.Evaluate(context)));
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+    {
+        for (int i = 0; i < Length; i++)
+        {
+            IExpression evaluated = this[i].StepEvaluate(context);
+
+            if (!this[i].Equals(evaluated))
+                return new Vector(this[..i].Append(evaluated).Concat(this[(i + 1)..]));
+        }
+
+        return this;
+    }
 
     public static IEnumerableExpression ConvertIEnumerable(IEnumerable<IExpression> elements)
         => new Vector(elements);
