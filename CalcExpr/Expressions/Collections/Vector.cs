@@ -41,6 +41,9 @@ public class Vector(IEnumerable<IExpression> elements) : IEnumerableExpression
         return this;
     }
 
+    public IEnumerableExpression Map(Func<IExpression, IExpression> map)
+        => ConvertIEnumerable(_elements.Select(x => map(x)));
+
     public static IEnumerableExpression ConvertIEnumerable(IEnumerable<IExpression> elements)
         => new Vector(elements);
 
