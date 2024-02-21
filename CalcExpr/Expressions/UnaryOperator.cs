@@ -1,5 +1,6 @@
 ﻿using CalcExpr.BuiltInFunctions;
 using CalcExpr.Context;
+using CalcExpr.Expressions.Collections;
 
 namespace CalcExpr.Expressions;
 
@@ -18,8 +19,8 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         {
             { "+", Positive },
             { "-", Negative },
-            { "~", (expr, cxt) => new Function(LogicalFunctions.Not).Invoke([expr], cxt) },
-            { "¬", (expr, cxt) => new Function(LogicalFunctions.Not).Invoke([expr], cxt) },
+            { "~", Not },
+            { "¬", Not },
             { "!", Subfactorial },
             { "--", PreDecrement },
             { "++", PreIncrement },
@@ -74,12 +75,12 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
             ? $"{Identifier}{Inside.ToString(format)}"
             : $"{Inside.ToString(format)}{Identifier}";
 
-    private static IExpression Positive(IExpression x, ExpressionContext variables)
-        => x.Evaluate(variables);
+    private static IExpression Positive(IExpression x, ExpressionContext context)
+        => x.Evaluate(context);
 
-    private static IExpression Negative(IExpression x, ExpressionContext variables)
+    private static IExpression Negative(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
         if (x_eval is Number n)
         {
@@ -98,15 +99,19 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
             // If for some reason the inside expression didn't evaluate to a Number or infinity, negative operators will
             // still cancel out.
         }
+        else if (x_eval is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => Negative(e, context));
+        }
 
         // Other IExpressions should evaluate to either a Number, Constant, or UnaryOperator dealt with previously.
 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Subfactorial(IExpression x, ExpressionContext variables)
+    private static IExpression Subfactorial(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
         
         if (Constant.TRUE.Equals(x_eval))
             x_eval = new Number(1);
@@ -121,7 +126,7 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
             }
             else if (n.Value > 0)
             {
-                IExpression n_fact = Factorial(n, variables);
+                IExpression n_fact = Factorial(n, context);
 
                 if (n_fact is Number n_fact_n)
                     return new Number((int)(0.5 + n_fact_n.Value / Math.E));
@@ -138,6 +143,10 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
 
             // Other constants (except for undefined) should evaluate to a Number.
         }
+        else if (x_eval is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => Subfactorial(e, context));
+        }
 
         // Other IExpressions should evaluate to either a Number or Constant dealt with previously, or result in an
         // undefined value.
@@ -145,9 +154,9 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Factorial(IExpression x, ExpressionContext variables)
+    private static IExpression Factorial(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
         if (x_eval is Number n && n.Value % 1 == 0)
         {
@@ -173,6 +182,10 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
             
             // Other constants (except for undefined) should evaluate to a Number.
         }
+        else if (x_eval is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => Factorial(e, context));
+        }
 
         // Other IExpressions should evaluate to either a Number or Constant dealt with previously, or result in an
         // undefined value.
@@ -180,25 +193,38 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Percent(IExpression x, ExpressionContext variables)
+    private static IExpression Percent(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
-        return x_eval is Number n
-            ? new Number(n.Value / 100)
-            : x_eval is Constant c && Constant.INFINITY.Equals(c)
-                ? Constant.INFINITY
-                // Other constants (except for undefined) should evaluate to a Number.
-                : x_eval is UnaryOperator uo && Constant.INFINITY.Equals(uo.Inside)
-                    ? uo.Clone()
-                    // Other IExpressions should evaluate to either a Number, Constant, or UnaryOperator dealt with
-                    // previously, or result in an undefined value.
-                    : Constant.UNDEFINED;
+        if (x_eval is Number n)
+        {
+            return new Number(n.Value / 100);
+        }
+        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
+        {
+            return x_eval;
+
+            // Other constants (except for undefined) should evaluate to a Number.
+        }
+        else if (x_eval is UnaryOperator uo && Constant.INFINITY.Equals(uo.Inside))
+        {
+            return uo;
+        }
+        else if (x_eval is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => Percent(e, context));
+        }
+
+        // Other IExpressions should evaluate to either a Number, Constant, or UnaryOperator dealt with
+        // previously, or result in an undefined value.
+
+        return Constant.UNDEFINED;
     }
 
-    private static IExpression DoubleFactorial(IExpression x, ExpressionContext variables)
+    private static IExpression DoubleFactorial(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
         if (x_eval is Number n && n.Value % 1 == 0)
         {
@@ -210,7 +236,7 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
             {
                 if (n.Value % 2 == 0)
                 {
-                    IExpression n_fact = Factorial(new Number(n.Value / 2), variables);
+                    IExpression n_fact = Factorial(new Number(n.Value / 2), context);
 
                     if (n_fact is Number n_fact_n)
                     {
@@ -227,8 +253,8 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
                 }
                 else
                 {
-                    IExpression n_fact = Factorial(n, variables);
-                    IExpression n_less_fact = Factorial(new Number((n.Value - 1) / 2), variables);
+                    IExpression n_fact = Factorial(n, context);
+                    IExpression n_less_fact = Factorial(new Number((n.Value - 1) / 2), context);
 
                     if (n_fact is Number n_fact_n && n_less_fact is Number n_less_fact_n)
                     {
@@ -255,6 +281,10 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
 
             // Other constants (except for undefined) should evaluate to a Number.
         }
+        else if (x_eval is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => DoubleFactorial(e, context));
+        }
 
         // Other IExpressions should evaluate to either a Number or Constant dealt with previously, or result in an
         // undefined value.
@@ -262,9 +292,9 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Primorial(IExpression x, ExpressionContext variables)
+    private static IExpression Primorial(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
         if (x_eval is Number n && n.Value % 1 == 0)
         {
@@ -281,11 +311,15 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
                     : new Number(output);
             }
         }
-        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
+        else if (Constant.INFINITY.Equals(x_eval))
         {
             return Constant.INFINITY;
 
             // Other constants (except for undefined) should evaluate to a Number.
+        }
+        else if (x_eval is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => Primorial(e, context));
         }
 
         // Other IExpressions should evaluate to either a Number or Constant dealt with previously, or result in an
@@ -320,55 +354,103 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         return [.. primes];
     }
 
-    private static IExpression PreDecrement(IExpression x, ExpressionContext variables)
+    private static IExpression PreDecrement(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
-        IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
-        variables ??= new ExpressionContext();
+        if (x is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => PreDecrement(e, context));
+        }
+        else if (x_eval is IEnumerableExpression eval_enum_expr)
+        {
+            return eval_enum_expr.Map(e => PreDecrement(e, context));
+        }
+
+        IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(context);
+
+        context ??= new ExpressionContext();
 
         if (x is Variable v)
-            variables[v.Name] = new_val;
+            context[v.Name] = new_val;
 
         return new_val;
     }
 
-    private static IExpression PreIncrement(IExpression x, ExpressionContext variables)
+    private static IExpression PreIncrement(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
-        IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
-        variables ??= new ExpressionContext();
+        if (x is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => PreIncrement(e, context));
+        }
+        else if (x_eval is IEnumerableExpression eval_enum_expr)
+        {
+            return eval_enum_expr.Map(e => PreIncrement(e, context));
+        }
+
+        IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(context);
+
+        context ??= new ExpressionContext();
 
         if (x is Variable v)
-            variables[v.Name] = new_val;
+            context[v.Name] = new_val;
 
         return new_val;
     }
 
-    private static IExpression PostDecrement(IExpression x, ExpressionContext variables)
+    private static IExpression PostDecrement(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
-        IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
-        variables ??= new ExpressionContext();
+        if (x is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => PostDecrement(e, context));
+        }
+        else if (x_eval is IEnumerableExpression eval_enum_expr)
+        {
+            return eval_enum_expr.Map(e => PostDecrement(e, context));
+        }
+
+        IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(context);
+
+        context ??= new ExpressionContext();
 
         if (x is Variable v)
-            variables[v.Name] = new_val;
+            context[v.Name] = new_val;
 
         return x_eval;
     }
 
-    private static IExpression PostIncrement(IExpression x, ExpressionContext variables)
+    private static IExpression PostIncrement(IExpression x, ExpressionContext context)
     {
-        IExpression x_eval = x.Evaluate(variables);
-        IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(variables);
+        IExpression x_eval = x.Evaluate(context);
 
-        variables ??= new ExpressionContext();
+        if (x is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => PostIncrement(e, context));
+        }
+        else if (x_eval is IEnumerableExpression eval_enum_expr)
+        {
+            return eval_enum_expr.Map(e => PostIncrement(e, context));
+        }
+
+        IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(context);
+
+        context ??= new ExpressionContext();
 
         if (x is Variable v)
-            variables[v.Name] = new_val;
+            context[v.Name] = new_val;
 
         return x_eval;
+    }
+
+    private static IExpression Not(IExpression x, ExpressionContext context)
+    {
+        if (x is IEnumerableExpression enum_expr)
+            return enum_expr.Map(e => Not(e, context));
+
+        return new Function(LogicalFunctions.Not).Invoke([x], context);
     }
 }
