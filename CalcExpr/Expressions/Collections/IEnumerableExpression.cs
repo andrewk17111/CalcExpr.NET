@@ -13,9 +13,21 @@ public interface IEnumerableExpression : IExpression, IEnumerable<IExpression>
     /// Maps the <see cref="IEnumerableExpression"/> to a new <see cref="IEnumerableExpression"/> using the specified
     /// map function.
     /// </summary>
-    /// <param name="map_func">
+    /// <param name="map">
     /// The function to transform each element of the <see cref="IEnumerableExpression"/>.
     /// </param>
     /// <returns>A new <see cref="IEnumerableExpression"/> with the transformed elements.</returns>
-    IEnumerableExpression Map(Func<IExpression, IExpression> map_func);
+    IEnumerableExpression Map(Func<IExpression, IExpression> map);
+
+    /// <summary>
+    /// Combines the <see cref="IEnumerableExpression"/> with another <see cref="IEnumerable{IExpression}"/> using the
+    /// specified combine function.
+    /// </summary>
+    /// <param name="expressions">The other <see cref="IEnumerable{IExpression}"/> to combine with.</param>
+    /// <param name="combine">
+    /// The function to combine the elements of the two <see cref="IEnumerable{IExpression}"/>.
+    /// </param>
+    /// <returns><see cref="IEnumerableExpression"/> with the combined elements.</returns>
+    IEnumerableExpression Combine(IEnumerable<IExpression> expressions,
+        Func<IExpression, IExpression, IExpression> combine);
 }
