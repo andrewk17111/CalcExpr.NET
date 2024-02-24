@@ -495,7 +495,8 @@ public static partial class TestCases
         new TestCase("triangle(4)", new FunctionCall("triangle", [new Number(4)]), new Number(10)),
         new TestCase("dist = ([IsNumber]x, [NotUndefined  ]  y) => (((x - 0)^2)+((y)^2)) ^ (1/2)",
             new AssignmentOperator(new Variable("dist"), new LambdaFunction([new Parameter("x",
-                [new IsNumberAttribute()]), new Parameter("y", [new NotUndefinedAttribute()])],
+                [new IsNumberAttribute()]),
+                new Parameter("y", [new NotUndefinedAttribute()])],
                 new BinaryOperator("^", new Parentheses(
                 new BinaryOperator("+", new Parentheses(new BinaryOperator("^", new Parentheses(new BinaryOperator("-",
                         new Variable("x"), new Number(0))), new Number(2))), new Parentheses(new BinaryOperator("^",

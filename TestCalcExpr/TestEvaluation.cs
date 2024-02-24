@@ -14,7 +14,18 @@ public class TestEvaluation
     [TestMethod]
     public void TestEvaluate()
     {
-        foreach (TestCase test_case in TestCases.Expressions)
+        EvaluateTestCases(TestCases.Expressions);
+    }
+
+    [TestMethod]
+    public void TestEvaluateCollections()
+    {
+        EvaluateTestCases(TestCases.Collections);
+    }
+
+    private static void EvaluateTestCases(IEnumerable<TestCase> test_cases)
+    {
+        foreach (TestCase test_case in test_cases)
         {
             ExpressionContext context = new ExpressionContext(TestCases.ContextVariables);
 
@@ -33,7 +44,18 @@ public class TestEvaluation
     [TestMethod]
     public void TestStepEvaluate()
     {
-        foreach (TestCase test_case in TestCases.Expressions)
+        StepEvaluateTestCases(TestCases.Expressions);
+    }
+
+    [TestMethod]
+    public void TestStepEvaluateCollections()
+    {
+        EvaluateTestCases(TestCases.Collections);
+    }
+
+    private static void StepEvaluateTestCases(IEnumerable<TestCase> test_cases)
+    {
+        foreach (TestCase test_case in test_cases)
         {
             ExpressionContext context = new ExpressionContext(TestCases.ContextVariables);
 

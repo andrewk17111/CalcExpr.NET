@@ -1,5 +1,7 @@
 ﻿using CalcExpr.Attributes;
+using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
+using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
 using CalcExpr.Parsing.Rules;
 using System.Reflection;
@@ -26,7 +28,7 @@ public class Parser
         : this ([
             new ReferenceRegexRule("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)",
                 RegexRuleOptions.PadReferences),
-            new ReferenceRegexRule("Operand", "({DiscreteOperand}|{Parameter}|{TokenizedParameter})"),
+            new ReferenceRegexRule("Operand", @"\[?({DiscreteOperand}|{Parameter}|{TokenizedParameter})\]?"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
             new ReferenceRegexRule("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)",
                 RegexRuleOptions.PadReferences),
@@ -37,6 +39,7 @@ public class Parser
             new ReferenceRegexRule("TokenizedParameter",
                 @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})",
                 RegexRuleOptions.PadReferences),
+            new Rule("Vector", ParseVector, MatchVector),
             new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall),
             new NestedRegexRule("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>",
                 RegexRuleOptions.Left | RegexRuleOptions.PadReferences | RegexRuleOptions.Trim, ParseLambdaFunction),
@@ -349,6 +352,32 @@ public class Parser
         return null;
     }
 
+    private static Token? MatchVector(string input, IEnumerable<Rule> rules)
+    {
+        Match match = Regex.Match(input, @"(?<=^\s*)\[.*?\](?=\s*$)");
+
+        if (match.Success)
+        {
+            try
+            {
+                ContextFreeUtils.TokenizeInput(match.Value[1..^1], out Token[] tokens, Brackets.Square);
+                // NestedRegexRule rule = new NestedRegexRule("", @"{Operand}(,{Operand})*",
+                //    RegexRuleOptions.PadReferences | RegexRuleOptions.Only, null!);
+
+                // if (rule.Match(tokenized, rules) is not null)
+                return match;
+            }
+            catch (UnbalancedParenthesesException)
+            { }
+            catch
+            {
+                throw;
+            }
+        }
+
+        return null;
+    }
+
     private static Token? MatchFunctionCall(string input, IEnumerable<Rule> rules)
     {
         input = input.Trim();
@@ -369,6 +398,15 @@ public class Parser
         }
 
         return null;
+    }
+
+    private static Vector ParseVector(string input, Token token, Parser parser)
+    {
+        Match match = Regex.Match(input, @"(?<=^\s*\[).*?(?=\]\s*$)");
+        string tokenized = ContextFreeUtils.TokenizeInput(match.Value, out Token[] tokens, Brackets.Square);
+
+        return new Vector(tokenized.Split(',')
+            .Select(e => parser.Parse(Regex.Replace(e, @"(?<!(^|[^\\])\\(\\\\)*)\[\d+\]", m => m.Value[1..^1]))));
     }
 
     private static FunctionCall ParseFunctionCall(string input, Token token, Parser parser)
