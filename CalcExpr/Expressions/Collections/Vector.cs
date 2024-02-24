@@ -44,6 +44,18 @@ public class Vector(IEnumerable<IExpression> elements) : IEnumerableExpression
     public IEnumerableExpression Map(Func<IExpression, IExpression> map)
         => ConvertIEnumerable(_elements.Select(x => map(x)));
 
+    public IEnumerableExpression Combine(IEnumerable<IExpression> expressions,
+        Func<IExpression, IExpression, IExpression> combine)
+    {
+        List<IExpression> result = [];
+        int count = expressions.Count();
+
+        for (int i = 0; i < Length && i < count; i++)
+            result.Add(combine(_elements[i], expressions.ElementAt(i)));
+
+        return new Vector(result);
+    }
+
     public static IEnumerableExpression ConvertIEnumerable(IEnumerable<IExpression> elements)
         => new Vector(elements);
 
