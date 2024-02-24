@@ -1,6 +1,6 @@
 ﻿using CalcExpr.BuiltInFunctions;
 using CalcExpr.Context;
-using CalcExpr.Exceptions;
+using CalcExpr.Expressions.Collections;
 
 namespace CalcExpr.Expressions;
 
@@ -25,11 +25,11 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
             { "%", EuclideanModulus },
             { "%%", TruncatedModulus },
             { "//", IntDivide },
-            { "&&", (a, b, cxt) => new Function(LogicalFunctions.And).Invoke([a, b], cxt) },
-            { "∧", (a, b, cxt) => new Function(LogicalFunctions.And).Invoke([a, b], cxt) },
-            { "||", (a, b, cxt) => new Function(LogicalFunctions.Or).Invoke([a, b], cxt) },
-            { "∨", (a, b, cxt) => new Function(LogicalFunctions.Or).Invoke([a, b], cxt) },
-            { "⊕", (a, b, cxt) => new Function(LogicalFunctions.Xor).Invoke([a, b], cxt) },
+            { "&&", And },
+            { "∧", And },
+            { "||", Or },
+            { "∨", Or },
+            { "⊕", Xor },
             { "==", IsEqual },
             { "!=", IsNotEqual },
             { "≠", IsNotEqual },
@@ -90,83 +90,153 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
     public string ToString(string? format)
         => $"{Left.ToString(format)}{Identifier}{Right.ToString(format)}";
 
-    private static IExpression Add(IExpression a, IExpression b, ExpressionContext variables)
+    private static IExpression Add(IExpression a, IExpression b, ExpressionContext context)
     {
-        IExpression a_eval = a.Evaluate(variables);
-        IExpression b_eval = b.Evaluate(variables);
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
 
         if (a_eval is Number a_num && b_eval is Number b_num)
+        {
             return new Number(a_num.Value + b_num.Value).Evaluate();
+        }
         else if (Constant.INFINITY.Equals(a_eval) || Constant.INFINITY.Equals(b_eval) &&
             (a_eval is Number || b_eval is Number ||
             (Constant.INFINITY.Equals(a_eval) && Constant.INFINITY.Equals(b_eval))))
+        { 
             return Constant.INFINITY;
+        }
         else if ((Constant.NEGATIVE_INFINITY.Equals(a_eval) || Constant.NEGATIVE_INFINITY.Equals(b_eval)) &&
             ((a_eval is Number || b_eval is Number) ||
             (Constant.NEGATIVE_INFINITY.Equals(a_eval) && Constant.NEGATIVE_INFINITY.Equals(b_eval))))
+        {
             return new UnaryOperator("-", true, Constant.INFINITY);
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => Add(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => Add(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => Add(a_eval, e, context));
+        }
 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Subtract(IExpression a, IExpression b, ExpressionContext variables)
+    private static IExpression Subtract(IExpression a, IExpression b, ExpressionContext context)
     {
-        IExpression a_eval = a.Evaluate(variables);
-        IExpression b_eval = b.Evaluate(variables);
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
 
         if (a_eval is Number a_num && b_eval is Number b_num)
+        {
             return new Number(a_num.Value - b_num.Value).Evaluate();
+        }
         else if ((a_eval is Number || Constant.INFINITY.Equals(a_eval)) &&
             (b_eval is Number || Constant.NEGATIVE_INFINITY.Equals(b_eval)))
+        {
             return Constant.INFINITY;
+        }
         else if ((a_eval is Number || Constant.NEGATIVE_INFINITY.Equals(a_eval)) &&
             (b_eval is Number || Constant.INFINITY.Equals(b_eval)))
+        {
             return new UnaryOperator("-", true, Constant.INFINITY);
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => Subtract(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => Subtract(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => Subtract(a_eval, e, context));
+        }
 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Multiply(IExpression a, IExpression b, ExpressionContext variables)
+    private static IExpression Multiply(IExpression a, IExpression b, ExpressionContext context)
     {
-        IExpression a_eval = a.Evaluate(variables);
-        IExpression b_eval = b.Evaluate(variables);
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
 
         if (a_eval is Number num_a && b_eval is Number num_b)
+        {
             return new Number(num_a.Value * num_b.Value).Evaluate();
+        }
         else if ((a_eval is Number a_num && a_num.Value != 0 && Constant.INFINITY.Equals(b_eval)) ||
             (b_eval is Number b_num && b_num.Value != 0 && Constant.INFINITY.Equals(a_eval)) ||
             (Constant.INFINITY.Equals(a_eval) && Constant.INFINITY.Equals(b_eval)) ||
             (Constant.NEGATIVE_INFINITY.Equals(a_eval) && Constant.NEGATIVE_INFINITY.Equals(b_eval)))
+        {
             return Constant.INFINITY;
+        }
         else if ((Constant.NEGATIVE_INFINITY.Equals(a_eval) && (b_eval is Number ||
                 Constant.INFINITY.Equals(b_eval))) ||
             (Constant.NEGATIVE_INFINITY.Equals(b_eval) && (a_eval is Number || Constant.INFINITY.Equals(a_eval))))
+        {
             return new UnaryOperator("-", true, Constant.INFINITY);
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => Multiply(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => Multiply(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => Multiply(a_eval, e, context));
+        }
 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Divide(IExpression a, IExpression b, ExpressionContext variables)
+    private static IExpression Divide(IExpression a, IExpression b, ExpressionContext context)
     {
-        IExpression a_eval = a.Evaluate(variables);
-        IExpression b_eval = b.Evaluate(variables);
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
 
         if (a_eval is Number a_num && b_eval is Number b_num && b_num.Value != 0)
+        {
             return new Number(a_num.Value / b_num.Value);
+        }
         else if (a_eval is Number && (Constant.INFINITY.Equals(b_eval) || Constant.NEGATIVE_INFINITY.Equals(b_eval)))
+        {
             return new Number(0);
+        }
         else if (Constant.INFINITY.Equals(a_eval) && b_eval is Number b_n && b_n.Value != 0)
+        {
             return Constant.INFINITY;
+        }
         else if (Constant.NEGATIVE_INFINITY.Equals(a_eval) && b_eval is Number)
+        {
             return new UnaryOperator("-", true, Constant.INFINITY);
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => Divide(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => Divide(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => Divide(a_eval, e, context));
+        }
 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression Exponent(IExpression a, IExpression b, ExpressionContext variables)
+    private static IExpression Exponent(IExpression a, IExpression b, ExpressionContext context)
     {
-        IExpression a_eval = a.Evaluate(variables);
-        IExpression b_eval = b.Evaluate(variables);
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
 
         if (a_eval is Number a_num && b_eval is Number b_num && !(a_num.Value == 0 && b_num.Value <= 0))
         {
@@ -201,85 +271,326 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(0);
         }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => Exponent(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => Exponent(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => Exponent(a_eval, e, context));
+        }
 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression EuclideanModulus(IExpression a, IExpression b, ExpressionContext variables)
-        => a.Evaluate(variables) is Number a_num && b.Evaluate(variables) is Number b_num && b_num.Value != 0
-            ? new Number(a_num.Value - Math.Abs(b_num.Value) * Math.Floor(a_num.Value / Math.Abs(b_num.Value)))
-            : Constant.UNDEFINED;
-
-    private static IExpression TruncatedModulus(IExpression a, IExpression b, ExpressionContext variables)
-        => a.Evaluate(variables) is Number a_num && b.Evaluate(variables) is Number b_num && b_num.Value != 0
-            ? new Number(a_num.Value % b_num.Value)
-            : Constant.UNDEFINED;
-
-    private static IExpression IntDivide(IExpression a, IExpression b, ExpressionContext variables)
-        => a.Evaluate(variables) is Number a_num && b.Evaluate(variables) is Number b_num
-            ? new Number(Math.Sign(b_num.Value) * Math.Floor(a_num.Value / Math.Abs(b_num.Value)))
-            : Constant.UNDEFINED;
-
-    private static IExpression IsEqual(IExpression a, IExpression b, ExpressionContext variables)
+    private static IExpression EuclideanModulus(IExpression a, IExpression b, ExpressionContext context)
     {
-        IExpression a_eval = a.Evaluate(variables);
-        IExpression b_eval = b.Evaluate(variables);
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
 
-        return a_eval is Number a_num
-            ? new Number(a_num.Equals(b_eval) ? 1 : 0)
-            : a_eval is Constant a_const
-                ? new Number(a_const.Equals(b_eval) ? 1 : 0)
-                : a_eval is UnaryOperator a_unop
-                    ? new Number(a_unop.Equals(b) ? 1 : 0)
-                    : Constant.UNDEFINED;
+        if (a_eval is Number a_num && b_eval is Number b_num && b_num.Value != 0)
+        {
+            return new Number(a_num.Value - Math.Abs(b_num.Value) * Math.Floor(a_num.Value / Math.Abs(b_num.Value)));
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => EuclideanModulus(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => EuclideanModulus(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => EuclideanModulus(a_eval, e, context));
+        }
+
+        return Constant.UNDEFINED;
     }
 
-    private static IExpression IsNotEqual(IExpression a, IExpression b, ExpressionContext variables)
-        => IsEqual(a, b, variables) is Number equals
+    private static IExpression TruncatedModulus(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is Number a_num && b_eval is Number b_num && b_num.Value != 0)
+        {
+            return new Number(a_num.Value % b_num.Value);
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => TruncatedModulus(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => TruncatedModulus(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => TruncatedModulus(a_eval, e, context));
+        }
+
+        return Constant.UNDEFINED;
+    }
+
+    private static IExpression IntDivide(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is Number a_num && b_eval is Number b_num)
+        {
+            return new Number(Math.Sign(b_num.Value) * Math.Floor(a_num.Value / Math.Abs(b_num.Value)));
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IntDivide(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => IntDivide(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IntDivide(a_eval, e, context));
+        }
+
+        return Constant.UNDEFINED;
+    }
+
+    private static IExpression IsEqual(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IsEqual(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return new Number(a_enum_expr.Equals(b_enum_expr) ? 1 : 0);
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IsEqual(a_eval, e, context));
+        }
+        else if (a_eval is Number a_num)
+        {
+            return new Number(a_num.Equals(b_eval) ? 1 : 0);
+        }
+        else if (a_eval is Constant a_const)
+        {
+            return new Number(a_const.Equals(b_eval) ? 1 : 0);
+        }
+        else if (a_eval is UnaryOperator a_unop)
+        {
+            return new Number(a_unop.Equals(b) ? 1 : 0);
+        }
+        else if (a_eval is IEnumerableExpression && b_eval is IEnumerableExpression)
+        {
+            return new Number(a_eval.Equals(b_eval) ? 1 : 0);
+        }
+
+        return Constant.UNDEFINED;
+    }
+
+    private static IExpression IsNotEqual(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IsNotEqual(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return new Number(a_enum_expr.Equals(b_enum_expr) ? 0 : 1);
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IsNotEqual(a_eval, e, context));
+        }
+
+        return IsEqual(a, b, context) is Number equals
             ? new Number((equals.Value - 1) * -1)
             : Constant.UNDEFINED;
+    }
 
-    private static IExpression IsLessThan(IExpression a, IExpression b, ExpressionContext variables)
+    private static IExpression IsLessThan(IExpression a, IExpression b, ExpressionContext context)
     {
-        IExpression a_eval = a.Evaluate(variables);
-        IExpression b_eval = b.Evaluate(variables);
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
 
         if (a_eval is Number a_num && b_eval is Number b_num)
+        {
             return new Number(a_num.Value < b_num.Value ? 1 : 0);
+        }
         else if (Constant.INFINITY.Equals(a_eval) || Constant.NEGATIVE_INFINITY.Equals(b_eval))
+        {
             return new Number(0);
+        }
         else if (Constant.INFINITY.Equals(b_eval) || Constant.NEGATIVE_INFINITY.Equals(a_eval))
+        {
             return new Number(1);
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IsLessThan(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => IsLessThan(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IsLessThan(a_eval, e, context));
+        }
 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression IsLessThanOrEqualTo(IExpression a, IExpression b, ExpressionContext variables)
-        => IsEqual(a, b, variables) is Number eq_num
-            ? eq_num.Value == 1
-                ? eq_num.Clone()
-                : IsLessThan(a, b, variables).Clone()
-            : Constant.UNDEFINED;
-
-    private static IExpression IsGreaterThan(IExpression a, IExpression b, ExpressionContext variables)
+    private static IExpression IsLessThanOrEqualTo(IExpression a, IExpression b, ExpressionContext context)
     {
-        IExpression a_eval = a.Evaluate(variables);
-        IExpression b_eval = b.Evaluate(variables);
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IsLessThanOrEqualTo(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => IsLessThanOrEqualTo(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IsLessThanOrEqualTo(a_eval, e, context));
+        }
+        else if (IsEqual(a, b, context) is Number eq_num)
+        {
+            if (eq_num.Value == 1)
+                return eq_num.Clone();
+            else
+                return IsLessThan(a, b, context);
+        }
+
+        return Constant.UNDEFINED;
+    }
+
+    private static IExpression IsGreaterThan(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
 
         if (a_eval is Number a_num && b_eval is Number b_num)
+        {
             return new Number(a_num.Value > b_num.Value ? 1 : 0);
+        }
         else if (Constant.INFINITY.Equals(b_eval) || Constant.NEGATIVE_INFINITY.Equals(a_eval))
+        {
             return new Number(0);
+        }
         else if (Constant.INFINITY.Equals(a_eval) || Constant.NEGATIVE_INFINITY.Equals(b_eval))
+        {
             return new Number(1);
+        }
+        else if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IsGreaterThan(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => IsGreaterThan(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IsGreaterThan(a_eval, e, context));
+        }
 
         return Constant.UNDEFINED;
     }
 
-    private static IExpression IsGreaterThanOrEqualTo(IExpression a, IExpression b, ExpressionContext variables)
-        => IsEqual(a, b, variables) is Number eq_num
-            ? eq_num.Value == 1
-                ? eq_num.Clone()
-                : IsGreaterThan(a, b, variables).Clone()
-            : Constant.UNDEFINED;
+    private static IExpression IsGreaterThanOrEqualTo(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IsGreaterThanOrEqualTo(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => IsGreaterThanOrEqualTo(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IsGreaterThanOrEqualTo(a_eval, e, context));
+        }
+        else if (IsEqual(a, b, context) is Number eq_num)
+        {
+            if (eq_num.Value == 1)
+                return eq_num.Clone();
+            else
+                return IsGreaterThan(a, b, context);
+        }
+
+        return Constant.UNDEFINED;
+    }
+
+    private static IExpression And(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => And(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => And(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => And(a_eval, e, context));
+        }
+
+        return new Function(LogicalFunctions.And).Invoke([a, b], context);
+    }
+
+    private static IExpression Or(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => Or(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => Or(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => Or(a_eval, e, context));
+        }
+
+        return new Function(LogicalFunctions.Or).Invoke([a, b], context);
+    }
+
+    private static IExpression Xor(IExpression a, IExpression b, ExpressionContext context)
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => Xor(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => Xor(x, y, context));
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => Xor(a_eval, e, context));
+        }
+
+        return new Function(LogicalFunctions.Xor).Invoke([a, b], context);
+    }
 }
