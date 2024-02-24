@@ -363,7 +363,18 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         IExpression a_eval = a.Evaluate(context);
         IExpression b_eval = b.Evaluate(context);
 
-        if (a_eval is Number a_num)
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IsEqual(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return new Number(a_enum_expr.Equals(b_enum_expr) ? 1 : 0);
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IsEqual(a_eval, e, context));
+        }
+        else if (a_eval is Number a_num)
         {
             return new Number(a_num.Equals(b_eval) ? 1 : 0);
         }
@@ -384,9 +395,26 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
     }
 
     private static IExpression IsNotEqual(IExpression a, IExpression b, ExpressionContext context)
-        => IsEqual(a, b, context) is Number equals
+    {
+        IExpression a_eval = a.Evaluate(context);
+        IExpression b_eval = b.Evaluate(context);
+
+        if (a_eval is IEnumerableExpression a_enum_expr)
+        {
+            if (b_eval is not IEnumerableExpression)
+                return a_enum_expr.Map(e => IsNotEqual(e, b_eval, context));
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+                return new Number(a_enum_expr.Equals(b_enum_expr) ? 0 : 1);
+        }
+        else if (b_eval is IEnumerableExpression b_enum_expr)
+        {
+            return b_enum_expr.Map(e => IsNotEqual(a_eval, e, context));
+        }
+
+        return IsEqual(a, b, context) is Number equals
             ? new Number((equals.Value - 1) * -1)
             : Constant.UNDEFINED;
+    }
 
     private static IExpression IsLessThan(IExpression a, IExpression b, ExpressionContext context)
     {
