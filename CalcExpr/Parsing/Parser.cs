@@ -104,7 +104,7 @@ public class Parser
         ArgumentNullException.ThrowIfNull(input);
 
         if (ContainsCache(input))
-            return _cache[CleanExpressionString(input)].Clone();
+            return _cache[CleanExpressionString(input)];
 
         foreach (Rule rule in _grammar)
         {
@@ -152,7 +152,7 @@ public class Parser
     {
         try
         {
-            _cache[CleanExpressionString(key)] = value.Clone();
+            _cache[CleanExpressionString(key)] = value;
             return true;
         }
         catch

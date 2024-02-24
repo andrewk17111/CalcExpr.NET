@@ -41,12 +41,6 @@ public interface IExpression
     public IExpression StepEvaluate(ExpressionContext context);
 
     /// <summary>
-    /// Creates a new <see cref="IExpression"/> with the same values of the current <see cref="IExpression"/>.
-    /// </summary>
-    /// <returns>A new copy of the current <see cref="IExpression"/>.</returns>
-    public IExpression Clone();
-
-    /// <summary>
     /// Returns a <see cref="string"/> that represents the current <see cref="IExpression"/>.
     /// </summary>
     /// <returns>A <see cref="string"/> that represents the current <see cref="IExpression"/>.</returns>

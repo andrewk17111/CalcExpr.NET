@@ -53,20 +53,17 @@ public class Constant(string identifier) : IExpression
 
     public readonly string Identifier = identifier;
 
-    public IExpression Clone()
-        => new Constant(Identifier);
-
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext variables)
-        => _values[Identifier].Clone();
+        => _values[Identifier];
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext variables)
-        => _values[Identifier].Clone();
+        => _values[Identifier];
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Constant c && Identifier switch

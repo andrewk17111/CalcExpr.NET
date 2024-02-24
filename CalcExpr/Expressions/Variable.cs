@@ -10,9 +10,6 @@ public class Variable(string name) : IExpression
 {
     public readonly string Name = name;
 
-    public IExpression Clone()
-        => new Variable(Name);
-
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 

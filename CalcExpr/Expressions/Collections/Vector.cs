@@ -16,9 +16,6 @@ public class Vector(IEnumerable<IExpression> elements) : IEnumerableExpression
     public int Length
         => _elements.Length;
 
-    public IExpression Clone()
-        => new Vector(_elements.Select(e => e.Clone()));
-
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 

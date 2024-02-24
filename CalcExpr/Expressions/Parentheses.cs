@@ -10,9 +10,6 @@ public class Parentheses(IExpression inside) : IExpression
 {
     public readonly IExpression Inside = inside;
 
-    public IExpression Clone()
-        => new Parentheses(Inside.Clone());
-
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 

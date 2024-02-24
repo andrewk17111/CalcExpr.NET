@@ -1,6 +1,5 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Components;
-using System;
 
 namespace CalcExpr.Expressions;
 
@@ -35,19 +34,16 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
     }
 
     public IExpression Evaluate()
-        => Clone();
+        => this;
 
     public IExpression Evaluate(ExpressionContext context)
-        => Clone();
+        => this;
 
     public IExpression StepEvaluate()
-        => Clone();
+        => this;
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => Clone();
-
-    public IExpression Clone()
-        => new LambdaFunction(Parameters, Body.Clone());
+        => this;
 
     public override bool Equals(object? obj)
     {

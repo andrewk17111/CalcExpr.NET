@@ -51,9 +51,6 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
     public readonly IExpression Left = left;
     public readonly IExpression Right = right;
 
-    public IExpression Clone()
-        => new BinaryOperator(Identifier, Left.Clone(), Right.Clone());
-
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 
@@ -467,7 +464,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         else if (IsEqual(a, b, context) is Number eq_num)
         {
             if (eq_num.Value == 1)
-                return eq_num.Clone();
+                return eq_num;
             else
                 return IsLessThan(a, b, context);
         }
@@ -526,7 +523,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         else if (IsEqual(a, b, context) is Number eq_num)
         {
             if (eq_num.Value == 1)
-                return eq_num.Clone();
+                return eq_num;
             else
                 return IsGreaterThan(a, b, context);
         }
