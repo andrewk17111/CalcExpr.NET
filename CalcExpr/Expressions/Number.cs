@@ -19,7 +19,7 @@ public class Number(double value) : IExpression
             Double.PositiveInfinity => Constant.INFINITY,
             Double.NegativeInfinity => new UnaryOperator("-", true, Constant.INFINITY),
             Double.NaN => Constant.UNDEFINED,
-            _ => Clone()
+            _ => this
         };
 
     public IExpression StepEvaluate()
@@ -27,9 +27,6 @@ public class Number(double value) : IExpression
 
     public IExpression StepEvaluate(ExpressionContext variables)
         => Evaluate(variables);
-
-    public IExpression Clone()
-        => new Number(Value);
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Number n && n.Value == Value;

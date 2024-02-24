@@ -26,9 +26,6 @@ public class AssignmentOperator : IExpression
         Value = value;
     }
 
-    public IExpression Clone()
-        => new AssignmentOperator(AssignedVariable.Clone(), Value.Clone());
-
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 
@@ -39,7 +36,7 @@ public class AssignmentOperator : IExpression
         IExpression eval = Value.Evaluate(context);
 
         context[AssignedVariable.Name] = eval;
-        return eval.Clone();
+        return eval;
     }
 
     public IExpression StepEvaluate()
@@ -54,10 +51,10 @@ public class AssignmentOperator : IExpression
         if (eval.Equals(Value))
         {
             context[AssignedVariable.Name] = eval;
-            return eval.Clone();
+            return eval;
         }
 
-        return new AssignmentOperator(AssignedVariable.Clone(), eval.Clone());
+        return new AssignmentOperator(AssignedVariable, eval);
     }
 
     public override bool Equals(object? obj)

@@ -39,9 +39,6 @@ public class FunctionCall(string name, IEnumerable<IExpression> arguments) : IEx
         return context[Name, _arguments].Evaluate(context);
     }
 
-    public IExpression Clone()
-        => new FunctionCall(Name, Arguments);
-
     public override bool Equals(object? obj)
         => obj is not null && obj is FunctionCall call && call.Name == Name &&
             call._arguments.Select((a, i) => a.Equals(_arguments[i])).Aggregate((a, b) => a && b);

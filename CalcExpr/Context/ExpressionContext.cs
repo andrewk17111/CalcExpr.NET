@@ -93,10 +93,10 @@ public class ExpressionContext
         Dictionary<string, IFunction> funcs = [];
 
         foreach (string var in _variables.Keys)
-            vars.Add(var, _variables[var].Clone());
+            vars.Add(var, _variables[var]);
 
         foreach (string func in _functions.Keys)
-            funcs.Add(func, (IFunction)_functions[func].Clone());
+            funcs.Add(func, (IFunction)_functions[func]);
 
         return new ExpressionContext(vars, funcs);
     }

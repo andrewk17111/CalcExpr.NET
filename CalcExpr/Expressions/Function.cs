@@ -52,19 +52,16 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body) : IFunct
     }
 
     public IExpression Evaluate()
-        => Clone();
+        => this;
 
     public IExpression Evaluate(ExpressionContext context)
-        => Clone();
+        => this;
 
     public IExpression StepEvaluate()
-        => Clone();
+        => this;
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => Clone();
-
-    public IExpression Clone()
-        => new Function(Parameters, Body);
+        => this;
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Function func && func.Body.Equals(Body) &&

@@ -43,9 +43,6 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
     public readonly bool IsPrefix = is_prefix;
     public readonly IExpression Inside = expression;
 
-    public IExpression Clone()
-        => new UnaryOperator(Identifier, IsPrefix, Inside.Clone());
-
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 
@@ -94,7 +91,7 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         }
         else if (x_eval is UnaryOperator uo && uo.IsPrefix && uo.Identifier == "-")
         {
-            return uo.Inside.Clone();
+            return uo.Inside;
             
             // If for some reason the inside expression didn't evaluate to a Number or infinity, negative operators will
             // still cancel out.
