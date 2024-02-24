@@ -323,13 +323,13 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
             if (b_eval is not IEnumerableExpression)
-                return a_enum_expr.Map(e => Multiply(e, b_eval, context));
+                return a_enum_expr.Map(e => TruncatedModulus(e, b_eval, context));
             else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
-                return a_enum_expr.Combine(b_enum_expr, (x, y) => Multiply(x, y, context));
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => TruncatedModulus(x, y, context));
         }
         else if (b_eval is IEnumerableExpression b_enum_expr)
         {
-            return b_enum_expr.Map(e => Multiply(a_eval, e, context));
+            return b_enum_expr.Map(e => TruncatedModulus(a_eval, e, context));
         }
 
         return Constant.UNDEFINED;
@@ -347,13 +347,13 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
             if (b_eval is not IEnumerableExpression)
-                return a_enum_expr.Map(e => Multiply(e, b_eval, context));
+                return a_enum_expr.Map(e => IntDivide(e, b_eval, context));
             else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
-                return a_enum_expr.Combine(b_enum_expr, (x, y) => Multiply(x, y, context));
+                return a_enum_expr.Combine(b_enum_expr, (x, y) => IntDivide(x, y, context));
         }
         else if (b_eval is IEnumerableExpression b_enum_expr)
         {
-            return b_enum_expr.Map(e => Multiply(a_eval, e, context));
+            return b_enum_expr.Map(e => IntDivide(a_eval, e, context));
         }
 
         return Constant.UNDEFINED;
