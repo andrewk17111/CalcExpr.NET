@@ -72,13 +72,16 @@ public class ExpressionContext
                         method.GetParameters().Any(p => !(p.ParameterType == typeof(IExpression) ||
                             p.ParameterType == typeof(ExpressionContext))))
                         continue;
+
+                    ElementwiseAttribute? elementwise = (ElementwiseAttribute?)method.GetCustomAttribute(typeof(ElementwiseAttribute));
                     
                     foreach (string alias in bif.Aliases)
                         funcs.Add(alias, new Function(method.CreateDelegate(Expression.GetDelegateType(method
-                            .GetParameters()
-                            .Select(p => p.ParameterType)
-                            .Append(method.ReturnType)
-                            .ToArray()))));
+                                .GetParameters()
+                                .Select(p => p.ParameterType)
+                                .Append(method.ReturnType)
+                                .ToArray())),
+                            elementwise is not null));
                 }
             }
         }

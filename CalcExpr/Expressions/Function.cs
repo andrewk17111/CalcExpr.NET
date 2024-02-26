@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace CalcExpr.Expressions;
 
-public class Function(IEnumerable<Parameter> parameters, Delegate body) : IFunction
+public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_elementwise = false) : IFunction
 {
     private readonly IReadOnlyList<Parameter> _parameters = parameters.ToArray() ?? [];
 
@@ -15,11 +15,13 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body) : IFunct
     public readonly bool RequiresContext = body.Method.GetParameters()
         .Select(p => p.ParameterType == typeof(ExpressionContext))
         .Contains(true);
+    public readonly bool IsElementwise = is_elementwise;
 
     public Parameter[] Parameters
         => _parameters.ToArray();
 
-    public Function(Delegate body) : this(body.Method.GetParameters().Select(p => (Parameter)p), body)
+    public Function(Delegate body, bool is_elementwise = false)
+        : this(body.Method.GetParameters().Select(p => (Parameter)p), body, is_elementwise)
     { }
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
