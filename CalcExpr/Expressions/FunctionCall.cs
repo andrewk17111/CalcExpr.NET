@@ -15,7 +15,7 @@ public class FunctionCall(string name, IEnumerable<IExpression> arguments) : IEx
         => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext context)
-        => context[Name, _arguments].Evaluate(context);
+        => context[Name, _arguments];
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
@@ -36,7 +36,7 @@ public class FunctionCall(string name, IEnumerable<IExpression> arguments) : IEx
             }
         }
 
-        return context[Name, _arguments].Evaluate(context);
+        return context[Name, _arguments];
     }
 
     public override bool Equals(object? obj)

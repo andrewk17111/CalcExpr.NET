@@ -19,8 +19,8 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
         {
             { "+", Positive },
             { "-", Negative },
-            { "~", Not },
-            { "¬", Not },
+            { "~", (x, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Not, true), [x], cxt) },
+            { "¬", (x, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Not, true), [x], cxt) },
             { "!", Subfactorial },
             { "--", PreDecrement },
             { "++", PreIncrement },
@@ -441,13 +441,5 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
             context[v.Name] = new_val;
 
         return x_eval;
-    }
-
-    private static IExpression Not(IExpression x, ExpressionContext context)
-    {
-        if (x is IEnumerableExpression enum_expr)
-            return enum_expr.Map(e => Not(e, context));
-
-        return new Function(LogicalFunctions.Not).Invoke([x], context);
     }
 }

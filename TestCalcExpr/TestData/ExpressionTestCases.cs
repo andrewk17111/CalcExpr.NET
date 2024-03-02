@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using TestCalcExpr.TestUtils;
@@ -486,10 +487,10 @@ public static partial class TestCases
                 new Number(2),
                 new BinaryOperator("+", new Number(3), new Number(4))]),
             new FunctionCall("g", [new Number(1), new Number(2), new Number(7)])),
-        new TestCase("is_num(3)", new FunctionCall("is_num", [new Number(3)]), new Number(1)),
-        new TestCase("is_num(infinity)", new FunctionCall("is_num", [new Constant("infinity")]), new Number(0)),
+        new TestCase("is_num(3)", new FunctionCall("is_num", [new Number(3)]), Constant.TRUE),
+        new TestCase("is_num(infinity)", new FunctionCall("is_num", [new Constant("infinity")]), Constant.FALSE),
         new TestCase("is_num(3+4)", new FunctionCall("is_num", [new BinaryOperator("+", new Number(3), new Number(4))]),
-            new Number(0)),
+            Constant.FALSE),
         new TestCase("l(1, 2, 3, 4)", new FunctionCall("l",
             [new Number(1), new Number(2), new Number(3), new Number(4)]), new Number(10)),
         new TestCase("triangle(4)", new FunctionCall("triangle", [new Number(4)]), new Number(10)),
@@ -515,9 +516,20 @@ public static partial class TestCases
         new TestCase("inc(1)+n", new BinaryOperator("+", new FunctionCall("inc", [new Number(1)]),
                 new Variable("n")), new Number(7), new BinaryOperator("+", new Number(2), new Variable("n")),
             new BinaryOperator("+", new Number(2), new Number(5))),
-        new TestCase("and(1, 2)", new FunctionCall("and", [new Number(1), new Number(2)]), new Number(1)),
-        new TestCase("or(1, 2)", new FunctionCall("or", [new Number(1), new Number(2)]), new Number(1)),
-        new TestCase("xor(1, 2)", new FunctionCall("xor", [new Number(1), new Number(2)]), new Number(0)),
+        new TestCase("and(1, 2)", new FunctionCall("and", [new Number(1), new Number(2)]), Constant.TRUE),
+        new TestCase("or(1, 2)", new FunctionCall("or", [new Number(1), new Number(2)]), Constant.TRUE),
+        new TestCase("xor(1, 2)", new FunctionCall("xor", [new Number(1), new Number(2)]), Constant.FALSE),
+        new TestCase("sin([pi,pi/2])", new FunctionCall("sin",
+                [new Vector([new Constant("pi"), new BinaryOperator("/", new Constant("pi"), (Number)2)])]),
+            new Vector([(Number)0, (Number)1]),
+            new FunctionCall("sin",
+                [new Vector([(Number)Double.Pi, new BinaryOperator("/", new Constant("pi"), (Number)2)])]),
+            new FunctionCall("sin",
+                [new Vector([(Number)Double.Pi, new BinaryOperator("/", (Number)Double.Pi, (Number)2)])]),
+            new FunctionCall("sin", [new Vector([(Number)Double.Pi, (Number)(Double.Pi / 2)])])),
+        new TestCase("tan([0,pi])", new FunctionCall("tan", [new Vector([(Number)0, new Constant("pi")])]),
+            new Vector([(Number)0, (Number)0]),
+            new FunctionCall("tan", [new Vector([(Number)0, (Number)Double.Pi])])),
     ];
 
     public readonly static Dictionary<string, IExpression> ContextVariables = new Dictionary<string, IExpression>()

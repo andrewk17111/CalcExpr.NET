@@ -32,12 +32,9 @@ public class TestEvaluation
             foreach (string func in TestCases.ContextFunctions.Keys)
                 context[func] = TestCases.ContextFunctions[func];
 
-            IExpression evaluated = test_case.Parsed.Evaluate(context);
+            IExpression result = test_case.Parsed.Evaluate(context);
 
-            if (test_case.Evaluated is Number result_num && evaluated is Number evaluated_num)
-                Assert.AreEqual(Math.Round(result_num.Value, DIGITS), Math.Round(evaluated_num.Value, DIGITS));
-            else
-                Assert.AreEqual(test_case.Evaluated, evaluated);
+            UtilFunctions.AreEqual(test_case.Evaluated, result, DIGITS);
         }
     }
 
@@ -68,11 +65,7 @@ public class TestEvaluation
             {
                 IExpression evaluated = start.StepEvaluate(context);
 
-                if (test_case.StepEvaluated[i] is Number result_num && evaluated is Number evaluated_num)
-                    Assert.AreEqual(Math.Round(result_num.Value, DIGITS), Math.Round(evaluated_num.Value, DIGITS));
-                else
-                    Assert.AreEqual(test_case.StepEvaluated[i], evaluated);
-
+                UtilFunctions.AreEqual(test_case.StepEvaluated[i], evaluated, DIGITS);
                 start = evaluated;
             }
         }
@@ -102,10 +95,7 @@ public class TestEvaluation
                     IExpression result = new FunctionCall(test_case.FunctionAliases[j], args)
                         .Evaluate(test_case.Context ?? new ExpressionContext());
 
-                    if (evaluated is Number eval_num && result is Number result_num)
-                        Assert.AreEqual(Math.Round(eval_num.Value, DIGITS), Math.Round(result_num.Value, DIGITS));
-                    else
-                        Assert.AreEqual(evaluated, result);
+                    UtilFunctions.AreEqual(evaluated, result, DIGITS);
                 }
             }
         }
