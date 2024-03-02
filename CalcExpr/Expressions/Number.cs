@@ -17,7 +17,7 @@ public class Number(double value) : IExpression
         => Value switch
         {
             Double.PositiveInfinity => Constant.INFINITY,
-            Double.NegativeInfinity => new UnaryOperator("-", true, Constant.INFINITY),
+            Double.NegativeInfinity => Constant.NEGATIVE_INFINITY,
             Double.NaN => Constant.UNDEFINED,
             _ => this
         };

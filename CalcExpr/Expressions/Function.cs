@@ -1,13 +1,17 @@
-﻿using CalcExpr.Context;
+﻿using CalcExpr.Attributes;
+using CalcExpr.Context;
+using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
 using CalcExpr.FunctionAttributes;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
-using System.Linq;
+using System.Linq.Expressions;
+using System;
+using System.Reflection;
 
 namespace CalcExpr.Expressions;
 
-public class Function(IEnumerable<Parameter> parameters, Delegate body) : IFunction
+public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_elementwise = false) : IFunction
 {
     private readonly IReadOnlyList<Parameter> _parameters = parameters.ToArray() ?? [];
 
@@ -19,7 +23,20 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body) : IFunct
     public Parameter[] Parameters
         => _parameters.ToArray();
 
-    public Function(Delegate body) : this(body.Method.GetParameters().Select(p => (Parameter)p), body)
+    public bool IsElementwise
+        => is_elementwise;
+
+    public Function(MethodInfo method)
+        : this (method.CreateDelegate(Expression.GetDelegateType(method
+            .GetParameters()
+            .Select(p => p.ParameterType)
+            .Append(method.ReturnType)
+            .ToArray())),
+        method.GetCustomAttribute(typeof(ElementwiseAttribute)) is not null)
+    { }
+
+    public Function(Delegate body, bool is_elementwise = false)
+        : this(body.Method.GetParameters().Select(p => (Parameter)p), body, is_elementwise)
     { }
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
@@ -81,6 +98,8 @@ public interface IFunction : IExpression
 {
     public Parameter[] Parameters { get; }
 
+    public bool IsElementwise { get; }
+
     public static ExpressionContext ContextReconciliation(ExpressionContext outer_context,
         ExpressionContext inner_context, IEnumerable<Parameter> parameters)
     {
@@ -120,4 +139,36 @@ public interface IFunction : IExpression
     }
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context);
+
+    public static IExpression ForEach(MethodInfo function, IEnumerable<IExpression> arguments, ExpressionContext context)
+        => ForEach(new Function(function), arguments, context);
+
+    public static IExpression ForEach(IFunction function, IEnumerable<IExpression> arguments, ExpressionContext context)
+    {
+        if (arguments.Count() != function.Parameters.Where(p => !p.IsContext).Count())
+            return Constant.UNDEFINED;
+
+        if (function.IsElementwise && arguments.Any(arg => arg is IEnumerableExpression))
+        {
+            int length = arguments.Where(arg => arg is IEnumerableExpression)
+                .Select(arg => ((IEnumerableExpression)arg).Count())
+                .Min();
+            List<IExpression> results = [];
+
+            for (int i = 0; i < length; i++)
+                results.Add(function.Invoke(arguments.Select(arg => arg is IEnumerableExpression enum_expr
+                    ? enum_expr.ElementAt(i)
+                    : arg).ToArray(), context));
+
+            Type enum_type = arguments.First(arg => arg is IEnumerableExpression).GetType();
+            MethodInfo? create_method = enum_type.GetMethod("ConvertIEnumerable", [typeof(IEnumerable<IExpression>)]);
+
+            MethodInfo[] methods = enum_type.GetMethods(BindingFlags.Static | BindingFlags.Public);
+            return (IEnumerableExpression?)create_method!.Invoke(null, [results])!;
+        }
+        else
+        {
+            return function.Invoke([.. arguments], context);
+        }
+    }
 }

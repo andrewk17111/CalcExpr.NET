@@ -9,18 +9,21 @@ namespace CalcExpr.BuiltInFunctions;
 public static class LogicalFunctions
 {
     [BuiltInFunction("and")]
+    [Elementwise]
     public static IExpression And([AsBoolean][NotUndefined] IExpression a, [AsBoolean][NotUndefined] IExpression b)
         => Constant.FALSE.Equals(a) || Constant.FALSE.Equals(b)
             ? Constant.FALSE
             : Constant.TRUE;
 
     [BuiltInFunction("or")]
+    [Elementwise]
     public static IExpression Or([AsBoolean][NotUndefined] IExpression a, [AsBoolean][NotUndefined] IExpression b)
         => Constant.TRUE.Equals(a) || Constant.TRUE.Equals(b)
             ? Constant.TRUE
             : Constant.FALSE;
 
     [BuiltInFunction("xor")]
+    [Elementwise]
     public static IExpression Xor([AsBoolean][NotUndefined] IExpression a, [AsBoolean][NotUndefined] IExpression b)
     {
         bool a_bool = Constant.TRUE.Equals(a);
@@ -32,14 +35,17 @@ public static class LogicalFunctions
     }
 
     [BuiltInFunction("not")]
+    [Elementwise]
     public static IExpression Not([AsBoolean][NotUndefined] IExpression x)
         => Constant.TRUE.Equals(x) ? Constant.FALSE : Constant.TRUE;
 
     [BuiltInFunction("bool")]
+    [Elementwise]
     public static IExpression Bool([AsBoolean][NotUndefined] IExpression x)
         => x;
 
     [BuiltInFunction("if")]
+    [Elementwise]
     public static IExpression If([AsBoolean][NotUndefined] IExpression condition, IExpression is_true,
         IExpression is_false)
         => Constant.TRUE.Equals(condition) ? is_true : is_false;

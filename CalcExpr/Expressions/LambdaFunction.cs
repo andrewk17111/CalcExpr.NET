@@ -12,6 +12,9 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
     public Parameter[] Parameters
         => _parameters.ToArray();
 
+    public bool IsElementwise
+        => false;
+
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
         ExpressionContext inner_context = context.Clone();

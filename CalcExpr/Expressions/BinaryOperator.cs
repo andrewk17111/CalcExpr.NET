@@ -25,11 +25,11 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
             { "%", EuclideanModulus },
             { "%%", TruncatedModulus },
             { "//", IntDivide },
-            { "&&", And },
-            { "∧", And },
-            { "||", Or },
-            { "∨", Or },
-            { "⊕", Xor },
+            { "&&", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.And, true), [a, b], cxt) },
+            { "∧", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.And, true), [a, b], cxt) },
+            { "||", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Or, true), [a, b], cxt) },
+            { "∨", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Or, true), [a, b], cxt) },
+            { "⊕", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Xor, true), [a, b], cxt) },
             { "==", IsEqual },
             { "!=", IsNotEqual },
             { "≠", IsNotEqual },
@@ -529,65 +529,5 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         }
 
         return Constant.UNDEFINED;
-    }
-
-    private static IExpression And(IExpression a, IExpression b, ExpressionContext context)
-    {
-        IExpression a_eval = a.Evaluate(context);
-        IExpression b_eval = b.Evaluate(context);
-
-        if (a_eval is IEnumerableExpression a_enum_expr)
-        {
-            if (b_eval is not IEnumerableExpression)
-                return a_enum_expr.Map(e => And(e, b_eval, context));
-            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
-                return a_enum_expr.Combine(b_enum_expr, (x, y) => And(x, y, context));
-        }
-        else if (b_eval is IEnumerableExpression b_enum_expr)
-        {
-            return b_enum_expr.Map(e => And(a_eval, e, context));
-        }
-
-        return new Function(LogicalFunctions.And).Invoke([a, b], context);
-    }
-
-    private static IExpression Or(IExpression a, IExpression b, ExpressionContext context)
-    {
-        IExpression a_eval = a.Evaluate(context);
-        IExpression b_eval = b.Evaluate(context);
-
-        if (a_eval is IEnumerableExpression a_enum_expr)
-        {
-            if (b_eval is not IEnumerableExpression)
-                return a_enum_expr.Map(e => Or(e, b_eval, context));
-            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
-                return a_enum_expr.Combine(b_enum_expr, (x, y) => Or(x, y, context));
-        }
-        else if (b_eval is IEnumerableExpression b_enum_expr)
-        {
-            return b_enum_expr.Map(e => Or(a_eval, e, context));
-        }
-
-        return new Function(LogicalFunctions.Or).Invoke([a, b], context);
-    }
-
-    private static IExpression Xor(IExpression a, IExpression b, ExpressionContext context)
-    {
-        IExpression a_eval = a.Evaluate(context);
-        IExpression b_eval = b.Evaluate(context);
-
-        if (a_eval is IEnumerableExpression a_enum_expr)
-        {
-            if (b_eval is not IEnumerableExpression)
-                return a_enum_expr.Map(e => Xor(e, b_eval, context));
-            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
-                return a_enum_expr.Combine(b_enum_expr, (x, y) => Xor(x, y, context));
-        }
-        else if (b_eval is IEnumerableExpression b_enum_expr)
-        {
-            return b_enum_expr.Map(e => Xor(a_eval, e, context));
-        }
-
-        return new Function(LogicalFunctions.Xor).Invoke([a, b], context);
     }
 }
