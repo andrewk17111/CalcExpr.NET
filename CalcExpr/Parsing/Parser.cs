@@ -11,11 +11,18 @@ namespace CalcExpr.Parsing;
 
 public class Parser
 {
+    private readonly List<Rule> _reference_grammar = [];
     private readonly List<Rule> _grammar = [];
     private readonly Dictionary<string, IExpression> _cache = [];
 
-    public Rule[] Grammar
+    public Rule[] ReferenceGrammar
+        => _reference_grammar.ToArray();
+
+    public Rule[] ActiveGrammar
         => _grammar.ToArray();
+
+    public Rule[] Grammar
+        => _grammar.Concat(_reference_grammar).ToArray();
 
     public string[] Cache
         => _cache.Keys.ToArray();
@@ -86,10 +93,16 @@ public class Parser
     /// <param name="build_rules">Whether or not grammar rules should be prebuilt.</param>
     public Parser(IEnumerable<Rule> grammar, bool build_rules = true)
     {
-        _grammar = grammar.ToList();
+        foreach (Rule rule in grammar)
+        {
+            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is null)
+                _grammar.Add(rule);
+            else
+                _reference_grammar.Add(rule);
+        }
 
         if (build_rules)
-            BuildGrammarRules(_grammar);
+            RebuildGrammarRules();
     }
 
     /// <summary>
@@ -108,9 +121,6 @@ public class Parser
 
         foreach (Rule rule in _grammar)
         {
-            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
-                continue;
-
             Token? match = rule.Match(input, Grammar);
 
             if (match.HasValue)
@@ -200,17 +210,21 @@ public class Parser
     /// </returns>
     public bool AddGrammarRule(Rule rule, int index = -1, bool build_rules = true)
     {
+        List<Rule> grammar = rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is null
+            ? _grammar
+            : _reference_grammar;
+
         if (index < 0)
-            index += _grammar.Count + 1;
+            index += grammar.Count + 1;
 
         try
         {
             if (index <= 0)
-                _grammar.Insert(0, rule);
-            else if (index >= _grammar.Count)
-                _grammar.Insert(_grammar.Count, rule);
+                grammar.Insert(0, rule);
+            else if (index >= grammar.Count)
+                grammar.Insert(grammar.Count, rule);
             else
-                _grammar.Insert(index, rule);
+                grammar.Insert(index, rule);
 
             if (build_rules)
                 RebuildGrammarRules();
@@ -233,8 +247,8 @@ public class Parser
     /// </returns>
     public bool RemoveGrammarRule(string name, bool build_rules = true)
     {
-        for (int i = 0; i < _grammar.Count; i++)
-            if (_grammar[i].Name == name)
+        for (int i = 0; i < Grammar.Length; i++)
+            if (Grammar[i].Name == name)
                 return RemoveGrammarRuleAt(i, build_rules);
 
         return false;
@@ -245,14 +259,20 @@ public class Parser
     /// </summary>
     /// <param name="index">The index for the <see cref="Rule"/> to be removed.</param>
     /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
+    /// <param name="reference">Whether or not the grammar rule is a reference rule.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="Rule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool RemoveGrammarRuleAt(int index, bool build_rules = true)
+    public bool RemoveGrammarRuleAt(int index, bool build_rules = true, bool? reference = null)
     {
         try
         {
-            _grammar.RemoveAt(index);
+            List<Rule> grammar = _grammar;
+
+            if ((reference.HasValue && reference.Value) || (!reference.HasValue && index >= _grammar.Count))
+                grammar = _reference_grammar;
+
+            grammar.RemoveAt(index);
 
             if (build_rules)
                 RebuildGrammarRules();
@@ -278,6 +298,10 @@ public class Parser
             if (rule.Name == name)
                 return true;
 
+        foreach (Rule rule in _reference_grammar)
+            if (rule.Name == name)
+                return true;
+
         return false;
     }
 
@@ -289,8 +313,9 @@ public class Parser
     public Rule? GetGrammarRule(string name)
     {
         int idx = 0;
+        Rule[] grammar = Grammar;
 
-        while (idx < _grammar.Count && _grammar[idx].Name != name)
+        while (idx < grammar.Length && grammar[idx].Name != name)
             idx++;
 
         return GetGrammarRule(idx);
@@ -300,15 +325,26 @@ public class Parser
     /// Gets a <see cref="Rule"/> from the grammar based on the specified index.
     /// </summary>
     /// <param name="index">The index of the grammar rule.</param>
+    /// <param name="reference">Whether or not the grammar rule is a reference rule.</param>
     /// <returns>The <see cref="Rule"/> in the grammar at the index of <paramref name="index"/>.</returns>
-    public Rule? GetGrammarRule(int index)
-        => index >= 0 && index < _grammar.Count ? _grammar[index] : null;
+    public Rule? GetGrammarRule(int index, bool? reference = null)
+    {
+        List<Rule> grammar = _grammar;
+
+        if ((reference.HasValue && reference.Value) || (!reference.HasValue && index >= _grammar.Count))
+        {
+            grammar = _reference_grammar;
+            index -= _grammar.Count;
+        }
+
+        return index >= 0 && index < grammar.Count ? grammar[index] : null;
+    }
 
     /// <summary>
     /// Rebuilds all of the grammar rules in the <see cref="Parser"/>.
     /// </summary>
     public void RebuildGrammarRules()
-        => BuildGrammarRules(_grammar);
+        => BuildGrammarRules(Grammar);
 
     private static void BuildGrammarRules(IEnumerable<Rule> rules)
     {
@@ -458,9 +494,6 @@ public class Parser
 
         foreach (Rule rule in parser.Grammar)
         {
-            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
-                continue;
-
             Token? match = rule.Match(tokenized_input, parser.Grammar);
 
             if (match.HasValue)
