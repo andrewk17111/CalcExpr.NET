@@ -1,5 +1,7 @@
-﻿using CalcExpr.Context;
+﻿using CalcExpr.BuiltInFunctions;
+using CalcExpr.Context;
 using CalcExpr.Expressions;
+using CalcExpr.Expressions.Collections;
 using System.Reflection;
 using TestCalcExpr.TestData;
 using TestCalcExpr.TestUtils;
