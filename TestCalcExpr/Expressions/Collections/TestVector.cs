@@ -2,7 +2,7 @@
 using CalcExpr.Expressions.Collections;
 using TestCalcExpr.TestUtils;
 
-namespace TestCalcExpr.Expressions;
+namespace TestCalcExpr.Expressions.Collections;
 
 [TestClass]
 public class TestVector
@@ -15,7 +15,7 @@ public class TestVector
     {
         for (int i = 0; i < 20; i++)
         {
-            IExpression[] elements = [..UtilFunctions.Random(i)];
+            IExpression[] elements = [.. UtilFunctions.Random(i)];
             Vector vect = new Vector(elements);
 
             Assert.AreEqual(elements.Length, vect.Length);
@@ -36,7 +36,7 @@ public class TestVector
             IExpression[] elements = [.. UtilFunctions.Random(i)];
             Vector vect = new Vector(elements);
 
-            Assert.AreEqual($"[{String.Join<IExpression>(", ", elements)}]", vect.ToString());
+            Assert.AreEqual($"[{string.Join<IExpression>(", ", elements)}]", vect.ToString());
         }
     }
 }
