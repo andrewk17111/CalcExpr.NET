@@ -62,9 +62,9 @@ public class TestSet
         for (int i = 0; i < 20; i++)
         {
             IExpression[] elements = [.. UtilFunctions.Random(i)];
-            Vector vect = new Vector(elements);
+            Set set = new Set(elements);
 
-            Assert.AreEqual($"{{{string.Join<IExpression>(", ", elements)}}}", vect.ToString());
+            Assert.AreEqual($"{{{string.Join<IExpression>(", ", elements)}}}", set.ToString());
         }
     }
 }

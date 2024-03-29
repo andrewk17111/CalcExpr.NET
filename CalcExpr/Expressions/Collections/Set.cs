@@ -1,11 +1,27 @@
 ﻿using CalcExpr.Context;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CalcExpr.Expressions.Collections;
 
 public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression
 {
-    private readonly SortedSet<IExpression> _elements = [.. elements];
+    private readonly struct HashedExpression(IExpression value) : IComparable
+    {
+        public IExpression Value { get; } = value;
+
+        public override bool Equals([NotNullWhen(true)] object? obj)
+            => obj is not null && (obj is HashedExpression he && Value.Equals(he.Value) ||
+                obj is IExpression expr && Value.Equals(expr));
+
+        public override int GetHashCode()
+            => Value.GetHashCode();
+
+        public int CompareTo(object? obj)
+            => Value.GetHashCode().CompareTo(obj?.GetHashCode() ?? 0);
+    }
+
+    private readonly SortedSet<HashedExpression> _elements = [.. elements.Select(e => new HashedExpression(e))];
 
     public int Count
         => _elements.Count;
@@ -14,28 +30,36 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression
         => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => new Set(elements.Select(x => x.Evaluate(context)));
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+    {
+        for (int i = 0; i < Count; i++)
+        {
+            IExpression element = _elements.ElementAt(i).Value;
+            IExpression evaluated = element.StepEvaluate(context);
+
+            if (!evaluated.Equals(element))
+                return new Set(_elements.Select((x, j) => j == i ? evaluated : x.Value));
+        }
+
+        return this;
+    }
 
     public IEnumerableExpression Map(Func<IExpression, IExpression> map)
-        => new Set(_elements.Select(x => map(x)));
+        => new Set(_elements.Select(x => map(x.Value)));
 
     public IEnumerableExpression Combine(IEnumerable<IExpression> expressions,
         Func<IExpression, IExpression, IExpression> combine)
     {
-        expressions = expressions.OrderBy(x => x.GetHashCode());
-
-        IEnumerable<IExpression> elements = _elements.OrderBy(x => x.GetHashCode());
         List<IExpression> result = [];
         int count = expressions.Count();
 
         for (int i = 0; i < Count && i < count; i++)
-            result.Add(combine(elements.ElementAt(i), expressions.ElementAt(i)));
+            result.Add(combine(_elements.ElementAt(i).Value, expressions.ElementAt(i)));
 
         return new Set(result);
     }
@@ -66,8 +90,8 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression
         => $"{{{String.Join(", ", elements.Select(e => e.ToString(format)))}}}";
 
     public IEnumerator<IExpression> GetEnumerator()
-        => ((IEnumerable<IExpression>)_elements).GetEnumerator();
+        => _elements.Select(h => h.Value).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
-        => _elements.GetEnumerator();
+        => _elements.Select(h => h.Value).GetEnumerator();
 }
