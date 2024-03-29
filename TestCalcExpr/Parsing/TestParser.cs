@@ -22,13 +22,13 @@ public class TestParser
         (string Name, string? Regex)[] default_rules =
         [
             ("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
-            ("Operand", @"\[?({DiscreteOperand}|{Parameter}|{TokenizedParameter})\]?"),
+            ("Operand", @"[\[\{]?({DiscreteOperand}|{Parameter}|{TokenizedParameter})[\]\}]?"),
             ("Token", @"\[\d+\]"),
             ("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)"),
             ("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})"),
             ("TokenizedAttribute", @"([A-Za-z][A-Za-z_0-9]*({Token})?)"),
             ("TokenizedParameter", @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})"),
-            ("Vector", null),
+            ("Collection", null),
             ("FunctionCall", null),
             ("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>"),
             ("Parentheses", null),
