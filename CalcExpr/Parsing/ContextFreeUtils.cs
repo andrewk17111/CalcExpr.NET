@@ -20,6 +20,16 @@ public static class ContextFreeUtils
         return (open_brackets, close_brackets);
     }
 
+    /// <summary>
+    /// Tokenizes the input string by replacing all bracketed expressions with a token.
+    /// </summary>
+    /// <param name="input">The input string to tokenize.</param>
+    /// <param name="tokens">The tokens that were created from the input string.</param>
+    /// <param name="brackets">Type of brackets to tokenize.</param>
+    /// <returns>The tokenized string.</returns>
+    /// <exception cref="UnbalancedParenthesesException">
+    /// Thrown when the input string has unbalanced brackets.
+    /// </exception>
     public static string TokenizeInput(this string input, out Token[] tokens, Brackets brackets = Brackets.All)
     {
         if (brackets == Brackets.None)
@@ -99,6 +109,14 @@ public static class ContextFreeUtils
         return output.ToString();
     }
 
+    /// <summary>
+    /// Checks if the input string has balanced brackets.
+    /// </summary>
+    /// <param name="input">The input string to check.</param>
+    /// <param name="brackets">Type of brackets to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if the input string has balanced brackets, <see langword="false"/> otherwise.
+    /// </returns>
     public static bool CheckBalancedBrackets(this string input, Brackets brackets = Brackets.All)
     {
         if (brackets == Brackets.None)
@@ -136,6 +154,13 @@ public static class ContextFreeUtils
             .Any(x => !x);
     }
 
+    /// <summary>
+    /// Converts the index of the tokenized string to the index of the original string.
+    /// </summary>
+    /// <param name="index">The index to detokenize.</param>
+    /// <param name="tokenized_string">The tokenized string.</param>
+    /// <param name="tokens">The tokens that were created from the input string.</param>
+    /// <returns>The index of the original string.</returns>
     public static int DetokenizeIndex(int index, string tokenized_string, Token[] tokens)
     {
         string[] matches =
@@ -151,6 +176,14 @@ public static class ContextFreeUtils
         return index;
     }
 
+    /// <summary>
+    /// Converts the indexes of the tokenized string to the indexes of the original string.
+    /// </summary>
+    /// <param name="indexes">The indexes to detokenize.</param>
+    /// <param name="tokenized_string">The tokenized string.</param>
+    /// <param name="tokens">The tokens that were created from the input string.</param>
+    /// <param name="sort">Whether to sort the indexes before detokenizing.</param>
+    /// <returns>The indexes of the original string.</returns>
     public static IEnumerable<int> DetokenizeIndexes(IEnumerable<int> indexes, string tokenized_string,
         Token[] tokens, bool sort = true)
     {
