@@ -1,5 +1,4 @@
 ﻿using CalcExpr.Exceptions;
-using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -7,6 +6,20 @@ namespace CalcExpr.Parsing;
 
 public static class ContextFreeUtils
 {
+    private static (string, string) GetBracketStrings(Brackets brackets = Brackets.All)
+    {
+        string open_brackets = (brackets.HasFlag(Brackets.Parenthesis) ? "(" : "") +
+            (brackets.HasFlag(Brackets.Square) ? "[" : "") +
+            (brackets.HasFlag(Brackets.Curly) ? "{" : "") +
+            (brackets.HasFlag(Brackets.Angle) ? "<" : "");
+        string close_brackets = (brackets.HasFlag(Brackets.Parenthesis) ? ")" : "") +
+            (brackets.HasFlag(Brackets.Square) ? "]" : "") +
+            (brackets.HasFlag(Brackets.Curly) ? "}" : "") +
+            (brackets.HasFlag(Brackets.Angle) ? ">" : "");
+
+        return (open_brackets, close_brackets);
+    }
+
     public static string TokenizeInput(this string input, out Token[] tokens, Brackets brackets = Brackets.All)
     {
         if (brackets == Brackets.None)
@@ -18,15 +31,7 @@ public static class ContextFreeUtils
         input = Regex.Replace(input, brackets.HasFlag(Brackets.Square) ? @"[\\]" : @"[\[\]\\]",
             match => @$"\{match.Value}");
 
-        string open_brackets = (brackets.HasFlag(Brackets.Parenthesis) ? "(" : "") +
-            (brackets.HasFlag(Brackets.Square) ? "[" : "") +
-            (brackets.HasFlag(Brackets.Curly) ? "{" : "") +
-            (brackets.HasFlag(Brackets.Angle) ? "<" : "");
-        string close_brackets = (brackets.HasFlag(Brackets.Parenthesis) ? ")" : "") +
-            (brackets.HasFlag(Brackets.Square) ? "]" : "") +
-            (brackets.HasFlag(Brackets.Curly) ? "}" : "") +
-            (brackets.HasFlag(Brackets.Angle) ? ">" : "");
-
+        (string open_brackets, string close_brackets) = GetBracketStrings(brackets);
         List<Token> toks = [];
         StringBuilder output = new StringBuilder();
         int start = -1;
@@ -92,6 +97,43 @@ public static class ContextFreeUtils
 
         tokens = [.. toks];
         return output.ToString();
+    }
+
+    public static bool CheckBalancedBrackets(this string input, Brackets brackets = Brackets.All)
+    {
+        if (brackets == Brackets.None)
+            return true;
+
+        input = Regex.Replace(input, brackets.HasFlag(Brackets.Square) ? @"[\\]" : @"[\[\]\\]",
+            match => @$"\{match.Value}");
+
+        (string open_brackets, string close_brackets) = GetBracketStrings(brackets);
+        Dictionary<char, int> open_counts = open_brackets.ToDictionary(c => c, c => 0);
+        Dictionary<char, int> close_counts = close_brackets.ToDictionary(c => c, c => 0);
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            char current = input[i];
+
+            if (current == '\\')
+            {
+                i++;
+            }
+            else if (open_brackets.Contains(current))
+            {
+                open_counts[current]++;
+            }
+            else if (close_brackets.Contains(current))
+            {
+                if (open_counts[open_brackets[close_brackets.IndexOf(current)]] == 0)
+                    return false;
+
+                close_counts[current]++;
+            }
+        }
+
+        return !open_brackets.Select((c, i) => open_counts[c] == close_counts[close_brackets[i]])
+            .Any(x => !x);
     }
 
     public static int DetokenizeIndex(int index, string tokenized_string, Token[] tokens)

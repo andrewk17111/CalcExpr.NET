@@ -360,12 +360,9 @@ public class Parser
         {
             try
             {
-                ContextFreeUtils.TokenizeInput(match.Value[1..^1], out Token[] tokens,
-                    Brackets.Square | Brackets.Curly);
-                return match;
+                if (ContextFreeUtils.CheckBalancedBrackets(match.Value[1..^1], Brackets.Square | Brackets.Curly))
+                    return match;
             }
-            catch (UnbalancedParenthesesException)
-            { }
             catch
             {
                 throw;
