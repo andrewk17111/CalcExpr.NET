@@ -204,9 +204,9 @@ public static class ContextFreeUtils
             .Where(m => !m.Value.StartsWith('\\'))];
         int match_index = -1;
 
-        if (matches.Any())
+        if (matches.Length != 0)
         {
-            Match match = null;
+            Match? match = null;
 
             for (int i = 0; i < sorted_indexes.Length; i++)
             {

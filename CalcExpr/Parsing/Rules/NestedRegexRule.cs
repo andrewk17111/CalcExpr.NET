@@ -18,7 +18,7 @@ namespace CalcExpr.Parsing.Rules;
 /// The function to use to parse a <see cref="string"/> into an <see cref="IExpression"/>.
 /// </param>
 public class NestedRegexRule(string name, string regex_template, RegexRuleOptions options,
-    Func<string, Token, Parser, IExpression> parse) : RegexRule(name, null, options, parse)
+    Func<string, Token, Parser, IExpression> parse) : RegexRule(name, null!, options, parse)
 {
     private string? _regex = null;
 
