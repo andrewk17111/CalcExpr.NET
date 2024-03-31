@@ -39,6 +39,23 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_
         : this(body.Method.GetParameters().Select(p => (Parameter)p), body, is_elementwise)
     { }
 
+    public static bool IsValidFunction(MethodInfo method, out string[]? aliases)
+    {
+        BuiltInFunctionAttribute? bif = method.GetCustomAttribute<BuiltInFunctionAttribute>();
+
+        aliases = bif?.Aliases;
+
+        if (bif is null)
+            return false;
+
+        if (!typeof(IExpression).IsAssignableFrom(method.ReturnType))
+            return false;
+
+        return method.GetParameters()
+            .All(p => typeof(IExpression).IsAssignableFrom(p.ParameterType) ||
+                p.ParameterType == typeof(ExpressionContext));
+    }
+
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
         object?[] args;
