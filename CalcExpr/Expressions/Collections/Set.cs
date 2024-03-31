@@ -26,6 +26,9 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression
     public int Count
         => _elements.Count;
 
+    public Set() : this([])
+    { }
+
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 

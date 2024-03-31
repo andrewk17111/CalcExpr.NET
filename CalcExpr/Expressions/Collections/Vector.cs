@@ -16,6 +16,9 @@ public class Vector(IEnumerable<IExpression> elements) : IEnumerableExpression
     public int Length
         => _elements.Length;
 
+    public Vector() : this([])
+    { }
+
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 
