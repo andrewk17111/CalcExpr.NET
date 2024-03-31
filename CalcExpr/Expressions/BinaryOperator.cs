@@ -400,7 +400,8 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             if (b_eval is not IEnumerableExpression)
                 return a_enum_expr.Map(e => IsNotEqual(e, b_eval, context));
-            else if (b_eval is IEnumerableExpression b_enum_expr && a_enum_expr.Count() == b_enum_expr.Count())
+            else if (b_eval is IEnumerableExpression b_enum_expr && a_eval.GetType() == b_eval.GetType() &&
+                a_enum_expr.Count() == b_enum_expr.Count())
                 return new Number(a_enum_expr.Equals(b_enum_expr) ? 0 : 1);
         }
         else if (b_eval is IEnumerableExpression b_enum_expr)

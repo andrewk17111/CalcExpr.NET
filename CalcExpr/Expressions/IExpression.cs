@@ -56,4 +56,26 @@ public interface IExpression
     /// <see cref="string"/>.
     /// </returns>
     public string ToString(string? format);
+
+    /// <summary>
+    /// Compares the current instance with another object of the same type and returns an integer that indicates
+    /// whether the current instance precedes, follows, or occurs in the same position in the sort order as the other
+    /// object.
+    /// </summary>
+    /// <param name="obj">An object to compare with this instance.</param>
+    /// <returns>
+    /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
+    /// <para>Value – Meaning</para>
+    /// <para>Less than zero – This instance precedes obj in the sort order.</para>
+    /// <para>Zero – This instance occurs in the same position in the sort order as obj.</para>
+    /// <para>Greater than zero – This instance follows obj in the sort order.</para>
+    /// </returns>
+    /// <exception cref="ArgumentException">obj is not the same type as this instance.</exception>
+    public int CompareTo(object? obj)
+    {
+        if (obj is IExpression expression)
+            return GetHashCode().CompareTo(expression.GetHashCode());
+
+        return 0;
+    }
 }
