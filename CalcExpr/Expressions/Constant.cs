@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Context;
+using CalcExpr.Expressions.Collections;
 
 namespace CalcExpr.Expressions;
 
@@ -25,6 +26,9 @@ public class Constant(string identifier) : IExpression
         { "-∞", new Constant("-∞") },
         { "-inf", new Constant("-inf") },
         { "-infinity", new Constant("-infinity") },
+        { "∅", new Set() },
+        { "empty", new Set() },
+        { "empty_set", new Set() },
     };
 
     public static Constant INFINITY
@@ -76,6 +80,8 @@ public class Constant(string identifier) : IExpression
                 "undefined" or "dne" => c.Identifier == "undefined" || c.Identifier == "dne",
                 "-∞" or "-inf" or "-infinity" => c.Identifier == "-∞" || c.Identifier == "-inf" ||
                     c.Identifier == "-infinity",
+                "∅" or "empty" or "empty_set" => c.Identifier == "∅" || c.Identifier == "empty" ||
+                    c.Identifier == "empty_set",
                 _ => false,
             };
 
