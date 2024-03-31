@@ -67,7 +67,7 @@ public class Parser
                 RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
             new RegexRule("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParsePostfix),
-            new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|e|true|false|undefined|dne)",
+            new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|undefined|dne|(empty(_set)?)|∅|e)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseConstant),
             new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseVariable),

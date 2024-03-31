@@ -70,7 +70,8 @@ public class Constant(string identifier) : IExpression
         => _values[Identifier];
 
     public override bool Equals(object? obj)
-        => obj is not null && obj is Constant c && Identifier switch
+        => obj is not null && obj is Constant c && 
+            (c.Identifier == Identifier || Identifier switch
             {
                 "∞" or "inf" or "infinity" => c.Identifier == "∞" || c.Identifier == "inf" ||
                     c.Identifier == "infinity",
@@ -83,7 +84,7 @@ public class Constant(string identifier) : IExpression
                 "∅" or "empty" or "empty_set" => c.Identifier == "∅" || c.Identifier == "empty" ||
                     c.Identifier == "empty_set",
                 _ => false,
-            };
+            });
 
     public override int GetHashCode()
         => Identifier.GetHashCode();
