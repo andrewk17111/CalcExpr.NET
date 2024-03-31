@@ -530,6 +530,9 @@ public static partial class TestCases
         new TestCase("tan([0,pi])", new FunctionCall("tan", [new Vector([(Number)0, new Constant("pi")])]),
             new Vector([(Number)0, (Number)0]),
             new FunctionCall("tan", [new Vector([(Number)0, (Number)Double.Pi])])),
+        new TestCase("∅", new Constant("∅"), new Set()),
+        new TestCase("empty", new Constant("empty"), new Set()),
+        new TestCase("empty_set", new Constant("empty_set"), new Set()),
     ];
 
     public readonly static Dictionary<string, IExpression> ContextVariables = new Dictionary<string, IExpression>()
