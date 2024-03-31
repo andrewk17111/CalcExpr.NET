@@ -71,20 +71,16 @@ public static class LogicalFunctions
             : Constant.FALSE;
 
     [BuiltInFunction("is_even")]
-    public static IExpression IsEven(IExpression x)
-        => x is Number num
-            ? num.Value % 2 == 0
-                ? Constant.TRUE
-                : Constant.FALSE
-            : Constant.UNDEFINED;
+    public static IExpression IsEven(Number x)
+        => x.Value % 2 == 0
+            ? Constant.TRUE
+            : Constant.FALSE;
 
     [BuiltInFunction("is_odd")]
-    public static IExpression IsOdd(IExpression x)
-        => x is Number num
-            ? Math.Abs(num.Value % 2) == 1
-                ? Constant.TRUE
-                : Constant.FALSE
-            : Constant.UNDEFINED;
+    public static IExpression IsOdd(Number x)
+        => Math.Abs(x.Value % 2) == 1
+            ? Constant.TRUE
+            : Constant.FALSE;
 
     [BuiltInFunction("is_positive")]
     public static IExpression IsPositive(IExpression x)

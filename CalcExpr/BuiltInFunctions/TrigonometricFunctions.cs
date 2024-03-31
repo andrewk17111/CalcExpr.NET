@@ -8,17 +8,17 @@ public static class TrigonometricFunctions
 {
     [BuiltInFunction("sin")]
     [Elementwise]
-    public static IExpression Sin([IsNumber] IExpression x)
+    public static IExpression Sin(Number x)
         => new Number(Math.Sin(((Number)x).Value));
 
     [BuiltInFunction("cos")]
     [Elementwise]
-    public static IExpression Cos([IsNumber] IExpression x)
+    public static IExpression Cos(Number x)
         => new Number(Math.Cos(((Number)x).Value));
 
     [BuiltInFunction("tan")]
     [Elementwise]
-    public static IExpression Tan([IsNumber] IExpression x)
+    public static IExpression Tan(Number x)
     {
         Number num = (Number)x;
         
@@ -29,12 +29,12 @@ public static class TrigonometricFunctions
 
     [BuiltInFunction("asin", "arcsin", "arsin")]
     [Elementwise]
-    public static IExpression Asin([IsNumber] IExpression x)
+    public static IExpression Asin(Number x)
         => new Number(Math.Asin(((Number)x).Value)).Evaluate();
 
     [BuiltInFunction("acos", "arccos", "arcos")]
     [Elementwise]
-    public static IExpression Acos([IsNumber] IExpression x)
+    public static IExpression Acos(Number x)
         => new Number(Math.Acos(((Number)x).Value)).Evaluate();
 
     [BuiltInFunction("atan", "arctan", "artan")]
@@ -50,7 +50,7 @@ public static class TrigonometricFunctions
 
     [BuiltInFunction("csc")]
     [Elementwise]
-    public static IExpression Csc([IsNumber] IExpression x)
+    public static IExpression Csc(Number x)
     {
         Number num = (Number)x;
 
@@ -61,7 +61,7 @@ public static class TrigonometricFunctions
 
     [BuiltInFunction("sec")]
     [Elementwise]
-    public static IExpression Sec([IsNumber] IExpression x)
+    public static IExpression Sec(Number x)
     {
         Number num = (Number)x;
         
@@ -72,7 +72,7 @@ public static class TrigonometricFunctions
 
     [BuiltInFunction("cot")]
     [Elementwise]
-    public static IExpression Cot([IsNumber] IExpression x)
+    public static IExpression Cot(Number x)
     {
         Number num = (Number)x;
 
@@ -161,7 +161,7 @@ public static class TrigonometricFunctions
 
     [BuiltInFunction("atanh", "arctanh", "artanh")]
     [Elementwise]
-    public static IExpression Atanh([IsNumber] IExpression x)
+    public static IExpression Atanh(Number x)
         => new Number(Math.Atanh(((Number)x).Value)).Evaluate();
 
     [BuiltInFunction("csch")]
