@@ -64,17 +64,13 @@ public class ExpressionContext
 
                 foreach (MethodInfo method in t.GetMethods())
                 {
-                    BuiltInFunctionAttribute? bif = (BuiltInFunctionAttribute?)method.GetCustomAttribute(typeof(BuiltInFunctionAttribute));
-
-                    if (bif is null || method.ReturnType != typeof(IExpression) ||
-                        method.GetParameters().Any(p => !(p.ParameterType == typeof(IExpression) ||
-                            p.ParameterType == typeof(ExpressionContext))))
+                    if (!Function.IsValidFunction(method, out string[]? aliases))
                         continue;
-
-                    ElementwiseAttribute? elementwise = (ElementwiseAttribute?)method.GetCustomAttribute(typeof(ElementwiseAttribute));
                     
-                    foreach (string alias in bif.Aliases)
-                        funcs.Add(alias, new Function(method));
+                    Function function = new Function(method);
+
+                    foreach (string alias in aliases!)
+                        funcs.Add(alias, function);
                 }
             }
         }

@@ -4,6 +4,7 @@ using CalcExpr.Parsing.Rules;
 using CalcExpr.Parsing;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using CalcExpr.FunctionAttributes.ConditionalAttributes;
 
 namespace CalcExpr.Expressions.Components;
 
@@ -95,9 +96,15 @@ public readonly struct Parameter(string name, IEnumerable<FunctionAttribute> att
         => !left.Equals(right);
 
     public static implicit operator Parameter(ParameterInfo parameter)
-        => new Parameter(parameter.Name!,
-            parameter.GetCustomAttributes(typeof(FunctionAttribute)).Cast<FunctionAttribute>(),
-            parameter.ParameterType == typeof(ExpressionContext));
+    {
+        IEnumerable<FunctionAttribute> attributes = parameter.GetCustomAttributes(typeof(FunctionAttribute))
+            .Cast<FunctionAttribute>();
+
+        if (parameter.ParameterType.GetInterface(nameof(IExpression)) is not null)
+            attributes = attributes.Append(new IsExpressionTypeAttribute(parameter.ParameterType));
+        
+        return new Parameter(parameter.Name!, attributes, parameter.ParameterType == typeof(ExpressionContext));
+    }
 
     public static implicit operator Parameter(string parameter)
         => new Parameter(parameter);
