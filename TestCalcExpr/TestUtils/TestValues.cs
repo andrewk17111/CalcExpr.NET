@@ -37,4 +37,13 @@ public static class TestValues
 
     public static IExpression P(IExpression x)
         => x is Number n ? new Number(n.Value + 1) : Constant.UNDEFINED;
+
+    public static IExpression SubFromTen(IExpression x)
+        => new BinaryOperator("-", new Number(10), x).Evaluate();
+
+    public static IExpression IsEven(IExpression x)
+        => x is Number n ? new Number(n.Value % 2 == 0 ? 1 : 0) : Constant.UNDEFINED;
+
+    public static IExpression Aggregate(IExpression a, IExpression b)
+        => new BinaryOperator("+", a, b).Evaluate();
 }

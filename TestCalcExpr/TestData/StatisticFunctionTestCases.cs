@@ -69,12 +69,6 @@ public static partial class TestCases
             { [UtilFunctions.Range<Vector>(1, 10), (Number)3], (Number)7.75 },
             { [UtilFunctions.Range<Vector>(1, 10), (Number)4], (Number)10 },
         }),
-        new FunctionTestCase("range", new Dictionary<IExpression, IExpression>
-        {
-            { TestValues.UNDEFINED, TestValues.UNDEFINED },
-            { UtilFunctions.Range<Vector>(1, 10), (Number)9 },
-            { UtilFunctions.Range<Vector>(1, 10).Map(x => (Number)(((Number)x).Value * 2)), (Number)18 },
-        }),
         new FunctionTestCase(["stdev", "stdevs"], new Dictionary<IExpression, IExpression>
         {
             { TestValues.UNDEFINED, TestValues.UNDEFINED },

@@ -9,6 +9,10 @@ internal static class UtilFunctions
         where T : IEnumerableExpression
         => (T)T.ConvertIEnumerable(Enumerable.Range(start, count).Select(i => (Number)i));
 
+    public static T Range<T>(int start, int count, int step)
+        where T : IEnumerableExpression
+        => (T)T.ConvertIEnumerable(Enumerable.Range(0, count).Select(i => (Number)(start + i * step)));
+
     public static T Random<T>(int count, int min = Int32.MinValue, int max = Int32.MaxValue)
         where T : IEnumerableExpression
     {

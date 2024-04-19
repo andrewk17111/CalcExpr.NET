@@ -101,5 +101,32 @@ public class TestEvaluation
                 }
             }
         }
+
+        // The 'random' function is tested separately because it is non-deterministic.
+        Random random = new Random();
+
+        for (int i = 0; i < 20; i++)
+        {
+            Number min = (Number)(random.NextDouble() * Double.MinValue);
+            Number max = (Number)(random.NextDouble() * Double.MaxValue);
+
+            IExpression results = new FunctionCall("random", [(Number)i, min, max, Constant.TRUE])
+                .Evaluate(new ExpressionContext());
+
+            if (results is IEnumerableExpression true_enum_expr)
+            {
+                Assert.AreEqual(i, true_enum_expr.Count());
+                Assert.IsTrue(true_enum_expr.All(x => x is Number n && n.Value >= min.Value && n.Value <= max.Value));
+            }
+
+            results = new FunctionCall("random", [(Number)i, min, max, Constant.FALSE])
+                .Evaluate(new ExpressionContext());
+
+            if (results is IEnumerableExpression false_enum_expr)
+            {
+                Assert.AreEqual(i, false_enum_expr.Count());
+                Assert.IsTrue(false_enum_expr.All(x => x is Number n && n.Value >= min.Value && n.Value <= max.Value));
+            }
+        }
     }
 }
