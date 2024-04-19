@@ -1,5 +1,4 @@
-﻿using CalcExpr.BuiltInFunctions;
-using CalcExpr.Context;
+﻿using CalcExpr.Context;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
 using System.Reflection;
@@ -36,7 +35,7 @@ public class TestEvaluation
 
             IExpression result = test_case.Parsed.Evaluate(context);
 
-            UtilFunctions.AreEqual(test_case.Evaluated, result, DIGITS);
+            UtilFunctions.AreEqual(test_case.Evaluated, result, DIGITS, $"Test case: '{test_case.ExpressionString}'.");
         }
     }
 
@@ -67,7 +66,8 @@ public class TestEvaluation
             {
                 IExpression evaluated = start.StepEvaluate(context);
 
-                UtilFunctions.AreEqual(test_case.StepEvaluated[i], evaluated, DIGITS);
+                UtilFunctions.AreEqual(test_case.StepEvaluated[i], evaluated, DIGITS,
+                    $"Test case: '{test_case.ExpressionString}'.");
                 start = evaluated;
             }
         }
@@ -96,8 +96,10 @@ public class TestEvaluation
 
                     IExpression result = new FunctionCall(test_case.FunctionAliases[j], args)
                         .Evaluate(test_case.Context ?? new ExpressionContext());
+                    string error_message = "Test case: " +
+                        $"'{test_case.FunctionAliases[j]}({String.Join(", ", args.Select(x => x.ToString()))})'.";
 
-                    UtilFunctions.AreEqual(evaluated, result, DIGITS);
+                    UtilFunctions.AreEqual(evaluated, result, DIGITS, error_message);
                 }
             }
         }

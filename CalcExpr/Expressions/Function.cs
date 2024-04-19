@@ -6,7 +6,6 @@ using CalcExpr.FunctionAttributes;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
 using System.Linq.Expressions;
-using System;
 using System.Reflection;
 
 namespace CalcExpr.Expressions;
