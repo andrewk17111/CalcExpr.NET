@@ -7,5 +7,5 @@ public class IsExpressionTypeAttribute(Type type) : ConditionAttribute
     public readonly Type ParameterType = type;
 
     public override bool CheckCondition(IExpression expression)
-        => expression.GetType() == ParameterType;
+        => ParameterType.IsAssignableFrom(expression.GetType());
 }
