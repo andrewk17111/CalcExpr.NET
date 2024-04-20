@@ -15,4 +15,15 @@ public static class CollectionFunctions
 
         return result ?? Constant.UNDEFINED;
     }
+
+    [BuiltInFunction("filter", "where")]
+    public static IExpression Filter(IEnumerableExpression collection, IFunction selector, ExpressionContext context)
+    {
+        IEnumerable<IExpression> expressions = collection
+            .Select(x => x.Evaluate(context))
+            .Where(x => !Constant.FALSE.Equals(LogicalFunctions.Bool(selector.Invoke([x], context))));
+        IExpression? result = (IExpression?)Activator.CreateInstance(collection.GetType(), expressions);
+
+        return result ?? Constant.UNDEFINED;
+    }
 }
