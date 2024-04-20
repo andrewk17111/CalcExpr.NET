@@ -26,4 +26,18 @@ public static class CollectionFunctions
 
         return result ?? Constant.UNDEFINED;
     }
+
+    [BuiltInFunction("aggregate")]
+    public static IExpression Aggregate(IEnumerableExpression collection, IFunction aggregator,
+        ExpressionContext context)
+    {
+        if (!collection.Any())
+            return Constant.UNDEFINED;
+
+        IExpression? result = collection
+            .Select(x => x.Evaluate(context))
+            .Aggregate((a, b) => aggregator.Invoke([a, b], context));
+
+        return result ?? Constant.UNDEFINED;
+    }
 }
