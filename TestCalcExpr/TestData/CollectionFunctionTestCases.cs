@@ -44,12 +44,11 @@ public static partial class TestCases
         }),
         new FunctionTestCase("range", new Dictionary<IExpression[], IExpression>
         {
-            { [new Vector(), new Function(TestValues.Aggregate)], TestValues.UNDEFINED },
-            { [UtilFunctions.Range<Vector>(1, 10), new Function(TestValues.Aggregate)], (Number)9 },
-            { [UtilFunctions.Range<Vector>(2, 10, 2), new Function(TestValues.Aggregate)], (Number)18 },
-            { [new Set(), new Function(TestValues.Aggregate)], TestValues.UNDEFINED },
-            { [UtilFunctions.Range<Set>(1, 10), new Function(TestValues.Aggregate)], (Number)9 },
-            { [UtilFunctions.Range<Set>(1, 10, 2), new Function(TestValues.Aggregate)], (Number)18 },
+            { [(Number)1, (Number)10, (Number)1], UtilFunctions.Range<Vector>(1, 10) },
+            { [(Number)1, (Number)10, (Number)2], UtilFunctions.Range<Vector>(1, 10, 2) },
+            { [(Number)10, (Number)6, (Number)7], UtilFunctions.Range<Vector>(10, 6, 7) },
+            { [(Number)0, (Number)7, (Number)(-2)], UtilFunctions.Range<Vector>(0, 7, -2) },
+            { [(Number)4, (Number)(-3), (Number)1], Constant.UNDEFINED },
         }),
         // The 'random' function is not deterministic, so we can't test it here.
         new FunctionTestCase(["sort", "order_by"], new Dictionary<IExpression, IExpression>

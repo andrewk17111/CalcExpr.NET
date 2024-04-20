@@ -40,4 +40,18 @@ public static class CollectionFunctions
 
         return result ?? Constant.UNDEFINED;
     }
+
+    [BuiltInFunction("range")]
+    public static IExpression Range(Number start, Number count, Number step)
+    {
+        if (start.Value % 1 != 0 || count.Value % 1 != 0 || step.Value % 1 != 0 || count.Value < 0)
+            return Constant.UNDEFINED;
+
+        int start_value = (int)start.Value;
+        int count_value = (int)count.Value;
+        int step_value = (int)step.Value;
+
+        return Vector.ConvertIEnumerable(Enumerable.Range(0, count_value)
+            .Select(i => (Number)(start_value + i * step_value)));
+    }
 }
