@@ -2,6 +2,7 @@
 using CalcExpr.Context;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.FunctionAttributes.PreprocessAttributes;
 
 namespace CalcExpr.BuiltInFunctions;
 
@@ -53,5 +54,29 @@ public static class CollectionFunctions
 
         return Vector.ConvertIEnumerable(Enumerable.Range(0, count_value)
             .Select(i => (Number)(start_value + i * step_value)));
+    }
+
+    [BuiltInFunction("random")]
+    public static IExpression Random(Number count, Number min, Number max, [AsBoolean] IExpression int_only)
+    {
+        Random random = new Random();
+
+        if (Constant.TRUE.Equals(int_only))
+        {
+            long minimum = Convert.ToInt64(Math.Truncate(min.Value + (min.Value <= 0 ? 0 : 1)));
+            long maximum = Convert.ToInt64(Math.Truncate(max.Value - (max.Value >= 0 ? 0 : 1)));
+
+            return new Vector(Enumerable.Range(1, Convert.ToInt32(count.Value))
+                .Select(x => maximum < minimum
+                    ? (IExpression)Constant.UNDEFINED
+                    : (Number)random.NextInt64(minimum, Math.Max(maximum, minimum))));
+        }
+        else
+        {
+            double range = max.Value - min.Value;
+
+            return new Vector(Enumerable.Range(1, Convert.ToInt32(count.Value))
+                .Select(x => (Number)(random.NextDouble() * range + min.Value)));
+        }
     }
 }

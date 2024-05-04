@@ -103,32 +103,79 @@ public class TestEvaluation
                 }
             }
         }
+    }
 
-        // The 'random' function is tested separately because it is non-deterministic.
+    [TestMethod]
+    public void TestRandomFunction()
+    {
+        // The random function is tested separately because it is non-deterministic.
         Random random = new Random();
+        bool all_integers = true;
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 30; i++)
         {
-            Number min = (Number)(random.NextDouble() * Double.MinValue);
-            Number max = (Number)(random.NextDouble() * Double.MaxValue);
-
-            IExpression results = new FunctionCall("random", [(Number)i, min, max, Constant.TRUE])
-                .Evaluate(new ExpressionContext());
-
-            if (results is IEnumerableExpression true_enum_expr)
+            for (int j = 0; j < 10; j++)
             {
-                Assert.AreEqual(i, true_enum_expr.Count());
-                Assert.IsTrue(true_enum_expr.All(x => x is Number n && n.Value >= min.Value && n.Value <= max.Value));
-            }
+                Number min = (Number)(random.NextDouble() * random.Next(100) * random.Next(-1, 2));
+                Number max = (Number)(random.NextDouble() * random.Next(200) + Math.Max(0, min.Value));
 
-            results = new FunctionCall("random", [(Number)i, min, max, Constant.FALSE])
-                .Evaluate(new ExpressionContext());
+                // Test the random function with the integer argument set to true.
+                IEnumerableExpression results = (IEnumerableExpression)new FunctionCall("random",
+                        [(Number)i, min, max, Constant.TRUE])
+                    .Evaluate(new ExpressionContext());
 
-            if (results is IEnumerableExpression false_enum_expr)
-            {
-                Assert.AreEqual(i, false_enum_expr.Count());
-                Assert.IsTrue(false_enum_expr.All(x => x is Number n && n.Value >= min.Value && n.Value <= max.Value));
+                Assert.AreEqual(i, results.Count(), "The number of elements in the enumeration is incorrect.");
+
+                double t_min = Math.Truncate(min.Value);
+                double t_max = Math.Truncate(max.Value);
+
+                foreach (IExpression element in results)
+                {
+                    if ((max.Value == min.Value && t_max != max.Value) ||
+                        (t_max == t_min && max.Value - min.Value < 1 &&
+                            min.Value != t_min && Math.Sign(min.Value) == Math.Sign(max.Value)))
+                    {
+                        Assert.AreEqual(Constant.UNDEFINED, element,
+                            $"Min: {min.Value}. Max: {max.Value}. Element is not undefined.");
+                        continue;
+                    }
+                    else
+                    {
+                        Assert.IsTrue(element is Number,
+                            $"Min: {min.Value}. Max: {max.Value}. Element {element.ToString()} is not a number.");
+                    }
+
+                    Number n = (Number)element;
+
+                    UtilFunctions.IsLessThanOrEqual(max.Value, n.Value,
+                        $"Element {element.ToString()} is not less than or equal to {max.Value}.");
+                    UtilFunctions.IsGreaterThanOrEqual(min.Value, n.Value,
+                        $"Element {element.ToString()} is not greater than or equal to {min.Value}.");
+                    Assert.IsTrue(n.Value % 1 == 0, "Not all elements are integers.");
+                }
+
+                // Test the random function with the integer argument set to false.
+                results = (IEnumerableExpression)new FunctionCall("random", [(Number)i, min, max, Constant.FALSE])
+                    .Evaluate(new ExpressionContext());
+
+                Assert.AreEqual(i, results.Count(), "The number of elements in the enumeration is incorrect.");
+
+                foreach (IExpression element in results)
+                {
+                    Assert.IsTrue(element is Number, $"Element {element.ToString()} is not a number.");
+
+                    Number n = (Number)element;
+
+                    UtilFunctions.IsLessThanOrEqual(max.Value, n.Value,
+                        $"Element {element.ToString()} is not less than or equal to {max.Value}.");
+                    UtilFunctions.IsGreaterThanOrEqual(min.Value, n.Value,
+                        $"Element {element.ToString()} is not greater than or equal to {min.Value}.");
+
+                    all_integers &= n.Value % 1 == 0;
+                }
             }
         }
+
+        Assert.IsFalse(all_integers, "All elements were integers.");
     }
 }

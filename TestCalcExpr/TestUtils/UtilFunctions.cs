@@ -52,4 +52,66 @@ internal static class UtilFunctions
             Assert.AreEqual(expected, actual, message);
         }
     }
+
+    public static void IsLessThan(double expected, double actual, string message = "")
+    {
+        if (actual >= expected)
+        {
+            string text = $"Expected: {expected}. Actual: {actual}.";
+
+            if (!String.IsNullOrEmpty(message))
+                text += $" {message}";
+
+            HandleFail("UtilFunctions.IsLessThan", text);
+        }
+    }
+    
+    public static void IsLessThanOrEqual(double expected, double actual, string message = "")
+    {
+        if (actual > expected)
+        {
+            string text = $"Expected: {expected}. Actual: {actual}.";
+
+            if (!String.IsNullOrEmpty(message))
+                text += $" {message}";
+
+            HandleFail("UtilFunctions.IsLessThanOrEqual", text);
+        }
+    }
+    
+    public static void IsGreaterThan(double expected, double actual, string message = "")
+    {
+        if (actual <= expected)
+        {
+            string text = $"Expected: {expected}. Actual: {actual}.";
+
+            if (!String.IsNullOrEmpty(message))
+                text += $" {message}";
+
+            HandleFail("UtilFunctions.IsGreaterThan", text);
+        }
+    }
+    
+    public static void IsGreaterThanOrEqual(double expected, double actual, string message = "")
+    {
+        if (actual < expected)
+        {
+            string text = $"Expected: {expected}. Actual: {actual}.";
+
+            if (!String.IsNullOrEmpty(message))
+                text += $" {message}";
+
+            HandleFail("UtilFunctions.IsGreaterThanOrEqual", text);
+        }
+    }
+
+    private static void HandleFail(string assertion_name, string message)
+    {
+        string text = $"{assertion_name} failed.";
+
+        if (!String.IsNullOrEmpty(message))
+            text += $" {message}";
+
+        throw new AssertFailedException(text);
+    }
 }
