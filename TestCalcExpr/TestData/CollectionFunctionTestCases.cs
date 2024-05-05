@@ -51,7 +51,7 @@ public static partial class TestCases
             { [(Number)4, (Number)(-3), (Number)1], Constant.UNDEFINED },
         }),
         // The 'random' function is not deterministic, so we can't test it here.
-        new FunctionTestCase(["sort", "order_by"], new Dictionary<IExpression, IExpression>
+        new FunctionTestCase(["sort", "order"], new Dictionary<IExpression, IExpression>
         {
             { new Vector(), new Vector() },
             { UtilFunctions.Range<Vector>(1, 10), UtilFunctions.Range<Vector>(1, 10) },

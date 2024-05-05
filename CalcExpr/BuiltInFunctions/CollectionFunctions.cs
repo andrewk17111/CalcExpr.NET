@@ -79,4 +79,35 @@ public static class CollectionFunctions
                 .Select(x => (Number)(random.NextDouble() * range + min.Value)));
         }
     }
+
+    private struct ExpressionComparer : IComparer<IExpression>
+    {
+        public readonly int Compare(IExpression? a, IExpression? b)
+        {
+            if (a is null || b is null || a.Equals(b))
+                return 0;
+
+            if (Constant.INFINITY.Equals(a) || Constant.NEGATIVE_INFINITY.Equals(b))
+                return 1;
+
+            if (Constant.INFINITY.Equals(a) || Constant.NEGATIVE_INFINITY.Equals(b))
+                return 1;
+
+            if (a is Number num_a && b is Number num_b)
+                return num_a.Value.CompareTo(num_b.Value);
+
+            return 0;
+        }
+    }
+
+    [BuiltInFunction("sort", "order")]
+    public static IExpression Sort(IEnumerableExpression collection)
+    {
+        List<IExpression> values = [.. collection];
+
+        values.Sort(new ExpressionComparer());
+
+        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?.Invoke(null, [values])
+            ?? Constant.UNDEFINED;
+    }
 }
