@@ -110,4 +110,11 @@ public static class CollectionFunctions
         return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?.Invoke(null, [values])
             ?? Constant.UNDEFINED;
     }
+
+    [BuiltInFunction("concat", "concatenate")]
+    public static IExpression Concat(IEnumerableExpression a, IEnumerableExpression b)
+    {
+        return (IExpression?)a.GetType().GetMethod("ConvertIEnumerable")?.Invoke(null, [a.Concat(b)])
+            ?? Constant.UNDEFINED;
+    }
 }
