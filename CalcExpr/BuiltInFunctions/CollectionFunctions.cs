@@ -117,4 +117,20 @@ public static class CollectionFunctions
         return (IExpression?)a.GetType().GetMethod("ConvertIEnumerable")?.Invoke(null, [a.Concat(b)])
             ?? Constant.UNDEFINED;
     }
+
+    [BuiltInFunction("append")]
+    public static IExpression Append(IEnumerableExpression collection, IExpression element)
+    {
+        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
+            .Invoke(null, [collection.Append(element)])
+            ?? Constant.UNDEFINED;
+    }
+
+    [BuiltInFunction("prepend")]
+    public static IExpression Prepend(IEnumerableExpression collection, IExpression element)
+    {
+        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
+            .Invoke(null, [collection.Prepend(element)])
+            ?? Constant.UNDEFINED;
+    }
 }
