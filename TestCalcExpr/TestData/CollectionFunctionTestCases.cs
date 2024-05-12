@@ -116,14 +116,14 @@ public static partial class TestCases
         }),
         new FunctionTestCase("remove", new Dictionary<IExpression[], IExpression>
         {
-            { [new Vector(), (Number)0], new Vector([(Number)0]) },
+            { [new Vector(), (Number)0], Constant.UNDEFINED },
             { [UtilFunctions.Range<Vector>(1, 10), (Number)0], UtilFunctions.Range<Vector>(2, 9) },
             { [UtilFunctions.Range<Vector>(1, 10), (Number)4],
                 new Vector(UtilFunctions.Range<Vector>(1, 4).Concat(UtilFunctions.Range<Vector>(6, 5))) },
             { [UtilFunctions.Range<Vector>(1, 10), (Number)10], TestValues.UNDEFINED },
             { [UtilFunctions.Range<Vector>(1, 10), (Number)(-3)],
                 new Vector(UtilFunctions.Range<Vector>(1, 7).Concat([(Number)9, (Number)10])) },
-            { [new Set(), (Number)0], new Set([(Number)0]) },
+            { [new Set(), (Number)0], Constant.UNDEFINED },
             { [UtilFunctions.Range<Set>(1, 10), (Number)0], UtilFunctions.Range<Set>(2, 9) },
             { [UtilFunctions.Range<Set>(1, 10), (Number)4],
                 new Set(UtilFunctions.Range<Set>(1, 4).Concat(UtilFunctions.Range<Set>(6, 5))) },

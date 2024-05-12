@@ -2,6 +2,7 @@
 using CalcExpr.Context;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Extensions;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
 
 namespace CalcExpr.BuiltInFunctions;
@@ -131,6 +132,29 @@ public static class CollectionFunctions
     {
         return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
             .Invoke(null, [collection.Prepend(element)])
+            ?? Constant.UNDEFINED;
+    }
+
+    [BuiltInFunction("insert")]
+    public static IExpression Insert(IEnumerableExpression collection, IExpression element, Number index)
+    {
+        if (index.Value % 1 != 0 || index.Value < -collection.Count() || index.Value > collection.Count())
+            return Constant.UNDEFINED;
+
+        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
+            .Invoke(null, [collection.Insert((int)index.Value, element)])
+            ?? Constant.UNDEFINED;
+    }
+
+    [BuiltInFunction("remove")]
+    public static IExpression Remove(IEnumerableExpression collection, Number index)
+    {
+        if (!collection.Any() || index.Value % 1 != 0 || index.Value < -collection.Count() ||
+            index.Value >= collection.Count())
+            return Constant.UNDEFINED;
+
+        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
+            .Invoke(null, [collection.Remove((int)index.Value)])
             ?? Constant.UNDEFINED;
     }
 }
