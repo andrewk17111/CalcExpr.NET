@@ -157,4 +157,22 @@ public static class CollectionFunctions
             .Invoke(null, [collection.Remove((int)index.Value)])
             ?? Constant.UNDEFINED;
     }
+
+    [BuiltInFunction("any", "some")]
+    public static IExpression Any(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
+    {
+        return ((IEnumerableExpression)collection.Evaluate(context))
+            .Any(x => Constant.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))))
+            ? Constant.TRUE
+            : Constant.FALSE;
+    }
+
+    [BuiltInFunction("all")]
+    public static IExpression All(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
+    {
+        return ((IEnumerableExpression)collection.Evaluate(context))
+            .All(x => Constant.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))))
+            ? Constant.TRUE
+            : Constant.FALSE;
+    }
 }

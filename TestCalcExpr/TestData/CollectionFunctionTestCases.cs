@@ -146,12 +146,12 @@ public static partial class TestCases
         {
             { [new Vector(), new Function(TestValues.IsEven)], Constant.TRUE },
             { [UtilFunctions.Range<Vector>(1, 10), new Function(TestValues.IsEven)], Constant.FALSE },
-            { [UtilFunctions.Range<Vector>(2, 10, 2), new Function(TestValues.IsEven)], Constant.FALSE },
-            { [UtilFunctions.Range<Vector>(1, 10, 2), new Function(TestValues.IsEven)], Constant.TRUE },
+            { [UtilFunctions.Range<Vector>(2, 10, 2), new Function(TestValues.IsEven)], Constant.TRUE },
+            { [UtilFunctions.Range<Vector>(1, 10, 2), new Function(TestValues.IsEven)], Constant.FALSE },
             { [new Set(), new Function(TestValues.IsEven)], Constant.TRUE },
             { [UtilFunctions.Range<Set>(1, 10), new Function(TestValues.IsEven)], Constant.FALSE },
-            { [UtilFunctions.Range<Set>(2, 10, 2), new Function(TestValues.IsEven)], Constant.FALSE },
-            { [UtilFunctions.Range<Set>(1, 10, 2), new Function(TestValues.IsEven)], Constant.TRUE },
+            { [UtilFunctions.Range<Set>(2, 10, 2), new Function(TestValues.IsEven)], Constant.TRUE },
+            { [UtilFunctions.Range<Set>(1, 10, 2), new Function(TestValues.IsEven)], Constant.FALSE },
         }),
         new FunctionTestCase("find", new Dictionary<IExpression[], IExpression>
         {
