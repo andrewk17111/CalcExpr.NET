@@ -175,4 +175,38 @@ public static class CollectionFunctions
             ? Constant.TRUE
             : Constant.FALSE;
     }
+
+    [BuiltInFunction("find")]
+    public static IExpression Find(IEnumerableExpression collection, IExpression item)
+    {
+        try
+        {
+            int index = collection.Select((x, i) => (x, i))
+                .First(element => element.x.Equals(item))
+                .i;
+
+            return (Number)index;
+        }
+        catch (InvalidOperationException)
+        {
+            return Constant.UNDEFINED;
+        }
+    }
+
+    [BuiltInFunction("find_last")]
+    public static IExpression FindLast(IEnumerableExpression collection, IExpression item)
+    {
+        try
+        {
+            int index = collection.Select((x, i) => (x, i))
+                .Last(element => element.x.Equals(item))
+                .i;
+
+            return (Number)index;
+        }
+        catch (InvalidOperationException)
+        {
+            return Constant.UNDEFINED;
+        }
+    }
 }
