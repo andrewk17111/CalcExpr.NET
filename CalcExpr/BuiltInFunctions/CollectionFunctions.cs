@@ -217,4 +217,13 @@ public static class CollectionFunctions
             .Invoke(null, [collection.Reverse()])
             ?? Constant.UNDEFINED;
     }
+
+    [BuiltInFunction("zip")]
+    public static IExpression Zip(IEnumerableExpression a, IEnumerableExpression b, IFunction combiner,
+        ExpressionContext context)
+    {
+        return (IExpression?)((IEnumerableExpression)a.Evaluate(context)).GetType().GetMethod("ConvertIEnumerable")?
+            .Invoke(null, [a.Zip(b, (x, y) => combiner.Invoke([x, y], context) ?? Constant.UNDEFINED)])
+            ?? Constant.UNDEFINED;
+    }
 }
