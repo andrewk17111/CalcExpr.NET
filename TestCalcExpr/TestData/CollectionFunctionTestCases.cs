@@ -181,9 +181,9 @@ public static partial class TestCases
         {
             { new Vector(), new Vector() },
             { UtilFunctions.Range<Vector>(1, 10), UtilFunctions.Range<Vector>(10, 10, -1) },
-            { UtilFunctions.Range<Vector>(2, 10, 2), UtilFunctions.Range<Vector>(1, 10) },
-            { UtilFunctions.Range<Vector>(1, 10, 2), UtilFunctions.Range<Vector>(1, 10) },
-            { UtilFunctions.Range<Set>(1, 10), UtilFunctions.Range<Set>(1, 10) },
+            { UtilFunctions.Range<Vector>(2, 10, 2), UtilFunctions.Range<Vector>(20, 10, -2) },
+            { UtilFunctions.Range<Vector>(1, 10, 2), UtilFunctions.Range<Vector>(19, 10, -2) },
+            { UtilFunctions.Range<Set>(1, 10), UtilFunctions.Range<Set>(10, 10, -1) },
         }),
         new FunctionTestCase("zip", new Dictionary<IExpression[], IExpression>
         {

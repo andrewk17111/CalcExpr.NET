@@ -209,4 +209,12 @@ public static class CollectionFunctions
             return Constant.UNDEFINED;
         }
     }
+
+    [BuiltInFunction("reverse")]
+    public static IExpression Reverse(IEnumerableExpression collection)
+    {
+        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
+            .Invoke(null, [collection.Reverse()])
+            ?? Constant.UNDEFINED;
+    }
 }
