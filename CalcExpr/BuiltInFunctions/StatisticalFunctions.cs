@@ -124,22 +124,6 @@ public static class StatisticalFunctions
         return Percentile(expressions, (Number)(((Number)q).Value / 4));
     }
 
-    [BuiltInFunction("range")]
-    public static IExpression Range([AreNumbers] IExpression expressions)
-    {
-        if (expressions is IEnumerableExpression enum_expr)
-        {
-            Number? max = (Number?)enum_expr.MaxBy(x => ((Number)x).Value);
-            Number? min = (Number?)enum_expr.MinBy(x => ((Number)x).Value);
-
-            return max is null || min is null
-                ? Constant.UNDEFINED
-                : (Number)(max.Value - min.Value);
-        }
-
-        return (Number)0;
-    }
-
     [BuiltInFunction("stdev", "stdevs")]
     public static IExpression SampleStandardDeviation([AreNumbers] IExpression expressions)
     {

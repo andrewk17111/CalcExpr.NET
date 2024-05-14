@@ -9,6 +9,10 @@ internal static class UtilFunctions
         where T : IEnumerableExpression
         => (T)T.ConvertIEnumerable(Enumerable.Range(start, count).Select(i => (Number)i));
 
+    public static T Range<T>(int start, int count, int step)
+        where T : IEnumerableExpression
+        => (T)T.ConvertIEnumerable(Enumerable.Range(0, count).Select(i => (Number)(start + i * step)));
+
     public static T Random<T>(int count, int min = Int32.MinValue, int max = Int32.MaxValue)
         where T : IEnumerableExpression
     {
@@ -47,5 +51,67 @@ internal static class UtilFunctions
         {
             Assert.AreEqual(expected, actual, message);
         }
+    }
+
+    public static void IsLessThan(double expected, double actual, string message = "")
+    {
+        if (actual >= expected)
+        {
+            string text = $"Expected: {expected}. Actual: {actual}.";
+
+            if (!String.IsNullOrEmpty(message))
+                text += $" {message}";
+
+            HandleFail("UtilFunctions.IsLessThan", text);
+        }
+    }
+    
+    public static void IsLessThanOrEqual(double expected, double actual, string message = "")
+    {
+        if (actual > expected)
+        {
+            string text = $"Expected: {expected}. Actual: {actual}.";
+
+            if (!String.IsNullOrEmpty(message))
+                text += $" {message}";
+
+            HandleFail("UtilFunctions.IsLessThanOrEqual", text);
+        }
+    }
+    
+    public static void IsGreaterThan(double expected, double actual, string message = "")
+    {
+        if (actual <= expected)
+        {
+            string text = $"Expected: {expected}. Actual: {actual}.";
+
+            if (!String.IsNullOrEmpty(message))
+                text += $" {message}";
+
+            HandleFail("UtilFunctions.IsGreaterThan", text);
+        }
+    }
+    
+    public static void IsGreaterThanOrEqual(double expected, double actual, string message = "")
+    {
+        if (actual < expected)
+        {
+            string text = $"Expected: {expected}. Actual: {actual}.";
+
+            if (!String.IsNullOrEmpty(message))
+                text += $" {message}";
+
+            HandleFail("UtilFunctions.IsGreaterThanOrEqual", text);
+        }
+    }
+
+    private static void HandleFail(string assertion_name, string message)
+    {
+        string text = $"{assertion_name} failed.";
+
+        if (!String.IsNullOrEmpty(message))
+            text += $" {message}";
+
+        throw new AssertFailedException(text);
     }
 }
