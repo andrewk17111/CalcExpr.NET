@@ -25,5 +25,5 @@ public class Indexer(IEnumerableExpression collection, IExpression index) : IExp
         => ToString(null);
 
     public string ToString(string? format)
-        => throw new NotImplementedException();
+        => $"{Collection.ToString(format)}[{Index.ToString(format)}]";
 }

@@ -13,13 +13,14 @@ public class TestIndexer
     [TestMethod]
     public void TestInit()
     {
-        for (int i = 0; i < 20; i++)
+        for (int j = 0; j < 20; j++)
         {
-            Vector elements = new Vector(UtilFunctions.Random(i));
+            Vector elements = new Vector(UtilFunctions.Random(j));
 
-            for (int index = 0; index < elements.Length; index++)
+            for (int i = 0; i < elements.Length; i++)
             {
-                Indexer indexer = new Indexer(elements, new Number(index));
+                Number index = (Number)i;
+                Indexer indexer = new Indexer(elements, index);
 
                 Assert.AreEqual(elements, indexer.Collection);
                 Assert.AreEqual(index, indexer.Index);
