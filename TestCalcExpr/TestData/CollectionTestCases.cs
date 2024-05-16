@@ -203,5 +203,14 @@ public static partial class TestCases
         new TestCase("[1,2,3]=={1,2,3}",
             new BinaryOperator("==", UtilFunctions.Range<Vector>(1, 3), UtilFunctions.Range<Set>(1, 3)),
             (Number)0),
+        new TestCase("[1,2,3][0]",
+            new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)0),
+            (Number)1),
+        new TestCase("{1,2,3}[1]",
+            new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)1),
+            (Number)2),
+        new TestCase("[1,2,3][2]",
+            new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)2),
+            (Number)3),
     ];
 }

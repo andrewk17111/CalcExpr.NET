@@ -48,7 +48,7 @@ public class TestEvaluation
     [TestMethod]
     public void TestStepEvaluateCollections()
     {
-        EvaluateTestCases(TestCases.Collections);
+        StepEvaluateTestCases(TestCases.Collections);
     }
 
     private static void StepEvaluateTestCases(IEnumerable<TestCase> test_cases)
