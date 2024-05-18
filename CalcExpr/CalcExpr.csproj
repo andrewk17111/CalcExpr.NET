@@ -8,8 +8,8 @@
     <Title>CalcExpr.NET</Title>
     <Version>0.1.0</Version>
     <Authors>andrewk17111</Authors>
-    <Description>CalcExpr.NET is a versatile and efficient math expression parsing library developed in C# targeting .NET 6. This library allows you to parse strings containin math expressions into expression trees and then evaluated to calculate the resulting value.</Description>
-    <Copyright>2023</Copyright>
+    <Description>CalcExpr.NET is a versatile and efficient math expression parsing library developed in C# targeting .NET 8. This library allows you to parse strings containin math expressions into expression trees and then evaluated to calculate the resulting value.</Description>
+    <Copyright>2024</Copyright>
     <PackageProjectUrl>https://github.com/andrewk17111/CalcExpr.NET</PackageProjectUrl>
     <RepositoryUrl>$(ProjectURL)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
