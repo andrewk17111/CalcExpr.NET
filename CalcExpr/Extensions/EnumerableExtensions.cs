@@ -14,6 +14,9 @@ internal static class EnumerableExtensions
         return index < 0 ? count + index : index;
     }
 
+    public static int NormalizeIndex(double index, int count, bool inclusive = false)
+        => NormalizeIndex((int)index, count, inclusive);
+
     public static IEnumerable<T> Insert<T>(this IEnumerable<T> enumerable, int index, T item)
     {
         index = NormalizeIndex(index, enumerable.Count(), true);
