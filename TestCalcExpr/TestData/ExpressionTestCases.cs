@@ -533,6 +533,11 @@ public static partial class TestCases
         new TestCase("∅", new Constant("∅"), new Set()),
         new TestCase("empty", new Constant("empty"), new Set()),
         new TestCase("empty_set", new Constant("empty_set"), new Set()),
+        new TestCase("[1] + [0] + 4", new BinaryOperator("+", new BinaryOperator("+", new Vector([(Number)1]),
+                new Vector([(Number)0])), (Number)4),
+            new Vector([(Number)5]), new BinaryOperator("+", new Vector([(Number)1]), (Number)4)),
+        new TestCase("[1] [0] + 4", new BinaryOperator("+", new Indexer(new Vector([(Number)1]), (Number)0), (Number)4),
+            (Number)5, new BinaryOperator("+", (Number)1, (Number)4)),
     ];
 
     public readonly static Dictionary<string, IExpression> ContextVariables = new Dictionary<string, IExpression>()

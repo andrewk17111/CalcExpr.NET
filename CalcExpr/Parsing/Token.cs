@@ -17,6 +17,12 @@ public readonly struct Token(string value, int index)
     public int Length
         => Value.Length;
 
+    public char this[int index]
+        => Value[index];
+
+    public string this[Range range]
+        => Value[range];
+
     public static implicit operator Token(Match match)
         => new Token(match.Value, match.Index);
 
