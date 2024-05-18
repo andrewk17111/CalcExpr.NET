@@ -67,6 +67,7 @@ public class Parser
                 RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
             new RegexRule("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParsePostfix),
+            new Rule("Indexer", ParseIndexer, MatchIndexer),
             new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|undefined|dne|(empty(_set)?)|∅|e)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseConstant),
             new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)",
@@ -394,12 +395,27 @@ public class Parser
         return null;
     }
 
+    private static Token? MatchIndexer(string input, IEnumerable<Rule> rules)
+    {
+        ContextFreeUtils.TokenizeInput(input, out Token[] tokens, Brackets.Square);
+
+        if (tokens.Length > 0)
+        {
+            Token match = tokens.Last();
+
+            if (!match[1..^1].Contains(','))
+                return match;
+        }
+
+        return null;
+    }
+
     private static IEnumerableExpression ParseCollection(string input, Token token, Parser parser)
     {
         string tokenized = ContextFreeUtils.TokenizeInput(token.Value[1..^1], out Token[] tokens,
             Brackets.Square | Brackets.Curly);
-        IEnumerable<IExpression> enumerable = tokenized.Split(',')
-            .Select(e => parser.Parse(Regex.Replace(e, @"(?<!(^|[^\\])\\(\\\\)*)\[\d+\]", m => m.Value[1..^1])));
+            IEnumerable<IExpression> enumerable = tokenized.Split(',')
+                .Select(e => parser.Parse(Regex.Replace(e, @"(?<!(^|[^\\])\\(\\\\)*)\[\d+\]", m => m.Value[1..^1])));
 
         return token.Value[0] == '['
             ? new Vector(enumerable)
@@ -477,6 +493,9 @@ public class Parser
     private static BinaryOperator ParseBinaryOperator(string input, Token match, Parser parser)
         => new BinaryOperator(match.Value, parser.Parse(input[..match.Index]),
             parser.Parse(input[(match.Index + match.Length)..]));
+
+    private static Indexer ParseIndexer(string input, Token match, Parser parser)
+        => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
 
     private static UnaryOperator ParsePrefix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, true, parser.Parse(input[(match.Index + match.Length)..]));

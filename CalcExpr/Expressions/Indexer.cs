@@ -1,6 +1,7 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Extensions;
+using System.ComponentModel;
 
 namespace CalcExpr.Expressions;
 
@@ -49,6 +50,12 @@ public class Indexer(IExpression collection, IExpression index) : IExpression
 
         return Evaluate(context);
     }
+
+    public override bool Equals(object? obj)
+        => obj is not null && obj is Indexer idx && Collection.Equals(idx.Collection) && Index.Equals(idx.Index);
+
+    public override int GetHashCode()
+        => HashCode.Combine(Collection, Index);
 
     public override string ToString()
         => ToString(null);
