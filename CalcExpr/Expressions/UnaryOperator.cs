@@ -52,10 +52,18 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
-    public IExpression StepEvaluate(ExpressionContext variables)
-        => Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside)
-            ? _operation(Inside, variables)
-            : new UnaryOperator(Identifier, IsPrefix, Inside.StepEvaluate(variables));
+    public IExpression StepEvaluate(ExpressionContext context)
+    {
+        if (Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside))
+            return _operation(Inside, context);
+
+        IExpression enum_eval = Inside.StepEvaluate(context);
+
+        if (!enum_eval.Equals(Inside))
+            return new UnaryOperator(Identifier, IsPrefix, enum_eval);
+        else
+            return _operation(enum_eval, context);
+    }
 
     public override string ToString()
         => ToString(null);
