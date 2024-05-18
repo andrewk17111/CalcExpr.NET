@@ -203,10 +203,11 @@ public static partial class TestCases
         new TestCase("[1,2,3]=={1,2,3}",
             new BinaryOperator("==", UtilFunctions.Range<Vector>(1, 3), UtilFunctions.Range<Set>(1, 3)),
             (Number)0),
-        new TestCase("[1,2,3][0]", new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)0), (Number)1),
-        new TestCase("{1,2,3}[1]", new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)1), (Number)2),
+        new TestCase("[1,2,3][0] ", new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)0), (Number)1),
+        new TestCase("{1,2,3}[1]", new Indexer(UtilFunctions.Range<Set>(1, 3), (Number)1), (Number)2),
         new TestCase("[1,2,3][2]", new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)2), (Number)3),
-        new TestCase("[1,2,3][4]", new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)4), Constant.UNDEFINED),
+        new TestCase("[1,2,3] [4] ", new Indexer(UtilFunctions.Range<Vector>(1, 3), (Number)4), Constant.UNDEFINED),
         new TestCase("3[2]", new Indexer((Number)3, (Number)2), Constant.UNDEFINED),
+        new TestCase("-[2]", new UnaryOperator("-", true, new Vector([(Number)2])), new Vector([(Number)(-2)])),
     ];
 }
