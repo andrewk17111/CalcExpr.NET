@@ -1,4 +1,6 @@
-﻿namespace CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+
+namespace CalcExpr.Expressions;
 
 public interface IExpression
 {
@@ -11,6 +13,15 @@ public interface IExpression
     public IExpression Evaluate();
 
     /// <summary>
+    /// Evaluates and calculates the value of the <see cref="IExpression"/>.
+    /// </summary>
+    /// <param name="context">The values for each variable that could appear in the <see cref="IExpression"/>.</param>
+    /// <returns>
+    /// A new <see cref="IExpression"/> containing the value of the current <see cref="IExpression"/>.
+    /// </returns>
+    public IExpression Evaluate(ExpressionContext context);
+
+    /// <summary>
     /// Evaluates and calculates one step towards the value of the <see cref="IExpression"/>.
     /// </summary>
     /// <returns>
@@ -20,10 +31,14 @@ public interface IExpression
     public IExpression StepEvaluate();
 
     /// <summary>
-    /// Creates a new <see cref="IExpression"/> with the same values of the current <see cref="IExpression"/>.
+    /// Evaluates and calculates one step towards the value of the <see cref="IExpression"/>.
     /// </summary>
-    /// <returns>A new copy of the current <see cref="IExpression"/>.</returns>
-    public IExpression Clone();
+    /// <param name="context">The values for each variable that could appear in the <see cref="IExpression"/>.</param>
+    /// <returns>
+    /// A new <see cref="IExpression"/> containing the partially evaluated value of the current 
+    /// <see cref="IExpression"/>.
+    /// </returns>
+    public IExpression StepEvaluate(ExpressionContext context);
 
     /// <summary>
     /// Returns a <see cref="string"/> that represents the current <see cref="IExpression"/>.
@@ -41,4 +56,26 @@ public interface IExpression
     /// <see cref="string"/>.
     /// </returns>
     public string ToString(string? format);
+
+    /// <summary>
+    /// Compares the current instance with another object of the same type and returns an integer that indicates
+    /// whether the current instance precedes, follows, or occurs in the same position in the sort order as the other
+    /// object.
+    /// </summary>
+    /// <param name="obj">An object to compare with this instance.</param>
+    /// <returns>
+    /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
+    /// <para>Value – Meaning</para>
+    /// <para>Less than zero – This instance precedes obj in the sort order.</para>
+    /// <para>Zero – This instance occurs in the same position in the sort order as obj.</para>
+    /// <para>Greater than zero – This instance follows obj in the sort order.</para>
+    /// </returns>
+    /// <exception cref="ArgumentException">obj is not the same type as this instance.</exception>
+    public int CompareTo(object? obj)
+    {
+        if (obj is IExpression expression)
+            return GetHashCode().CompareTo(expression.GetHashCode());
+
+        return 0;
+    }
 }

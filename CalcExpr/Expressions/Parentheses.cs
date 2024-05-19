@@ -1,26 +1,28 @@
-﻿namespace CalcExpr.Expressions;
+﻿using CalcExpr.Context;
 
-public class Parentheses : IExpression
+namespace CalcExpr.Expressions;
+
+/// <summary>
+/// Initializes a new instance of the <see cref="Parentheses"/> class.
+/// </summary>
+/// <param name="inside">The <see cref="IExpression"/> inside of this <see cref="Parentheses"/>.</param>
+public class Parentheses(IExpression inside) : IExpression
 {
-    public readonly IExpression Inside;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Parentheses"/> class.
-    /// </summary>
-    /// <param name="inside">The <see cref="IExpression"/> inside of this <see cref="Parentheses"/>.</param>
-    public Parentheses(IExpression inside)
-        => Inside = inside;
-
-    public IExpression Clone()
-        => new Parentheses(Inside.Clone());
+    public readonly IExpression Inside = inside;
 
     public IExpression Evaluate()
-        => Inside.Evaluate();
+        => Evaluate(new ExpressionContext());
+
+    public IExpression Evaluate(ExpressionContext variables)
+        => Inside.Evaluate(variables);
 
     public IExpression StepEvaluate()
+        => StepEvaluate(new ExpressionContext());
+
+    public IExpression StepEvaluate(ExpressionContext variables)
         => Inside is Number n
-            ? n.StepEvaluate()
-            : new Parentheses(Inside.StepEvaluate());
+            ? n.StepEvaluate(variables)
+            : new Parentheses(Inside.StepEvaluate(variables));
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Parentheses paren && paren.Inside.Equals(Inside);

@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>CalcExpr.NET</PackageId>
     <Title>CalcExpr.NET</Title>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>andrewk17111</Authors>
-    <Description>CalcExpr.NET is a versatile and efficient math expression parsing library developed in C# targeting .NET 6. This library allows you to parse strings containin math expressions into expression trees and then evaluated to calculate the resulting value.</Description>
-    <Copyright>2023</Copyright>
+    <Description>CalcExpr.NET is a versatile and efficient math expression parsing library developed in C# targeting .NET 8. This library allows you to parse strings containin math expressions into expression trees and then evaluated to calculate the resulting value.</Description>
+    <Copyright>2024</Copyright>
     <PackageProjectUrl>https://github.com/andrewk17111/CalcExpr.NET</PackageProjectUrl>
     <RepositoryUrl>$(ProjectURL)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

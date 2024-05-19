@@ -1,24 +1,32 @@
-﻿namespace CalcExpr.Expressions;
+﻿using CalcExpr.Context;
 
-public class Number : IExpression
+namespace CalcExpr.Expressions;
+
+/// <summary>
+/// Initializes a new instance of the the <see cref="Number"/> class.
+/// </summary>
+/// <param name="value">The numeric value.</param>
+public class Number(double value) : IExpression
 {
-    public double Value { get; private set; }
-
-    /// <summary>
-    /// Initializes a new instance of the the <see cref="Number"/> class.
-    /// </summary>
-    /// <param name="value">The numeric value.</param>
-    public Number(double value)
-        => Value = value;
+    public double Value { get; private set; } = value;
 
     public IExpression Evaluate()
-        => Clone();
+        => Evaluate(null!);
+
+    public IExpression Evaluate(ExpressionContext variables)
+        => Value switch
+        {
+            Double.PositiveInfinity => Constant.INFINITY,
+            Double.NegativeInfinity => Constant.NEGATIVE_INFINITY,
+            Double.NaN => Constant.UNDEFINED,
+            _ => this
+        };
 
     public IExpression StepEvaluate()
-        => Clone();
+        => StepEvaluate(new ExpressionContext());
 
-    public IExpression Clone()
-        => new Number(Value);
+    public IExpression StepEvaluate(ExpressionContext variables)
+        => Evaluate(variables);
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Number n && n.Value == Value;

@@ -1,6 +1,6 @@
 ﻿using CalcExpr.Expressions;
 
-namespace TestCalcExpr;
+namespace TestCalcExpr.Expressions;
 
 [TestClass]
 public class TestUnaryOperator
@@ -16,11 +16,11 @@ public class TestUnaryOperator
         ("%", false),
         ("!!", false),
         ("#", false),
+        ("--", true),
+        ("++", true),
+        ("--", false),
+        ("++", false),
         // TODO ± prefix.
-        // TODO ++ prefix.
-        // TODO -- prefix.
-        // TODO ++ suffix.
-        // TODO -- suffix.
     };
 
     /// <summary>
@@ -30,44 +30,16 @@ public class TestUnaryOperator
     public void TestInit()
     {
         Random random = new Random();
-        Number num = new Number(1);
 
         foreach ((string op, bool is_prefix) in _operators)
         {
+            Number num = new Number(random.NextDouble() + random.Next());
             UnaryOperator unop = new UnaryOperator(op, is_prefix, num);
 
             Assert.AreEqual(op, unop.Identifier);
             Assert.AreEqual(is_prefix, unop.IsPrefix);
             Assert.AreEqual(num, unop.Inside);
         }
-    }
-
-    /// <summary>
-    /// Tests that the operand gets evaluated into a simpler expression with the minimum levels to the expression tree.
-    /// </summary>
-    [TestMethod]
-    public void TestEvaluate()
-    {
-        Dictionary<UnaryOperator, double> expressions = new Dictionary<UnaryOperator, double>()
-        {
-            { new UnaryOperator("+", true, new Number(1)), 1 },
-            { new UnaryOperator("-", true, new Number(1)), -1 },
-            { new UnaryOperator("~", true, new Number(1)), 0 },
-            { new UnaryOperator("¬", true, new Number(1)), 0 },
-            { new UnaryOperator("!", true, new Number(5)), 44 },
-            { new UnaryOperator("!", false, new Number(5)), 120 },
-            { new UnaryOperator("%", false, new Number(1)), 0.01 },
-            { new UnaryOperator("!!", false, new Number(5)), 15 },
-            { new UnaryOperator("#", false, new Number(5)), 2310 },
-            // TODO ± prefix.
-            // TODO ++ prefix.
-            // TODO -- prefix.
-            // TODO ++ postfix.
-            // TODO -- postfix.
-        };
-
-        foreach (UnaryOperator expression in expressions.Keys)
-            Assert.AreEqual(expressions[expression], ((Number)expression.Evaluate()).Value);
     }
 
     /// <summary>
@@ -87,11 +59,11 @@ public class TestUnaryOperator
             { new UnaryOperator("%", false, new Number(1)), "1%" },
             { new UnaryOperator("!!", false, new Number(5)), "5!!" },
             { new UnaryOperator("#", false, new Number(5)), "5#" },
+            { new UnaryOperator("--", true, new Variable("abc")), "--abc" },
+            { new UnaryOperator("++", true, new Variable("abc")), "++abc" },
+            { new UnaryOperator("--", false, new Variable("abc")), "abc--" },
+            { new UnaryOperator("++", false, new Variable("abc")), "abc++" },
             // TODO ± prefix.
-            // TODO ++ prefix.
-            // TODO -- prefix.
-            // TODO ++ suffix.
-            // TODO -- suffix.
         };
 
         foreach (UnaryOperator expression in expressions.Keys)

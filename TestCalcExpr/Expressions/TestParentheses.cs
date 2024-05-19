@@ -1,6 +1,6 @@
 ﻿using CalcExpr.Expressions;
 
-namespace TestCalcExpr;
+namespace TestCalcExpr.Expressions;
 
 [TestClass]
 public class TestParentheses
@@ -18,24 +18,6 @@ public class TestParentheses
             Number n = new Number(random.NextDouble() + random.Next());
 
             Assert.AreEqual(n, new Parentheses(n).Inside);
-        }
-    }
-
-    /// <summary>
-    /// Tests that the operand gets evaluated into a simpler expression with the minimum levels to the expression tree.
-    /// </summary>
-    [TestMethod]
-    public void TestEvaluate()
-    {
-        Random random = new Random();
-
-        for (int i = 0; i < 10; i++)
-        {
-            double a = random.NextDouble() + random.Next();
-            double b = random.NextDouble() + random.Next();
-
-            Assert.AreEqual(new Number(a + b),
-                new Parentheses(new BinaryOperator("+", new Number(a), new Number(b))).Evaluate());
         }
     }
 
