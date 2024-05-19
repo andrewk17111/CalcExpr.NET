@@ -1,12 +1,12 @@
-# CalcExpr.NET
-![Lines of Code](https://tokei.rs/b1/github/andrewk17111/CalcExpr.NET?style=flat-square)
-[![License](https://img.shields.io/github/license/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/blob/main/LICENSE)
-[![Open Issues](https://img.shields.io/github/issues/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/issues)
-[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/pulls)
+# DiceEngine.NET
+![Lines of Code](https://tokei.rs/b1/github/whix100/DiceEngine.NET?style=flat-square)
+[![License](https://img.shields.io/github/license/whix100/DiceEngine.NET?style=flat-square)](https://github.com/whix100/DiceEngine.NET/blob/main/LICENSE)
+[![Open Issues](https://img.shields.io/github/issues/whix100/DiceEngine.NET?style=flat-square)](https://github.com/whix100/DiceEngine.NET/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/whix100/DiceEngine.NET?style=flat-square)](https://github.com/whix100/DiceEngine.NET/pulls)
 
-A .NET 8 math expression parser and calculator library
+A .NET 8 dice notation expression parser and calculator library
 
-CalcExpr.NET is a versatile and efficient math expression parsing library developed in C# targeting .NET 8. This library allows you to parse strings containin math expressions into expression trees and then evaluated to calculate the resulting value.
+DiceEngine.NET is a versatile and efficient dice notation expression parsing library developed in C# targeting .NET 8. This library allows you to parse strings containing dice notation expressions into expression trees and then evaluated to calculate the resulting value.
 
 ## Features
 - Expression Parsing: Parse and tokenize mathematical expressions provided as strings.
@@ -26,10 +26,10 @@ CalcExpr.NET is a versatile and efficient math expression parsing library develo
 Because this project is still under active development, you can install this by either downloading this repository and building the project, or by downloading the latest experimental build from the section of this repository.
 
 ## Usage
-Here's a simple example demonstrating how to use CalcExpr.NET:
+Here's a simple example demonstrating how to use DiceEngine.NET:
 
 ``` csharp
-using CalcExpr.Parsing;
+using DiceEngine.Parsing;
 
 public class Program
 {
@@ -48,4 +48,4 @@ public class Program
 ```
 
 ## License
-CalcExpr.NET is released under the GPL-3.0 License.
+DiceEngine.NET is released under the GPL-3.0 License.

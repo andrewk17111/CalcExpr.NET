@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>DiceEngine.NET</PackageId>
+    <Title>DiceEngine.NET</Title>
+    <Version>0.2.0</Version>
+    <Authors>whix100</Authors>
+    <Description>DiceEngine.NET is a versatile and efficient dice notation parsing engine developed in C# targeting .NET 8. This library allows you to parse strings containing dice notation expressions into expression trees and then evaluated to calculate the resulting value. Forked from andrewk17111/CalcExpr.NET</Description>
+    <Copyright>2024</Copyright>
+    <PackageProjectUrl>https://github.com/whix100/DiceEngine.NET</PackageProjectUrl>
+    <RepositoryUrl>$(ProjectURL)</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>dotNET;dice;parser</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
