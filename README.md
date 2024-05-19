@@ -1,5 +1,10 @@
 # CalcExpr.NET
-A .NET 6 math expression parser and calculator library
+![Lines of Code](https://tokei.rs/b1/github/andrewk17111/CalcExpr.NET?style=flat-square)
+[![License](https://img.shields.io/github/license/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/blob/main/LICENSE)
+[![Open Issues](https://img.shields.io/github/issues/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/issues)
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/pulls)
+
+A .NET 8 math expression parser and calculator library
 
 CalcExpr.NET is a versatile and efficient math expression parsing library developed in C# targeting .NET 8. This library allows you to parse strings containin math expressions into expression trees and then evaluated to calculate the resulting value.
 
@@ -12,7 +17,10 @@ CalcExpr.NET is a versatile and efficient math expression parsing library develo
 - Functions: Define and use custom functions using lambda expressions, along with built-in functions in expressions.
   - Conditional Function Attributes: Define conditions that parameters must meet before being passed to a function.
   - Preprocess Function Attributes: Define preprocesses that are applied to a parameter before being passed to a function.
-- Vectors: Vectors can contain any number of elements and can be used in expressions.
+- Collections: Expressions that are groups containing other functions
+  - Vectors: Vectors can contain any number of elements in a set order, allowing for non-unique elements.
+  - Sets: Sets can contain any number of unique elements in an indeterminate order.
+- Indexers: An expression to get an element from another expression
 
 ## Installation
 Because this project is still under active development, you can install this by either downloading this repository and building the project, or by downloading the latest experimental build from the section of this repository.
