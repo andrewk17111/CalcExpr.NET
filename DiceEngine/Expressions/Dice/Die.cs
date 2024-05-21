@@ -2,11 +2,11 @@
 
 namespace DiceEngine.Expressions.Dice;
 
-public class Die(uint size) : IDie
+public class Die(int size) : IDie
 {
-    public readonly uint Size = size;
+    public readonly int Size = size;
 
-    public Die(int size) : this((uint)size)
+    public Die(uint size) : this((int)size)
     {
     }
 
@@ -14,19 +14,19 @@ public class Die(uint size) : IDie
         => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => (Number)(context.Random.Next(Size) + 1);
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => (Number)(context.Random.Next(Size) + 1);
 
     public override string ToString()
         => ToString(null);
 
     public string ToString(string? format)
-        => throw new NotImplementedException();
+        => $"d{Size}";
 }
 
 public interface IDie : IExpression
