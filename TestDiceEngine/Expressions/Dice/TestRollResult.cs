@@ -39,7 +39,7 @@ public class TestRollResult
             Number number = (Number)random.Next(1, size + 1);
             RollResult rollResult = new RollResult([number], die);
 
-            Assert.AreEqual($"{die}({number})", rollResult.ToString());
+            Assert.AreEqual($"{die} ({number})", rollResult.ToString());
         }
     }
 }

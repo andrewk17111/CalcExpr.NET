@@ -15,7 +15,7 @@ public class TestDie
 
         for (int i = 0; i < 100; i++)
         {
-            uint size = (uint)random.Next(1, 100);
+            int size = random.Next(1, 100);
             Die die = new Die(size);
 
             Assert.AreEqual(size, die.Size);

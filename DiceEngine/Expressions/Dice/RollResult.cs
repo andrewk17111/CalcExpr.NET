@@ -22,13 +22,13 @@ public class RollResult(IEnumerable<IExpression> results, IDie die) : IExpressio
         => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => _results.Aggregate((a, b) => new BinaryOperator("+", a, b).Evaluate(context));
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => throw new NotImplementedException();
+        => _results.Aggregate((a, b) => new BinaryOperator("+", a, b).Evaluate(context));
 
     public override string ToString()
         => ToString(null);
