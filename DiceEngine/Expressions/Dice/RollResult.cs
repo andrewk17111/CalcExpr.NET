@@ -3,37 +3,38 @@ using System.Collections;
 
 namespace DiceEngine.Expressions.Dice;
 
-public class RollResult(IEnumerable<IExpression> results, IDie die) : IExpression, IEnumerable<IExpression>
+public class RollResult(IEnumerable<Number> results, IDie die) : Number(double.NaN), IEnumerable<IExpression>
 {
-    private readonly IExpression[] _results = results.ToArray();
+    private readonly Number[] _results = results.ToArray();
 
     public readonly IDie Die = die;
 
-    public IExpression this[int index]
+    public new double Value => ((Number)Evaluate()).Value;
+
+    public Number this[int index]
         => _results[index];
 
-    public IExpression[] this[Range range]
+    public Number[] this[Range range]
         => _results[range];
 
     public int Length
         => _results.Length;
 
-    public IExpression Evaluate()
-        => Evaluate(new ExpressionContext());
+    public RollResult(Number result, IDie die)
+        : this(new Number[] { result }, die)
+    {
+    }
 
-    public IExpression Evaluate(ExpressionContext context)
-        => _results.Aggregate((a, b) => new BinaryOperator("+", a, b).Evaluate(context));
+    public new IExpression Evaluate(ExpressionContext _)
+        => _results.Aggregate((a, b) => (Number)(a.Value + b.Value));
 
-    public IExpression StepEvaluate()
-        => StepEvaluate(new ExpressionContext());
-
-    public IExpression StepEvaluate(ExpressionContext context)
-        => _results.Aggregate((a, b) => new BinaryOperator("+", a, b).Evaluate(context));
+    public new IExpression StepEvaluate(ExpressionContext _)
+        => _results.Aggregate((a, b) => (Number)(a.Value + b.Value));
 
     public override string ToString()
         => ToString(null);
 
-    public string ToString(string? format)
+    public new string ToString(string? format)
         => $"{Die} ({String.Join(", ", _results.Select(r => r.ToString(format)))})";
 
     public IEnumerator<IExpression> GetEnumerator()

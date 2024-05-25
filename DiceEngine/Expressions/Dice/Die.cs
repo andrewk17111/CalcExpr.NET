@@ -27,6 +27,30 @@ public class Die(int size) : IDie
 
     public string ToString(string? format)
         => $"d{Size}";
+
+    public static explicit operator Die(long n)
+        => new Die((int)n);
+
+    public static explicit operator Die(int n)
+        => new Die(n);
+
+    public static explicit operator Die(short n)
+        => new Die(n);
+
+    public static explicit operator Die(sbyte n)
+        => new Die(n);
+
+    public static explicit operator Die(ulong n)
+        => new Die((int)n);
+
+    public static explicit operator Die(uint n)
+        => new Die(n);
+
+    public static explicit operator Die(ushort n)
+        => new Die(n);
+
+    public static explicit operator Die(byte n)
+        => new Die(n);
 }
 
 public interface IDie : IExpression

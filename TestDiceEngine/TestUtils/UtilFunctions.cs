@@ -1,5 +1,6 @@
 ﻿using DiceEngine.Expressions;
 using DiceEngine.Expressions.Collections;
+using TestDiceEngine.TestModels;
 
 namespace TestDiceEngine.TestUtils;
 
@@ -33,19 +34,60 @@ internal static class UtilFunctions
     {
         if (expected is IEnumerable<IExpression> exp_enum && actual is IEnumerable<IExpression> act_enum)
         {
-            if (exp_enum.GetType() == act_enum.GetType() && exp_enum.Count() == act_enum.Count())
+            if (expected is RandomCollection randCollection)
+            {
+                if (randCollection.MinCount.HasValue)
+                    IsGreaterThanOrEqual(randCollection.MinCount.Value, act_enum.Count(), message);
+
+                if (randCollection.MaxCount.HasValue)
+                    IsLessThanOrEqual(randCollection.MaxCount.Value, act_enum.Count(), message);
+
+                if (randCollection.Min.HasValue)
+                    foreach (IExpression expr in act_enum)
+                        if (expr is Number num)
+                            IsGreaterThanOrEqual(randCollection.Min.Value, num.Value, message);
+
+                if (randCollection.Max.HasValue)
+                    foreach (IExpression expr in act_enum)
+                        if (expr is Number num)
+                            IsLessThanOrEqual(randCollection.Max.Value, num.Value, message);
+
+                if (randCollection.Validate is not null)
+                    foreach (IExpression expr in act_enum)
+                        Assert.IsTrue(randCollection.Validate(expr), message);
+
+                return;
+            }
+            else if (exp_enum.GetType() == act_enum.GetType() && exp_enum.Count() == act_enum.Count())
             {
                 IEnumerator<IExpression> exp_enumerator = exp_enum.GetEnumerator();
                 IEnumerator<IExpression> act_enumerator = act_enum.GetEnumerator();
 
                 while (exp_enumerator.MoveNext() && act_enumerator.MoveNext())
                     AreEqual(exp_enumerator.Current, act_enumerator.Current, decimal_places, message);
+
+                return;
             }
         }
-        else if (expected is Number exp_num && actual is Number act_num)
+        else if (actual is Number actualNum)
         {
-            Assert.AreEqual(Math.Round(exp_num.Value, decimal_places), Math.Round(act_num.Value, decimal_places),
-                message);
+            if (expected is Number expectedNum)
+            {
+                Assert.AreEqual(Math.Round(expectedNum.Value, decimal_places),
+                    Math.Round(actualNum.Value, decimal_places), message);
+                return;
+            }
+            else if (expected is RandomValue randVal)
+            {
+                if (randVal.Min.HasValue)
+                    IsGreaterThanOrEqual(randVal.Min.Value, actualNum.Value, message);
+
+                if (randVal.Max.HasValue)
+                    IsLessThanOrEqual(randVal.Max.Value, actualNum.Value, message);
+
+                if (randVal.Validate is not null)
+                    Assert.IsTrue(randVal.Validate(actualNum), message);
+            }
         }
         else
         {
