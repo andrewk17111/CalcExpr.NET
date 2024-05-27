@@ -180,18 +180,10 @@ public class TestEvaluation
     }
 
     [TestMethod]
-    public void TestDice()
-    {
-        foreach (TestCase testCase in TestCases.DiceNotation)
-        {
-            ExpressionContext context = new ExpressionContext(TestCases.ContextVariables);
+    public void TestDiceEvaluation()
+        => EvaluateTestCases(TestCases.DiceNotation);
 
-            foreach (string func in TestCases.ContextFunctions.Keys)
-                context[func] = TestCases.ContextFunctions[func];
-
-            IExpression result = testCase.Parsed.Evaluate(context);
-
-            UtilFunctions.AreEqual(testCase.Evaluated, result, DIGITS, $"Test case: '{testCase.ExpressionString}'.");
-        }
-    }
+    [TestMethod]
+    public void TestDiceStepEvaluation()
+        => StepEvaluateTestCases(TestCases.DiceNotation);
 }

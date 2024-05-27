@@ -31,6 +31,12 @@ public class RollResult(IEnumerable<Number> results, IDie die) : Number(double.N
     public new IExpression StepEvaluate(ExpressionContext _)
         => _results.Aggregate((a, b) => (Number)(a.Value + b.Value));
 
+    public override int GetHashCode()
+        => HashCode.Combine(Die, _results);
+
+    public override bool Equals(object? obj)
+        => obj is RollResult result && Die.Equals(result.Die) && _results.SequenceEqual(result._results);
+
     public override string ToString()
         => ToString(null);
 

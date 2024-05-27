@@ -36,26 +36,7 @@ internal static class UtilFunctions
         {
             if (expected is RandomCollection randCollection)
             {
-                if (randCollection.MinCount.HasValue)
-                    IsGreaterThanOrEqual(randCollection.MinCount.Value, act_enum.Count(), message);
-
-                if (randCollection.MaxCount.HasValue)
-                    IsLessThanOrEqual(randCollection.MaxCount.Value, act_enum.Count(), message);
-
-                if (randCollection.Min.HasValue)
-                    foreach (IExpression expr in act_enum)
-                        if (expr is Number num)
-                            IsGreaterThanOrEqual(randCollection.Min.Value, num.Value, message);
-
-                if (randCollection.Max.HasValue)
-                    foreach (IExpression expr in act_enum)
-                        if (expr is Number num)
-                            IsLessThanOrEqual(randCollection.Max.Value, num.Value, message);
-
-                if (randCollection.Validate is not null)
-                    foreach (IExpression expr in act_enum)
-                        Assert.IsTrue(randCollection.Validate(expr), message);
-
+                Assert.AreEqual(randCollection, act_enum, message);
                 return;
             }
             else if (exp_enum.GetType() == act_enum.GetType() && exp_enum.Count() == act_enum.Count())
@@ -69,25 +50,10 @@ internal static class UtilFunctions
                 return;
             }
         }
-        else if (actual is Number actualNum)
+        else if (expected is Number exp_num && actual is Number act_num)
         {
-            if (expected is Number expectedNum)
-            {
-                Assert.AreEqual(Math.Round(expectedNum.Value, decimal_places),
-                    Math.Round(actualNum.Value, decimal_places), message);
-                return;
-            }
-            else if (expected is RandomValue randVal)
-            {
-                if (randVal.Min.HasValue)
-                    IsGreaterThanOrEqual(randVal.Min.Value, actualNum.Value, message);
-
-                if (randVal.Max.HasValue)
-                    IsLessThanOrEqual(randVal.Max.Value, actualNum.Value, message);
-
-                if (randVal.Validate is not null)
-                    Assert.IsTrue(randVal.Validate(actualNum), message);
-            }
+            Assert.AreEqual(Math.Round(exp_num.Value, decimal_places), Math.Round(act_num.Value, decimal_places),
+                message);
         }
         else
         {

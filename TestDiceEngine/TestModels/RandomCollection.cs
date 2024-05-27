@@ -6,14 +6,15 @@ using System.Text;
 namespace TestDiceEngine.TestModels;
 
 internal class RandomCollection(int? minCount, int? maxCount, double? min, double? max,
-    Func<IExpression, bool>? validate = null)
+    Func<IExpression, bool>? elementValidator = null, Func<IEnumerable<IExpression>, bool>? collectionValidator = null)
     : IEnumerable<IExpression>, IExpression
 {
     public readonly int? MinCount = minCount;
     public readonly int? MaxCount = maxCount;
     public readonly double? Min = min;
     public readonly double? Max = max;
-    public readonly Func<IExpression, bool>? Validate = validate;
+    public readonly Func<IExpression, bool>? ElementValidator = elementValidator;
+    public readonly Func<IEnumerable<IExpression>, bool>? CollectionValidator = collectionValidator;
 
     public IExpression Evaluate()
         => throw new NotImplementedException();
@@ -52,8 +53,11 @@ internal class RandomCollection(int? minCount, int? maxCount, double? min, doubl
         if (Max.HasValue)
             builder.Append($"Max: {Max}. ");
 
-        if (Validate is not null)
-            builder.Append($"Has Validation. ");
+        if (ElementValidator is not null)
+            builder.Append($"Has Element Validation. ");
+
+        if (CollectionValidator is not null)
+            builder.Append($"Has Collection Validation. ");
 
         if (builder.Length > 0)
             return $"RandomCollection: ({builder})";
@@ -62,18 +66,34 @@ internal class RandomCollection(int? minCount, int? maxCount, double? min, doubl
     }
 
     public override int GetHashCode()
-        => HashCode.Combine(MinCount, MaxCount, Min, Max, Validate);
+        => HashCode.Combine(MinCount, MaxCount, Min, Max, ElementValidator, CollectionValidator);
 
     public override bool Equals(object? obj)
-        => obj is not null &&
-        ((obj is RandomCollection collection && collection.MinCount == MinCount && collection.MaxCount == MaxCount &&
-            collection.Min == Min && collection.Max == Max && collection.Validate == Validate) ||
-        (obj is IEnumerable<IExpression> enumExpr && obj is IExpression expr &&
-            (!MinCount.HasValue || enumExpr.Count() >= MinCount) &&
-            (!MaxCount.HasValue || enumExpr.Count() <= MaxCount) &&
-            (!Min.HasValue ||
-                enumExpr.All(x => !Constant.FALSE.Equals(new BinaryOperator(">=", x, (Number)Min.Value).Evaluate()))) &&
-            (!Max.HasValue ||
-                enumExpr.All(x => !Constant.FALSE.Equals(new BinaryOperator("<=", x, (Number)Max.Value).Evaluate()))) &&
-            (Validate is null || enumExpr.All(Validate))));
+    {
+        if (obj is null)
+            return false;
+
+        if (obj is RandomCollection collection && collection.MinCount == MinCount && collection.MaxCount == MaxCount &&
+            collection.Min == Min && collection.Max == Max && collection.ElementValidator == ElementValidator &&
+            collection.CollectionValidator == CollectionValidator)
+            return true;
+
+        if (obj is IEnumerable<IExpression> enumExpr && obj is IExpression expr)
+        {
+            IEnumerable<double> numbers = enumExpr
+                .Where(x => x is Number)
+                .Select(x => ((Number)x).Value)
+                .ToArray();
+
+            if ((!MinCount.HasValue || enumExpr.Count() >= MinCount) &&
+                (!MaxCount.HasValue || enumExpr.Count() <= MaxCount) &&
+                (!Min.HasValue || numbers.All(x => x >= Min.Value)) &&
+                (!Max.HasValue || numbers.All(x => x <= Max.Value)) &&
+                (ElementValidator is null || enumExpr.All(ElementValidator)) &&
+                (CollectionValidator is null || CollectionValidator(enumExpr)))
+            return true;
+        }
+
+        return false;
+    }
 }

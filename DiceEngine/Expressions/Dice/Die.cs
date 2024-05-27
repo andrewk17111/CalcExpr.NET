@@ -14,13 +14,22 @@ public class Die(int size) : IDie
         => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext context)
-        => (Number)(context.Random.Next(Size) + 1);
+        => new RollResult(Roll(context.Random), this);
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
-        => (Number)(context.Random.Next(Size) + 1);
+        => Evaluate(context);
+
+    public Number Roll(Random? random = null)
+        => (Number)((random ?? new Random()).Next(Size) + 1);
+
+    public override int GetHashCode()
+        => Size;
+
+    public override bool Equals(object? obj)
+        => obj is Die die && die.Size == Size;
 
     public override string ToString()
         => ToString(null);
@@ -55,4 +64,5 @@ public class Die(int size) : IDie
 
 public interface IDie : IExpression
 {
+    Number Roll(Random? random = null);
 }
