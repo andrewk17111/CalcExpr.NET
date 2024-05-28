@@ -76,7 +76,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
 
     public override bool Equals(object? obj)
         => obj is not null && obj is BinaryOperator bin_op && bin_op.Identifier == Identifier &&
-            bin_op.Left.Equals(Left) && bin_op.Right.Equals(Right);
+            Left.Equals(bin_op.Left) && Right.Equals(bin_op.Right);
 
     public override int GetHashCode()
         => Identifier.GetHashCode();

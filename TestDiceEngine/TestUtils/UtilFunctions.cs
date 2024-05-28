@@ -1,5 +1,6 @@
 ﻿using DiceEngine.Expressions;
 using DiceEngine.Expressions.Collections;
+using TestDiceEngine.TestModels;
 
 namespace TestDiceEngine.TestUtils;
 
@@ -33,13 +34,20 @@ internal static class UtilFunctions
     {
         if (expected is IEnumerable<IExpression> exp_enum && actual is IEnumerable<IExpression> act_enum)
         {
-            if (exp_enum.GetType() == act_enum.GetType() && exp_enum.Count() == act_enum.Count())
+            if (expected is RandomCollection randCollection)
+            {
+                Assert.AreEqual(randCollection, act_enum, message);
+                return;
+            }
+            else if (exp_enum.GetType() == act_enum.GetType() && exp_enum.Count() == act_enum.Count())
             {
                 IEnumerator<IExpression> exp_enumerator = exp_enum.GetEnumerator();
                 IEnumerator<IExpression> act_enumerator = act_enum.GetEnumerator();
 
                 while (exp_enumerator.MoveNext() && act_enumerator.MoveNext())
                     AreEqual(exp_enumerator.Current, act_enumerator.Current, decimal_places, message);
+
+                return;
             }
         }
         else if (expected is Number exp_num && actual is Number act_num)

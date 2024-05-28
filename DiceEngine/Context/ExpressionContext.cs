@@ -1,7 +1,4 @@
-﻿using DiceEngine.Attributes;
-using DiceEngine.Expressions;
-using DiceEngine.Expressions.Collections;
-using System.Linq.Expressions;
+﻿using DiceEngine.Expressions;
 using System.Reflection;
 
 namespace DiceEngine.Context;
@@ -10,6 +7,8 @@ public class ExpressionContext
 {
     private readonly Dictionary<string, IExpression> _variables;
     private readonly Dictionary<string, IFunction> _functions;
+
+    public readonly Random Random;
 
     public string[] Variables
         => _variables.Keys.Concat(Functions).ToArray();
@@ -43,7 +42,7 @@ public class ExpressionContext
     }
 
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
-        Dictionary<string, IFunction>? functions = null)
+        Dictionary<string, IFunction>? functions = null, int? seed = null)
     {
         Dictionary<string, IExpression> vars = [];
         Dictionary<string, IFunction> funcs = functions?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value) ?? [];
@@ -77,6 +76,7 @@ public class ExpressionContext
 
         _variables = vars;
         _functions = funcs;
+        Random = seed is null ? new Random() : new Random(seed.Value);
     }
 
     public ExpressionContext Clone()

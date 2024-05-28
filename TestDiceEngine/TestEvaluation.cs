@@ -178,4 +178,12 @@ public class TestEvaluation
 
         Assert.IsFalse(all_integers, "All elements were integers.");
     }
+
+    [TestMethod]
+    public void TestDiceEvaluation()
+        => EvaluateTestCases(TestCases.DiceNotation);
+
+    [TestMethod]
+    public void TestDiceStepEvaluation()
+        => StepEvaluateTestCases(TestCases.DiceNotation);
 }
