@@ -45,6 +45,7 @@ public class TestParser
             ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
             ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
             ("Indexer", null),
+            ("DiceNotation", @"d(\d+)"),
             ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|undefined|dne|(empty(_set)?)|∅|e)"),
             ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
             ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),
@@ -89,6 +90,15 @@ public class TestParser
     public void TestParseCollections()
     {
         ParseTestCases(TestCases.Collections);
+    }
+
+    /// <summary>
+    /// Tests that the Parser is able to properly parse dice notation strings into IExpressions.
+    /// </summary>
+    [TestMethod]
+    public void TestParseDiceNotation()
+    {
+        ParseTestCases(TestCases.DiceNotation);
     }
 
     private static void ParseTestCases(IEnumerable<TestCase> test_cases)

@@ -1,8 +1,8 @@
 ﻿using DiceEngine.Attributes;
-using DiceEngine.Exceptions;
 using DiceEngine.Expressions;
 using DiceEngine.Expressions.Collections;
 using DiceEngine.Expressions.Components;
+using DiceEngine.Expressions.Dice;
 using DiceEngine.Parsing.Rules;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -68,6 +68,7 @@ public class Parser
             new RegexRule("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParsePostfix),
             new Rule("Indexer", ParseIndexer, MatchIndexer),
+            new RegexRule("DiceNotation", @"d(\d+)", RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseDice),
             new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|undefined|dne|(empty(_set)?)|∅|e)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseConstant),
             new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)",
@@ -502,6 +503,11 @@ public class Parser
 
     private static UnaryOperator ParsePostfix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, false, parser.Parse(input[..match.Index]));
+
+    private static IDie ParseDice(string input, Token match, Parser parser)
+    {
+        return new Die(Int32.Parse(match[1..]));
+    }
 
     private static Constant ParseConstant(string input, Token match, Parser parser)
         => new Constant(match.Value);
