@@ -23,7 +23,7 @@ public static class CollectionFunctions
     {
         IEnumerable<IExpression> expressions = collection
             .Select(x => x.Evaluate(context))
-            .Where(x => !Constant.FALSE.Equals(LogicalFunctions.Bool(selector.Invoke([x], context))));
+            .Where(x => !Constant.FALSE.Equals(new AsBooleanAttribute().Preprocess(selector.Invoke([x], context))));
         IExpression? result = (IExpression?)Activator.CreateInstance(collection.GetType(), expressions);
 
         return result ?? Constant.UNDEFINED;
