@@ -116,10 +116,13 @@ public class Parser
 
             if (match.HasValue)
             {
-                IExpression expression = rule.Parse.Invoke(input, match.Value, this);
+                IExpression? expression = rule.Parse(input, match.Value, this);
 
-                AddCache(input, expression);
-                return expression;
+                if (expression is not null)
+                {
+                    AddCache(input, expression);
+                    return expression;
+                }
             }
         }
 
@@ -477,10 +480,15 @@ public class Parser
             Token? match = rule.Match(tokenized_input, parser.Grammar);
 
             if (match.HasValue)
-                return rule.Parse.Invoke(input,
+            {
+                IExpression? result = rule.Parse(input,
                     new Token(match.Value, ContextFreeUtils.DetokenizeIndex(match.Value.Index, tokenized_input,
                         tokens)),
                     parser);
+
+                if (result is not null)
+                    return result;
+            }
         }
 
         throw new Exception($"The input was not in the correct format: '{input}'");
