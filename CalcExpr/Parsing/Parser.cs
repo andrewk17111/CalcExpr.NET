@@ -1,11 +1,11 @@
 ﻿using CalcExpr.Attributes;
-using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
-using CalcExpr.Expressions.Collections;
-using CalcExpr.Expressions.Components;
 using CalcExpr.Parsing.Rules;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using static CalcExpr.Parsing.ParseFunctions;
+using static CalcExpr.Parsing.MatchFunctions;
+using static CalcExpr.Parsing.ParseMatchFunctions;
 
 namespace CalcExpr.Parsing;
 
@@ -39,41 +39,42 @@ public class Parser
             new ReferenceRegexRule("TokenizedParameter",
                 @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})",
                 RegexRuleOptions.PadReferences),
-            new Rule("Collection", ParseCollection, MatchCollection),
-            new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall),
+            new Rule("Collection", ParseMatchCollection, MatchCollection),
+            new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall, ParseMatchFunctionCall),
             new NestedRegexRule("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>",
-                RegexRuleOptions.Left | RegexRuleOptions.PadReferences | RegexRuleOptions.Trim, ParseLambdaFunction),
-            new Rule("Parentheses", ParseParentheses, MatchParentheses),
-            new RegexRule("WithParentheses", @"\(|\)", RegexOptions.None, ParseWithParentheses),
+                RegexRuleOptions.Left | RegexRuleOptions.PadReferences | RegexRuleOptions.Trim,
+                ParseMatchLambdaFunction),
+            new Rule("Parentheses", ParseMatchParentheses, MatchParentheses),
+            new RegexRule("WithParentheses", @"\(|\)", RegexOptions.None, ParseMatchWithParentheses),
             new NestedRegexRule("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseAssignmentOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchAssignmentOperator),
             new NestedRegexRule("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new NestedRegexRule("XorBinOp", @"(?<={Operand})(⊕)(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new NestedRegexRule("AndBinOp", @"(?<={Operand})(&&|∧)(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new NestedRegexRule("EqBinOp", @"(?<={Operand})(==|!=|<>|≠)(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new NestedRegexRule("IneqBinOp", @"(?<={Operand})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new NestedRegexRule("AddBinOp", @"(?<={Operand})([\+\-])(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new NestedRegexRule("MultBinOp", @"(?<={Operand})(%%|//|[*×/÷%])(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new NestedRegexRule("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseBinaryOperator),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new RegexRule("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])",
-                RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParsePrefix),
+                RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParseMatchPrefix),
             new RegexRule("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
-                RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParsePostfix),
-            new Rule("Indexer", ParseIndexer, MatchIndexer),
+                RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParseMatchPostfix),
+            new Rule("Indexer", ParseMatchIndexer, MatchIndexer),
             new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|undefined|dne|(empty(_set)?)|∅|e)",
-                RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseConstant),
+                RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchConstant),
             new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)",
-                RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseVariable),
+                RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchVariable),
             new RegexRule("Number", @"((\d+\.?\d*)|(\d*\.?\d+))", RegexRuleOptions.Only | RegexRuleOptions.Trim,
-                ParseNumber)
+                ParseMatchNumber)
         ],
         build_rules)
     { }
@@ -320,203 +321,4 @@ public class Parser
             if (rule is NestedRegexRule regex_rule)
                 regex_rule.Build(rules);
     }
-
-    private static Token? MatchParentheses(string input, IEnumerable<Rule> rules)
-    {
-        input = input.Trim();
-
-        if (String.IsNullOrWhiteSpace(input))
-            return null;
-
-        if (input[0] == '(' && input[^1] == ')')
-        {
-            int depth = 0;
-
-            for (int i = 1; i < input.Length - 1; i++)
-            {
-                char current = input[i];
-
-                if (current == '(')
-                {
-                    depth++;
-                }
-                else if (current == ')')
-                {
-                    if (depth == 0)
-                        return null;
-
-                    depth--;
-                }
-            }
-
-            if (depth == 0)
-                return new Token(input[1..^1], 1);
-        }
-
-        return null;
-    }
-
-    private static Token? MatchCollection(string input, IEnumerable<Rule> rules)
-    {
-        Match match = Regex.Match(input, @"(?<=^\s*)[\[\{].*?[\]\}](?=\s*$)");
-
-        if (match.Success && match.Value[^1] - match.Value[0] == 2)
-        {
-            try
-            {
-                if (ContextFreeUtils.CheckBalancedBrackets(match.Value[1..^1], Brackets.Square | Brackets.Curly))
-                    return match;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        return null;
-    }
-
-    private static Token? MatchFunctionCall(string input, IEnumerable<Rule> rules)
-    {
-        input = input.Trim();
-
-        if (String.IsNullOrWhiteSpace(input))
-            return null;
-
-        Match function_name = Regex.Match(input, @"^([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
-
-        if (function_name.Success)
-        {
-            Token? parentheses = MatchParentheses(input[function_name.Length..], rules);
-
-            if (parentheses is not null)
-                return new Token(
-                    input[..(function_name.Length + parentheses.Value.Index + parentheses.Value.Length + 1)],
-                    0);
-        }
-
-        return null;
-    }
-
-    private static Token? MatchIndexer(string input, IEnumerable<Rule> rules)
-    {
-        ContextFreeUtils.TokenizeInput(input, out Token[] tokens, Brackets.Square);
-
-        if (tokens.Length > 0)
-        {
-            Token match = tokens.Last();
-
-            if (!match[1..^1].Contains(','))
-                return match;
-        }
-
-        return null;
-    }
-
-    private static IEnumerableExpression ParseCollection(string input, Token token, Parser parser)
-    {
-        string tokenized = ContextFreeUtils.TokenizeInput(token.Value[1..^1], out Token[] tokens,
-            Brackets.Square | Brackets.Curly);
-            IEnumerable<IExpression> enumerable = tokenized.Split(',')
-                .Select(e => parser.Parse(Regex.Replace(e, @"(?<!(^|[^\\])\\(\\\\)*)\[\d+\]", m => m.Value[1..^1])));
-
-        return token.Value[0] == '['
-            ? new Vector(enumerable)
-            : new Set(enumerable);
-    }
-
-    private static FunctionCall ParseFunctionCall(string input, Token token, Parser parser)
-    {
-        Match function_name = Regex.Match(input, @"(?<=^\s*)([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
-        string tokenized_args = token.Value[(function_name.Length + 1)..^1].TokenizeInput(out Token[] tokens);
-
-        string[] args = tokenized_args
-            .Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(arg => !arg.Contains('[')
-                ? arg
-                : Regex.Replace(arg, @"\[\d+\]", match => tokens[Convert.ToInt32(match.Value[1..^1])]))
-            .ToArray();
-
-        return new FunctionCall(function_name.Value, args.Select(arg => parser.Parse(arg)));
-    }
-
-    private static LambdaFunction ParseLambdaFunction(string input, Token token, Parser parser)
-    {
-        string parameters_string = Regex.Match(token.Value.Trim(), @"(?<=^\(?).*?(?=\)?\s*=>)").Value.TrimStart('(');
-        string tokenized_parameters_string = parameters_string.TokenizeInput(out Token[] attribute_tokens,
-            Brackets.Square);
-        IEnumerable<Parameter> parameters = tokenized_parameters_string
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(p =>
-            {
-                Match attribute_match = Regex.Match(p, @"(?<=^\s*\[)\d+(?=\])");
-                string? attribute_string = attribute_match.Success
-                    ? attribute_tokens[Convert.ToInt32(attribute_match.Value)].Value[1..^1]
-                    : null;
-                IEnumerable<string> attributes = attribute_string is null
-                    ? Enumerable.Empty<string>()
-                    : Regex.Split(attribute_string, @"(?<!\([^\)]*?),(?![^\(]*?\))");
-
-                return new Parameter(Regex.Match(p,
-                    @$"(?<=\]?\s*){((RegexRule?)parser.GetGrammarRule("Variable"))!.RegularExpression}(?=\s*$)").Value,
-                    attributes);
-            }).ToArray();
-
-        return new LambdaFunction(parameters, parser.Parse(input[(token.Index + token.Length)..]));
-    }
-
-    private static Parentheses ParseParentheses(string input, Token token, Parser parser)
-        => new Parentheses(parser.Parse(token));
-
-    private static IExpression ParseWithParentheses(string input, Token _, Parser parser)
-    {
-        string tokenized_input = input.TokenizeInput(out Token[] tokens, Brackets.Parenthesis);
-
-        foreach (Rule rule in parser.Grammar)
-        {
-            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
-                continue;
-
-            Token? match = rule.Match(tokenized_input, parser.Grammar);
-
-            if (match.HasValue)
-            {
-                IExpression? result = rule.Parse(input,
-                    new Token(match.Value, ContextFreeUtils.DetokenizeIndex(match.Value.Index, tokenized_input,
-                        tokens)),
-                    parser);
-
-                if (result is not null)
-                    return result;
-            }
-        }
-
-        throw new Exception($"The input was not in the correct format: '{input}'");
-    }
-
-    private static AssignmentOperator ParseAssignmentOperator(string input, Token match, Parser parser)
-        => new AssignmentOperator((parser.Parse(input[..match.Index]) as Variable)!,
-            parser.Parse(input[(match.Index + match.Length)..]));
-
-    private static BinaryOperator ParseBinaryOperator(string input, Token match, Parser parser)
-        => new BinaryOperator(match.Value, parser.Parse(input[..match.Index]),
-            parser.Parse(input[(match.Index + match.Length)..]));
-
-    private static Indexer ParseIndexer(string input, Token match, Parser parser)
-        => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
-
-    private static UnaryOperator ParsePrefix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, true, parser.Parse(input[(match.Index + match.Length)..]));
-
-    private static UnaryOperator ParsePostfix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, false, parser.Parse(input[..match.Index]));
-
-    private static Constant ParseConstant(string input, Token match, Parser parser)
-        => new Constant(match.Value);
-
-    private static Variable ParseVariable(string input, Token match, Parser parser)
-        => new Variable(match.Value);
-
-    private static Number ParseNumber(string input, Token match, Parser parser)
-        => new Number(Convert.ToDouble(match.Value));
 }
