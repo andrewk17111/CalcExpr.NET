@@ -11,6 +11,7 @@ namespace CalcExpr.Parsing;
 
 public class Parser
 {
+    private readonly Dictionary<string, int> _grammar_indexes = [];
     private readonly List<IRule> _grammar = [];
     private readonly Dictionary<string, IExpression> _cache = [];
 
@@ -89,6 +90,7 @@ public class Parser
     public Parser(IEnumerable<IRule> grammar, bool build_rules = true)
     {
         _grammar = grammar.ToList();
+        _grammar_indexes = _grammar.Select((rule, idx) => (rule.Name, idx)).ToDictionary();
 
         if (build_rules)
             BuildGrammarRules(_grammar);
@@ -203,14 +205,17 @@ public class Parser
         if (index < 0)
             index += _grammar.Count + 1;
 
+        index = Math.Max(0, Math.Min(index, _grammar.Count));
+
         try
         {
-            if (index <= 0)
-                _grammar.Insert(0, rule);
-            else if (index >= _grammar.Count)
-                _grammar.Insert(_grammar.Count, rule);
-            else
-                _grammar.Insert(index, rule);
+            _grammar.Insert(index, rule);
+
+            foreach (string key in _grammar_indexes.Keys)
+                if (_grammar_indexes[key] >= index)
+                    _grammar_indexes[key]++;
+
+            _grammar_indexes[rule.Name] = index;
 
             if (build_rules)
                 RebuildGrammarRules();
@@ -233,9 +238,8 @@ public class Parser
     /// </returns>
     public bool RemoveGrammarRule(string name, bool build_rules = true)
     {
-        for (int i = 0; i < _grammar.Count; i++)
-            if (_grammar[i].Name == name)
-                return RemoveGrammarRuleAt(i, build_rules);
+        if (_grammar_indexes.TryGetValue(name, out int index))
+            return RemoveGrammarRuleAt(index, build_rules);
 
         return false;
     }
@@ -252,7 +256,12 @@ public class Parser
     {
         try
         {
+            _grammar_indexes.Remove(_grammar[index].Name);
             _grammar.RemoveAt(index);
+
+            foreach (string key in _grammar_indexes.Keys)
+                if (_grammar_indexes[key] > index)
+                    _grammar_indexes[key]--;
 
             if (build_rules)
                 RebuildGrammarRules();
@@ -274,11 +283,7 @@ public class Parser
     /// </returns>
     public bool GrammarContains(string name)
     {
-        foreach (IRule rule in _grammar)
-            if (rule.Name == name)
-                return true;
-
-        return false;
+        return _grammar_indexes.ContainsKey(name);
     }
 
     /// <summary>
@@ -288,12 +293,7 @@ public class Parser
     /// <returns>The <see cref="IRule"/> in the grammar with the name <paramref name="name"/>.</returns>
     public IRule? GetGrammarRule(string name)
     {
-        int idx = 0;
-
-        while (idx < _grammar.Count && _grammar[idx].Name != name)
-            idx++;
-
-        return GetGrammarRule(idx);
+        return GetGrammarRule(_grammar_indexes[name]);
     }
 
     /// <summary>
