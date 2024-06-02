@@ -10,7 +10,7 @@ namespace CalcExpr.Parsing;
 
 internal static class ParseMatchFunctions
 {
-    internal static IEnumerableExpression ParseMatchCollection(string input, Token token, Parser parser)
+    internal static IEnumerableExpression ParseMatchCollection(string _, Token token, Parser parser)
     {
         string tokenized = ContextFreeUtils.TokenizeInput(token.Value[1..^1], out Token[] tokens,
             Brackets.Square | Brackets.Curly);
@@ -62,14 +62,14 @@ internal static class ParseMatchFunctions
         return new LambdaFunction(parameters, parser.Parse(input[(token.Index + token.Length)..]));
     }
 
-    internal static Parentheses ParseMatchParentheses(string input, Token token, Parser parser)
+    internal static Parentheses ParseMatchParentheses(string _, Token token, Parser parser)
         => new Parentheses(parser.Parse(token));
 
     internal static IExpression ParseMatchWithParentheses(string input, Token _, Parser parser)
     {
         string tokenized_input = input.TokenizeInput(out Token[] tokens, Brackets.Parenthesis);
 
-        foreach (Rule rule in parser.Grammar)
+        foreach (IRule rule in parser.Grammar)
         {
             if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
                 continue;
@@ -108,12 +108,12 @@ internal static class ParseMatchFunctions
     internal static UnaryOperator ParseMatchPostfix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, false, parser.Parse(input[..match.Index]));
 
-    internal static Constant ParseMatchConstant(string input, Token match, Parser parser)
+    internal static Constant ParseMatchConstant(string _, Token match, Parser parser)
         => new Constant(match.Value);
 
-    internal static Variable ParseMatchVariable(string input, Token match, Parser parser)
+    internal static Variable ParseMatchVariable(string _, Token match, Parser parser)
         => new Variable(match.Value);
 
-    internal static Number ParseMatchNumber(string input, Token match, Parser parser)
+    internal static Number ParseMatchNumber(string _, Token match, Parser parser)
         => new Number(Convert.ToDouble(match.Value));
 }

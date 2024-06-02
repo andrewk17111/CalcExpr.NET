@@ -5,7 +5,7 @@ namespace CalcExpr.Parsing;
 
 internal static class MatchFunctions
 {
-    internal static Token? MatchParentheses(string input, IEnumerable<Rule> rules)
+    internal static Token? MatchParentheses(string input, IEnumerable<IRule> _)
     {
         input = input.Trim();
 
@@ -40,7 +40,7 @@ internal static class MatchFunctions
         return null;
     }
 
-    internal static Token? MatchCollection(string input, IEnumerable<Rule> rules)
+    internal static Token? MatchCollection(string input, IEnumerable<IRule> _)
     {
         Match match = Regex.Match(input, @"(?<=^\s*)[\[\{].*?[\]\}](?=\s*$)");
 
@@ -60,7 +60,7 @@ internal static class MatchFunctions
         return null;
     }
 
-    internal static Token? MatchFunctionCall(string input, IEnumerable<Rule> rules)
+    internal static Token? MatchFunctionCall(string input, IEnumerable<IRule> rules)
     {
         input = input.Trim();
 
@@ -82,7 +82,7 @@ internal static class MatchFunctions
         return null;
     }
 
-    internal static Token? MatchIndexer(string input, IEnumerable<Rule> rules)
+    internal static Token? MatchIndexer(string input, IEnumerable<IRule> _)
     {
         ContextFreeUtils.TokenizeInput(input, out Token[] tokens, Brackets.Square);
 
