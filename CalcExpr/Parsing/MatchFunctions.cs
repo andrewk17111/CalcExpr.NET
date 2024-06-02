@@ -5,41 +5,6 @@ namespace CalcExpr.Parsing;
 
 internal static class MatchFunctions
 {
-    internal static Token? MatchParentheses(string input, IEnumerable<IRule> _)
-    {
-        input = input.Trim();
-
-        if (String.IsNullOrWhiteSpace(input))
-            return null;
-
-        if (input[0] == '(' && input[^1] == ')')
-        {
-            int depth = 0;
-
-            for (int i = 1; i < input.Length - 1; i++)
-            {
-                char current = input[i];
-
-                if (current == '(')
-                {
-                    depth++;
-                }
-                else if (current == ')')
-                {
-                    if (depth == 0)
-                        return null;
-
-                    depth--;
-                }
-            }
-
-            if (depth == 0)
-                return new Token(input[1..^1], 1);
-        }
-
-        return null;
-    }
-
     internal static Token? MatchCollection(string input, IEnumerable<IRule> _)
     {
         Match match = Regex.Match(input, @"(?<=^\s*)[\[\{].*?[\]\}](?=\s*$)");
@@ -77,6 +42,41 @@ internal static class MatchFunctions
                 return new Token(
                     input[..(function_name.Length + parentheses.Value.Index + parentheses.Value.Length + 1)],
                     0);
+        }
+
+        return null;
+    }
+
+    internal static Token? MatchParentheses(string input, IEnumerable<IRule> _)
+    {
+        input = input.Trim();
+
+        if (String.IsNullOrWhiteSpace(input))
+            return null;
+
+        if (input[0] == '(' && input[^1] == ')')
+        {
+            int depth = 0;
+
+            for (int i = 1; i < input.Length - 1; i++)
+            {
+                char current = input[i];
+
+                if (current == '(')
+                {
+                    depth++;
+                }
+                else if (current == ')')
+                {
+                    if (depth == 0)
+                        return null;
+
+                    depth--;
+                }
+            }
+
+            if (depth == 0)
+                return new Token(input[1..^1], 1);
         }
 
         return null;

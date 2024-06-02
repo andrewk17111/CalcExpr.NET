@@ -39,7 +39,7 @@ public class Parser
             new ReferenceRegexRule("TokenizedParameter",
                 @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})",
                 RegexRuleOptions.PadReferences),
-            new Rule("Collection", ParseMatchCollection, MatchCollection),
+            new Rule("Collection", ParseCollection, MatchCollection, ParseMatchCollection),
             new Rule("FunctionCall", ParseFunctionCall, MatchFunctionCall, ParseMatchFunctionCall),
             new NestedRegexRule("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>",
                 RegexRuleOptions.Left | RegexRuleOptions.PadReferences | RegexRuleOptions.Trim,
@@ -113,17 +113,12 @@ public class Parser
             if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
                 continue;
 
-            Token? match = rule.Match(input, Grammar);
+            IExpression? expression = rule.Parse(input, this);
 
-            if (match.HasValue)
+            if (expression is not null)
             {
-                IExpression? expression = rule.Parse(input, match.Value, this);
-
-                if (expression is not null)
-                {
-                    AddCache(input, expression);
-                    return expression;
-                }
+                AddCache(input, expression);
+                return expression;
             }
         }
 
