@@ -11,12 +11,19 @@ namespace CalcExpr.Parsing;
 
 public class Parser
 {
-    private readonly Dictionary<string, int> _grammar_indexes = [];
+    private readonly Dictionary<string, RuleIndex> _grammar_indexes = [];
     private readonly List<IRule> _grammar = [];
+    private readonly List<IRule> _reference_grammar = [];
     private readonly Dictionary<string, IExpression> _cache = [];
 
     public IRule[] Grammar
         => _grammar.ToArray();
+
+    public IRule[] ReferenceGrammar
+        => _reference_grammar.ToArray();
+
+    public IRule[] CompleteGrammar
+        => _reference_grammar.Concat(_grammar).ToArray();
 
     public string[] Cache
         => _cache.Keys.ToArray();
@@ -89,11 +96,22 @@ public class Parser
     /// <param name="build_rules">Whether or not grammar rules should be prebuilt.</param>
     public Parser(IEnumerable<IRule> grammar, bool build_rules = true)
     {
-        _grammar = grammar.ToList();
-        _grammar_indexes = _grammar.Select((rule, idx) => (rule.Name, idx)).ToDictionary();
+        foreach (IRule rule in grammar)
+        {
+            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
+            {
+                _grammar_indexes.Add(rule.Name, (RuleIndex)(_reference_grammar.Count, true));
+                _reference_grammar.Add(rule);
+            }
+            else
+            {
+                _grammar_indexes.Add(rule.Name, (RuleIndex)(_grammar.Count, false));
+                _grammar.Add(rule);
+            }
+        }
 
         if (build_rules)
-            BuildGrammarRules(_grammar);
+            RebuildGrammarRules();
     }
 
     /// <summary>
@@ -112,9 +130,6 @@ public class Parser
 
         foreach (IRule rule in _grammar)
         {
-            if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
-                continue;
-
             IExpression? expression = rule.Parse(input, this);
 
             if (expression is not null)
@@ -215,7 +230,9 @@ public class Parser
                 if (_grammar_indexes[key] >= index)
                     _grammar_indexes[key]++;
 
-            _grammar_indexes[rule.Name] = index;
+            bool is_reference = rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null;
+
+            _grammar_indexes[rule.Name] = (RuleIndex)(index, is_reference);
 
             if (build_rules)
                 RebuildGrammarRules();
@@ -233,13 +250,14 @@ public class Parser
     /// </summary>
     /// <param name="name">The name of the <see cref="IRule"/> to be removed.</param>
     /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
+    /// <param name="is_reference">Whether or not the rule is a reference rule.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="IRule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool RemoveGrammarRule(string name, bool build_rules = true)
+    public bool RemoveGrammarRule(string name, bool build_rules = true, bool is_reference = false)
     {
-        if (_grammar_indexes.TryGetValue(name, out int index))
-            return RemoveGrammarRuleAt(index, build_rules);
+        if (_grammar_indexes.TryGetValue(name, out RuleIndex index))
+            return RemoveGrammarRuleAt(index, build_rules, is_reference);
 
         return false;
     }
@@ -249,10 +267,11 @@ public class Parser
     /// </summary>
     /// <param name="index">The index for the <see cref="IRule"/> to be removed.</param>
     /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
+    /// <param name="is_reference">Whether or not the rule is a reference rule.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="IRule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool RemoveGrammarRuleAt(int index, bool build_rules = true)
+    public bool RemoveGrammarRuleAt(int index, bool build_rules = true, bool is_reference = false)
     {
         try
         {
@@ -293,27 +312,59 @@ public class Parser
     /// <returns>The <see cref="IRule"/> in the grammar with the name <paramref name="name"/>.</returns>
     public IRule? GetGrammarRule(string name)
     {
-        return GetGrammarRule(_grammar_indexes[name]);
+        return GetGrammarRule(_grammar_indexes[name], _grammar_indexes[name]);
     }
 
     /// <summary>
     /// Gets a <see cref="IRule"/> from the grammar based on the specified index.
     /// </summary>
     /// <param name="index">The index of the grammar rule.</param>
+    /// <param name="is_reference">Whether or not the rule is a reference rule.</param>
     /// <returns>The <see cref="IRule"/> in the grammar at the index of <paramref name="index"/>.</returns>
-    public IRule? GetGrammarRule(int index)
-        => index >= 0 && index < _grammar.Count ? _grammar[index] : null;
+    public IRule? GetGrammarRule(int index, bool is_reference = false)
+    {
+        List<IRule> grammar = is_reference ? _reference_grammar : _grammar;
+
+        return index >= 0 && index < grammar.Count ? grammar[index] : null;
+    }
 
     /// <summary>
     /// Rebuilds all of the grammar rules in the <see cref="Parser"/>.
     /// </summary>
     public void RebuildGrammarRules()
-        => BuildGrammarRules(_grammar);
-
-    private static void BuildGrammarRules(IEnumerable<IRule> rules)
     {
-        foreach (IRule rule in rules)
+        foreach (IRule rule in CompleteGrammar)
             if (rule is NestedRegexRule regex_rule)
-                regex_rule.Build(rules);
+                regex_rule.Build(CompleteGrammar);
+    }
+
+    private readonly struct RuleIndex(int index, bool is_reference)
+    {
+        public int Index { get; } = index;
+        public bool IsReference { get; } = is_reference;
+
+        public static implicit operator int(RuleIndex rule_index)
+            => rule_index.Index;
+
+        public static implicit operator bool(RuleIndex rule_index)
+            => rule_index.IsReference;
+
+        public static implicit operator (int, bool)(RuleIndex rule_index)
+            => (rule_index.Index, rule_index.IsReference);
+
+        public static explicit operator RuleIndex((int, bool) rule_index)
+            => new RuleIndex(rule_index.Item1, rule_index.Item2);
+
+        public static RuleIndex operator +(RuleIndex rule_index, int value)
+            => new RuleIndex(rule_index.Index + value, rule_index.IsReference);
+
+        public static RuleIndex operator -(RuleIndex rule_index, int value)
+            => new RuleIndex(rule_index.Index - value, rule_index.IsReference);
+
+        public static RuleIndex operator ++(RuleIndex rule_index)
+            => new RuleIndex(rule_index.Index + 1, rule_index.IsReference);
+
+        public static RuleIndex operator --(RuleIndex rule_index)
+            => new RuleIndex(rule_index.Index - 1, rule_index.IsReference);
     }
 }

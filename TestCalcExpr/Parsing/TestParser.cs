@@ -21,13 +21,6 @@ public class TestParser
     {
         (string Name, string? Regex)[] default_rules =
         [
-            ("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
-            ("Operand", @"[\[\{]?({DiscreteOperand}|{Parameter}|{TokenizedParameter})[\]\}]?"),
-            ("Token", @"\[\d+\]"),
-            ("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)"),
-            ("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})"),
-            ("TokenizedAttribute", @"([A-Za-z][A-Za-z_0-9]*({Token})?)"),
-            ("TokenizedParameter", @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})"),
             ("Collection", null),
             ("FunctionCall", null),
             ("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>"),
@@ -49,6 +42,16 @@ public class TestParser
             ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
             ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),
         ];
+        (string Name, string? Regex)[] default_reference_rules =
+        [
+            ("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            ("Operand", @"[\[\{]?({DiscreteOperand}|{Parameter}|{TokenizedParameter})[\]\}]?"),
+            ("Token", @"\[\d+\]"),
+            ("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)"),
+            ("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})"),
+            ("TokenizedAttribute", @"([A-Za-z][A-Za-z_0-9]*({Token})?)"),
+            ("TokenizedParameter", @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})"),
+        ];
 
         Parser parser = new Parser();
 
@@ -65,6 +68,19 @@ public class TestParser
 
             Assert.AreEqual(rule, parser.GetGrammarRule(rule.Name));
             Assert.AreEqual(rule, parser.GetGrammarRule(i));
+        }
+
+        for (int i = 0; i < default_reference_rules.Length; i++)
+        {
+            IRule rule = parser.ReferenceGrammar[i];
+
+            Assert.AreEqual(default_reference_rules[i].Name, rule.Name);
+
+            if (rule is ReferenceRegexRule reference_regex_rule)
+                Assert.AreEqual(default_reference_rules[i].Regex, reference_regex_rule.RegularExpressionTemplate);
+
+            Assert.AreEqual(rule, parser.GetGrammarRule(rule.Name));
+            Assert.AreEqual(rule, parser.GetGrammarRule(i, true));
         }
 
         parser = new Parser([CUSTOM_RULE]);
