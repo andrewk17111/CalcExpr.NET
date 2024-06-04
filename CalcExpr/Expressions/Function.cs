@@ -2,10 +2,10 @@
 using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
+using CalcExpr.Extensions;
 using CalcExpr.FunctionAttributes;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace CalcExpr.Expressions;
@@ -26,34 +26,12 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_
         => is_elementwise;
 
     public Function(MethodInfo method)
-        : this (method.CreateDelegate(Expression.GetDelegateType(method
-            .GetParameters()
-            .Select(p => p.ParameterType)
-            .Append(method.ReturnType)
-            .ToArray())),
-        method.GetCustomAttribute(typeof(ElementwiseAttribute)) is not null)
+        : this (method.ToDelegate(), method.GetCustomAttribute(typeof(ElementwiseAttribute)) is not null)
     { }
 
     public Function(Delegate body, bool is_elementwise = false)
         : this(body.Method.GetParameters().Select(p => (Parameter)p), body, is_elementwise)
     { }
-
-    public static bool IsValidFunction(MethodInfo method, out string[]? aliases)
-    {
-        BuiltInFunctionAttribute? bif = method.GetCustomAttribute<BuiltInFunctionAttribute>();
-
-        aliases = bif?.Aliases;
-
-        if (bif is null)
-            return false;
-
-        if (!typeof(IExpression).IsAssignableFrom(method.ReturnType))
-            return false;
-
-        return method.GetParameters()
-            .All(p => typeof(IExpression).IsAssignableFrom(p.ParameterType) ||
-                p.ParameterType == typeof(ExpressionContext));
-    }
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {

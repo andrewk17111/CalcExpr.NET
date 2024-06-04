@@ -1,7 +1,5 @@
-﻿using CalcExpr.Attributes;
-using CalcExpr.Expressions;
-using CalcExpr.Expressions.Collections;
-using System.Linq.Expressions;
+﻿using CalcExpr.Expressions;
+using CalcExpr.Extensions;
 using System.Reflection;
 
 namespace CalcExpr.Context;
@@ -62,15 +60,12 @@ public class ExpressionContext
                 if (!t.IsClass || t.Namespace != "CalcExpr.BuiltInFunctions")
                     continue;
 
-                foreach (MethodInfo method in t.GetMethods())
-                {
-                    if (!Function.IsValidFunction(method, out string[]? aliases))
-                        continue;
-                    
-                    Function function = new Function(method);
+                Dictionary<string[], Function> built_in_functions = t.GetFunctions();
 
-                    foreach (string alias in aliases!)
-                        funcs.Add(alias, function);
+                foreach (string[] aliases in built_in_functions.Keys)
+                {
+                    foreach (string alias in aliases)
+                        funcs.Add(alias, built_in_functions[aliases]);
                 }
             }
         }
