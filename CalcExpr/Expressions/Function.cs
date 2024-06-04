@@ -3,9 +3,6 @@ using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
 using CalcExpr.Extensions;
-using CalcExpr.FunctionAttributes;
-using CalcExpr.FunctionAttributes.ConditionalAttributes;
-using CalcExpr.FunctionAttributes.PreprocessAttributes;
 using System.Reflection;
 
 namespace CalcExpr.Expressions;
@@ -39,18 +36,18 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_
 
         if (RequiresContext)
         {
-            IExpression[]? processed_args = ((IFunction)this).ProcessArguments(arguments);
+            object?[]? processed_args = ((IFunction)this).ProcessArguments(arguments);
 
             if (processed_args is null)
                 return Constant.UNDEFINED;
 
             int i = 0;
 
-            args = [.. Parameters.Select(p => (object?)(p.IsContext ? context : processed_args[i++]))];
+            args = [.. Parameters.Select(p => p.IsContext ? context : processed_args[i++])];
         }
         else
         {            
-            IExpression[]? processed_args = ((IFunction)this)
+            object?[]? processed_args = ((IFunction)this)
                 .ProcessArguments(arguments.Select(arg => arg.Evaluate(context)));
 
             if (processed_args is null)
@@ -58,6 +55,8 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_
 
             args = [.. processed_args];
         }
+
+        // TODO: Process args for primitive types.
         
         return (IExpression?)Body.Method.Invoke(this, args) ?? Constant.UNDEFINED;
     }
@@ -110,21 +109,10 @@ public interface IFunction : IExpression
 
         for (int i = 0; i < Parameters.Where(p => !p.IsContext).Count(); i++)
         {
-            Parameter parameter = Parameters[i];
-            IExpression argument = args[i];
+            IExpression? argument = Parameters[i].ProcessArgument(args[i]);
 
-            foreach (FunctionAttribute attribute in parameter.Attributes)
-            {
-                if (attribute is ConditionAttribute condition)
-                {
-                    if (!condition.CheckCondition(argument))
-                        return null;
-                }
-                else if (attribute is PreprocessAttribute preprocess)
-                {
-                    argument = preprocess.Preprocess(argument);
-                }
-            }
+            if (argument is null)
+                return null;
 
             results.Add(argument);
         }

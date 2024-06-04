@@ -1,10 +1,9 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.FunctionAttributes;
-using CalcExpr.Parsing.Rules;
-using CalcExpr.Parsing;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
+using CalcExpr.FunctionAttributes.PreprocessAttributes;
 
 namespace CalcExpr.Expressions.Components;
 
@@ -26,6 +25,24 @@ public readonly struct Parameter(string name, IEnumerable<FunctionAttribute> att
 
     public Parameter(string name, bool is_context) : this(name, [], is_context)
     { }
+
+    public IExpression? ProcessArgument(IExpression argument)
+    {
+        foreach (FunctionAttribute attribute in Attributes)
+        {
+            if (attribute is ConditionAttribute condition)
+            {
+                if (!condition.CheckCondition(argument))
+                    return null;
+            }
+            else if (attribute is PreprocessAttribute preprocess)
+            {
+                argument = preprocess.Preprocess(argument);
+            }
+        }
+
+        return argument;
+    }
 
     private static FunctionAttribute GetAttribute(string attribute)
     {
