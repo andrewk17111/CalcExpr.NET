@@ -18,3 +18,7 @@ public interface ITypeConverter<T>
     /// <returns>A value representing the expression.</returns>
     T? ConvertFromExpression(IExpression expression);
 }
+
+public interface ITypeConverter
+{
+}

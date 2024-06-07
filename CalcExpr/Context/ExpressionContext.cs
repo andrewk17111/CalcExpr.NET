@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Extensions;
+using CalcExpr.TypeConverters;
 using System.Reflection;
 
 namespace CalcExpr.Context;
@@ -8,6 +9,7 @@ public class ExpressionContext
 {
     private readonly Dictionary<string, IExpression> _variables;
     private readonly Dictionary<string, IFunction> _functions;
+    private readonly Dictionary<Type, List<ITypeConverter>> _type_converters;
 
     public string[] Variables
         => _variables.Keys.Concat(Functions).ToArray();
@@ -41,10 +43,11 @@ public class ExpressionContext
     }
 
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
-        Dictionary<string, IFunction>? functions = null)
+        Dictionary<string, IFunction>? functions = null, IEnumerable<ITypeConverter>? type_converters = null)
     {
         Dictionary<string, IExpression> vars = [];
         Dictionary<string, IFunction> funcs = functions?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value) ?? [];
+        Dictionary<Type, List<ITypeConverter>> types = [];
 
         if (variables is not null)
             foreach (string var in variables.Keys)
@@ -70,6 +73,28 @@ public class ExpressionContext
             }
         }
 
+        type_converters ??= Assembly.GetExecutingAssembly().GetTypes()
+            .Where(type => type.IsClass && type.Namespace == "CalcExpr.TypeConverters" &&
+                type.IsAssignableFrom(typeof(ITypeConverter<>)))
+            .Select(type => (ITypeConverter)Activator.CreateInstance(type)!);
+
+        foreach (ITypeConverter converter in type_converters)
+        {
+            Type? convert_type = converter.GetType().GetInterface("ITypeConverter`1")?.GetGenericArguments()?.First();
+
+            if (convert_type == typeof(Nullable<>))
+                convert_type = convert_type.GetGenericArguments().First();
+
+            if (convert_type is not null)
+            {
+                if (types.TryGetValue(convert_type, out List<ITypeConverter>? convert_list))
+                    convert_list.Add(converter);
+                else
+                    types[convert_type] = [converter];
+            }
+        }
+
+        _type_converters = types;
         _variables = vars;
         _functions = funcs;
     }
@@ -83,9 +108,9 @@ public class ExpressionContext
             vars.Add(var, _variables[var]);
 
         foreach (string func in _functions.Keys)
-            funcs.Add(func, (IFunction)_functions[func]);
+            funcs.Add(func, _functions[func]);
 
-        return new ExpressionContext(vars, funcs);
+        return new ExpressionContext(vars, funcs, _type_converters.SelectMany(t => t.Value));
     }
 
     public bool SetVariable(string name, IExpression expression)
