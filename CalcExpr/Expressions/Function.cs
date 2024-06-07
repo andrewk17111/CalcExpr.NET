@@ -7,16 +7,16 @@ using System.Reflection;
 
 namespace CalcExpr.Expressions;
 
-public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_elementwise = false) : IFunction
+public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is_elementwise = false) : IFunction
 {
-    private readonly IReadOnlyList<Parameter> _parameters = parameters.ToArray() ?? [];
+    private readonly IReadOnlyList<IParameter> _parameters = parameters.ToArray() ?? [];
 
     public readonly Delegate Body = body;
     public readonly bool RequiresContext = body.Method.GetParameters()
         .Select(p => p.ParameterType == typeof(ExpressionContext))
         .Contains(true);
 
-    public Parameter[] Parameters
+    public IParameter[] Parameters
         => _parameters.ToArray();
 
     public bool IsElementwise
@@ -27,7 +27,7 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_
     { }
 
     public Function(Delegate body, bool is_elementwise = false)
-        : this(body.Method.GetParameters().Select(p => (Parameter)p), body, is_elementwise)
+        : this(body.Method.GetParameters().ToParameters([])!, body, is_elementwise)
     { }
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
@@ -43,7 +43,7 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_
 
             int i = 0;
 
-            args = [.. Parameters.Select(p => p.IsContext ? context : processed_args[i++])];
+            args = [.. Parameters.Select(p => p is ContextParameter ? context : processed_args[i++])];
         }
         else
         {            
@@ -89,7 +89,7 @@ public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_
 
 public interface IFunction : IExpression
 {
-    public Parameter[] Parameters { get; }
+    public IParameter[] Parameters { get; }
 
     public bool IsElementwise { get; }
 
@@ -102,16 +102,17 @@ public interface IFunction : IExpression
         return outer_context;
     }
 
-    public IExpression[]? ProcessArguments(IEnumerable<IExpression> arguments)
+    public object?[]? ProcessArguments(IEnumerable<IExpression> arguments)
     {
+        IParameter[] parameters = Parameters.Where(p => p is not ContextParameter).ToArray();
         IExpression[] args = arguments.ToArray();
-        List<IExpression> results = [];
+        List<object?> results = [];
 
-        for (int i = 0; i < Parameters.Where(p => !p.IsContext).Count(); i++)
+        for (int i = 0; i < parameters.Length; i++)
         {
-            IExpression? argument = Parameters[i].ProcessArgument(args[i]);
+            object? argument = parameters[i].ProcessArgument(args[i]);
 
-            if (argument is null)
+            if (argument is null && !parameters[i].AllowNull)
                 return null;
 
             results.Add(argument);
@@ -127,7 +128,7 @@ public interface IFunction : IExpression
 
     public static IExpression ForEach(IFunction function, IEnumerable<IExpression> arguments, ExpressionContext context)
     {
-        if (arguments.Count() != function.Parameters.Where(p => !p.IsContext).Count())
+        if (arguments.Count() != function.Parameters.Where(p => p is not ContextParameter).Count())
             return Constant.UNDEFINED;
 
         if (function.IsElementwise && arguments.Any(arg => arg is IEnumerableExpression))

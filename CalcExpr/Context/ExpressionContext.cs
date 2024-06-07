@@ -56,23 +56,6 @@ public class ExpressionContext
                 else
                     vars.Add(var, variables[var]);
 
-        if (functions is null)
-        {
-            foreach (Type t in Assembly.GetExecutingAssembly().GetTypes())
-            {
-                if (!t.IsClass || t.Namespace != "CalcExpr.BuiltInFunctions")
-                    continue;
-
-                Dictionary<string[], Function> built_in_functions = t.GetFunctions();
-
-                foreach (string[] aliases in built_in_functions.Keys)
-                {
-                    foreach (string alias in aliases)
-                        funcs.Add(alias, built_in_functions[aliases]);
-                }
-            }
-        }
-
         type_converters ??= Assembly.GetExecutingAssembly().GetTypes()
             .Where(type => type.IsClass && type.Namespace == "CalcExpr.TypeConverters" &&
                 type.IsAssignableFrom(typeof(ITypeConverter<>)))
@@ -91,6 +74,23 @@ public class ExpressionContext
                     convert_list.Add(converter);
                 else
                     types[convert_type] = [converter];
+            }
+        }
+
+        if (functions is null)
+        {
+            foreach (Type t in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (!t.IsClass || t.Namespace != "CalcExpr.BuiltInFunctions")
+                    continue;
+
+                Dictionary<string[], Function> built_in_functions = t.GetFunctions(types.Keys);
+
+                foreach (string[] aliases in built_in_functions.Keys)
+                {
+                    foreach (string alias in aliases)
+                        funcs.Add(alias, built_in_functions[aliases]);
+                }
             }
         }
 

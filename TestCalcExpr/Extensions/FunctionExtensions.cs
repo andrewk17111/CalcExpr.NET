@@ -7,7 +7,7 @@ using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace CalcExpr.Extensions;
+namespace TestCalcExpr.Extensions;
 
 internal static class FunctionExtensions
 {
@@ -37,7 +37,7 @@ internal static class FunctionExtensions
                     results.Add(new ContextParameter());
                     continue;
                 }
-                else if (parameter.ParameterType.IsAssignableTo(typeof(IExpression)))
+                else if (parameter.ParameterType.IsAssignableFrom(typeof(IExpression)))
                 {
                     if (parameter.ParameterType.GetInterface(nameof(IExpression)) is not null)
                         attributes = attributes.Append(new IsExpressionTypeAttribute(parameter.ParameterType));
@@ -64,31 +64,5 @@ internal static class FunctionExtensions
         }
 
         return results;
-    }
-
-    public static Dictionary<string[], Function> GetFunctions(this Type type, IEnumerable<Type> compatible_types)
-    {
-        Dictionary<string[], Function> candidates = [];
-
-        foreach (MethodInfo method in type.GetMethods())
-        {
-            BuiltInFunctionAttribute? bif = method.GetCustomAttribute<BuiltInFunctionAttribute>();
-
-            if (bif is not null && method.ReturnType.IsAssignableFrom(typeof(IExpression)) ||
-                compatible_types.Contains(method.ReturnType))
-            {
-                List<IParameter>? parameters = method.GetParameters().ToParameters(compatible_types);
-
-                if (parameters is not null)
-                {
-                    bool is_elementwise = method.GetCustomAttribute<ElementwiseAttribute>() is not null;
-                    Function function = new Function(parameters, method.ToDelegate(), is_elementwise);
-
-                    candidates[bif.Aliases] = function;
-                }
-            }
-        }
-
-        return candidates;
     }
 }
