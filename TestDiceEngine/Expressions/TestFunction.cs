@@ -2,6 +2,7 @@
 using DiceEngine.Expressions.Components;
 using System.Linq.Expressions;
 using System.Reflection;
+using TestDiceEngine.Extensions;
 using TestDiceEngine.TestData;
 
 namespace TestDiceEngine.Expressions;
@@ -17,11 +18,8 @@ public class TestFunction
     {
         foreach (MethodInfo method in typeof(TestCases).GetMethods(BindingFlags.Static))
         {
-            Delegate del = method.CreateDelegate(Expression.GetDelegateType(method.GetParameters()
-                .Select(p => p.ParameterType)
-                .Concat(new Type[] { method.ReturnType })
-                .ToArray()));
-            Parameter[] parameters = method.GetParameters().Select(p => (Parameter)p).ToArray();
+            Delegate del = method.ToDelegate();
+            IParameter[] parameters = [.. method.GetParameters().ToParameters([])];
             Function function = new Function(del);
 
             Assert.AreEqual(method, function.Body.Method);

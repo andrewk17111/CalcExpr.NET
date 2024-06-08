@@ -1,5 +1,4 @@
 ﻿using DiceEngine.Attributes;
-using DiceEngine.Expressions;
 using DiceEngine.FunctionAttributes.ConditionalAttributes;
 
 namespace DiceEngine.BuiltInFunctions;
@@ -8,216 +7,208 @@ public static class TrigonometricFunctions
 {
     [BuiltInFunction("sin")]
     [Elementwise]
-    public static IExpression Sin(Number x)
-        => new Number(Math.Sin(((Number)x).Value));
+    public static double Sin(double x)
+        => Math.Sin(x);
 
     [BuiltInFunction("cos")]
     [Elementwise]
-    public static IExpression Cos(Number x)
-        => new Number(Math.Cos(((Number)x).Value));
+    public static double Cos(double x)
+        => Math.Cos(x);
 
     [BuiltInFunction("tan")]
     [Elementwise]
-    public static IExpression Tan(Number x)
-    {
-        Number num = (Number)x;
-        
-        return (num.Value / Math.PI - 0.5) % 1 == 0
-            ? Constant.UNDEFINED
-            : new Number(Math.Tan(num.Value)).Evaluate();
+    public static double Tan(double x)
+    {        
+        return (x / Math.PI - 0.5) % 1 == 0
+            ? Double.NaN
+            : Math.Tan(x);
     }
 
     [BuiltInFunction("asin", "arcsin", "arsin")]
     [Elementwise]
-    public static IExpression Asin(Number x)
-        => new Number(Math.Asin(((Number)x).Value)).Evaluate();
+    public static double Asin(double x)
+        => Math.Asin(x);
 
     [BuiltInFunction("acos", "arccos", "arcos")]
     [Elementwise]
-    public static IExpression Acos(Number x)
-        => new Number(Math.Acos(((Number)x).Value)).Evaluate();
+    public static double Acos(double x)
+        => Math.Acos(x);
 
     [BuiltInFunction("atan", "arctan", "artan")]
     [Elementwise]
-    public static IExpression Atan([NotUndefined] IExpression x)
-        => x is Number num
-            ? new Number(Math.Atan(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x)
-                ? new Number(Math.PI / 2)
-                : Constant.NEGATIVE_INFINITY.Equals(x)
-                    ? new Number(-Math.PI / 2)
-                    : Constant.UNDEFINED;
+    public static double Atan(double x)
+        => Double.IsFinite(x)
+            ? Math.Atan(x)
+            : Double.IsPositiveInfinity(x)
+                ? Math.PI / 2
+                : Double.IsNegativeInfinity(x)
+                    ? -Math.PI / 2
+                    : Double.NaN;
 
     [BuiltInFunction("csc")]
     [Elementwise]
-    public static IExpression Csc(Number x)
+    public static double Csc(double x)
     {
-        Number num = (Number)x;
-
-        return num.Value / Math.PI % 1 == 0
-            ? Constant.UNDEFINED
-            : new Number(1 / Math.Sin(num.Value)).Evaluate();
+        return x / Math.PI % 1 == 0
+            ? Double.NaN
+            : 1 / Math.Sin(x);
     }
 
     [BuiltInFunction("sec")]
     [Elementwise]
-    public static IExpression Sec(Number x)
+    public static double Sec(double x)
     {
-        Number num = (Number)x;
-        
-        return (num.Value / Math.PI - 0.5) % 1 == 0
-            ? Constant.UNDEFINED
-            : new Number(1 / Math.Cos(num.Value)).Evaluate();
+        return (x / Math.PI - 0.5) % 1 == 0
+            ? Double.NaN
+            : 1 / Math.Cos(x);
     }
 
     [BuiltInFunction("cot")]
     [Elementwise]
-    public static IExpression Cot(Number x)
+    public static double Cot(double x)
     {
-        Number num = (Number)x;
-
-        return num.Value / Math.PI % 1 == 0
-            ? Constant.UNDEFINED
-            : new Number(1 / Math.Tan(num.Value)).Evaluate();
+        return x / Math.PI % 1 == 0
+            ? Double.NaN
+            : 1 / Math.Tan(x);
     }
 
     [BuiltInFunction("acsc", "arccsc", "arcsc")]
     [Elementwise]
-    public static IExpression Acsc([NotUndefined][Gap(-1, 1)] IExpression x)
-        => x is Number num
-            ? new Number(Math.Asin(1 / num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
-                ? new Number(0)
-                : Constant.UNDEFINED;
+    public static double Acsc([Gap(-1, 1)] double x)
+        => Double.IsFinite(x)
+            ? Math.Asin(1 / x)
+            : Double.IsInfinity(x)
+                ? 0
+                : Double.NaN;
 
     [BuiltInFunction("asec", "arcsec", "arsec")]
     [Elementwise]
-    public static IExpression Asec([NotUndefined][Gap(-1, 1)] IExpression x)
-        => x is Number num
-            ? new Number(Math.Acos(1 / num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
-                ? new Number(Math.PI / 2)
-                : Constant.UNDEFINED;
+    public static double Asec([Gap(-1, 1)] double x)
+        => Double.IsFinite(x)
+            ? Math.Acos(1 / x)
+            : Double.IsInfinity(x)
+                ? Math.PI / 2
+                : Double.NaN;
 
     [BuiltInFunction("acot", "arccot", "arcot")]
     [Elementwise]
-    public static IExpression Acot([NotUndefined] IExpression x)
-        => x is Number num
-            ? new Number(Math.PI / 2 - Math.Atan(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x)
-                ? new Number(0)
-                : Constant.NEGATIVE_INFINITY.Equals(x)
-                    ? new Number(Math.PI)
-                    : Constant.UNDEFINED;
+    public static double Acot(double x)
+        => Double.IsFinite(x)
+            ? Math.PI / 2 - Math.Atan(x)
+            : Double.IsPositiveInfinity(x)
+                ? 0
+                : Double.IsNegativeInfinity(x)
+                    ? Math.PI
+                    : Double.NaN;
 
     [BuiltInFunction("sinh")]
     [Elementwise]
-    public static IExpression Sinh([NotUndefined] IExpression x)
-        => x is Number num
-            ? new Number(Math.Sinh(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
+    public static double Sinh(double x)
+        => Double.IsFinite(x)
+            ? Math.Sinh(x)
+            : Double.IsInfinity(x)
                 ? x
-                : Constant.UNDEFINED;
+                : Double.NaN;
 
     [BuiltInFunction("cosh")]
     [Elementwise]
-    public static IExpression Cosh([NotUndefined] IExpression x)
-        => x is Number num
-            ? new Number(Math.Cosh(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
-                ? Constant.INFINITY
-                : Constant.UNDEFINED;
+    public static double Cosh(double x)
+        => Double.IsFinite(x)
+            ? Math.Cosh(x)
+            : Double.IsInfinity(x)
+                ? Double.PositiveInfinity
+                : Double.NaN;
 
     [BuiltInFunction("tanh")]
     [Elementwise]
-    public static IExpression Tanh([NotUndefined] IExpression x)
-        => x is Number num
-            ? new Number(Math.Tanh(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x)
-                ? new Number(1)
-                : Constant.NEGATIVE_INFINITY.Equals(x)
-                    ? new Number(-1)
-                    : Constant.UNDEFINED;
+    public static double Tanh(double x)
+        => Double.IsFinite(x)
+            ? Math.Tanh(x)
+            : Double.IsPositiveInfinity(x)
+                ? 1
+                : Double.IsNegativeInfinity(x)
+                    ? -1
+                    : Double.NaN;
 
     [BuiltInFunction("asinh", "arcsinh", "arsinh")]
     [Elementwise]
-    public static IExpression Asinh([NotUndefined] IExpression x)
-        => x is Number num
-            ? new Number(Math.Asinh(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x)
-                ? Constant.INFINITY
-                : Constant.NEGATIVE_INFINITY.Equals(x)
-                    ? Constant.NEGATIVE_INFINITY
-                    : Constant.UNDEFINED;
+    public static double Asinh(double x)
+        => Double.IsFinite(x)
+            ? Math.Asinh(x)
+            : Double.IsPositiveInfinity(x)
+                ? Double.PositiveInfinity
+                : Double.IsNegativeInfinity(x)
+                    ? Double.NegativeInfinity
+                    : Double.NaN;
 
     [BuiltInFunction("acosh", "arccosh", "arcosh")]
     [Elementwise]
-    public static IExpression Acosh([NotUndefined][Minimum(1)] IExpression x)
-        => x is Number num
-            ? new Number(Math.Acosh(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x)
-                ? Constant.INFINITY
-                : Constant.UNDEFINED;
+    public static double Acosh([Minimum(1)] double x)
+        => Double.IsFinite(x)
+            ? Math.Acosh(x)
+            : Double.IsPositiveInfinity(x)
+                ? Double.PositiveInfinity
+                : Double.NaN;
 
     [BuiltInFunction("atanh", "arctanh", "artanh")]
     [Elementwise]
-    public static IExpression Atanh(Number x)
-        => new Number(Math.Atanh(((Number)x).Value)).Evaluate();
+    public static double Atanh(double x)
+        => Math.Atanh(x);
 
     [BuiltInFunction("csch")]
     [Elementwise]
-    public static IExpression Csch([NotUndefined][Gap(0, 0, inclusive: true)] IExpression x)
-        => x is Number num
-            ? new Number(1 / Math.Sinh(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
-                ? new Number(0)
-                : Constant.UNDEFINED;
+    public static double Csch([Gap(0, 0, inclusive: true)] double x)
+        => Double.IsFinite(x)
+            ? 1 / Math.Sinh(x)
+            : Double.IsInfinity(x)
+                ? 0
+                : Double.NaN;
 
     [BuiltInFunction("sech")]
     [Elementwise]
-    public static IExpression Sech([NotUndefined] IExpression x)
-        => x is Number num
-            ? new Number(1 / Math.Cosh(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
-                ? new Number(0)
-                : Constant.UNDEFINED;
+    public static double Sech(double x)
+        => Double.IsFinite(x)
+            ? 1 / Math.Cosh(x)
+            : Double.IsInfinity(x)
+                ? 0
+                : Double.NaN;
 
     [BuiltInFunction("coth")]
     [Elementwise]
-    public static IExpression Coth([NotUndefined][Gap(0, 0, inclusive: true)] IExpression x)
-        => x is Number num
-            ? new Number(Math.Cosh(num.Value) / Math.Sinh(num.Value)).Evaluate()
-            : Constant.INFINITY.Equals(x)
-                ? new Number(1)
-                : Constant.NEGATIVE_INFINITY.Equals(x)
-                    ? new Number(-1)
-                    : Constant.UNDEFINED;
+    public static double Coth([Gap(0, 0, inclusive: true)] double x)
+        => Double.IsFinite(x)
+            ? Math.Cosh(x) / Math.Sinh(x)
+            : Double.IsPositiveInfinity(x)
+                ? 1
+                : Double.IsNegativeInfinity(x)
+                    ? -1
+                    : Double.NaN;
 
     [BuiltInFunction("acsch", "arccsch", "arcsch")]
     [Elementwise]
-    public static IExpression Acsch([NotUndefined][Gap(0, 0, inclusive: true)] IExpression x)
-        => x is Number num
-            ? Asinh(new Number(1 / num.Value))
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
-                ? new Number(0)
-                : Constant.UNDEFINED;
+    public static double Acsch([Gap(0, 0, inclusive: true)] double x)
+        => Double.IsFinite(x)
+            ? Asinh(1 / x)
+            : Double.IsInfinity(x)
+                ? 0
+                : Double.NaN;
 
     [BuiltInFunction("asech", "arcsech", "arsech")]
     [Elementwise]
-    public static IExpression Asech([IsNumber][Range(0, 1)] IExpression x)
-        => Acosh(new Number(1 / ((Number)x).Value));
+    public static double Asech([Range(0, 1)] double x)
+        => Acosh(1 / x);
 
     [BuiltInFunction("acoth", "arccoth", "arcoth")]
     [Elementwise]
-    public static IExpression Acoth([NotUndefined][Gap(-1, 1)] IExpression x)
-        => x is Number num
-            ? num.Value switch
+    public static double Acoth([Gap(-1, 1)] double x)
+        => Double.IsFinite(x)
+            ? x switch
             {
-                1 => Constant.INFINITY,
-                -1 => Constant.NEGATIVE_INFINITY,
-                _ => Atanh(new Number(1 / num.Value))
+                1 => Double.PositiveInfinity,
+                -1 => Double.NegativeInfinity,
+                _ => Atanh(1 / x)
             }
-            : Constant.INFINITY.Equals(x) || Constant.NEGATIVE_INFINITY.Equals(x)
-                ? new Number(0)
-                : Constant.UNDEFINED;
+            : Double.IsInfinity(x)
+                ? 0
+                : Double.NaN;
 }

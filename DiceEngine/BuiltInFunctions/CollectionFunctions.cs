@@ -23,7 +23,7 @@ public static class CollectionFunctions
     {
         IEnumerable<IExpression> expressions = collection
             .Select(x => x.Evaluate(context))
-            .Where(x => !Constant.FALSE.Equals(LogicalFunctions.Bool(selector.Invoke([x], context))));
+            .Where(x => !Constant.FALSE.Equals(new AsBooleanAttribute().Preprocess(selector.Invoke([x], context))));
         IExpression? result = (IExpression?)Activator.CreateInstance(collection.GetType(), expressions);
 
         return result ?? Constant.UNDEFINED;
@@ -44,17 +44,12 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("range")]
-    public static IExpression Range(Number start, Number count, Number step)
+    public static IExpression Range(int start, int count, int step)
     {
-        if (start.Value % 1 != 0 || count.Value % 1 != 0 || step.Value % 1 != 0 || count.Value < 0)
+        if (start % 1 != 0 || count % 1 != 0 || step % 1 != 0 || count < 0)
             return Constant.UNDEFINED;
 
-        int start_value = (int)start.Value;
-        int count_value = (int)count.Value;
-        int step_value = (int)step.Value;
-
-        return Vector.ConvertIEnumerable(Enumerable.Range(0, count_value)
-            .Select(i => (Number)(start_value + i * step_value)));
+        return Vector.ConvertIEnumerable(Enumerable.Range(0, count).Select(i => (Number)(start + i * step)));
     }
 
     [BuiltInFunction("random")]
@@ -136,48 +131,43 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("insert")]
-    public static IExpression Insert(IEnumerableExpression collection, IExpression element, Number index)
+    public static IExpression Insert(IEnumerableExpression collection, IExpression element, int index)
     {
-        if (index.Value % 1 != 0 || index.Value < -collection.Count() || index.Value > collection.Count())
+        if (index % 1 != 0 || index < -collection.Count() || index > collection.Count())
             return Constant.UNDEFINED;
 
         return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
-            .Invoke(null, [collection.Insert((int)index.Value, element)])
+            .Invoke(null, [collection.Insert(index, element)])
             ?? Constant.UNDEFINED;
     }
 
     [BuiltInFunction("remove")]
-    public static IExpression Remove(IEnumerableExpression collection, Number index)
+    public static IExpression Remove(IEnumerableExpression collection, int index)
     {
-        if (!collection.Any() || index.Value % 1 != 0 || index.Value < -collection.Count() ||
-            index.Value >= collection.Count())
+        if (!collection.Any() || index % 1 != 0 || index < -collection.Count() || index >= collection.Count())
             return Constant.UNDEFINED;
 
         return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
-            .Invoke(null, [collection.Remove((int)index.Value)])
+            .Invoke(null, [collection.Remove(index)])
             ?? Constant.UNDEFINED;
     }
 
     [BuiltInFunction("any", "some")]
-    public static IExpression Any(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
+    public static bool Any(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
     {
         return ((IEnumerableExpression)collection.Evaluate(context))
-            .Any(x => Constant.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))))
-            ? Constant.TRUE
-            : Constant.FALSE;
+            .Any(x => Constant.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
     }
 
     [BuiltInFunction("all")]
-    public static IExpression All(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
+    public static bool All(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
     {
         return ((IEnumerableExpression)collection.Evaluate(context))
-            .All(x => Constant.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))))
-            ? Constant.TRUE
-            : Constant.FALSE;
+            .All(x => Constant.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
     }
 
     [BuiltInFunction("find")]
-    public static IExpression Find(IEnumerableExpression collection, IExpression item)
+    public static int? Find(IEnumerableExpression collection, IExpression item)
     {
         try
         {
@@ -185,11 +175,11 @@ public static class CollectionFunctions
                 .First(element => element.x.Equals(item))
                 .i;
 
-            return (Number)index;
+            return index;
         }
         catch (InvalidOperationException)
         {
-            return Constant.UNDEFINED;
+            return null;
         }
     }
 
@@ -213,8 +203,7 @@ public static class CollectionFunctions
     [BuiltInFunction("reverse")]
     public static IExpression Reverse(IEnumerableExpression collection)
     {
-        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
-            .Invoke(null, [collection.Reverse()])
+        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?.Invoke(null, [collection.Reverse()])
             ?? Constant.UNDEFINED;
     }
 
