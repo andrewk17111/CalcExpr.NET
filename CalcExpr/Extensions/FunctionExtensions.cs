@@ -52,7 +52,8 @@ internal static class FunctionExtensions
                     if (p is not null)
                         results.Add(p);
                 }
-                else if (parameter.ParameterType == typeof(Nullable<>))
+                else if (parameter.ParameterType.IsGenericType &&
+                    parameter.ParameterType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     Type type = parameter.ParameterType.GetGenericArguments()[0];
                     IParameter? p = (IParameter?)TypeParameter.InitializeTypeParameter(type, attributes, true);
@@ -76,10 +77,15 @@ internal static class FunctionExtensions
 
         foreach (MethodInfo method in type.GetMethods())
         {
+            string name = method.Name;
             BuiltInFunctionAttribute? bif = method.GetCustomAttribute<BuiltInFunctionAttribute>();
+            Type return_type = method.ReturnType.IsGenericType &&
+                method.ReturnType.GetGenericTypeDefinition() == typeof(Nullable<>)
+                    ? method.ReturnType.GetGenericArguments().Single()
+                    : method.ReturnType;
 
             if (bif is not null && (method.ReturnType.IsAssignableFrom(typeof(IExpression)) ||
-                compatible_types.Contains(method.ReturnType)))
+                compatible_types.Contains(return_type)))
             {
                 List<IParameter>? parameters = method.GetParameters().ToParameters(compatible_types);
 

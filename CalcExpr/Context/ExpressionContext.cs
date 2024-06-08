@@ -7,6 +7,27 @@ namespace CalcExpr.Context;
 
 public class ExpressionContext
 {
+    internal static readonly Dictionary<Type, List<ITypeConverter>> DEFAULT_CONVERTERS =
+        new Dictionary<Type, List<ITypeConverter>>
+        {
+            { typeof(bool), [new BooleanTypeConverter()] },
+            { typeof(sbyte), [new IntegerTypeConverter<sbyte>()] },
+            { typeof(short), [new IntegerTypeConverter<short>()] },
+            { typeof(int), [new IntegerTypeConverter<int>()] },
+            { typeof(long), [new IntegerTypeConverter<long>()] },
+            { typeof(Int128), [new IntegerTypeConverter<Int128>()] },
+            { typeof(byte), [new IntegerTypeConverter<byte>()] },
+            { typeof(ushort), [new IntegerTypeConverter<ushort>()] },
+            { typeof(uint), [new IntegerTypeConverter<uint>()] },
+            { typeof(ulong), [new IntegerTypeConverter<ulong>()] },
+            { typeof(UInt128), [new IntegerTypeConverter<UInt128>()] },
+            { typeof(Half), [new FloatTypeConverter<Half>()] },
+            { typeof(float), [new FloatTypeConverter<float>()] },
+            { typeof(double), [new FloatTypeConverter<double>()] },
+            { typeof(decimal), [new DecimalTypeConverter()] },
+        };
+    internal static readonly Type[] DEFAULT_TYPES = [.. DEFAULT_CONVERTERS.Keys];
+
     private readonly Dictionary<string, IExpression> _variables;
     private readonly Dictionary<string, IFunction> _functions;
     private readonly Dictionary<Type, List<ITypeConverter>> _type_converters;
@@ -58,24 +79,7 @@ public class ExpressionContext
 
         if (type_converters is null)
         {
-            types = new Dictionary<Type, List<ITypeConverter>>
-            {
-                { typeof(bool), [new BooleanTypeConverter()] },
-                { typeof(sbyte), [new IntegerTypeConverter<sbyte>()] },
-                { typeof(short), [new IntegerTypeConverter<short>()] },
-                { typeof(int), [new IntegerTypeConverter<int>()] },
-                { typeof(long), [new IntegerTypeConverter<long>()] },
-                { typeof(Int128), [new IntegerTypeConverter<Int128>()] },
-                { typeof(byte), [new IntegerTypeConverter<byte>()] },
-                { typeof(ushort), [new IntegerTypeConverter<ushort>()] },
-                { typeof(uint), [new IntegerTypeConverter<uint>()] },
-                { typeof(ulong), [new IntegerTypeConverter<ulong>()] },
-                { typeof(UInt128), [new IntegerTypeConverter<UInt128>()] },
-                { typeof(Half), [new FloatTypeConverter<Half>()] },
-                { typeof(float), [new FloatTypeConverter<float>()] },
-                { typeof(double), [new FloatTypeConverter<double>()] },
-                { typeof(decimal), [new DecimalTypeConverter()] },
-            };
+            types = DEFAULT_CONVERTERS;
         }
         else
         {

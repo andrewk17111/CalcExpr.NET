@@ -27,7 +27,7 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
     { }
 
     public Function(Delegate body, bool is_elementwise = false)
-        : this(body.Method.GetParameters().ToParameters([])!, body, is_elementwise)
+        : this(body.Method.GetParameters().ToParameters(ExpressionContext.DEFAULT_TYPES)!, body, is_elementwise)
     { }
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
@@ -68,9 +68,10 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
         }
         else
         {
-            Type return_type = Body.Method.ReturnType == typeof(Nullable<>)
-                ? Body.Method.ReturnType.GetGenericArguments().Single()
-                : Body.Method.ReturnType;
+            Type return_type = Body.Method.ReturnType.IsGenericType &&
+                Body.Method.ReturnType.GetGenericTypeDefinition() == typeof(Nullable<>)
+                    ? Body.Method.ReturnType.GetGenericArguments().Single()
+                    : Body.Method.ReturnType;
             ITypeConverter[] converter = context.GetTypeConverters(return_type);
 
             return converter.ConvertToExpression(result) ?? Constant.UNDEFINED;
