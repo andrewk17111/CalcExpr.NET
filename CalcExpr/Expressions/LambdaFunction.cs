@@ -18,7 +18,7 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
         ExpressionContext inner_context = context.Clone();
-        IExpression[]? args = ((IFunction)this).ProcessArguments(arguments)?.Cast<IExpression>().ToArray();
+        IExpression[]? args = ((IFunction)this).ProcessArguments(arguments, context)?.Cast<IExpression>().ToArray();
 
         if (args is null)
             return Constant.UNDEFINED;

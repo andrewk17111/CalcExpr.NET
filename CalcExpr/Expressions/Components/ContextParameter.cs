@@ -1,4 +1,5 @@
-﻿using CalcExpr.FunctionAttributes;
+﻿using CalcExpr.Context;
+using CalcExpr.FunctionAttributes;
 using System.Diagnostics.CodeAnalysis;
 
 namespace CalcExpr.Expressions.Components;
@@ -9,7 +10,7 @@ public struct ContextParameter(IEnumerable<FunctionAttribute> attributes) : IPar
 
     public bool AllowNull { get; } = false;
 
-    public object? ProcessArgument(IExpression argument)
+    public object? ProcessArgument(IExpression argument, ExpressionContext _)
     {
         throw new NotImplementedException();
     }

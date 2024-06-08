@@ -18,11 +18,11 @@ public class DecimalTypeConverter : ITypeConverter<decimal?>
         return Constant.UNDEFINED;
     }
 
-    public decimal? ConvertFromExpression(IExpression expression)
+    public decimal? ConvertFromExpression(IExpression? expression)
     {
         try
         {
-            if (expression is Number num)
+            if (expression is not null && expression is Number num)
                 return Convert.ToDecimal(num.Value);
         }
         catch

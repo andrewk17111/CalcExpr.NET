@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
+using CalcExpr.Context;
 
 namespace CalcExpr.Expressions.Components;
 
@@ -19,7 +20,7 @@ public readonly struct Parameter(string name, IEnumerable<FunctionAttribute> att
     public Parameter(string name, IEnumerable<string> attributes) : this(name, attributes.Select(GetAttribute))
     { }
 
-    public object? ProcessArgument(IExpression argument)
+    public object? ProcessArgument(IExpression argument, ExpressionContext _)
     {
         return IParameter.ApplyAttributes(argument, Attributes);
     }
@@ -102,7 +103,7 @@ public interface IParameter
 
     public bool AllowNull { get; }
 
-    object? ProcessArgument(IExpression argument);
+    object? ProcessArgument(IExpression argument, ExpressionContext context);
 
     public static IExpression? ApplyAttributes(IExpression argument, IEnumerable<FunctionAttribute> attributes)
     {

@@ -15,8 +15,11 @@ public class BooleanTypeConverter : ITypeConverter<bool?>
         return Constant.UNDEFINED;
     }
 
-    public bool? ConvertFromExpression(IExpression expression)
+    public bool? ConvertFromExpression(IExpression? expression)
     {
+        if (expression is null)
+            return null;
+
         IExpression result = new AsBooleanAttribute().Preprocess(expression);
 
         if (Constant.UNDEFINED.Equals(result))

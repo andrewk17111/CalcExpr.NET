@@ -2,7 +2,7 @@
 
 namespace CalcExpr.TypeConverters;
 
-public interface ITypeConverter<T>
+public interface ITypeConverter<T> : ITypeConverter
 {
     /// <summary>
     /// Converts from a value to an expression.
@@ -16,7 +16,7 @@ public interface ITypeConverter<T>
     /// </summary>
     /// <param name="expression">The expression to convert.</param>
     /// <returns>A value representing the expression.</returns>
-    T? ConvertFromExpression(IExpression expression);
+    T? ConvertFromExpression(IExpression? expression);
 }
 
 public interface ITypeConverter

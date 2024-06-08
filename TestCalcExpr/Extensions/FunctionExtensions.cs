@@ -1,5 +1,4 @@
-﻿using CalcExpr.Attributes;
-using CalcExpr.Context;
+﻿using CalcExpr.Context;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Components;
 using CalcExpr.FunctionAttributes;
@@ -37,7 +36,7 @@ internal static class FunctionExtensions
                     results.Add(new ContextParameter());
                     continue;
                 }
-                else if (parameter.ParameterType.IsAssignableFrom(typeof(IExpression)))
+                else if (parameter.ParameterType.IsAssignableTo(typeof(IExpression)))
                 {
                     if (parameter.ParameterType.GetInterface(nameof(IExpression)) is not null)
                         attributes = attributes.Append(new IsExpressionTypeAttribute(parameter.ParameterType));
@@ -46,15 +45,19 @@ internal static class FunctionExtensions
                 }
                 else if (compatible_types.Contains(parameter.ParameterType))
                 {
-                    results.Add(new TypeParameter(parameter.ParameterType, attributes,
-                        parameter.ParameterType.IsClass));
+                    IParameter? p = (IParameter?)TypeParameter.InitializeTypeParameter(parameter.ParameterType,
+                        attributes, parameter.ParameterType.IsClass);
+
+                    if (p is not null)
+                        results.Add(p);
                 }
                 else if (parameter.ParameterType == typeof(Nullable<>))
                 {
                     Type type = parameter.ParameterType.GetGenericArguments()[0];
+                    IParameter? p = (IParameter?)TypeParameter.InitializeTypeParameter(type, attributes, true);
 
-                    if (compatible_types.Contains(type))
-                        results.Add(new TypeParameter(type, attributes, true));
+                    if (p is not null && compatible_types.Contains(type))
+                        results.Add(p);
                 }
             }
         }

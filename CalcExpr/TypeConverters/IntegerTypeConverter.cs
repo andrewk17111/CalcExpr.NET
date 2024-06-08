@@ -20,11 +20,11 @@ public class IntegerTypeConverter<T> : ITypeConverter<T?>
         }
     }
 
-    public T? ConvertFromExpression(IExpression expression)
+    public T? ConvertFromExpression(IExpression? expression)
     {
         try
         {
-            if (expression is Number num)
+            if (expression is not null && expression is Number num)
                 return (T?)Convert.ChangeType(num.Value, typeof(T));
         }
         catch

@@ -3,6 +3,7 @@ using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
 using CalcExpr.Extensions;
+using CalcExpr.TypeConverters;
 using System.Reflection;
 
 namespace CalcExpr.Expressions;
@@ -12,9 +13,8 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
     private readonly IReadOnlyList<IParameter> _parameters = parameters.ToArray() ?? [];
 
     public readonly Delegate Body = body;
-    public readonly bool RequiresContext = body.Method.GetParameters()
-        .Select(p => p.ParameterType == typeof(ExpressionContext))
-        .Contains(true);
+    public readonly bool RequiresContext = parameters
+        .Any(p => p is ContextParameter);
 
     public IParameter[] Parameters
         => _parameters.ToArray();
@@ -36,7 +36,7 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
 
         if (RequiresContext)
         {
-            object?[]? processed_args = ((IFunction)this).ProcessArguments(arguments);
+            object?[]? processed_args = ((IFunction)this).ProcessArguments(arguments, context);
 
             if (processed_args is null)
                 return Constant.UNDEFINED;
@@ -48,7 +48,7 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
         else
         {            
             object?[]? processed_args = ((IFunction)this)
-                .ProcessArguments(arguments.Select(arg => arg.Evaluate(context)));
+                .ProcessArguments(arguments.Select(arg => arg.Evaluate(context)), context);
 
             if (processed_args is null)
                 return Constant.UNDEFINED;
@@ -56,9 +56,25 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
             args = [.. processed_args];
         }
 
-        // TODO: Process args for primitive types.
-        
-        return (IExpression?)Body.Method.Invoke(this, args) ?? Constant.UNDEFINED;
+        object? result = Body.Method.Invoke(this, args);
+
+        if (result is null)
+        {
+            return Constant.UNDEFINED;
+        }
+        else if (result is IExpression expr)
+        {
+            return expr;
+        }
+        else
+        {
+            Type return_type = Body.Method.ReturnType == typeof(Nullable<>)
+                ? Body.Method.ReturnType.GetGenericArguments().Single()
+                : Body.Method.ReturnType;
+            ITypeConverter[] converter = context.GetTypeConverters(return_type);
+
+            return converter.ConvertToExpression(result) ?? Constant.UNDEFINED;
+        }
     }
 
     public IExpression Evaluate()
@@ -102,7 +118,7 @@ public interface IFunction : IExpression
         return outer_context;
     }
 
-    public object?[]? ProcessArguments(IEnumerable<IExpression> arguments)
+    public object?[]? ProcessArguments(IEnumerable<IExpression> arguments, ExpressionContext context)
     {
         IParameter[] parameters = Parameters.Where(p => p is not ContextParameter).ToArray();
         IExpression[] args = arguments.ToArray();
@@ -110,7 +126,7 @@ public interface IFunction : IExpression
 
         for (int i = 0; i < parameters.Length; i++)
         {
-            object? argument = parameters[i].ProcessArgument(args[i]);
+            object? argument = parameters[i].ProcessArgument(args[i], context);
 
             if (argument is null && !parameters[i].AllowNull)
                 return null;

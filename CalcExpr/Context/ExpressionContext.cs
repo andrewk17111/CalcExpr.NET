@@ -56,24 +56,47 @@ public class ExpressionContext
                 else
                     vars.Add(var, variables[var]);
 
-        type_converters ??= Assembly.GetExecutingAssembly().GetTypes()
-            .Where(type => type.IsClass && type.Namespace == "CalcExpr.TypeConverters" &&
-                type.IsAssignableFrom(typeof(ITypeConverter<>)))
-            .Select(type => (ITypeConverter)Activator.CreateInstance(type)!);
-
-        foreach (ITypeConverter converter in type_converters)
+        if (type_converters is null)
         {
-            Type? convert_type = converter.GetType().GetInterface("ITypeConverter`1")?.GetGenericArguments()?.First();
-
-            if (convert_type == typeof(Nullable<>))
-                convert_type = convert_type.GetGenericArguments().First();
-
-            if (convert_type is not null)
+            types = new Dictionary<Type, List<ITypeConverter>>
             {
-                if (types.TryGetValue(convert_type, out List<ITypeConverter>? convert_list))
-                    convert_list.Add(converter);
-                else
-                    types[convert_type] = [converter];
+                { typeof(bool), [new BooleanTypeConverter()] },
+                { typeof(sbyte), [new IntegerTypeConverter<sbyte>()] },
+                { typeof(short), [new IntegerTypeConverter<short>()] },
+                { typeof(int), [new IntegerTypeConverter<int>()] },
+                { typeof(long), [new IntegerTypeConverter<long>()] },
+                { typeof(Int128), [new IntegerTypeConverter<Int128>()] },
+                { typeof(byte), [new IntegerTypeConverter<byte>()] },
+                { typeof(ushort), [new IntegerTypeConverter<ushort>()] },
+                { typeof(uint), [new IntegerTypeConverter<uint>()] },
+                { typeof(ulong), [new IntegerTypeConverter<ulong>()] },
+                { typeof(UInt128), [new IntegerTypeConverter<UInt128>()] },
+                { typeof(Half), [new FloatTypeConverter<Half>()] },
+                { typeof(float), [new FloatTypeConverter<float>()] },
+                { typeof(double), [new FloatTypeConverter<double>()] },
+                { typeof(decimal), [new DecimalTypeConverter()] },
+            };
+        }
+        else
+        {
+            foreach (ITypeConverter converter in type_converters)
+            {
+                Type? convert_type = converter.GetType().GetInterface("ITypeConverter`1")?.GetGenericArguments()?
+                    .First();
+
+                if (convert_type == typeof(Nullable<>))
+                    convert_type = convert_type.GetGenericArguments().First();
+
+                if (convert_type is not null)
+                {
+                    if (convert_type.GetGenericArguments().Length == 0)
+                    {
+                        if (types.TryGetValue(convert_type, out List<ITypeConverter>? convert_list))
+                            convert_list.Add(converter);
+                        else
+                            types[convert_type] = [converter];
+                    }
+                }
             }
         }
 
@@ -149,4 +172,15 @@ public class ExpressionContext
 
     public bool ContainsFunction(string name)
         => _functions.ContainsKey(name);
+
+    public ITypeConverter[] GetTypeConverters<T>()
+        => GetTypeConverters(typeof(T));
+
+    public ITypeConverter[] GetTypeConverters(Type type)
+    {
+        if (_type_converters.TryGetValue(type, out List<ITypeConverter>? converters))
+            return [.. converters];
+        else
+            return [];
+    }
 }
