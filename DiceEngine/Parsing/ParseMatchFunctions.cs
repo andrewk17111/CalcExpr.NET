@@ -1,12 +1,12 @@
-﻿using CalcExpr.Attributes;
-using CalcExpr.Expressions;
-using CalcExpr.Expressions.Collections;
-using CalcExpr.Expressions.Components;
-using CalcExpr.Parsing.Rules;
+﻿using DiceEngine.Attributes;
+using DiceEngine.Expressions;
+using DiceEngine.Expressions.Collections;
+using DiceEngine.Expressions.Components;
+using DiceEngine.Parsing.Rules;
 using System.Text.RegularExpressions;
 using System.Reflection;
 
-namespace CalcExpr.Parsing;
+namespace DiceEngine.Parsing;
 
 internal static class ParseMatchFunctions
 {

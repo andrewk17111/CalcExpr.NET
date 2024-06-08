@@ -1,8 +1,8 @@
-﻿using CalcExpr.Expressions;
-using CalcExpr.Expressions.Collections;
+﻿using DiceEngine.Expressions;
+using DiceEngine.Expressions.Collections;
 using System.Text.RegularExpressions;
 
-namespace CalcExpr.Parsing;
+namespace DiceEngine.Parsing;
 
 internal static class ParseFunctions
 {

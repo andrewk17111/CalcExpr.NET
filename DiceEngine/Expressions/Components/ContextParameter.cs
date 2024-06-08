@@ -1,8 +1,8 @@
-﻿using CalcExpr.Context;
-using CalcExpr.FunctionAttributes;
+﻿using DiceEngine.Context;
+using DiceEngine.FunctionAttributes;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CalcExpr.Expressions.Components;
+namespace DiceEngine.Expressions.Components;
 
 public struct ContextParameter(IEnumerable<FunctionAttribute> attributes) : IParameter
 {

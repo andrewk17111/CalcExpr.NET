@@ -1,7 +1,7 @@
-﻿using CalcExpr.Expressions;
+﻿using DiceEngine.Expressions;
 using System.Numerics;
 
-namespace CalcExpr.TypeConverters;
+namespace DiceEngine.TypeConverters;
 
 public class IntegerTypeConverter<T> : ITypeConverter<T?>
     where T : struct, IBinaryInteger<T>, IMinMaxValue<T>

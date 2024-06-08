@@ -1,7 +1,7 @@
-﻿using CalcExpr.Expressions;
-using CalcExpr.FunctionAttributes.PreprocessAttributes;
+﻿using DiceEngine.Expressions;
+using DiceEngine.FunctionAttributes.PreprocessAttributes;
 
-namespace CalcExpr.TypeConverters;
+namespace DiceEngine.TypeConverters;
 
 public class BooleanTypeConverter : ITypeConverter<bool?>
 {

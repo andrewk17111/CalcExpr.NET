@@ -1,6 +1,6 @@
-﻿using CalcExpr.Expressions;
+﻿using DiceEngine.Expressions;
 
-namespace CalcExpr.TypeConverters;
+namespace DiceEngine.TypeConverters;
 
 public interface ITypeConverter<T> : ITypeConverter
 {

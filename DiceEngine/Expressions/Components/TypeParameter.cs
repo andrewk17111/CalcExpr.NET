@@ -1,9 +1,9 @@
-﻿using CalcExpr.Context;
-using CalcExpr.FunctionAttributes;
-using CalcExpr.TypeConverters;
+﻿using DiceEngine.Context;
+using DiceEngine.FunctionAttributes;
+using DiceEngine.TypeConverters;
 using System;
 
-namespace CalcExpr.Expressions.Components;
+namespace DiceEngine.Expressions.Components;
 
 public struct TypeParameter<T>(IEnumerable<FunctionAttribute> attributes, bool allow_null) : IParameter
 {

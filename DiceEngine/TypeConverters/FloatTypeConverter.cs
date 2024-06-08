@@ -1,7 +1,7 @@
-﻿using CalcExpr.Expressions;
+﻿using DiceEngine.Expressions;
 using System.Numerics;
 
-namespace CalcExpr.TypeConverters;
+namespace DiceEngine.TypeConverters;
 
 public class FloatTypeConverter<T> : ITypeConverter<T?>
     where T : struct, IFloatingPointIeee754<T>, IMinMaxValue<T>

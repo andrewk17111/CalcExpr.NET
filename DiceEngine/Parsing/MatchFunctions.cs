@@ -1,7 +1,7 @@
-﻿using CalcExpr.Parsing.Rules;
+﻿using DiceEngine.Parsing.Rules;
 using System.Text.RegularExpressions;
 
-namespace CalcExpr.Parsing;
+namespace DiceEngine.Parsing;
 
 internal static class MatchFunctions
 {

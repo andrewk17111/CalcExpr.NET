@@ -1,6 +1,6 @@
-﻿using CalcExpr.Expressions;
+﻿using DiceEngine.Expressions;
 
-namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
+namespace DiceEngine.FunctionAttributes.ConditionalAttributes;
 
 public class IsIntegerAttribute : ConditionAttribute
 {

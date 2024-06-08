@@ -1,13 +1,13 @@
-﻿using CalcExpr.Attributes;
-using CalcExpr.Context;
-using CalcExpr.Expressions;
-using CalcExpr.Expressions.Components;
-using CalcExpr.FunctionAttributes;
-using CalcExpr.FunctionAttributes.ConditionalAttributes;
+﻿using DiceEngine.Attributes;
+using DiceEngine.Context;
+using DiceEngine.Expressions;
+using DiceEngine.Expressions.Components;
+using DiceEngine.FunctionAttributes;
+using DiceEngine.FunctionAttributes.ConditionalAttributes;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace CalcExpr.Extensions;
+namespace DiceEngine.Extensions;
 
 internal static class FunctionExtensions
 {

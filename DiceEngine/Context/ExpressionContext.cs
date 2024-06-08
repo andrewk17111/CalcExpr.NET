@@ -141,7 +141,7 @@ public class ExpressionContext
         foreach (string func in _functions.Keys)
             funcs.Add(func, _functions[func]);
 
-        return new ExpressionContext(vars, funcs, _type_converters.SelectMany(t => t.Value));
+        return new ExpressionContext(vars, funcs, type_converters: _type_converters.SelectMany(t => t.Value));
     }
 
     public bool SetVariable(string name, IExpression expression)
