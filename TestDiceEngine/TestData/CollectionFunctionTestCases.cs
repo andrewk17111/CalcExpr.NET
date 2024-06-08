@@ -23,12 +23,12 @@ public static partial class TestCases
         {
             { [new Vector(), new Function(TestValues.IsEven)], new Vector() },
             { [UtilFunctions.Range<Vector>(1, 10), new Function(TestValues.IsEven)],
-                UtilFunctions.Range<Vector>(1, 10) },
+                UtilFunctions.Range<Vector>(2, 5, 2) },
             { [UtilFunctions.Range<Vector>(2, 10, 2), new Function(TestValues.IsEven)],
                 UtilFunctions.Range<Vector>(2, 10, 2) },
             { [UtilFunctions.Range<Vector>(1, 10, 2), new Function(TestValues.IsEven)], new Vector() },
             { [new Set(), new Function(TestValues.IsEven)], new Set() },
-            { [UtilFunctions.Range<Set>(1, 10), new Function(TestValues.IsEven)], UtilFunctions.Range<Set>(1, 10) },
+            { [UtilFunctions.Range<Set>(1, 10), new Function(TestValues.IsEven)], UtilFunctions.Range<Set>(2, 5, 2) },
             { [UtilFunctions.Range<Set>(2, 10, 2), new Function(TestValues.IsEven)],
                 UtilFunctions.Range<Set>(2, 10, 2) },
             { [UtilFunctions.Range<Set>(1, 10, 2), new Function(TestValues.IsEven)], new Set() },
@@ -73,19 +73,19 @@ public static partial class TestCases
         {
             { [new Set(), (Number)1], new Set([(Number)1]) },
             { [UtilFunctions.Range<Vector>(1, 10), UtilFunctions.Range<Set>(2, 10)],
-                new Vector(UtilFunctions.Range<Vector>(1, 10).Append(UtilFunctions.Range<Vector>(2, 10))) },
+                new Vector(UtilFunctions.Range<Vector>(1, 10).Append(UtilFunctions.Range<Set>(2, 10))) },
             { [new Set([(Number)3]), new Set([(Number)2])], new Set([(Number)3, new Set([(Number)2])]) },
         }),
         new FunctionTestCase("prepend", new Dictionary<IExpression[], IExpression>
         {
             { [new Set(), (Number)1], new Set([(Number)1]) },
             { [UtilFunctions.Range<Vector>(1, 10), UtilFunctions.Range<Set>(2, 10)],
-                new Vector(UtilFunctions.Range<Vector>(1, 10).Prepend(UtilFunctions.Range<Vector>(2, 10))) },
+                new Vector(UtilFunctions.Range<Vector>(1, 10).Prepend(UtilFunctions.Range<Set>(2, 10))) },
             { [new Set([(Number)3]), new Set([(Number)2])], new Set([(Number)3, new Set([(Number)2])]) },
         }),
         new FunctionTestCase("insert", new Dictionary<IExpression[], IExpression>
         {
-            { [new Vector(), TestValues.INFINITY, (Number)0], new Vector([(Number)0]) },
+            { [new Vector(), TestValues.INFINITY, (Number)0], new Vector([TestValues.INFINITY]) },
             { [UtilFunctions.Range<Vector>(1, 10), TestValues.INFINITY, (Number)0],
                 new Vector(UtilFunctions.Range<Vector>(1, 10).Prepend(TestValues.INFINITY)) },
             { [UtilFunctions.Range<Vector>(1, 10), TestValues.INFINITY, (Number)4],
@@ -99,7 +99,7 @@ public static partial class TestCases
                 new Vector(UtilFunctions.Range<Vector>(1, 7)
                     .Append(TestValues.INFINITY)
                     .Concat(UtilFunctions.Range<Vector>(8, 3))) },
-            { [new Set(), TestValues.INFINITY, (Number)0], new Set([(Number)0]) },
+            { [new Set(), TestValues.INFINITY, (Number)0], new Set([TestValues.INFINITY]) },
             { [UtilFunctions.Range<Set>(1, 10), TestValues.INFINITY, (Number)0],
                 new Set(UtilFunctions.Range<Set>(1, 10).Prepend(TestValues.INFINITY)) },
             { [UtilFunctions.Range<Set>(1, 10), TestValues.INFINITY, (Number)4],

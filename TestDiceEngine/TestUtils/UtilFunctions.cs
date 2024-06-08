@@ -54,11 +54,10 @@ internal static class UtilFunctions
         {
             Assert.AreEqual(Math.Round(exp_num.Value, decimal_places), Math.Round(act_num.Value, decimal_places),
                 message);
+            return;
         }
-        else
-        {
-            Assert.AreEqual(expected, actual, message);
-        }
+        
+        Assert.AreEqual(expected, actual, message);
     }
 
     public static void IsLessThan(double expected, double actual, string message = "")
