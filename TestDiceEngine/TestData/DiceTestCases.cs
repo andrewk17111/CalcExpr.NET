@@ -63,8 +63,9 @@ public static partial class TestCases
                 new RandomCollection(1, 1, 1, 100, collectionValidator: x => CompareDieToResult((Die)100, x))),
             new BinaryOperator("+", (Number)1, new RandomValue(1, 100))),
         new TestCase("d%", new PercentileDie(), new RandomCollection(1, 1, 0, 90,
-            x => x is Number num && num.Value % 10 == 0 && num.Value >= 0 && num.Value <= 90,
-            x => CompareDieToResult(new PercentileDie(), x))),
+            x => x is Number num && num.Value % 10 == 0, x => CompareDieToResult(new PercentileDie(), x))),
+        new TestCase("dF", new FateDie(), new RandomCollection(1, 1, -1, 1,
+            collectionValidator: x => CompareDieToResult(new FateDie(), x))),
     ];
 
     private static bool CompareDieToResult(IDie expected, IEnumerable<IExpression> actual)
