@@ -69,7 +69,7 @@ public class Parser
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new RegexRule("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])",
                 RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParseMatchPrefix),
-            new RegexRule("DiceNotation", @"d(\d+|%)", RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchDice),
+            new RegexRule("DiceNotation", @"d(\d+|%|F)", RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchDice),
             new RegexRule("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParseMatchPostfix),
             new Rule("Indexer", ParseMatchIndexer, MatchIndexer),
