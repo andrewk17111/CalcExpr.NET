@@ -108,9 +108,12 @@ internal static class ParseMatchFunctions
 
     internal static IDie ParseMatchDice(string _, Token match, Parser __)
     {
-        return match == "d%"
-            ? new PercentileDie()
-            : new Die(Int32.Parse(match[1..]));
+        return match.Value switch
+        {
+            "d%" => new PercentileDie(),
+            "dF" => new FateDie(),
+            _ => new Die(Int32.Parse(match[1..])),
+        };
     }
 
     internal static Indexer ParseMatchIndexer(string input, Token match, Parser parser)
