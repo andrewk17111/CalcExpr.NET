@@ -9,7 +9,7 @@ A .NET 8 dice notation expression parser and calculator library
 DiceEngine.NET is a versatile and efficient dice notation expression parsing library developed in C# targeting .NET 8. This library allows you to parse strings containing dice notation expressions into expression trees and then evaluated to calculate the resulting value.
 
 ## Features
-- Expression Parsing: Parse and tokenize mathematical expressions provided as strings.
+- Expression Parsing: Parse and tokenize mathematical expressions and dice notation provided as strings.
 - Unary Operations: Perfoms unary operations supporting prefixes and postfixes.
 - Binary Operations: Perform arithmetic operations such as addition, subtraction, multiplication, division, integer division, and modulus.
 - Parentheses Support: Handle nested expressions using parentheses for accurate calculations.
@@ -21,6 +21,11 @@ DiceEngine.NET is a versatile and efficient dice notation expression parsing lib
   - Vectors: Vectors can contain any number of elements in a set order, allowing for non-unique elements.
   - Sets: Sets can contain any number of unique elements in an indeterminate order.
 - Indexers: An expression to get an element from another expression
+
+### Dice Features
+- Roll Result: Roll results store the results of the rolls from dice. These results will then be summed together when evaluated.
+- Die: A die generates a random value between 1 and the max value of the die.
+- Percentile Die: A percentile die generates a random value between 0 and 90 that is a multiple of 10.
 
 ## Installation
 Because this project is still under active development, you can install this by either downloading this repository and building the project, or by downloading the latest experimental build from the section of this repository.
