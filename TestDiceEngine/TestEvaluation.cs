@@ -180,10 +180,16 @@ public class TestEvaluation
     }
 
     [TestMethod]
-    public void TestDiceEvaluation()
-        => EvaluateTestCases(TestCases.DiceNotation);
+    public void TestEvaluateDice()
+    {
+        for (int i = 0; i < 100; i++)
+            EvaluateTestCases(TestCases.DiceNotation);
+    }
 
     [TestMethod]
-    public void TestDiceStepEvaluation()
-        => StepEvaluateTestCases(TestCases.DiceNotation);
+    public void TestStepEvaluateDice()
+    {
+        for (int i = 0; i < 100; i++)
+            StepEvaluateTestCases(TestCases.DiceNotation);
+    }
 }
