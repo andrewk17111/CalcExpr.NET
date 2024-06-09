@@ -5,6 +5,7 @@ using DiceEngine.Expressions.Components;
 using DiceEngine.Parsing.Rules;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using DiceEngine.Expressions.Dice;
 
 namespace DiceEngine.Parsing;
 
@@ -105,15 +106,22 @@ internal static class ParseMatchFunctions
     internal static UnaryOperator ParseMatchPostfix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, false, parser.Parse(input[..match.Index]));
 
+    internal static IDie ParseMatchDice(string _, Token match, Parser __)
+    {
+        return match == "d%"
+            ? new PercentileDie()
+            : new Die(Int32.Parse(match[1..]));
+    }
+
     internal static Indexer ParseMatchIndexer(string input, Token match, Parser parser)
         => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
 
-    internal static Constant ParseMatchConstant(string _, Token match, Parser parser)
+    internal static Constant ParseMatchConstant(string _, Token match, Parser __)
         => new Constant(match.Value);
 
-    internal static Variable ParseMatchVariable(string _, Token match, Parser parser)
+    internal static Variable ParseMatchVariable(string _, Token match, Parser __)
         => new Variable(match.Value);
 
-    internal static Number ParseMatchNumber(string _, Token match, Parser parser)
+    internal static Number ParseMatchNumber(string _, Token match, Parser __)
         => new Number(Convert.ToDouble(match.Value));
 }

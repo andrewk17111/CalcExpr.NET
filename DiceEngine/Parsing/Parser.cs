@@ -69,10 +69,10 @@ public class Parser
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
             new RegexRule("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])",
                 RegexRuleOptions.Left | RegexRuleOptions.TrimLeft, ParseMatchPrefix),
+            new RegexRule("DiceNotation", @"d(\d+|%)", RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchDice),
             new RegexRule("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.Right | RegexRuleOptions.TrimRight, ParseMatchPostfix),
             new Rule("Indexer", ParseMatchIndexer, MatchIndexer),
-            new RegexRule("DiceNotation", @"d(\d+)", RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseDice),
             new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|undefined|dne|(empty(_set)?)|∅|e)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchConstant),
             new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)",
@@ -319,10 +319,5 @@ public class Parser
         foreach (IRule rule in rules)
             if (rule is NestedRegexRule regex_rule)
                 regex_rule.Build(rules);
-    }
-
-    private static IDie ParseDice(string input, Token match, Parser parser)
-    {
-        return new Die(Int32.Parse(match[1..]));
     }
 }
