@@ -88,10 +88,10 @@ internal class RandomCollection(int? minCount, int? maxCount, double? min, doubl
             if ((!MinCount.HasValue || enumExpr.Count() >= MinCount) &&
                 (!MaxCount.HasValue || enumExpr.Count() <= MaxCount) &&
                 (!Min.HasValue || numbers.All(x => x >= Min.Value)) &&
-                (!Max.HasValue || numbers.All(x => x <= Max.Value)) &&
-                (ElementValidator is null || enumExpr.All(ElementValidator)) &&
-                (CollectionValidator is null || CollectionValidator(enumExpr)))
-            return true;
+                (!Max.HasValue || numbers.All(x => x <= Max.Value)))
+                if (ElementValidator is null || enumExpr.All(ElementValidator))
+                    if (CollectionValidator is null || CollectionValidator(enumExpr))
+                        return true;
         }
 
         return false;
