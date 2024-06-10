@@ -43,7 +43,7 @@ public class TestParser
             ("MultBinOp", @"(?<={Operand})(%%|//|[*×/÷%])(?={Operand})"),
             ("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})"),
             ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
-            ("DiceNotation", @"d(\d+|%|F)"),
+            ("DiceNotation", @"\d*d(\d+|%|F)"),
             ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
             ("Indexer", null),
             ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|undefined|dne|(empty(_set)?)|∅|e)"),
