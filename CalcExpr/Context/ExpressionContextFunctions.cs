@@ -1,6 +1,5 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Extensions;
-using System;
 using System.Reflection;
 
 namespace CalcExpr.Context;
@@ -49,14 +48,16 @@ public partial class ExpressionContext
     public bool SetFunction(string name, IFunction function)
     {
         if (function is null)
-            return _functions.Remove(name);
+            return _functions.Remove(name) && _aliases.Remove(name);
 
+        _variables.Remove(name);
         _functions[name] = function;
+        _aliases[name] = true;
         return true;
     }
 
     public bool RemoveFunction(string name)
-        => _functions.Remove(name);
+        => _functions.Remove(name) && _aliases.Remove(name);
 
     public bool ContainsFunction(string name)
         => _functions.ContainsKey(name);
