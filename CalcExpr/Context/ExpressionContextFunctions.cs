@@ -12,19 +12,16 @@ public partial class ExpressionContext
     public string[] Functions
         => [.. _functions.Keys];
 
-    public IExpression this[string function, IEnumerable<IExpression> arguments]
+    public IExpression InvokeFunction(string function, IEnumerable<IExpression> arguments)
     {
-        get
+        if (ContainsFunction(function))
         {
-            if (ContainsFunction(function))
-            {
-                IFunction func = _functions[function];
+            IFunction func = _functions[function];
 
-                return IFunction.ForEach(func, arguments, this);
-            }
-
-            return Constant.UNDEFINED;
+            return IFunction.ForEach(func, arguments, this);
         }
+
+        return Constant.UNDEFINED;
     }
 
     public void SetFunctions(Assembly assembly)
