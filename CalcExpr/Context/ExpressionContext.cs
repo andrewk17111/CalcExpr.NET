@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace CalcExpr.Context;
 
-public class ExpressionContext
+public partial class ExpressionContext
 {
     internal static readonly Dictionary<Type, List<ITypeConverter>> DEFAULT_CONVERTERS =
         new Dictionary<Type, List<ITypeConverter>>
@@ -29,14 +29,10 @@ public class ExpressionContext
     internal static readonly Type[] DEFAULT_TYPES = [.. DEFAULT_CONVERTERS.Keys];
 
     private readonly Dictionary<string, IExpression> _variables;
-    private readonly Dictionary<string, IFunction> _functions;
     private readonly Dictionary<Type, List<ITypeConverter>> _type_converters;
 
     public string[] Variables
         => _variables.Keys.Concat(Functions).ToArray();
-
-    public string[] Functions
-        => _functions.Keys.ToArray();
 
     public IExpression this[string variable]
     {
@@ -46,21 +42,6 @@ public class ExpressionContext
                 ? func_value
                 : Constant.UNDEFINED;
         set => SetVariable(variable, value);
-    }
-
-    public IExpression this[string function, IEnumerable<IExpression> arguments]
-    {
-        get
-        {
-            if (ContainsFunction(function))
-            {
-                IFunction func = _functions[function];
-
-                return IFunction.ForEach(func, arguments, this);
-            }
-
-            return Constant.UNDEFINED;
-        }
     }
 
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
@@ -161,21 +142,6 @@ public class ExpressionContext
 
     public bool ContainsVariable(string name)
         => _variables.ContainsKey(name) || ContainsFunction(name);
-    
-    public bool SetFunction(string name, IFunction function)
-    {
-        if (function is null)
-            return _functions.Remove(name);
-
-        _functions[name] = function;
-        return true;
-    }
-
-    public bool RemoveFunction(string name)
-        => _functions.Remove(name);
-
-    public bool ContainsFunction(string name)
-        => _functions.ContainsKey(name);
 
     public ITypeConverter[] GetTypeConverters<T>()
         => GetTypeConverters(typeof(T));
