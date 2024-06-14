@@ -28,6 +28,7 @@ public partial class ExpressionContext
 
     private readonly Dictionary<string, IExpression> _variables;
     private readonly Dictionary<Type, List<ITypeConverter>> _type_converters;
+    private readonly Dictionary<string, bool> _aliases;
 
     public string[] Variables
         => _variables.Keys.Concat(Functions).ToArray();
@@ -45,16 +46,27 @@ public partial class ExpressionContext
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
         bool register_default_functions = true, IEnumerable<ITypeConverter>? type_converters = null)
     {
+        Dictionary<string, bool> aliases = [];
         Dictionary<string, IExpression> vars = [];
         Dictionary<string, IFunction> funcs = [];
         Dictionary<Type, List<ITypeConverter>> types = [];
 
         if (variables is not null)
+        {
             foreach (string var in variables.Keys)
+            {
                 if (variables[var] is IFunction func)
-                    funcs.Add(var, func);
+                {
+                    funcs[var] = func;
+                    aliases[var] = true;
+                }
                 else
-                    vars.Add(var, variables[var]);
+                {
+                    vars[var] = variables[var];
+                    aliases[var] = false;
+                }
+            }
+        }
 
         if (type_converters is null)
         {
@@ -84,6 +96,7 @@ public partial class ExpressionContext
         }
 
         _type_converters = types;
+        _aliases = aliases;
         _variables = vars;
         _functions = funcs;
 
@@ -118,6 +131,8 @@ public partial class ExpressionContext
 
         if (expression is not IFunction function)
         {
+            _functions.Remove(name);
+            _aliases[name] = false;
             _variables[name] = expression;
             return true;
         }
@@ -128,10 +143,10 @@ public partial class ExpressionContext
     }
 
     public bool RemoveVariable(string name)
-        => _variables.Remove(name) || _functions.Remove(name);
+        => _aliases.Remove(name) && (_variables.Remove(name) || _functions.Remove(name));
 
     public bool ContainsVariable(string name)
-        => _variables.ContainsKey(name) || ContainsFunction(name);
+        => _aliases.ContainsKey(name);
 
     public ITypeConverter[] GetTypeConverters<T>()
         => GetTypeConverters(typeof(T));
