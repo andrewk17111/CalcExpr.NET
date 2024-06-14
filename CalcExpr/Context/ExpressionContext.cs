@@ -1,11 +1,9 @@
 ﻿using CalcExpr.Expressions;
-using CalcExpr.Extensions;
 using CalcExpr.TypeConverters;
-using System.Reflection;
 
 namespace CalcExpr.Context;
 
-public class ExpressionContext
+public partial class ExpressionContext
 {
     internal static readonly Dictionary<Type, List<ITypeConverter>> DEFAULT_CONVERTERS =
         new Dictionary<Type, List<ITypeConverter>>
@@ -29,14 +27,10 @@ public class ExpressionContext
     internal static readonly Type[] DEFAULT_TYPES = [.. DEFAULT_CONVERTERS.Keys];
 
     private readonly Dictionary<string, IExpression> _variables;
-    private readonly Dictionary<string, IFunction> _functions;
     private readonly Dictionary<Type, List<ITypeConverter>> _type_converters;
 
     public string[] Variables
         => _variables.Keys.Concat(Functions).ToArray();
-
-    public string[] Functions
-        => _functions.Keys.ToArray();
 
     public IExpression this[string variable]
     {
@@ -48,26 +42,11 @@ public class ExpressionContext
         set => SetVariable(variable, value);
     }
 
-    public IExpression this[string function, IEnumerable<IExpression> arguments]
-    {
-        get
-        {
-            if (ContainsFunction(function))
-            {
-                IFunction func = _functions[function];
-
-                return IFunction.ForEach(func, arguments, this);
-            }
-
-            return Constant.UNDEFINED;
-        }
-    }
-
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
-        Dictionary<string, IFunction>? functions = null, IEnumerable<ITypeConverter>? type_converters = null)
+        bool register_default_functions = true, IEnumerable<ITypeConverter>? type_converters = null)
     {
         Dictionary<string, IExpression> vars = [];
-        Dictionary<string, IFunction> funcs = functions?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value) ?? [];
+        Dictionary<string, IFunction> funcs = [];
         Dictionary<Type, List<ITypeConverter>> types = [];
 
         if (variables is not null)
@@ -104,26 +83,12 @@ public class ExpressionContext
             }
         }
 
-        if (functions is null)
-        {
-            foreach (Type t in Assembly.GetExecutingAssembly().GetTypes())
-            {
-                if (!t.IsClass || t.Namespace != "CalcExpr.BuiltInFunctions")
-                    continue;
-
-                Dictionary<string[], Function> built_in_functions = t.GetFunctions(types.Keys);
-
-                foreach (string[] aliases in built_in_functions.Keys)
-                {
-                    foreach (string alias in aliases)
-                        funcs.Add(alias, built_in_functions[aliases]);
-                }
-            }
-        }
-
         _type_converters = types;
         _variables = vars;
         _functions = funcs;
+
+        if (register_default_functions)
+            SetFunctions(GetType().Assembly);
     }
 
     public ExpressionContext Clone()
@@ -134,10 +99,16 @@ public class ExpressionContext
         foreach (string var in _variables.Keys)
             vars.Add(var, _variables[var]);
 
+        ExpressionContext result = new ExpressionContext(vars, false, _type_converters.SelectMany(t => t.Value));
+
+        // TODO: Replace with streamlined function when created.
         foreach (string func in _functions.Keys)
             funcs.Add(func, _functions[func]);
 
-        return new ExpressionContext(vars, funcs, _type_converters.SelectMany(t => t.Value));
+        foreach (KeyValuePair<string, IFunction> func in _functions)
+            result.SetFunction(func.Key, func.Value);
+
+        return result;
     }
 
     public bool SetVariable(string name, IExpression expression)
@@ -161,21 +132,6 @@ public class ExpressionContext
 
     public bool ContainsVariable(string name)
         => _variables.ContainsKey(name) || ContainsFunction(name);
-    
-    public bool SetFunction(string name, IFunction function)
-    {
-        if (function is null)
-            return _functions.Remove(name);
-
-        _functions[name] = function;
-        return true;
-    }
-
-    public bool RemoveFunction(string name)
-        => _functions.Remove(name);
-
-    public bool ContainsFunction(string name)
-        => _functions.ContainsKey(name);
 
     public ITypeConverter[] GetTypeConverters<T>()
         => GetTypeConverters(typeof(T));
