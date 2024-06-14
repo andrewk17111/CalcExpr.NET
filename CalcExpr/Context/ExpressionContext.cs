@@ -31,16 +31,20 @@ public partial class ExpressionContext
     private readonly Dictionary<string, bool> _aliases;
 
     public string[] Variables
-        => _variables.Keys.Concat(Functions).ToArray();
+        => [.. _aliases.Keys];
 
-    public IExpression this[string variable]
+    public IExpression this[string name]
     {
-        get => _variables.TryGetValue(variable, out IExpression? var_value)
-            ? var_value
-            : _functions.TryGetValue(variable, out IFunction? func_value)
-                ? func_value
-                : Constant.UNDEFINED;
-        set => SetVariable(variable, value);
+        get
+        {
+            if (_aliases.TryGetValue(name, out bool is_func))
+                return is_func
+                    ? _functions[name]
+                    : _variables[name];
+            
+            return Constant.UNDEFINED;
+        }
+        set => SetVariable(name, value);
     }
 
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
