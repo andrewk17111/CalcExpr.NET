@@ -45,10 +45,10 @@ public partial class ExpressionContext
     }
 
     public ExpressionContext(Dictionary<string, IExpression>? variables = null,
-        Dictionary<string, IFunction>? functions = null, IEnumerable<ITypeConverter>? type_converters = null)
+        bool register_default_functions = true, IEnumerable<ITypeConverter>? type_converters = null)
     {
         Dictionary<string, IExpression> vars = [];
-        Dictionary<string, IFunction> funcs = functions?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value) ?? [];
+        Dictionary<string, IFunction> funcs = [];
         Dictionary<Type, List<ITypeConverter>> types = [];
 
         if (variables is not null)
@@ -85,20 +85,14 @@ public partial class ExpressionContext
             }
         }
 
-        if (functions is null)
+        foreach (Type t in GetType().Assembly.GetTypes())
         {
-            foreach (Type t in Assembly.GetExecutingAssembly().GetTypes())
+            Dictionary<string[], Function> built_in_functions = t.GetFunctions(types.Keys);
+
+            foreach (string[] aliases in built_in_functions.Keys)
             {
-                if (!t.IsClass || t.Namespace != "CalcExpr.BuiltInFunctions")
-                    continue;
-
-                Dictionary<string[], Function> built_in_functions = t.GetFunctions(types.Keys);
-
-                foreach (string[] aliases in built_in_functions.Keys)
-                {
-                    foreach (string alias in aliases)
-                        funcs.Add(alias, built_in_functions[aliases]);
-                }
+                foreach (string alias in aliases)
+                    funcs.Add(alias, built_in_functions[aliases]);
             }
         }
 
@@ -115,10 +109,16 @@ public partial class ExpressionContext
         foreach (string var in _variables.Keys)
             vars.Add(var, _variables[var]);
 
+        ExpressionContext result = new ExpressionContext(vars, false, _type_converters.SelectMany(t => t.Value));
+
+        // TODO: Replace with streamlined function when created.
         foreach (string func in _functions.Keys)
             funcs.Add(func, _functions[func]);
 
-        return new ExpressionContext(vars, funcs, _type_converters.SelectMany(t => t.Value));
+        foreach (KeyValuePair<string, IFunction> func in _functions)
+            result.SetFunction(func.Key, func.Value);
+
+        return result;
     }
 
     public bool SetVariable(string name, IExpression expression)

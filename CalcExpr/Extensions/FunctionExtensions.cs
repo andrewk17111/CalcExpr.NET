@@ -75,7 +75,7 @@ internal static class FunctionExtensions
     {
         Dictionary<string[], Function> candidates = [];
 
-        foreach (MethodInfo method in type.GetMethods())
+        foreach (MethodInfo method in type.GetMethods().Where(x => x.IsStatic))
         {
             string name = method.Name;
             BuiltInFunctionAttribute? bif = method.GetCustomAttribute<BuiltInFunctionAttribute>();
