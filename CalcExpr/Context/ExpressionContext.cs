@@ -1,7 +1,5 @@
 ﻿using CalcExpr.Expressions;
-using CalcExpr.Extensions;
 using CalcExpr.TypeConverters;
-using System.Reflection;
 
 namespace CalcExpr.Context;
 
@@ -85,20 +83,12 @@ public partial class ExpressionContext
             }
         }
 
-        foreach (Type t in GetType().Assembly.GetTypes())
-        {
-            Dictionary<string[], Function> built_in_functions = t.GetFunctions(types.Keys);
-
-            foreach (string[] aliases in built_in_functions.Keys)
-            {
-                foreach (string alias in aliases)
-                    funcs.Add(alias, built_in_functions[aliases]);
-            }
-        }
-
         _type_converters = types;
         _variables = vars;
         _functions = funcs;
+
+        if (register_default_functions)
+            SetFunctions(GetType().Assembly);
     }
 
     public ExpressionContext Clone()
