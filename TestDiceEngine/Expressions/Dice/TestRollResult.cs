@@ -18,7 +18,7 @@ public class TestRollResult
         {
             int size = random.Next(1, 100);
             Die die = new Die(size);
-            RollResult rollResult = new RollResult([(Number)random.Next(1, size + 1)], die);
+            RollResult rollResult = new RollResult(random.Next(1, size + 1), die);
 
             Assert.AreEqual(die, rollResult.Die);
         }
@@ -36,8 +36,8 @@ public class TestRollResult
         {
             int size = random.Next(1, 100);
             Die die = new Die(size);
-            Number number = (Number)random.Next(1, size + 1);
-            RollResult rollResult = new RollResult([number], die);
+            int number = random.Next(1, size + 1);
+            RollResult rollResult = new RollResult(number, die);
 
             Assert.AreEqual($"{die} ({number})", rollResult.ToString());
         }

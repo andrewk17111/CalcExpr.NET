@@ -19,7 +19,7 @@ public class DiceSet(int size, IDie die) : IDie
     public IExpression StepEvaluate(ExpressionContext context)
         => Evaluate(context);
 
-    public Number Roll(Random? random = null)
+    public int Roll(Random? random = null)
         => Die.Roll();
 
     public override int GetHashCode()

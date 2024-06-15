@@ -3,33 +3,32 @@ using System.Collections;
 
 namespace DiceEngine.Expressions.Dice;
 
-public class RollResult(IEnumerable<Number> results, IDie die) : Number(double.NaN), IEnumerable<IExpression>
+public class RollResult(IEnumerable<int> results, IDie die) : Number(double.NaN), IEnumerable<IExpression>
 {
-    private readonly Number[] _results = results.ToArray();
+    private readonly int[] _results = results.ToArray();
 
     public readonly IDie Die = die;
 
-    public new double Value => ((Number)Evaluate()).Value;
+    public new int Value => _results.Sum();
 
-    public Number this[int index]
+    public int this[int index]
         => _results[index];
 
-    public Number[] this[Range range]
+    public int[] this[Range range]
         => _results[range];
 
     public int Length
         => _results.Length;
 
-    public RollResult(Number result, IDie die)
-        : this(new Number[] { result }, die)
+    public RollResult(int result, IDie die) : this([result], die)
     {
     }
 
     public new IExpression Evaluate(ExpressionContext _)
-        => _results.Aggregate((a, b) => (Number)(a.Value + b.Value));
+        => (Number)Value;
 
     public new IExpression StepEvaluate(ExpressionContext _)
-        => _results.Aggregate((a, b) => (Number)(a.Value + b.Value));
+        => (Number)Value;
 
     public override int GetHashCode()
         => HashCode.Combine(Die, _results);
@@ -44,7 +43,7 @@ public class RollResult(IEnumerable<Number> results, IDie die) : Number(double.N
         => $"{Die} ({String.Join(", ", _results.Select(r => r.ToString(format)))})";
 
     public IEnumerator<IExpression> GetEnumerator()
-        => ((IEnumerable<IExpression>)_results).GetEnumerator();
+        => _results.Select(x => (Number)x).Cast<IExpression>().GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
         => _results.GetEnumerator();

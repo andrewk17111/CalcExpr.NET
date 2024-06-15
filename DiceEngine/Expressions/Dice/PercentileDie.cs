@@ -16,8 +16,8 @@ public class PercentileDie : IDie
     public IExpression StepEvaluate(ExpressionContext context)
         => Evaluate(context);
 
-    public Number Roll(Random? random = null)
-        => (Number)((random ?? new Random()).Next(10) * 10);
+    public int Roll(Random? random = null)
+        => (random ?? new Random()).Next(10) * 10;
 
     public override int GetHashCode()
         => 0;
