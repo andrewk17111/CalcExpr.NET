@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace DiceEngine.Expressions.Dice;
 
-public class RollResult(IEnumerable<int> results, IDie die) : Number(double.NaN), IEnumerable<IExpression>
+public class RollResult(IEnumerable<int> results, IDie die) : Number(double.NaN), IEnumerable<int>
 {
     private readonly int[] _results = results.ToArray();
 
@@ -42,8 +42,8 @@ public class RollResult(IEnumerable<int> results, IDie die) : Number(double.NaN)
     public new string ToString(string? format)
         => $"{Die} ({String.Join(", ", _results.Select(r => r.ToString(format)))})";
 
-    public IEnumerator<IExpression> GetEnumerator()
-        => _results.Select(x => (Number)x).Cast<IExpression>().GetEnumerator();
+    public IEnumerator<int> GetEnumerator()
+        => ((IEnumerable<int>)_results).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
         => _results.GetEnumerator();

@@ -32,14 +32,15 @@ internal static class UtilFunctions
 
     public static void AreEqual(IExpression expected, IExpression actual, int decimal_places = 0, string message = "")
     {
-        if (expected is IEnumerable<IExpression> exp_enum && actual is IEnumerable<IExpression> act_enum)
+        if (expected is RandomCollection || (expected.GetType().IsGenericType &&
+            expected.GetType().GetGenericTypeDefinition() == typeof(RandomEnumerable<>)))
         {
-            if (expected is RandomCollection randCollection)
-            {
-                Assert.AreEqual(randCollection, act_enum, message);
-                return;
-            }
-            else if (exp_enum.GetType() == act_enum.GetType() && exp_enum.Count() == act_enum.Count())
+            Assert.AreEqual(expected, actual, message);
+            return;
+        }
+        else if (expected is IEnumerable<IExpression> exp_enum && actual is IEnumerable<IExpression> act_enum)
+        {
+            if (exp_enum.GetType() == act_enum.GetType() && exp_enum.Count() == act_enum.Count())
             {
                 IEnumerator<IExpression> exp_enumerator = exp_enum.GetEnumerator();
                 IEnumerator<IExpression> act_enumerator = act_enum.GetEnumerator();
