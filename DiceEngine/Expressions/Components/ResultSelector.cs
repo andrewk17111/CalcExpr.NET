@@ -10,8 +10,8 @@ namespace DiceEngine.Expressions.Components;
 /// <param name="value">The value to use in the selection.</param>
 public readonly struct ResultSelector(string selector, int value)
 {
-    private static readonly ReadOnlyDictionary<string, Func<int, RollResult, IEnumerable<int>>> SELECTORS =
-        new Dictionary<string, Func<int, RollResult, IEnumerable<int>>>
+    private static readonly ReadOnlyDictionary<string, Func<int, IEnumerable<RollValue>, IEnumerable<int>>> SELECTORS =
+        new Dictionary<string, Func<int, IEnumerable<RollValue>, IEnumerable<int>>>
         {
             { "", SelectLiteral },
             { "h", SelectHighest },
@@ -25,64 +25,82 @@ public readonly struct ResultSelector(string selector, int value)
     public readonly string Selector = selector;
     public readonly int Value = value;
 
-    private static IEnumerable<int> SelectLiteral(int value, RollResult result)
+    public int[] Select(IEnumerable<RollValue> result)
     {
-        for (int i = 0; i < result.Length; i++)
+        if (SELECTORS.TryGetValue(Selector, out Func<int, IEnumerable<RollValue>, IEnumerable<int>>? selector))
+            return selector(Value, result).ToArray();
+
+        return [];
+    }
+
+    private static IEnumerable<int> SelectLiteral(int value, IEnumerable<RollValue> results)
+    {
+        int i = 0;
+
+        foreach (RollValue result in results)
         {
-            if (result[i] == value)
-                yield return i;
+            if (result == value)
+                yield return i++;
         }
     }
 
-    private static IEnumerable<int> SelectHighest(int value, RollResult result)
+    private static IEnumerable<int> SelectHighest(int value, IEnumerable<RollValue> results)
     {
-        return result.Select((x, i) => (i, x))
+        return results.Select((x, i) => (i, x))
             .OrderByDescending(pair => pair.x)
             .Take(value)
             .Select(pair => pair.i);
     }
 
-    private static IEnumerable<int> SelectLowest(int value, RollResult result)
+    private static IEnumerable<int> SelectLowest(int value, IEnumerable<RollValue> results)
     {
-        return result.Select((x, i) => (i, x))
+        return results.Select((x, i) => (i, x))
             .OrderBy(pair => pair.x)
             .Take(value)
             .Select(pair => pair.i);
     }
 
-    private static IEnumerable<int> SelectLessThan(int value, RollResult result)
+    private static IEnumerable<int> SelectLessThan(int value, IEnumerable<RollValue> results)
     {
-        for (int i = 0; i < result.Length; i++)
+        int i = 0;
+
+        foreach (RollValue result in results)
         {
-            if (result[i] < value)
-                yield return i;
+            if (result < value)
+                yield return i++;
         }
     }
 
-    private static IEnumerable<int> SelectLessThanOrEqual(int value, RollResult result)
+    private static IEnumerable<int> SelectLessThanOrEqual(int value, IEnumerable<RollValue> results)
     {
-        for (int i = 0; i < result.Length; i++)
+        int i = 0;
+
+        foreach (RollValue result in results)
         {
-            if (result[i] <= value)
-                yield return i;
+            if (result <= value)
+                yield return i++;
         }
     }
 
-    private static IEnumerable<int> SelectGreaterThan(int value, RollResult result)
+    private static IEnumerable<int> SelectGreaterThan(int value, IEnumerable<RollValue> results)
     {
-        for (int i = 0; i < result.Length; i++)
+        int i = 0;
+
+        foreach (RollValue result in results)
         {
-            if (result[i] > value)
-                yield return i;
+            if (result > value)
+                yield return i++;
         }
     }
 
-    private static IEnumerable<int> SelectGreaterThanOrEqual(int value, RollResult result)
+    private static IEnumerable<int> SelectGreaterThanOrEqual(int value, IEnumerable<RollValue> results)
     {
-        for (int i = 0; i < result.Length; i++)
+        int i = 0;
+
+        foreach (RollValue result in results)
         {
-            if (result[i] >= value)
-                yield return i;
+            if (result >= value)
+                yield return i++;
         }
     }
 }
