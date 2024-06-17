@@ -1,22 +1,28 @@
 ﻿using DiceEngine.Context;
 using DiceEngine.Expressions;
+using DiceEngine.Expressions.Dice;
 using System.Collections;
-using System.Numerics;
 using System.Text;
 
 namespace TestDiceEngine.TestModels;
 
-internal class RandomEnumerable<T>(int? minCount, int? maxCount, T? min, T? max,
-    Func<T, bool>? elementValidator = null, Func<IEnumerable<T>, bool>? enumerableValidator = null)
-    : IEnumerable<T>, IExpression
-    where T : struct, IComparisonOperators<T, T, bool>, IEquatable<T>
+internal class RandomRollResult(int? minCount, int? maxCount, RollValue? min, RollValue? max,
+    Func<RollValue, bool>? elementValidator = null, Func<IEnumerable<RollValue>, bool>? enumerableValidator = null)
+    : IEnumerable<RollValue>, IExpression
 {
     public readonly int? MinCount = minCount;
     public readonly int? MaxCount = maxCount;
-    public readonly T? Min = min;
-    public readonly T? Max = max;
-    public readonly Func<T, bool>? ElementValidator = elementValidator;
-    public readonly Func<IEnumerable<T>, bool>? EnumerableValidator = enumerableValidator;
+    public readonly RollValue? Min = min;
+    public readonly RollValue? Max = max;
+    public readonly Func<RollValue, bool>? ElementValidator = elementValidator;
+    public readonly Func<IEnumerable<RollValue>, bool>? EnumerableValidator = enumerableValidator;
+
+    public RandomRollResult(int? minCount, int? maxCount, int? min, int? max,
+        Func<RollValue, bool>? elementValidator = null,
+        Func<IEnumerable<RollValue>, bool>? enumerableValidator = null)
+        : this(minCount, maxCount, (RollValue?)min, (RollValue?)max, elementValidator, enumerableValidator)
+    {
+    }
 
     public IExpression Evaluate()
         => throw new NotImplementedException();
@@ -30,7 +36,7 @@ internal class RandomEnumerable<T>(int? minCount, int? maxCount, T? min, T? max,
     public IExpression StepEvaluate(ExpressionContext context)
         => throw new NotImplementedException();
 
-    public IEnumerator<T> GetEnumerator()
+    public IEnumerator<RollValue> GetEnumerator()
         => throw new NotImplementedException();
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -62,9 +68,9 @@ internal class RandomEnumerable<T>(int? minCount, int? maxCount, T? min, T? max,
             builder.Append($"Has Enumerable Validation. ");
 
         if (builder.Length > 0)
-            return $"RandomEnumerable: ({builder})";
+            return $"{GetType().Name}: ({builder})";
         else
-            return "RandomEnumerable";
+            return GetType().Name;
     }
 
     public override int GetHashCode()
@@ -75,12 +81,12 @@ internal class RandomEnumerable<T>(int? minCount, int? maxCount, T? min, T? max,
         if (obj is null)
             return false;
 
-        if (obj is RandomEnumerable<T> rEnumerable && rEnumerable.MinCount == MinCount && rEnumerable.MaxCount == MaxCount &&
-            rEnumerable.Min.Equals(Min) && rEnumerable.Max.Equals(Max) && rEnumerable.ElementValidator == ElementValidator &&
-            rEnumerable.EnumerableValidator == EnumerableValidator)
+        if (obj is RandomRollResult randResult && randResult.MinCount == MinCount && randResult.MaxCount == MaxCount &&
+            randResult.Min.Equals(Min) && randResult.Max.Equals(Max) &&
+            randResult.ElementValidator == ElementValidator && randResult.EnumerableValidator == EnumerableValidator)
             return true;
 
-        if (obj is IEnumerable<T> enumerable)
+        if (obj is IEnumerable<RollValue> enumerable)
             if ((!MinCount.HasValue || enumerable.Count() >= MinCount) &&
                 (!MaxCount.HasValue || enumerable.Count() <= MaxCount) &&
                 (!Min.HasValue || enumerable.All(x => x >= Min.Value)) &&

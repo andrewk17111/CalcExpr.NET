@@ -32,8 +32,7 @@ internal static class UtilFunctions
 
     public static void AreEqual(IExpression expected, IExpression actual, int decimal_places = 0, string message = "")
     {
-        if (expected is RandomCollection || (expected.GetType().IsGenericType &&
-            expected.GetType().GetGenericTypeDefinition() == typeof(RandomEnumerable<>)))
+        if (expected is RandomCollection || expected is RandomRollResult)
         {
             Assert.AreEqual(expected, actual, message);
             return;
