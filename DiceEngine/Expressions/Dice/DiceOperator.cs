@@ -1,4 +1,5 @@
-﻿using DiceEngine.Expressions.Components;
+﻿using DiceEngine.Context;
+using DiceEngine.Expressions.Components;
 using System.Collections.ObjectModel;
 
 namespace DiceEngine.Expressions.Dice;
@@ -9,7 +10,7 @@ namespace DiceEngine.Expressions.Dice;
 /// <param name="op">The identifier for the operator.</param>
 /// <param name="result">The result of the dice roll.</param>
 /// <param name="right">The <see cref="IExpression"/> right operand for this operator.</param>
-public class DiceOperator(string op, RollResult result, ResultSelector selector)
+public class DiceOperator(string op, RollResult result, ResultSelector selector) : IExpression
 {
     private static readonly ReadOnlyDictionary<string, Func<RollResult, ResultSelector, IEnumerable<RollValue>>> OPERATORS =
         new Dictionary<string, Func<RollResult, ResultSelector, IEnumerable<RollValue>>>
@@ -36,6 +37,28 @@ public class DiceOperator(string op, RollResult result, ResultSelector selector)
 
         return Constant.UNDEFINED;
     }
+
+    public IExpression Evaluate(ExpressionContext _)
+        => Evaluate();
+
+    public IExpression StepEvaluate()
+        => Evaluate();
+
+    public IExpression StepEvaluate(ExpressionContext _)
+        => StepEvaluate();
+
+    public override int GetHashCode()
+        => HashCode.Combine(Identifier, Result, Selector);
+
+    public override bool Equals(object? obj)
+        => obj is DiceOperator diceOperator && diceOperator.Identifier == Identifier &&
+            diceOperator.Result.Equals(Result) && diceOperator.Selector.Equals(Selector);
+
+    public override string ToString()
+        => ToString(null);
+
+    public string ToString(string? format)
+        => $"{Result.ToString(format)}{Identifier}{Selector}";
 
     private static IEnumerable<RollValue> Keep(RollResult result, ResultSelector selector)
     {
