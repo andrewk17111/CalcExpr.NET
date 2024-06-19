@@ -8,9 +8,9 @@ namespace DiceEngine.Expressions.Dice;
 /// Initializes a new instance of the <see cref="DiceOperator"/> class.
 /// </summary>
 /// <param name="op">The identifier for the operator.</param>
-/// <param name="result">The result of the dice roll.</param>
-/// <param name="right">The <see cref="IExpression"/> right operand for this operator.</param>
-public class DiceOperator(string op, RollResult result, ResultSelector selector) : IExpression
+/// <param name="inside">The expression inside the operator.</param>
+/// <param name="selector">The selector for the operator.</param>
+public class DiceOperator(string op, IExpression inside, ResultSelector selector) : IExpression
 {
     private static readonly ReadOnlyDictionary<string, Func<RollResult, ResultSelector, IEnumerable<RollValue>>> OPERATORS =
         new Dictionary<string, Func<RollResult, ResultSelector, IEnumerable<RollValue>>>
@@ -26,39 +26,51 @@ public class DiceOperator(string op, RollResult result, ResultSelector selector)
         }.AsReadOnly();
 
     public readonly string Identifier = op;
-    public readonly RollResult Result = result;
+    public readonly IExpression Inside = inside;
     public readonly ResultSelector Selector = selector;
 
     public IExpression Evaluate()
+        => Evaluate(new ExpressionContext());
+
+    public IExpression Evaluate(ExpressionContext context)
     {
-        if (OPERATORS.TryGetValue(Identifier, out Func<RollResult, ResultSelector, IEnumerable<RollValue>>? op) &&
+        IExpression result = Inside.Evaluate(context);
+
+        if (result is RollResult rollResult &&
+            OPERATORS.TryGetValue(Identifier, out Func<RollResult, ResultSelector, IEnumerable<RollValue>>? operate) &&
             !((Identifier == "ma" || Identifier == "mi") && Selector.Selector != ""))
-                return new RollResult(op(Result, Selector), Result.Die);
+            return new RollResult(operate(rollResult, Selector), rollResult.Die);
 
         return Constant.UNDEFINED;
     }
 
-    public IExpression Evaluate(ExpressionContext _)
-        => Evaluate();
-
     public IExpression StepEvaluate()
-        => Evaluate();
+        => StepEvaluate(new ExpressionContext());
 
-    public IExpression StepEvaluate(ExpressionContext _)
-        => StepEvaluate();
+    public IExpression StepEvaluate(ExpressionContext context)
+    {
+        if (Inside is RollResult rollResult &&
+            OPERATORS.TryGetValue(Identifier, out Func<RollResult, ResultSelector, IEnumerable<RollValue>>? operate) &&
+            !((Identifier == "ma" || Identifier == "mi") && Selector.Selector != ""))
+            return new RollResult(operate(rollResult, Selector), rollResult.Die);
+
+        IExpression result = Inside.StepEvaluate(context);
+
+        return new DiceOperator(Identifier, result, Selector);
+    }
 
     public override int GetHashCode()
-        => HashCode.Combine(Identifier, Result, Selector);
+        => HashCode.Combine(Identifier, Inside, Selector);
 
     public override bool Equals(object? obj)
         => obj is DiceOperator diceOperator && diceOperator.Identifier == Identifier &&
-            diceOperator.Result.Equals(Result) && diceOperator.Selector.Equals(Selector);
+            diceOperator.Inside.Equals(Inside) && diceOperator.Selector.Equals(Selector);
 
     public override string ToString()
         => ToString(null);
 
     public string ToString(string? format)
-        => $"{Result.ToString(format)}{Identifier}{Selector}";
+        => $"{Inside.ToString(format)}{Identifier}{Selector}";
 
     private static IEnumerable<RollValue> Keep(RollResult result, ResultSelector selector)
     {
