@@ -64,7 +64,7 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
 
     public override bool Equals(object? obj)
         => obj is DiceOperator diceOperator && diceOperator.Identifier == Identifier &&
-            diceOperator.Inside.Equals(Inside) && diceOperator.Selector.Equals(Selector);
+            Inside.Equals(diceOperator.Inside) && diceOperator.Selector.Equals(Selector);
 
     public override string ToString()
         => ToString(null);
