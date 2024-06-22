@@ -32,7 +32,7 @@ public class DiceSet(int size, IDie die) : IDie
         => Evaluate(context);
 
     public int Roll(Random? random = null)
-        => Die.Roll();
+        => Die.Roll(random);
 
     public override int GetHashCode()
         => Size;

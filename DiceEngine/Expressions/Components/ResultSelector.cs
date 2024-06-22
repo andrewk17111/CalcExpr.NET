@@ -1,4 +1,5 @@
 ﻿using DiceEngine.Expressions.Dice;
+using DiceEngine.Extensions;
 using System.Collections.ObjectModel;
 
 namespace DiceEngine.Expressions.Components;
@@ -10,8 +11,8 @@ namespace DiceEngine.Expressions.Components;
 /// <param name="value">The value to use in the selection.</param>
 public readonly struct ResultSelector(string selector, int value)
 {
-    private static readonly ReadOnlyDictionary<string, Func<int, IEnumerable<RollValue>, IEnumerable<int>>> SELECTORS =
-        new Dictionary<string, Func<int, IEnumerable<RollValue>, IEnumerable<int>>>
+    private static readonly ReadOnlyDictionary<string, Func<int, Dictionary<int, RollValue>, IEnumerable<int>>> SELECTORS =
+        new Dictionary<string, Func<int, Dictionary<int, RollValue>, IEnumerable<int>>>
         {
             { "", SelectLiteral },
             { "h", SelectHighest },
@@ -31,10 +32,13 @@ public readonly struct ResultSelector(string selector, int value)
     /// <param name="value">The value to use in the selection.</param>
     public ResultSelector(int value) : this("", value) { }
 
-    public int[] Select(IEnumerable<RollValue> result)
+    public int[] Select(IEnumerable<RollValue> result, bool excludeExploded = false)
     {
-        if (SELECTORS.TryGetValue(Selector, out Func<int, IEnumerable<RollValue>, IEnumerable<int>>? select))
-            return select(Value, result).ToArray();
+        if (SELECTORS.TryGetValue(Selector, out Func<int, Dictionary<int, RollValue>, IEnumerable<int>>? select))
+            return select(Value, result.Select((r, i) => (i, r))
+                    .Where(kvp => !kvp.r.IsDropped && (!excludeExploded || kvp.r.IsExploded))
+                    .ToDictionary())
+                .ToArray();
 
         return [];
     }
@@ -43,79 +47,46 @@ public readonly struct ResultSelector(string selector, int value)
         => HashCode.Combine(Selector, Value);
 
     public override bool Equals(object? obj)
-        => obj is ResultSelector resultSelector && Selector == resultSelector.Selector && Value == resultSelector.Value;
+    {
+        if (obj is ResultSelector resultSelector)
+        {
+            return Selector == resultSelector.Selector && Value == resultSelector.Value;
+        }
+
+        return false;
+    }
 
     public override string? ToString()
         => $"{Selector}{Value}";
 
-    private static IEnumerable<int> SelectLiteral(int value, IEnumerable<RollValue> results)
-    {
-        int i = 0;
+    private static IEnumerable<int> SelectLiteral(int value, Dictionary<int, RollValue> results)
+        => results.KeysWhere((k, v) => v == value);
 
-        foreach (RollValue result in results)
-        {
-            if (result == value)
-                yield return i++;
-        }
-    }
-
-    private static IEnumerable<int> SelectHighest(int value, IEnumerable<RollValue> results)
+    private static IEnumerable<int> SelectHighest(int value, Dictionary<int, RollValue> results)
     {
-        return results.Select((x, i) => (i, x))
-            .OrderByDescending(pair => pair.x)
+        return results
+            .OrderByDescending(pair => pair.Value)
             .Take(value)
-            .Select(pair => pair.i);
+            .Select(pair => pair.Key);
     }
 
-    private static IEnumerable<int> SelectLowest(int value, IEnumerable<RollValue> results)
+    private static IEnumerable<int> SelectLowest(int value, Dictionary<int, RollValue> results)
     {
-        return results.Select((x, i) => (i, x))
-            .OrderBy(pair => pair.x)
+        return results
+            .OrderBy(pair => pair.Value)
             .Take(value)
-            .Select(pair => pair.i);
+            .Select(pair => pair.Key);
     }
 
-    private static IEnumerable<int> SelectLessThan(int value, IEnumerable<RollValue> results)
-    {
-        int i = 0;
+    private static IEnumerable<int> SelectLessThan(int value, Dictionary<int, RollValue> results)
+        => results.KeysWhere((k, v) => v < value);
 
-        foreach (RollValue result in results)
-        {
-            if (result < value)
-                yield return i++;
-        }
-    }
+    private static IEnumerable<int> SelectLessThanOrEqual(int value, Dictionary<int, RollValue> results)
+        => results.KeysWhere((k, v) => v <= value);
 
-    private static IEnumerable<int> SelectLessThanOrEqual(int value, IEnumerable<RollValue> results)
-    {
-        int i = 0;
+    private static IEnumerable<int> SelectGreaterThan(int value, Dictionary<int, RollValue> results)
+        => results.KeysWhere((k, v) => v > value);
 
-        foreach (RollValue result in results)
-        {
-            if (result <= value)
-                yield return i++;
-        }
-    }
-
-    private static IEnumerable<int> SelectGreaterThan(int value, IEnumerable<RollValue> results)
-    {
-        int i = 0;
-
-        foreach (RollValue result in results)
-        {
-            if (result > value)
-                yield return i++;
-        }
-    }
-
-    private static IEnumerable<int> SelectGreaterThanOrEqual(int value, IEnumerable<RollValue> results)
-    {
-        int i = 0;
-
-        foreach (RollValue result in results)
-        {
-            if (result >= value)
-                yield return i++;
-        }
-    }
+    private static IEnumerable<int> SelectGreaterThanOrEqual(int value, Dictionary<int, RollValue> results)
+        => results.KeysWhere((k, v) => v >= value);
 }

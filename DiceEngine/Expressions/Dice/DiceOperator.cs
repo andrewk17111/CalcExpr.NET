@@ -1,4 +1,5 @@
 ﻿using DiceEngine.Context;
+using DiceEngine.Exceptions;
 using DiceEngine.Expressions.Components;
 using System.Collections.ObjectModel;
 
@@ -12,8 +13,8 @@ namespace DiceEngine.Expressions.Dice;
 /// <param name="selector">The selector for the operator.</param>
 public class DiceOperator(string op, IExpression inside, ResultSelector selector) : IExpression
 {
-    private static readonly ReadOnlyDictionary<string, Func<RollResult, ResultSelector, IEnumerable<RollValue>>> OPERATORS =
-        new Dictionary<string, Func<RollResult, ResultSelector, IEnumerable<RollValue>>>
+    private static readonly ReadOnlyDictionary<string, Func<RollResult, ResultSelector, Random, IEnumerable<RollValue>>> OPERATORS =
+        new Dictionary<string, Func<RollResult, ResultSelector, Random, IEnumerable<RollValue>>>
         {
             { "k",  Keep },
             { "d",  Drop },
@@ -37,9 +38,9 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
         IExpression result = Inside.Evaluate(context);
 
         if (result is RollResult rollResult &&
-            OPERATORS.TryGetValue(Identifier, out Func<RollResult, ResultSelector, IEnumerable<RollValue>>? operate) &&
+            OPERATORS.TryGetValue(Identifier, out Func<RollResult, ResultSelector, Random, IEnumerable<RollValue>>? operate) &&
             !((Identifier == "ma" || Identifier == "mi") && Selector.Selector != ""))
-            return new RollResult(operate(rollResult, Selector), rollResult.Die);
+            return new RollResult(operate(rollResult, Selector, context.Random), rollResult.Die);
 
         return Constant.UNDEFINED;
     }
@@ -50,9 +51,9 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
     public IExpression StepEvaluate(ExpressionContext context)
     {
         if (Inside is RollResult rollResult &&
-            OPERATORS.TryGetValue(Identifier, out Func<RollResult, ResultSelector, IEnumerable<RollValue>>? operate) &&
+            OPERATORS.TryGetValue(Identifier, out Func<RollResult, ResultSelector, Random, IEnumerable<RollValue>>? operate) &&
             !((Identifier == "ma" || Identifier == "mi") && Selector.Selector != ""))
-            return new RollResult(operate(rollResult, Selector), rollResult.Die);
+            return new RollResult(operate(rollResult, Selector, context.Random), rollResult.Die);
 
         IExpression result = Inside.StepEvaluate(context);
 
@@ -72,63 +73,69 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
     public string ToString(string? format)
         => $"{Inside.ToString(format)}{Identifier}{Selector}";
 
-    private static IEnumerable<RollValue> Keep(RollResult result, ResultSelector selector)
+    private static IEnumerable<RollValue> Keep(RollResult result, ResultSelector selector, Random _)
     {
         int[] selected = selector.Select(result);
 
         return result.Select((r, i) => selected.Contains(i) ? r : r.Drop());
     }
 
-    private static IEnumerable<RollValue> Drop(RollResult result, ResultSelector selector)
+    private static IEnumerable<RollValue> Drop(RollResult result, ResultSelector selector, Random _)
     {
         int[] selected = selector.Select(result);
 
         return result.Select((r, i) => selected.Contains(i) ? r.Drop() : r);
     }
 
-    private static IEnumerable<RollValue> Reroll(RollResult result, ResultSelector selector)
+    private static IEnumerable<RollValue> Reroll(RollResult result, ResultSelector selector, Random random)
     {
         IEnumerable<RollValue> values = result;
         
         for (int[] selected = selector.Select(values); selected.Length > 0; selected = selector.Select(values))
         {
+            if (values.Count() >= TooManyDiceRollsException.MAX_ROLLS)
+                throw new TooManyDiceRollsException();
+
             values = values.SelectMany<RollValue, RollValue>(
-                (r, i) => selected.Contains(i) ? [r.Drop(), (RollValue)result.Die.Roll()] : [r]);
+                (r, i) => selected.Contains(i) ? [r.Drop(), (RollValue)result.Die.Roll(random)] : [r]);
         }
 
         return values;
     }
 
-    private static IEnumerable<RollValue> RerollOnce(RollResult result, ResultSelector selector)
+    private static IEnumerable<RollValue> RerollOnce(RollResult result, ResultSelector selector, Random random)
     {
         int[] selected = selector.Select(result);
         
         return result.SelectMany<RollValue, RollValue>(
-                (r, i) => selected.Contains(i) ? [r.Drop(), (RollValue)result.Die.Roll()] : [r]);
+                (r, i) => selected.Contains(i) ? [r.Drop(), (RollValue)result.Die.Roll(random)] : [r]);
     }
 
     // TODO: Reroll and Add.
 
-    private static IEnumerable<RollValue> Explode(RollResult result, ResultSelector selector)
+    private static IEnumerable<RollValue> Explode(RollResult result, ResultSelector selector, Random random)
     {
         IEnumerable<RollValue> values = result;
         
-        for (int[] selected = selector.Select(values); selected.Length > 0; selected = selector.Select(values))
+        for (int[] selected = selector.Select(values, true); selected.Length > 0; selected = selector.Select(values))
         {
+            if (values.Count() >= TooManyDiceRollsException.MAX_ROLLS)
+                throw new TooManyDiceRollsException();
+
             values = values.SelectMany<RollValue, RollValue>(
-                (r, i) => selected.Contains(i) ? [r.Explode(), (RollValue)result.Die.Roll()] : [r]);
+                (r, i) => selected.Contains(i) ? [r.Explode(), (RollValue)result.Die.Roll(random)] : [r]);
         }
 
         return values;
     }
 
-    private static IEnumerable<RollValue> Minimum(RollResult result, ResultSelector selector)
+    private static IEnumerable<RollValue> Minimum(RollResult result, ResultSelector selector, Random _)
     {
         return result.SelectMany<RollValue, RollValue>(
             (r, i) => r < selector.Value ? [r.Drop(), (RollValue)selector.Value] : [r]);
     }
 
-    private static IEnumerable<RollValue> Maximum(RollResult result, ResultSelector selector)
+    private static IEnumerable<RollValue> Maximum(RollResult result, ResultSelector selector, Random _)
     {
         return result.SelectMany<RollValue, RollValue>(
             (r, i) => r < selector.Value ? [r.Drop(), (RollValue)selector.Value] : [r]);

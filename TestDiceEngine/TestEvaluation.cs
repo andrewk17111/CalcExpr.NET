@@ -1,4 +1,5 @@
 ﻿using DiceEngine.Context;
+using DiceEngine.Exceptions;
 using DiceEngine.Expressions;
 using DiceEngine.Expressions.Collections;
 using System.Reflection;
@@ -28,14 +29,22 @@ public class TestEvaluation
     {
         foreach (TestCase test_case in test_cases)
         {
-            ExpressionContext context = new ExpressionContext(TestCases.ContextVariables);
+            try
+            {
+                ExpressionContext context = new ExpressionContext(TestCases.ContextVariables);
 
-            foreach (string func in TestCases.ContextFunctions.Keys)
-                context[func] = TestCases.ContextFunctions[func];
+                foreach (string func in TestCases.ContextFunctions.Keys)
+                    context[func] = TestCases.ContextFunctions[func];
 
-            IExpression result = test_case.Parsed.Evaluate(context);
+                IExpression result = test_case.Parsed.Evaluate(context);
 
-            UtilFunctions.AreEqual(test_case.Evaluated, result, DIGITS, $"Test case: '{test_case.ExpressionString}'.");
+                UtilFunctions.AreEqual(test_case.Evaluated, result, DIGITS,
+                    $"Test case: '{test_case.ExpressionString}'.");
+            }
+            catch (TooManyDiceRollsException)
+            {
+                Assert.Fail($"Too many dice rolls. Test case: '{test_case.Parsed}'.");
+            }
         }
     }
 

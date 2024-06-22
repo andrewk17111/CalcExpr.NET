@@ -59,7 +59,7 @@ public class RollResult(IEnumerable<RollValue> results, IDie die) : Number(doubl
 }
 
 public readonly struct RollValue(int value, bool isFocused, bool isDropped, bool isExploded)
-    : IComparisonOperators<RollValue, RollValue, bool>, IEquatable<RollValue>
+    : IComparisonOperators<RollValue, RollValue, bool>, IEquatable<RollValue>, IComparable
 {
     public readonly int Value = value;
     public readonly bool IsFocused = isFocused;
@@ -90,6 +90,23 @@ public readonly struct RollValue(int value, bool isFocused, bool isDropped, bool
     public bool Equals(RollValue value)
         => value.Value == Value && value.IsFocused == IsFocused && value.IsDropped == IsDropped &&
             value.IsExploded == IsExploded;
+
+    int IComparable.CompareTo(object? obj)
+    {
+        if (obj is RollValue value)
+        {
+            if (Value > value.Value)
+                return 1;
+            else if (Value < value.Value)
+                return -1;
+        }
+        else if (obj is IComparable comparable)
+        {
+             return -comparable.CompareTo(this);
+        }
+
+        return 0;
+    }
 
     public static bool operator >(RollValue left, RollValue right)
         => left.Value > right.Value;
