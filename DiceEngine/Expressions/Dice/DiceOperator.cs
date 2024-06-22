@@ -21,6 +21,7 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
             { "rr",  Reroll },
             { "r",  Reroll },
             { "ro", RerollOnce },
+            { "ra", RerollAndAdd },
             { "e",  Explode },
             { "mi", Minimum },
             { "ma", Maximum },
@@ -108,10 +109,18 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
         int[] selected = selector.Select(result);
         
         return result.SelectMany<RollValue, RollValue>(
-                (r, i) => selected.Contains(i) ? [r.Drop(), (RollValue)result.Die.Roll(random)] : [r]);
+            (r, i) => selected.Contains(i) ? [r.Drop(), (RollValue)result.Die.Roll(random)] : [r]);
     }
 
-    // TODO: Reroll and Add.
+    private static IEnumerable<RollValue> RerollAndAdd(RollResult result, ResultSelector selector, Random random)
+    {
+        int[] selected = selector.Select(result);
+
+        return selected.Length == 0
+            ? result
+            : result.SelectMany<RollValue, RollValue>(
+                (r, i) => selected[0] == i ? [r.Drop(), (RollValue)result.Die.Roll(random)] : [r]);
+    }
 
     private static IEnumerable<RollValue> Explode(RollResult result, ResultSelector selector, Random random)
     {

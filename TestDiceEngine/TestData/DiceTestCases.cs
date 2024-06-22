@@ -173,7 +173,10 @@ public static partial class TestCases
             new RandomRollResult(10, 10, 1, 10, enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)),
             new DiceOperator("ro", new RandomRollResult(10, 10, 1, 10,
                 enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)), new ResultSelector("h", 1))),
-        // TODO: 10d10ral1
+        new TestCase("10d10ral1", new DiceOperator("ra", new DiceSet(10, 10), new ResultSelector("l", 1)),
+            new RandomRollResult(10, 10, 1, 10, enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)),
+            new DiceOperator("ra", new RandomRollResult(10, 10, 1, 10,
+                enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)), new ResultSelector("l", 1))),
         new TestCase("3d10e3", new DiceOperator("e", new DiceSet(3, 10), new ResultSelector(3)),
             new RandomRollResult(3, null, 1, 10, enumerableValidator: x => CompareDieToResult(new DiceSet(3, 10), x)),
             new DiceOperator("e", new RandomRollResult(3, 3, 1, 10,
@@ -182,7 +185,10 @@ public static partial class TestCases
             new RandomRollResult(0, 10, 1, 10, enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)),
             new DiceOperator("ro", new RandomRollResult(10, 10, 1, 10,
                 enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)), new ResultSelector("≤", 1))),
-        // TODO: 10d10ra>1
+        new TestCase("10d10ra>1", new DiceOperator("ra", new DiceSet(10, 10), new ResultSelector(">", 1)),
+            new RandomRollResult(10, 10, 1, 10, enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)),
+            new DiceOperator("ra", new RandomRollResult(10, 10, 1, 10,
+                enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)), new ResultSelector(">", 1))),
         new TestCase("10d10e<=1", new DiceOperator("e", new DiceSet(10, 10), new ResultSelector("<=", 1)),
             new RandomRollResult(10, null, 1, 10, enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)),
             new DiceOperator("e", new RandomRollResult(10, 10, 1, 10,
