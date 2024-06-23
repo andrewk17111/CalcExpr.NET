@@ -106,10 +106,11 @@ internal static class ParseMatchFunctions
     internal static UnaryOperator ParseMatchPostfix(string input, Token match, Parser parser)
         => new UnaryOperator(match.Value, false, parser.Parse(input[..match.Index]));
 
-    internal static IDie ParseMatchDice(string _, Token match, Parser __)
+    internal static IExpression ParseMatchDice(string _, Token match, Parser __)
     {
         Match sizeMatch = Regex.Match(match, @"^\d+");
-        string dieString = match.Value[(sizeMatch.Length + 1)..];
+        int offset = sizeMatch.Length + 1;
+        string dieString = Regex.Match(match.Value[offset..], @"^(\d+|%|F)").Value;
         IDie die = dieString switch
         {
             "%" => new PercentileDie(),
@@ -117,9 +118,22 @@ internal static class ParseMatchFunctions
             _ => new Die(Int32.Parse(dieString)),
         };
 
-        return sizeMatch.Success
+        die = sizeMatch.Success
             ? new DiceSet(Int32.Parse(sizeMatch.Value), die)
             : die;
+        offset += dieString.Length;
+
+        if (offset == match.Length)
+            return die;
+
+        string operation = Regex.Match(match.Value[offset..], @"^(k|d|(r(r|o|a))|e|mi|ma)").Value;
+
+        offset += operation.Length;
+
+        Match selectorValue = Regex.Match(match.Value[offset..], @"\d+$");
+        string selector = match[offset..(offset + selectorValue.Index)];
+
+        return new DiceOperator(operation, die, new ResultSelector(selector, Convert.ToInt32(selectorValue.Value)));
     }
 
     internal static Indexer ParseMatchIndexer(string input, Token match, Parser parser)

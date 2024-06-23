@@ -1,6 +1,7 @@
 ﻿using DiceEngine.Expressions;
 using DiceEngine.Expressions.Components;
 using DiceEngine.Expressions.Dice;
+using System.Security.Cryptography;
 using TestDiceEngine.TestModels;
 using TestDiceEngine.TestUtils;
 
@@ -201,6 +202,11 @@ public static partial class TestCases
             new RandomRollResult(0, 10, 1, 10, enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)),
             new DiceOperator("ma", new RandomRollResult(10, 10, 1, 10,
                 enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)), new ResultSelector("", 5))),
+        new TestCase("10d10<=1", new BinaryOperator("<=", new DiceSet(10, 10), (Number)1),
+            (Number)0,
+            new BinaryOperator("<=", new RandomRollResult(10, 10, 1, 10,
+                enumerableValidator: x => CompareDieToResult(new DiceSet(10, 10), x)), (Number)1),
+            new BinaryOperator("<=", new RandomValue(10, 100), (Number)1)),
     ];
 
     private static bool CompareDieToResult(IDie expected, IEnumerable<RollValue> actual)

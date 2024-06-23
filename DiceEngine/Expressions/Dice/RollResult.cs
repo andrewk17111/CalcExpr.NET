@@ -4,13 +4,13 @@ using System.Numerics;
 
 namespace DiceEngine.Expressions.Dice;
 
-public class RollResult(IEnumerable<RollValue> results, IDie die) : Number(double.NaN), IEnumerable<RollValue>
+public class RollResult(IEnumerable<RollValue> results, IDie die) : IExpression, IEnumerable<RollValue>
 {
     private readonly RollValue[] _results = results.ToArray();
 
     public readonly IDie Die = die;
 
-    public new int Value => _results.Where(r => !r.IsDropped).Select(r => (int)r).Sum();
+    public int Value => _results.Where(r => !r.IsDropped).Select(r => (int)r).Sum();
 
     public RollValue this[int index]
         => _results[index];
@@ -33,11 +33,17 @@ public class RollResult(IEnumerable<RollValue> results, IDie die) : Number(doubl
     {
     }
 
-    public new IExpression Evaluate(ExpressionContext _)
+    public IExpression Evaluate()
         => (Number)Value;
 
-    public new IExpression StepEvaluate(ExpressionContext _)
+    public IExpression Evaluate(ExpressionContext _)
+        => Evaluate();
+
+    public IExpression StepEvaluate()
         => (Number)Value;
+
+    public IExpression StepEvaluate(ExpressionContext _)
+        => StepEvaluate();
 
     public override int GetHashCode()
         => HashCode.Combine(Die, _results);
