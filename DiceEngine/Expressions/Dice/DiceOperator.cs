@@ -99,6 +99,9 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
 
             values = values.SelectMany<RollValue, RollValue>(
                 (r, i) => selected.Contains(i) ? [r.Drop(), (RollValue)result.Die.Roll(random)] : [r]);
+
+            if (selector.Selector == "l" || selector.Selector == "h")
+                break;
         }
 
         return values;
@@ -133,6 +136,9 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
 
             values = values.SelectMany<RollValue, RollValue>(
                 (r, i) => selected.Contains(i) ? [r.Explode(), (RollValue)result.Die.Roll(random)] : [r]);
+
+            if (selector.Selector == "l" || selector.Selector == "h")
+                break;
         }
 
         return values;
