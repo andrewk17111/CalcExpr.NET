@@ -22,8 +22,8 @@ public class Die(int size) : IDie
     public IExpression StepEvaluate(ExpressionContext context)
         => Evaluate(context);
 
-    public Number Roll(Random? random = null)
-        => (Number)((random ?? new Random()).Next(Size) + 1);
+    public int Roll(Random? random = null)
+        => (random ?? new Random()).Next(Size) + 1;
 
     public override int GetHashCode()
         => Size;
@@ -64,5 +64,5 @@ public class Die(int size) : IDie
 
 public interface IDie : IExpression
 {
-    Number Roll(Random? random = null);
+    int Roll(Random? random = null);
 }

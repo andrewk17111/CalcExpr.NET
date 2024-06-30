@@ -13,11 +13,11 @@ public class TestFateDie
     public void TestRoll()
     {
         FateDie die = new FateDie();
-        HashSet<double> results = [];
+        HashSet<int> results = [];
 
         while (results.Count < 3)
         {
-            double result = die.Roll().Value;
+            int result = die.Roll();
 
             UtilFunctions.IsGreaterThanOrEqual(-1, result, $"{result} is not greater than or equal to -1.");
             UtilFunctions.IsLessThanOrEqual(1, result, $"{result} is not less than or equal to 1.");

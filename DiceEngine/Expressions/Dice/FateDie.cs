@@ -16,8 +16,8 @@ public class FateDie : IDie
     public IExpression StepEvaluate(ExpressionContext context)
         => Evaluate(context);
 
-    public Number Roll(Random? random = null)
-        => (Number)((random ?? new Random()).Next(3) - 1);
+    public int Roll(Random? random = null)
+        => (random ?? new Random()).Next(3) - 1;
 
     public override int GetHashCode()
         => 0;

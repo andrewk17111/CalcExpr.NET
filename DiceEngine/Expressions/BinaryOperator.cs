@@ -45,7 +45,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
     private Func<IExpression, IExpression, ExpressionContext, IExpression> _operation
         => (a, b, vars) => Constant.UNDEFINED.Equals(a) || Constant.UNDEFINED.Equals(b)
             ? Constant.UNDEFINED
-            : _operators[Identifier](a, b, vars);
+            : _operators[Identifier](a.Evaluate(vars), b.Evaluate(vars), vars);
 
     public readonly string Identifier = op;
     public readonly IExpression Left = left;

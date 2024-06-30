@@ -13,11 +13,11 @@ public class TestPercentileDie
     public void TestRoll()
     {
         PercentileDie die = new PercentileDie();
-        HashSet<double> results = [];
+        HashSet<int> results = [];
 
         while (results.Count < 10)
         {
-            double result = die.Roll().Value;
+            int result = die.Roll();
 
             UtilFunctions.IsGreaterThanOrEqual(0, result, $"{result} is not greater than or equal to 0.");
             UtilFunctions.IsLessThanOrEqual(90, result, $"{result} is not less than or equal to 90.");

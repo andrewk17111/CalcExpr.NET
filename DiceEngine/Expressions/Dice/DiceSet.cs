@@ -2,10 +2,22 @@
 
 namespace DiceEngine.Expressions.Dice;
 
+/// <summary>
+/// Initializes a new instance of the <see cref="DiceSet"/> class.
+/// </summary>
+/// <param name="size">The number of dice to roll.</param>
+/// <param name="die">The die to roll.</param>
 public class DiceSet(int size, IDie die) : IDie
 {
     public readonly int Size = size;
     public readonly IDie Die = die;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiceSet"/> class.
+    /// </summary>
+    /// <param name="size">The number of dice to roll.</param>
+    /// <param name="die">The number of sides on the <see cref="Dice.Die"/>.</param>
+    public DiceSet(int size, int die) : this(size, new Die(die)) { }
 
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
@@ -19,8 +31,8 @@ public class DiceSet(int size, IDie die) : IDie
     public IExpression StepEvaluate(ExpressionContext context)
         => Evaluate(context);
 
-    public Number Roll(Random? random = null)
-        => Die.Roll();
+    public int Roll(Random? random = null)
+        => Die.Roll(random);
 
     public override int GetHashCode()
         => Size;

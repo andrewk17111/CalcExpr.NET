@@ -45,4 +45,8 @@ internal static class EnumerableExtensions
             yield return element;
         }
     }
+
+    public static IEnumerable<TKey> KeysWhere<TKey, TValue>(
+        this IEnumerable<KeyValuePair<TKey, TValue>> enumerable, Func<TKey, TValue, bool> predicate)
+        => enumerable.Where(kvp => predicate(kvp.Key, kvp.Value)).Select(kvp => kvp.Key);
 }
