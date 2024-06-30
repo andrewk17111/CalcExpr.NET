@@ -86,15 +86,23 @@ internal class RandomRollResult(int? minCount, int? maxCount, RollValue? min, Ro
             randResult.ElementValidator == ElementValidator && randResult.EnumerableValidator == EnumerableValidator)
             return true;
 
-        if (obj is IEnumerable<RollValue> enumerable &&
-            (!MinCount.HasValue || enumerable.Count(x => !x.IsDropped) >= MinCount) &&
-            (!MaxCount.HasValue || enumerable.Count(x => !x.IsDropped) <= MaxCount) &&
-            (!Min.HasValue || enumerable.All(x => x >= Min.Value)) &&
-            (!Max.HasValue || enumerable.All(x => x <= Max.Value)) &&
-            (ElementValidator is null || enumerable.All(ElementValidator)) &&
-            (EnumerableValidator is null || EnumerableValidator(enumerable)))
-            return true;
+        if (obj is not IEnumerable<RollValue> enumerable)
+            return false;
 
-        return false;
+        if ((MinCount.HasValue && enumerable.Count(x => !x.IsDropped) < MinCount) ||
+            (MaxCount.HasValue && enumerable.Count(x => !x.IsDropped) > MaxCount))
+            return false;
+
+        if ((Min.HasValue && enumerable.Any(x => !x.IsDropped && x < Min.Value)) ||
+            (Max.HasValue && enumerable.Any(x => !x.IsDropped && x > Max.Value)))
+            return false;
+
+        if (ElementValidator is not null && !enumerable.All(ElementValidator))
+            return false;
+
+        if (EnumerableValidator is not null && !EnumerableValidator(enumerable))
+            return false;
+
+        return true;
     }
 }

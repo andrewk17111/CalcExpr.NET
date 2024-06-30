@@ -123,17 +123,24 @@ internal static class ParseMatchFunctions
             : die;
         offset += dieString.Length;
 
-        if (offset == match.Length)
-            return die;
+        IExpression result = die;
 
-        string operation = Regex.Match(match.Value[offset..], @"^(k|d|(r(r|o|a))|e|mi|ma)").Value;
+        while (offset < match.Length)
+        {
+            string operation = Regex.Match(match.Value[offset..], @"^(k|d|(r(r|o|a))|e|mi|ma)").Value;
 
-        offset += operation.Length;
+            offset += operation.Length;
 
-        Match selectorValue = Regex.Match(match.Value[offset..], @"\d+$");
-        string selector = match[offset..(offset + selectorValue.Index)];
+            Match selectorValue = Regex.Match(match.Value[offset..], @"\d+");
+            string selector = match[offset..(offset + selectorValue.Index)];
 
-        return new DiceOperator(operation, die, new ResultSelector(selector, Convert.ToInt32(selectorValue.Value)));
+            result = new DiceOperator(operation, result,
+                new ResultSelector(selector, Convert.ToInt32(selectorValue.Value)));
+
+            offset += selectorValue.Index + selectorValue.Length;
+        }
+
+        return result;
     }
 
     internal static Indexer ParseMatchIndexer(string input, Token match, Parser parser)

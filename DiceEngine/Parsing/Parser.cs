@@ -48,7 +48,7 @@ public class Parser
             new RegexRule("WithParentheses", @"\(|\)", RegexOptions.None, ParseMatchWithParentheses),
             new NestedRegexRule("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchAssignmentOperator),
-            new RegexRule("DiceNotation", @"\d*d(\d+|%|F)((((k|d|(r(r|o|a))|e)(|h|l|((<|>)=?)|≤|≥))|mi|ma)\d+)?",
+            new RegexRule("DiceNotation", @"\d*d(\d+|%|F)((((k|d|(r(r|o|a))|e)(|h|l|((<|>)=?)|≤|≥))|mi|ma)\d+)*",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchDice),
             new NestedRegexRule("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})",
                 RegexRuleOptions.RightToLeft | RegexRuleOptions.PadReferences, ParseMatchBinaryOperator),
