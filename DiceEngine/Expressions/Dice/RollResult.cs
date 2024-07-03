@@ -21,17 +21,11 @@ public class RollResult(IEnumerable<RollValue> results, IDie die) : IExpression,
     public int Length
         => _results.Length;
 
-    public RollResult(RollValue result, IDie die) : this(new RollValue[] { result }, die)
-    {
-    }
+    public RollResult(RollValue result, IDie die) : this(new RollValue[] { result }, die) { }
 
-    public RollResult(int result, IDie die) : this((RollValue)result, die)
-    {
-    }
+    public RollResult(int result, IDie die) : this((RollValue)result, die) { }
 
-    public RollResult(IEnumerable<int> results, IDie die) : this(results.Select(x => (RollValue)x), die)
-    {
-    }
+    public RollResult(IEnumerable<int> results, IDie die) : this(results.Select(x => (RollValue)x), die) { }
 
     public IExpression Evaluate()
         => (Number)Value;
@@ -45,6 +39,12 @@ public class RollResult(IEnumerable<RollValue> results, IDie die) : IExpression,
     public IExpression StepEvaluate(ExpressionContext _)
         => StepEvaluate();
 
+    public IExpression EvaluateDice()
+        => this;
+
+    public IExpression EvaluateDice(ExpressionContext _)
+        => this;
+
     public override int GetHashCode()
         => HashCode.Combine(Die, _results);
 
@@ -54,7 +54,7 @@ public class RollResult(IEnumerable<RollValue> results, IDie die) : IExpression,
     public override string ToString()
         => ToString(null);
 
-    public new string ToString(string? format)
+    public string ToString(string? format)
         => $"{Die} ({String.Join(", ", _results.Select(r => r.ToString()))})";
 
     public IEnumerator<RollValue> GetEnumerator()

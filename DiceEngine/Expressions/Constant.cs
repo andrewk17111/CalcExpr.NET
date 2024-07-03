@@ -69,6 +69,12 @@ public class Constant(string identifier) : IExpression
     public IExpression StepEvaluate(ExpressionContext variables)
         => _values[Identifier];
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext _)
+        => _values[Identifier];
+
     public override bool Equals(object? obj)
         => obj is not null && obj is Constant c && 
             (c.Identifier == Identifier || Identifier switch

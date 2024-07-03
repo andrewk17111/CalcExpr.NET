@@ -6,9 +6,7 @@ public class Die(int size) : IDie
 {
     public readonly int Size = size;
 
-    public Die(uint size) : this((int)size)
-    {
-    }
+    public Die(uint size) : this((int)size) { }
 
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
@@ -20,6 +18,12 @@ public class Die(int size) : IDie
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
+        => Evaluate(context);
+
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
         => Evaluate(context);
 
     public int Roll(Random? random = null)

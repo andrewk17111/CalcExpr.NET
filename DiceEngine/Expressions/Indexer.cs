@@ -1,7 +1,6 @@
 ﻿using DiceEngine.Context;
 using DiceEngine.Expressions.Collections;
 using DiceEngine.Extensions;
-using System.ComponentModel;
 
 namespace DiceEngine.Expressions;
 
@@ -50,6 +49,12 @@ public class Indexer(IExpression collection, IExpression index) : IExpression
 
         return Evaluate(context);
     }
+
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => new Indexer(Collection.EvaluateDice(context), Index.EvaluateDice(context));
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Indexer idx && Collection.Equals(idx.Collection) && Index.Equals(idx.Index);

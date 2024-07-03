@@ -28,6 +28,12 @@ internal class RandomCollection(int? minCount, int? maxCount, double? min, doubl
     public IExpression StepEvaluate(ExpressionContext context)
         => throw new NotImplementedException();
 
+    public IExpression EvaluateDice()
+        => throw new NotImplementedException();
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => throw new NotImplementedException();
+
     public IEnumerator<IExpression> GetEnumerator()
         => throw new NotImplementedException();
 

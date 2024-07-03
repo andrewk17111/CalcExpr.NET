@@ -90,6 +90,12 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
     public IExpression StepEvaluate(ExpressionContext context)
         => this;
 
+    public IExpression EvaluateDice()
+        => this;
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => this;
+
     public override bool Equals(object? obj)
         => obj is not null && obj is Function func && func.Body.Equals(Body) &&
             func.Parameters.Select((p, i) => p.Equals(Parameters[i])).Aggregate((a, b) => a && b);

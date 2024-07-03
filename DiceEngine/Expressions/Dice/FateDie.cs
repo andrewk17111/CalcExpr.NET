@@ -19,6 +19,12 @@ public class FateDie : IDie
     public int Roll(Random? random = null)
         => (random ?? new Random()).Next(3) - 1;
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => Evaluate(context);
+
     public override int GetHashCode()
         => 0;
 

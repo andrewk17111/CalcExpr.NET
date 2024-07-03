@@ -24,6 +24,12 @@ internal class RandomValue(double? min, double? max,
     public IExpression StepEvaluate(ExpressionContext context)
         => throw new NotImplementedException();
 
+    public IExpression EvaluateDice()
+        => throw new NotImplementedException();
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => throw new NotImplementedException();
+
     public override string ToString()
         => ToString(null);
 

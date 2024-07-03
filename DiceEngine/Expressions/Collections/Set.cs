@@ -52,6 +52,12 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression
         return this;
     }
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => new Set(this.Select(x => x.EvaluateDice(context)));
+
     public IEnumerableExpression Map(Func<IExpression, IExpression> map)
         => new Set(_elements.Select(x => map(x.Value)));
 

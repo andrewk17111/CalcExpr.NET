@@ -74,6 +74,12 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         return new BinaryOperator(Identifier, l, Right);
     }
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => new BinaryOperator(Identifier, Left.EvaluateDice(context), Right.EvaluateDice(context));
+
     public override bool Equals(object? obj)
         => obj is not null && obj is BinaryOperator bin_op && bin_op.Identifier == Identifier &&
             Left.Equals(bin_op.Left) && Right.Equals(bin_op.Right);

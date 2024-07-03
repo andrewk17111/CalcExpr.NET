@@ -49,6 +49,12 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
     public IExpression StepEvaluate(ExpressionContext context)
         => this;
 
+    public IExpression EvaluateDice()
+        => this;
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => this;
+
     public override bool Equals(object? obj)
     {
         if (obj is not null && obj is LambdaFunction lambda)

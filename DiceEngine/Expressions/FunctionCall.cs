@@ -39,6 +39,12 @@ public class FunctionCall(string name, IEnumerable<IExpression> arguments) : IEx
         return context[Name, _arguments];
     }
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => new FunctionCall(Name, Arguments.Select(a => a.EvaluateDice(context)));
+
     public override bool Equals(object? obj)
         => obj is not null && obj is FunctionCall call && call.Name == Name &&
             call._arguments.Select((a, i) => a.Equals(_arguments[i])).Aggregate((a, b) => a && b);
