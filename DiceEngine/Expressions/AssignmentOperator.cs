@@ -57,6 +57,12 @@ public class AssignmentOperator : IExpression
         return new AssignmentOperator(AssignedVariable, eval);
     }
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => new AssignmentOperator(AssignedVariable, Value.EvaluateDice(context));
+
     public override bool Equals(object? obj)
         => obj is not null && obj is AssignmentOperator assn_op &&
             assn_op.AssignedVariable.Equals(AssignedVariable) && assn_op.Value.Equals(Value);

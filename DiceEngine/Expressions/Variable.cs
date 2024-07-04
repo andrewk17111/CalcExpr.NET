@@ -22,6 +22,12 @@ public class Variable(string name) : IExpression
     public IExpression StepEvaluate(ExpressionContext variables)
         => variables[Name];
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => context[Name];
+
     public override bool Equals(object? obj)
         => obj is not null && obj is Variable v && v.Name == Name;
 

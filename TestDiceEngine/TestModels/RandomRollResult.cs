@@ -36,6 +36,12 @@ internal class RandomRollResult(int? minCount, int? maxCount, RollValue? min, Ro
     public IExpression StepEvaluate(ExpressionContext context)
         => throw new NotImplementedException();
 
+    public IExpression EvaluateDice()
+        => throw new NotImplementedException();
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => throw new NotImplementedException();
+
     public IEnumerator<RollValue> GetEnumerator()
         => throw new NotImplementedException();
 

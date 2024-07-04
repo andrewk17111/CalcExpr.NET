@@ -65,6 +65,12 @@ public class UnaryOperator(string op, bool is_prefix, IExpression expression) : 
             return _operation(enum_eval, context);
     }
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => new UnaryOperator(Identifier, IsPrefix, Inside.EvaluateDice(context));
+
     public override string ToString()
         => ToString(null);
 

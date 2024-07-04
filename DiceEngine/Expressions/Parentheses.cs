@@ -24,6 +24,12 @@ public class Parentheses(IExpression inside) : IExpression
             ? n.StepEvaluate(variables)
             : new Parentheses(Inside.StepEvaluate(variables));
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => new Parentheses(Inside.EvaluateDice(context));
+
     public override bool Equals(object? obj)
         => obj is not null && obj is Parentheses paren && paren.Inside.Equals(Inside);
 

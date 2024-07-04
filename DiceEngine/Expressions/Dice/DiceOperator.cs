@@ -11,7 +11,7 @@ namespace DiceEngine.Expressions.Dice;
 /// <param name="op">The identifier for the operator.</param>
 /// <param name="inside">The expression inside the operator.</param>
 /// <param name="selector">The selector for the operator.</param>
-public class DiceOperator(string op, IExpression inside, ResultSelector selector) : IExpression
+public class DiceOperator(string op, IExpression inside, ResultSelector selector) : IDie
 {
     private static readonly ReadOnlyDictionary<string, Func<RollResult, ResultSelector, Random, IEnumerable<RollValue>>> OPERATORS =
         new Dictionary<string, Func<RollResult, ResultSelector, Random, IEnumerable<RollValue>>>
@@ -60,6 +60,22 @@ public class DiceOperator(string op, IExpression inside, ResultSelector selector
 
         return new DiceOperator(Identifier, result, Selector);
     }
+
+    public int Roll(Random? random = null)
+    {
+        if (Inside is RollResult rollResult)
+            return rollResult.Die.Roll(random);
+        else if (Inside is IDie die)
+            return die.Roll(random);
+        else
+            throw new Exception("Cannot roll a non-die expression.");
+    }
+
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => Evaluate(context);
 
     public override int GetHashCode()
         => HashCode.Combine(Identifier, Inside, Selector);

@@ -41,6 +41,25 @@ public interface IExpression
     public IExpression StepEvaluate(ExpressionContext context);
 
     /// <summary>
+    /// Evaluates all dice in the <see cref="IExpression"/>.
+    /// </summary>
+    /// <returns>
+    /// A new <see cref="IExpression"/> containing the value of the current <see cref="IExpression"/> with all dice
+    /// evaluated.
+    /// </returns>
+    public IExpression EvaluateDice();
+
+    /// <summary>
+    /// Evaluates all dice in the <see cref="IExpression"/>.
+    /// </summary>
+    /// <param name="context">The values for each variable that could appear in the <see cref="IExpression"/>.</param>
+    /// <returns>
+    /// A new <see cref="IExpression"/> containing the value of the current <see cref="IExpression"/> with all dice
+    /// evaluated.
+    /// </returns>
+    public IExpression EvaluateDice(ExpressionContext context);
+
+    /// <summary>
     /// Returns a <see cref="string"/> that represents the current <see cref="IExpression"/>.
     /// </summary>
     /// <returns>A <see cref="string"/> that represents the current <see cref="IExpression"/>.</returns>

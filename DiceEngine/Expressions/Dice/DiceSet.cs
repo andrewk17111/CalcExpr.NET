@@ -34,6 +34,12 @@ public class DiceSet(int size, IDie die) : IDie
     public int Roll(Random? random = null)
         => Die.Roll(random);
 
+    public IExpression EvaluateDice()
+        => EvaluateDice(new ExpressionContext());
+
+    public IExpression EvaluateDice(ExpressionContext context)
+        => Evaluate(context);
+
     public override int GetHashCode()
         => Size;
 

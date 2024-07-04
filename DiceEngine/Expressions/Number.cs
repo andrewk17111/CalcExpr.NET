@@ -28,6 +28,12 @@ public class Number(double value) : IExpression
     public IExpression StepEvaluate(ExpressionContext variables)
         => Evaluate(variables);
 
+    public IExpression EvaluateDice()
+        => this;
+
+    public IExpression EvaluateDice(ExpressionContext _)
+        => this;
+
     public override bool Equals(object? obj)
         => obj is not null && obj is Number n && n.Value == Value;
 

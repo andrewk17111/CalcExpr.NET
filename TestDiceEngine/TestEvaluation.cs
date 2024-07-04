@@ -2,6 +2,7 @@
 using DiceEngine.Exceptions;
 using DiceEngine.Expressions;
 using DiceEngine.Expressions.Collections;
+using DiceEngine.Expressions.Dice;
 using System.Reflection;
 using TestDiceEngine.TestData;
 using TestDiceEngine.TestUtils;
@@ -193,6 +194,39 @@ public class TestEvaluation
     {
         for (int i = 0; i < 100; i++)
             EvaluateTestCases(TestCases.DiceNotation);
+
+        foreach (TestCase testCase in TestCases.DiceNotation)
+        {
+            IExpression noDice = testCase.Parsed.EvaluateDice();
+
+            Assert.IsFalse(CheckForDie(noDice), $"Test case: '{testCase.ExpressionString}'.");
+        }
+    }
+
+    private static bool CheckForDie(IExpression? expression)
+    {
+        if (expression is IDie)
+            return true;
+        else if (expression is null)
+            return false;
+
+        Type expressionType = expression.GetType();
+
+        foreach (PropertyInfo prop in expressionType.GetProperties())
+        {
+            if (prop.PropertyType == typeof(IExpression))
+                if (CheckForDie((IExpression?)prop.GetValue(expression)))
+                    return true;
+        }
+
+        foreach (FieldInfo field in expressionType.GetFields())
+        {
+            if (field.FieldType == typeof(IExpression))
+                if (CheckForDie((IExpression?)field.GetValue(expression)))
+                    return true;
+        }
+
+        return false;
     }
 
     [TestMethod]
