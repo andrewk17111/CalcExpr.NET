@@ -106,7 +106,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
             ((a_eval is Number || b_eval is Number) ||
             (Constant.NEGATIVE_INFINITY.Equals(a_eval) && Constant.NEGATIVE_INFINITY.Equals(b_eval))))
         {
-            return new UnaryOperator("-", true, Constant.INFINITY);
+            return Constant.NEGATIVE_INFINITY;
         }
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
@@ -140,7 +140,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         else if ((a_eval is Number || Constant.NEGATIVE_INFINITY.Equals(a_eval)) &&
             (b_eval is Number || Constant.INFINITY.Equals(b_eval)))
         {
-            return new UnaryOperator("-", true, Constant.INFINITY);
+            return Constant.NEGATIVE_INFINITY;
         }
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
@@ -177,7 +177,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
                 Constant.INFINITY.Equals(b_eval))) ||
             (Constant.NEGATIVE_INFINITY.Equals(b_eval) && (a_eval is Number || Constant.INFINITY.Equals(a_eval))))
         {
-            return new UnaryOperator("-", true, Constant.INFINITY);
+            return Constant.NEGATIVE_INFINITY;
         }
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
@@ -213,7 +213,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         }
         else if (Constant.NEGATIVE_INFINITY.Equals(a_eval) && b_eval is Number)
         {
-            return new UnaryOperator("-", true, Constant.INFINITY);
+            return Constant.NEGATIVE_INFINITY;
         }
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
@@ -379,7 +379,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(a_const.Equals(b_eval) ? 1 : 0);
         }
-        else if (a_eval is UnaryOperator a_unop)
+        else if (a_eval is PrefixOperator a_unop)
         {
             return new Number(a_unop.Equals(b) ? 1 : 0);
         }

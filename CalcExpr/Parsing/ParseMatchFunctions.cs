@@ -99,11 +99,11 @@ internal static class ParseMatchFunctions
         => new BinaryOperator(match.Value, parser.Parse(input[..match.Index]),
             parser.Parse(input[(match.Index + match.Length)..]));
 
-    internal static UnaryOperator ParseMatchPrefix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, true, parser.Parse(input[(match.Index + match.Length)..]));
+    internal static PrefixOperator ParseMatchPrefix(string input, Token match, Parser parser)
+        => new PrefixOperator(match.Value, parser.Parse(input[(match.Index + match.Length)..]));
 
-    internal static UnaryOperator ParseMatchPostfix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, false, parser.Parse(input[..match.Index]));
+    internal static PostfixOperator ParseMatchPostfix(string input, Token match, Parser parser)
+        => new PostfixOperator(match.Value, parser.Parse(input[..match.Index]));
 
     internal static Indexer ParseMatchIndexer(string input, Token match, Parser parser)
         => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
