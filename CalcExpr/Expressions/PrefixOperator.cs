@@ -96,25 +96,7 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
     }
 
     private static IExpression Subfactorial(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-        
-        if (Constant.TRUE.Equals(x_eval))
-            x_eval = new Number(1);
-        else if (Constant.FALSE.Equals(x_eval))
-            x_eval = new Number(0);
-
-        if (x_eval is Number || Constant.INFINITY.Equals(x_eval))
-        {
-            return FactorialFunctions.Subfactorial(x_eval);
-        }
-        else if (x_eval is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => Subfactorial(e, context));
-        }
-
-        return Constant.UNDEFINED;
-    }
+        => IFunction.ForEach(new Function(FactorialFunctions.Subfactorial, true), [x], context);
 
     private static IExpression PreDecrement(IExpression x, ExpressionContext context)
     {

@@ -1,7 +1,4 @@
 ﻿using CalcExpr.Attributes;
-using CalcExpr.Context;
-using CalcExpr.Expressions;
-using CalcExpr.Expressions.Collections;
 
 namespace CalcExpr.BuiltInFunctions;
 
@@ -9,87 +6,72 @@ public static class FactorialFunctions
 {
     [BuiltInFunction("factorial")]
     [Elementwise]
-    public static IExpression Factorial(IExpression x)
+    public static double Factorial(double x)
     {
-        if (x is Number n && n.Value % 1 == 0)
+        if (x == 0 || x == 1)
         {
-            if (n.Value == 0 || n.Value == 1)
-            {
-                return new Number(1);
-            }
-            else if (n.Value > 0)
-            {
-                double output = 1;
-
-                for (int i = 2; i <= n.Value; i++)
-                    output *= i;
-
-                return output == Double.PositiveInfinity
-                    ? Constant.INFINITY
-                    : new Number(output);
-            }
+            return 1;
         }
-        else if (x is Constant c && Constant.INFINITY.Equals(c))
+        else if (x % 1 == 0 && x > 0)
         {
-            return Constant.INFINITY;
+            double output = 1;
+
+            for (int i = 2; i <= x; i++)
+                output *= i;
+
+            return output;
+        }
+        else if (Double.IsPositiveInfinity(x))
+        {
+            return Double.PositiveInfinity;
         }
 
-        return Constant.UNDEFINED;
+        return Double.NaN;
     }
 
     [BuiltInFunction("subfactorial")]
     [Elementwise]
-    public static IExpression Subfactorial(IExpression x)
+    public static double Subfactorial(double x)
     {
-        if (x is Number n && n.Value % 1 == 0)
+        if (x == 0)
         {
-            if (n.Value == 0)
-            {
-                return new Number(1);
-            }
-            else if (n.Value > 0)
-            {
-                IExpression n_fact = Factorial(n);
-
-                if (n_fact is Number n_fact_n)
-                    return new Number((int)(0.5 + n_fact_n.Value / Math.E));
-                else if (Constant.INFINITY.Equals(n_fact))
-                    return Constant.INFINITY;
-            }
+            return 1;
         }
-        else if (Constant.INFINITY.Equals(x))
+        else if (x % 1 == 0 && x > 0)
         {
-            return Constant.INFINITY;
+            double n_fact = Factorial(x);
+            
+            if (Double.IsPositiveInfinity(n_fact))
+                return Double.PositiveInfinity;
+            else
+                return (int)(0.5 + n_fact / Math.E);
+        }
+        else if (Double.IsPositiveInfinity(x))
+        {
+            return Double.PositiveInfinity;
         }
 
-        return Constant.UNDEFINED;
+        return Double.NaN;
     }
 
     [BuiltInFunction("primorial")]
     [Elementwise]
-    public static IExpression Primorial(IExpression x)
+    public static double Primorial(double x)
     {
-        if (x is Number n && n.Value % 1 == 0)
+        if (x == 0)
         {
-            if (n.Value == 0)
-            {
-                return new Number(1);
-            }
-            else if (n.Value > 0)
-            {
-                double output = GetNPrimes((int)n.Value).Aggregate((a, b) => a * b);
-
-                return output == Double.PositiveInfinity
-                    ? Constant.INFINITY
-                    : new Number(output);
-            }
+            return 1;
         }
-        else if (Constant.INFINITY.Equals(x))
+        else if (x % 1 == 0 && x > 0)
         {
-            return Constant.INFINITY;
+            return GetNPrimes((int)x).Aggregate((a, b) => a * b);
+        }
+        else if (Double.IsPositiveInfinity(x))
+        {
+            return Double.PositiveInfinity;
         }
 
-        return Constant.UNDEFINED;
+        return Double.NaN;
     }
 
     private static int[] GetNPrimes(int length)
@@ -116,62 +98,51 @@ public static class FactorialFunctions
 
     [BuiltInFunction("double_factorial")]
     [Elementwise]
-    public static IExpression DoubleFactorial(IExpression x)
+    public static double DoubleFactorial(double x)
     {
-        if (x is Number n && n.Value % 1 == 0)
+        if (x == 0 || x == 1)
         {
-            if (n.Value == 0 || n.Value == 1)
+            return 1;
+        }
+        else if (x % 1 == 0 && x > 0)
+        {
+            if (x % 2 == 0)
             {
-                return new Number(1);
-            }
-            else if (n.Value > 0)
-            {
-                if (n.Value % 2 == 0)
+                double n_fact = Factorial(x / 2);
+
+                if (Double.IsPositiveInfinity(n_fact))
                 {
-                    IExpression n_fact = Factorial(new Number(n.Value / 2));
-
-                    if (n_fact is Number n_fact_n)
-                    {
-                        double output = Math.Pow(2, n.Value / 2) * n_fact_n.Value;
-
-                        return output == Double.PositiveInfinity
-                            ? Constant.INFINITY
-                            : new Number(output);
-                    }
-                    else if (n_fact is Constant n_fact_c && Constant.INFINITY.Equals(n_fact_c))
-                    {
-                        return Constant.INFINITY;
-                    }
+                    return Double.PositiveInfinity;
                 }
                 else
                 {
-                    IExpression n_fact = Factorial(n);
-                    IExpression n_less_fact = Factorial(new Number((n.Value - 1) / 2));
+                    return Math.Pow(2, x / 2) * n_fact;
+                }
+            }
+            else
+            {
+                double n_fact = Factorial(x);
+                double n_less_fact = Factorial((x - 1) / 2);
 
-                    if (n_fact is Number n_fact_n && n_less_fact is Number n_less_fact_n)
-                    {
-                        return new Number(n_fact_n.Value / (Math.Pow(2, (n.Value - 1) / 2) * n_less_fact_n.Value));
-                    }
-                    else if (n_fact is Constant n_fact_c && Constant.INFINITY.Equals(n_fact_c) &&
-                        n_less_fact is not Constant)
-                    {
-                        // If the numerator contains infinity, then the resulting output is infinity.
-                        return Constant.INFINITY;
-                    }
-                    else if (n_less_fact is Constant n_less_fact_c && Constant.INFINITY.Equals(n_less_fact_c) &&
-                        n_fact is not Constant)
-                    {
-                        // If the denominator contains infinity, then the resulting output is 0.
-                        return new Number(0);
-                    }
+                if (Double.IsRealNumber(n_fact) && Double.IsRealNumber(n_less_fact))
+                {
+                    return n_fact / (Math.Pow(2, (x - 1) / 2) * n_less_fact);
+                }
+                else if (Double.IsPositiveInfinity(n_fact) && Double.IsRealNumber(n_less_fact))
+                {
+                    return Double.PositiveInfinity;
+                }
+                else if (Double.IsPositiveInfinity(n_less_fact) && Double.IsRealNumber(n_fact))
+                {
+                    return 0;
                 }
             }
         }
-        else if (Constant.INFINITY.Equals(x))
+        else if (Double.IsPositiveInfinity(x))
         {
-            return Constant.INFINITY;
+            return Double.PositiveInfinity;
         }
 
-        return Constant.UNDEFINED;
+        return Double.NaN;
     }
 }

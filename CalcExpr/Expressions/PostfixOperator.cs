@@ -64,20 +64,7 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
         => $"{Inside.ToString(format)}{Identifier}";
 
     private static IExpression Factorial(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x_eval is Number || Constant.INFINITY.Equals(x_eval))
-        {
-            return FactorialFunctions.Factorial(x_eval);
-        }
-        else if (x_eval is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => Factorial(e, context));
-        }
-
-        return Constant.UNDEFINED;
-    }
+        => IFunction.ForEach(new Function(FactorialFunctions.Factorial, true), [x], context);
 
     private static IExpression Percent(IExpression x, ExpressionContext context)
     {
@@ -89,7 +76,6 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
         }
         else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
         {
-            // Other constants (except for undefined) should evaluate to a Number.
             return x_eval;
         }
         else if (x_eval is PostfixOperator uo && Constant.INFINITY.Equals(uo.Inside))
@@ -105,36 +91,10 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
     }
 
     private static IExpression DoubleFactorial(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x_eval is Number || Constant.INFINITY.Equals(x_eval))
-        {
-            return FactorialFunctions.DoubleFactorial(x_eval);
-        }
-        else if (x_eval is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => DoubleFactorial(e, context));
-        }
-
-        return Constant.UNDEFINED;
-    }
+        => IFunction.ForEach(new Function(FactorialFunctions.DoubleFactorial, true), [x], context);
 
     private static IExpression Primorial(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x_eval is Number || Constant.INFINITY.Equals(x_eval))
-        {
-            return FactorialFunctions.Primorial(x_eval);
-        }
-        else if (x_eval is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => Primorial(e, context));
-        }
-
-        return Constant.UNDEFINED;
-    }
+        => IFunction.ForEach(new Function(FactorialFunctions.Primorial, true), [x], context);
 
     private static IExpression PostDecrement(IExpression x, ExpressionContext context)
     {
