@@ -108,68 +108,14 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
     {
         IExpression x_eval = x.Evaluate(context);
 
-        if (x_eval is Number n && n.Value % 1 == 0)
+        if (x_eval is Number || Constant.INFINITY.Equals(x_eval))
         {
-            if (n.Value == 0 || n.Value == 1)
-            {
-                return new Number(1);
-            }
-            else if (n.Value > 0)
-            {
-                if (n.Value % 2 == 0)
-                {
-                    IExpression n_fact = Factorial(new Number(n.Value / 2), context);
-
-                    if (n_fact is Number n_fact_n)
-                    {
-                        double output = Math.Pow(2, n.Value / 2) * n_fact_n.Value;
-
-                        return output == Double.PositiveInfinity
-                            ? Constant.INFINITY
-                            : new Number(output);
-                    }
-                    else if (n_fact is Constant n_fact_c && Constant.INFINITY.Equals(n_fact_c))
-                    {
-                        return Constant.INFINITY;
-                    }
-                }
-                else
-                {
-                    IExpression n_fact = Factorial(n, context);
-                    IExpression n_less_fact = Factorial(new Number((n.Value - 1) / 2), context);
-
-                    if (n_fact is Number n_fact_n && n_less_fact is Number n_less_fact_n)
-                    {
-                        return new Number(n_fact_n.Value / (Math.Pow(2, (n.Value - 1) / 2) * n_less_fact_n.Value));
-                    }
-                    else if (n_fact is Constant n_fact_c && Constant.INFINITY.Equals(n_fact_c) &&
-                        n_less_fact is not Constant)
-                    {
-                        // If the numerator contains infinity, then the resulting output is infinity.
-                        return Constant.INFINITY;
-                    }
-                    else if (n_less_fact is Constant n_less_fact_c && Constant.INFINITY.Equals(n_less_fact_c) &&
-                        n_fact is not Constant)
-                    {
-                        // If the denominator contains infinity, then the resulting output is 0.
-                        return new Number(0);
-                    }
-                }
-            }
-        }
-        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
-        {
-            return Constant.INFINITY;
-
-            // Other constants (except for undefined) should evaluate to a Number.
+            return FactorialFunctions.DoubleFactorial(x_eval);
         }
         else if (x_eval is IEnumerableExpression enum_expr)
         {
             return enum_expr.Map(e => DoubleFactorial(e, context));
         }
-
-        // Other IExpressions should evaluate to either a Number or Constant dealt with previously, or result in an
-        // undefined value.
 
         return Constant.UNDEFINED;
     }
