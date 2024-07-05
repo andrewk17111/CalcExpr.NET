@@ -43,7 +43,7 @@ public class NestedRegexRule(string name, string regex_template, RegexRuleOption
         : this(name, regex_template, (RegexRuleOptions)options, parse)
     { }
 
-    public override Token? Match(string input, IEnumerable<Rule> rules)
+    public override Token? Match(string input, IEnumerable<IRule> rules)
     {
         if (RegularExpression is null)
             Build(rules);
@@ -51,12 +51,12 @@ public class NestedRegexRule(string name, string regex_template, RegexRuleOption
         return FindMatch(input, RegularExpression!, Options);
     }
 
-    public void Build(IEnumerable<Rule> rules)
+    public void Build(IEnumerable<IRule> rules)
     {
         _regex = ReplaceRules(RegularExpressionTemplate, rules, Options);
     }
 
-    private static string ReplaceRules(string regular_expression, IEnumerable<Rule> rules, RegexRuleOptions options)
+    private static string ReplaceRules(string regular_expression, IEnumerable<IRule> rules, RegexRuleOptions options)
     {
         List<string> matches = Regex.Matches(regular_expression, @"(?<=(^|[^\\](\\\\)*){)\w+(?=})")
             .Select(m => m.Value)

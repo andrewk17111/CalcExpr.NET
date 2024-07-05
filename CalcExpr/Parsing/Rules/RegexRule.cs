@@ -15,11 +15,15 @@ namespace CalcExpr.Parsing.Rules;
 /// The function to use to parse a <see cref="string"/> into an <see cref="IExpression"/>.
 /// </param>
 public class RegexRule(string name, string regex, RegexRuleOptions options,
-    Func<string, Token, Parser, IExpression> parse) : Rule(name, parse, null!)
+    Func<string, Token, Parser, IExpression> parse) : IRule
 {
+    private readonly Func<string, Token, Parser, IExpression?> _parse = parse;
+
     public readonly string RegularExpression = regex;
     public readonly RegexRuleOptions Options = options;
-    
+
+    public string Name { get; } = name;
+
     public RegexOptions RegularOptions
         => (RegexOptions)((int)Options & 0x0000FFFF);
 
@@ -37,10 +41,20 @@ public class RegexRule(string name, string regex, RegexRuleOptions options,
         : this(name, regex, (RegexRuleOptions)options, parse)
     { }
 
-    public override Token? Match(string input, IEnumerable<Rule> rules)
+    public virtual Token? Match(string input, IEnumerable<IRule> rules)
         => RegularExpression is null ? null : FindMatch(input, RegularExpression, Options);
 
-    public virtual IEnumerable<Token> Matches(string input, IEnumerable<Rule> rules)
+    public IExpression? Parse(string input, Parser parser)
+    {
+        Token? match = Match(input, parser.Grammar);
+
+        return match.HasValue ? Parse(input, match.Value, parser) : null;
+    }
+
+    public IExpression? Parse(string input, Token match, Parser parser)
+        => _parse(input, match, parser);
+
+    public virtual IEnumerable<Token> Matches(string input, IEnumerable<IRule> rules)
     {
         bool rtl = Options.HasFlag((RegexRuleOptions)RegexOptions.RightToLeft);
         int start = rtl ? input.Length - 1 : 0;

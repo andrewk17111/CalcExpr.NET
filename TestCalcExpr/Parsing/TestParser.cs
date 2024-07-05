@@ -54,7 +54,7 @@ public class TestParser
 
         for (int i = 0; i < default_rules.Length; i++)
         {
-            Rule rule = parser.Grammar[i];
+            IRule rule = parser.Grammar[i];
 
             Assert.AreEqual(default_rules[i].Name, rule.Name);
 
@@ -70,7 +70,7 @@ public class TestParser
         parser = new Parser([CUSTOM_RULE]);
 
         Assert.IsTrue(parser.Grammar.Length == 1);
-        Assert.IsTrue(parser.Grammar[0] == CUSTOM_RULE);
+        Assert.IsTrue((RegexRule)parser.Grammar[0] == CUSTOM_RULE);
     }
 
     /// <summary>
@@ -142,9 +142,9 @@ public class TestParser
         Assert.IsFalse(parser.Grammar.Contains(CUSTOM_RULE));
         Assert.IsFalse(parser.Grammar.Contains(tau));
         Assert.IsTrue(parser.AddGrammarRule(CUSTOM_RULE, 0));
-        Assert.IsTrue(parser.Grammar[0] == CUSTOM_RULE);
+        Assert.IsTrue((RegexRule)parser.Grammar[0] == CUSTOM_RULE);
         Assert.IsTrue(parser.AddGrammarRule(tau, -1));
-        Assert.IsTrue(parser.Grammar.Last() == tau);
+        Assert.IsTrue((RegexRule)parser.Grammar.Last() == tau);
         Assert.IsTrue(parser.GrammarContains(tau.Name));
         Assert.IsTrue(parser.RemoveGrammarRule(CUSTOM_RULE.Name));
         Assert.IsFalse(parser.GrammarContains(CUSTOM_RULE.Name));
