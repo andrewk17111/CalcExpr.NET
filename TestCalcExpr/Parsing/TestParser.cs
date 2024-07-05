@@ -67,7 +67,7 @@ public class TestParser
             Assert.AreEqual(rule, parser.GetGrammarRule(i));
         }
 
-        parser = new Parser(new Rule[] { CUSTOM_RULE });
+        parser = new Parser([CUSTOM_RULE]);
 
         Assert.IsTrue(parser.Grammar.Length == 1);
         Assert.IsTrue(parser.Grammar[0] == CUSTOM_RULE);

@@ -497,11 +497,11 @@ public class Parser
     private static Indexer ParseIndexer(string input, Token match, Parser parser)
         => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
 
-    private static UnaryOperator ParsePrefix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, true, parser.Parse(input[(match.Index + match.Length)..]));
+    private static PrefixOperator ParsePrefix(string input, Token match, Parser parser)
+        => new PrefixOperator(match.Value, parser.Parse(input[(match.Index + match.Length)..]));
 
-    private static UnaryOperator ParsePostfix(string input, Token match, Parser parser)
-        => new UnaryOperator(match.Value, false, parser.Parse(input[..match.Index]));
+    private static PostfixOperator ParsePostfix(string input, Token match, Parser parser)
+        => new PostfixOperator(match.Value, parser.Parse(input[..match.Index]));
 
     private static Constant ParseConstant(string input, Token match, Parser parser)
         => new Constant(match.Value);
