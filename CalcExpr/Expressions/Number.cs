@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Context;
+using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.Expressions;
 
@@ -6,7 +7,7 @@ namespace CalcExpr.Expressions;
 /// Initializes a new instance of the the <see cref="Number"/> class.
 /// </summary>
 /// <param name="value">The numeric value.</param>
-public class Number(double value) : IExpression
+public class Number(double value) : IExpression, IBoolConvertible
 {
     public double Value { get; private set; } = value;
 
@@ -27,6 +28,13 @@ public class Number(double value) : IExpression
 
     public IExpression StepEvaluate(ExpressionContext variables)
         => Evaluate(variables);
+
+    public Constant ToBool()
+        => Value switch
+        {
+            0 => Constant.FALSE,
+            _ => Constant.TRUE
+        };
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Number n && n.Value == Value;

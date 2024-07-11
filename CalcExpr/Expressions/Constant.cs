@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.Expressions;
 
@@ -7,7 +8,7 @@ namespace CalcExpr.Expressions;
 /// Initializes a new instance of the the <see cref="Constant"/> class.
 /// </summary>
 /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Constant"/>.</param>
-public class Constant(string identifier) : IExpression
+public class Constant(string identifier) : IExpression, IBoolConvertible
 {
     private static readonly Dictionary<string, IExpression> _values = new Dictionary<string, IExpression>()
     {
@@ -31,31 +32,16 @@ public class Constant(string identifier) : IExpression
         { "empty_set", new Set() },
     };
 
-    public static Constant INFINITY
-        => new Constant("∞");
-
-    public static Constant PI
-        => new Constant("π");
-
-    public static Constant TAU
-        => new Constant("τ");
-
-    public static Constant E
-        => new Constant("e");
-
-    public static Constant TRUE
-        => new Constant("true");
-
-    public static Constant FALSE
-        => new Constant("false");
-
-    public static Constant UNDEFINED
-        => new Constant("undefined");
-
-    public static Constant NEGATIVE_INFINITY
-        => new Constant("-∞");
-
     public readonly string Identifier = identifier;
+
+    public static Constant INFINITY { get; } = new Constant("∞");
+    public static Constant PI { get; } = new Constant("π");
+    public static Constant TAU { get; } = new Constant("τ");
+    public static Constant E { get; } = new Constant("e");
+    public static Constant TRUE { get; } = new Constant("true");
+    public static Constant FALSE { get; } = new Constant("false");
+    public static Constant UNDEFINED { get; } = new Constant("undefined");
+    public static Constant NEGATIVE_INFINITY { get; } = new Constant("-∞");
 
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
@@ -68,6 +54,14 @@ public class Constant(string identifier) : IExpression
 
     public IExpression StepEvaluate(ExpressionContext variables)
         => _values[Identifier];
+
+    public Constant ToBool()
+        => Identifier switch
+        {
+            "false" => FALSE,
+            "undefined" or "dne" => UNDEFINED,
+            _ => TRUE,
+        };
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Constant c && 
