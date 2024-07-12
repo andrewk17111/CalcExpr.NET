@@ -1,4 +1,5 @@
-﻿using CalcExpr.Context;
+﻿using CalcExpr.BuiltInFunctions;
+using CalcExpr.Context;
 using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.Expressions;
@@ -7,9 +8,9 @@ namespace CalcExpr.Expressions;
 /// Initializes a new instance of the the <see cref="Number"/> class.
 /// </summary>
 /// <param name="value">The numeric value.</param>
-public class Number(double value) : IExpression, IBoolConvertible
+public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperable
 {
-    public double Value { get; private set; } = value;
+    public double Value { get; set; } = value;
 
     public IExpression Evaluate()
         => Evaluate(null!);
@@ -35,6 +36,20 @@ public class Number(double value) : IExpression, IBoolConvertible
             0 => Constant.FALSE,
             _ => Constant.TRUE
         };
+
+    public IExpression PrefixOperate(string identifier, ExpressionContext _)
+    {
+        return identifier switch
+        {
+            PrefixOperator.POSITIVE => this,
+            PrefixOperator.NEGATIVE => new Number(-Value),
+            PrefixOperator.NOT or PrefixOperator.NOT_ALT => Value == 0 ? Constant.TRUE : Constant.FALSE,
+            PrefixOperator.SUBFACTORIAL => new Number(FactorialFunctions.Subfactorial(Value)),
+            PrefixOperator.PRE_DECREMENT => new Number(Value - 1),
+            PrefixOperator.PRE_INCREMENT => new Number(Value + 1),
+            _ => Constant.UNDEFINED,
+        };
+    }
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Number n && n.Value == Value;

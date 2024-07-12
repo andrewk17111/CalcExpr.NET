@@ -1,6 +1,6 @@
-﻿using CalcExpr.BuiltInFunctions;
-using CalcExpr.Context;
+﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.Expressions;
 
@@ -11,20 +11,13 @@ namespace CalcExpr.Expressions;
 /// <param name="expression">The <see cref="IExpression"/> operand for this operator.</param>
 public class PrefixOperator(string op, IExpression expression) : IExpression
 {
-    private static readonly Dictionary<string, Func<IExpression, ExpressionContext, IExpression>> _prefixes
-        = new Dictionary<string, Func<IExpression, ExpressionContext, IExpression>>
-        {
-            { "+", Positive },
-            { "-", Negative },
-            { "~", (x, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Not, true), [x], cxt) },
-            { "¬", (x, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Not, true), [x], cxt) },
-            { "!", Subfactorial },
-            { "--", PreDecrement },
-            { "++", PreIncrement },
-        };
-
-    private Func<IExpression, ExpressionContext, IExpression> _operation
-        => _prefixes[Identifier];
+    public const string POSITIVE = "+";
+    public const string NEGATIVE = "-";
+    public const string NOT = "~";
+    public const string NOT_ALT = "¬";
+    public const string SUBFACTORIAL = "!";
+    public const string PRE_DECREMENT = "--";
+    public const string PRE_INCREMENT = "++";
 
     public readonly string Identifier = op;
     public readonly IExpression Inside = expression;
@@ -33,22 +26,42 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
         => Evaluate(new ExpressionContext());
 
     public IExpression Evaluate(ExpressionContext context)
-        => _operation(Inside, context);
+    {
+        IExpression evaluated = Inside.Evaluate(context);
+
+        if (evaluated is IPrefixOperable operable)
+        {
+            IExpression result = operable.PrefixOperate(Identifier, context);
+
+            return result;
+        }
+        else if (evaluated is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => e is IPrefixOperable e_operable
+                ? e_operable.PrefixOperate(Identifier, context)
+                : e);
+        }
+
+        return Constant.UNDEFINED;
+    }
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
     {
-        if (Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside))
-            return _operation(Inside, context);
-
         IExpression enum_eval = Inside.StepEvaluate(context);
 
         if (!enum_eval.Equals(Inside))
             return new PrefixOperator(Identifier, enum_eval);
-        else
-            return _operation(enum_eval, context);
+        else if (enum_eval is IPrefixOperable operable)
+            return operable.PrefixOperate(Identifier, context) ?? Constant.UNDEFINED;
+        else if (enum_eval is IEnumerableExpression enum_expr)
+            return enum_expr.Map(e => e is IPrefixOperable e_operable
+                ? e_operable.PrefixOperate(Identifier, context)
+                : e);
+
+        return Constant.UNDEFINED;
     }
 
     public override string ToString()
@@ -63,84 +76,4 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
 
     public string ToString(string? format)
         => $"{Identifier}{Inside.ToString(format)}";
-
-    private static IExpression Positive(IExpression x, ExpressionContext context)
-        => x.Evaluate(context);
-
-    private static IExpression Negative(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x_eval is Number n)
-        {
-            return new Number(-n.Value);
-        }
-        else if (Constant.INFINITY.Equals(x_eval))
-        {
-            // Other constants (except for undefined) should evaluate to a Number.
-            return Constant.NEGATIVE_INFINITY;
-        }
-        else if (x_eval is PrefixOperator uo && uo.Identifier == "-")
-        {
-            // If for some reason the inside expression didn't evaluate to a Number or infinity, negative operators will
-            // still cancel out.
-            return uo.Inside;
-        }
-        else if (x_eval is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => Negative(e, context));
-        }
-
-        // Other IExpressions should evaluate to either a Number, Constant, or UnaryOperator dealt with previously.
-        return Constant.UNDEFINED;
-    }
-
-    private static IExpression Subfactorial(IExpression x, ExpressionContext context)
-        => IFunction.ForEach(new Function(FactorialFunctions.Subfactorial, true), [x], context);
-
-    private static IExpression PreDecrement(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => PreDecrement(e, context));
-        }
-        else if (x_eval is IEnumerableExpression eval_enum_expr)
-        {
-            return eval_enum_expr.Map(e => PreDecrement(e, context));
-        }
-
-        IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(context);
-
-        context ??= new ExpressionContext();
-
-        if (x is Variable v)
-            context[v.Name] = new_val;
-
-        return new_val;
-    }
-
-    private static IExpression PreIncrement(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => PreIncrement(e, context));
-        }
-        else if (x_eval is IEnumerableExpression eval_enum_expr)
-        {
-            return eval_enum_expr.Map(e => PreIncrement(e, context));
-        }
-
-        IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(context);
-
-        context ??= new ExpressionContext();
-
-        if (x is Variable v)
-            context[v.Name] = new_val;
-
-        return new_val;
-    }
 }

@@ -8,7 +8,7 @@ namespace CalcExpr.Expressions;
 /// Initializes a new instance of the the <see cref="Constant"/> class.
 /// </summary>
 /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Constant"/>.</param>
-public class Constant(string identifier) : IExpression, IBoolConvertible
+public class Constant(string identifier) : IExpression, IBoolConvertible, IPrefixOperable
 {
     private static readonly Dictionary<string, IExpression> _values = new Dictionary<string, IExpression>()
     {
@@ -62,6 +62,47 @@ public class Constant(string identifier) : IExpression, IBoolConvertible
             "undefined" or "dne" => UNDEFINED,
             _ => TRUE,
         };
+
+    public IExpression PrefixOperate(string identifier, ExpressionContext context)
+    {
+        switch (identifier)
+        {
+            case PrefixOperator.POSITIVE:
+                return this;
+            case PrefixOperator.NOT or PrefixOperator.NOT_ALT:
+                return ToBool().Identifier switch
+                {
+                    "true" => FALSE,
+                    "false" => TRUE,
+                    _ => UNDEFINED,
+                };
+        }
+
+        switch (Identifier)
+        {
+            case "π" or "pi" or "τ" or "tau" or "e" or "true" or "false":
+                return ((Number)Evaluate(context)).PrefixOperate(identifier, context);
+            case "∞" or "inf" or "infinity":
+                return identifier switch
+                {
+                    PrefixOperator.PRE_DECREMENT or PrefixOperator.PRE_INCREMENT or PrefixOperator.SUBFACTORIAL
+                        => INFINITY,
+                    PrefixOperator.NEGATIVE => NEGATIVE_INFINITY,
+                    _ => UNDEFINED,
+                };
+            case "-∞" or "-inf" or "-infinity":
+                return identifier switch
+                {
+                    PrefixOperator.NEGATIVE or PrefixOperator.PRE_DECREMENT or PrefixOperator.PRE_INCREMENT
+                        => NEGATIVE_INFINITY,
+                    _ => UNDEFINED,
+                };
+            case "∅" or "empty" or "empty_set":
+                return this;
+            default:
+                return UNDEFINED;
+        };
+    }
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Constant c && 
