@@ -8,7 +8,7 @@ namespace CalcExpr.Expressions;
 /// Initializes a new instance of the the <see cref="Number"/> class.
 /// </summary>
 /// <param name="value">The numeric value.</param>
-public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperable
+public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperable, IPostfixOperable
 {
     public double Value { get; set; } = value;
 
@@ -47,6 +47,19 @@ public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperab
             PrefixOperator.SUBFACTORIAL => new Number(FactorialFunctions.Subfactorial(Value)),
             PrefixOperator.PRE_DECREMENT => new Number(Value - 1),
             PrefixOperator.PRE_INCREMENT => new Number(Value + 1),
+            _ => Constant.UNDEFINED,
+        };
+    }
+
+    public IExpression PostfixOperate(string identifier, ExpressionContext _)
+    {
+        return identifier switch
+        {
+            PostfixOperator.FACTORIAL => new Number(FactorialFunctions.Factorial(Value)),
+            PostfixOperator.PERCENT => new Number(Value / 100),
+            PostfixOperator.DOUBLE_FACTORIAL => new Number(FactorialFunctions.DoubleFactorial(Value)),
+            PostfixOperator.PRIMORIAL => new Number(FactorialFunctions.Primorial(Value)),
+            PostfixOperator.POST_DECREMENT or PostfixOperator.POST_INCREMENT => this,
             _ => Constant.UNDEFINED,
         };
     }

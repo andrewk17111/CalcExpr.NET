@@ -55,7 +55,7 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
         if (!enum_eval.Equals(Inside))
             return new PrefixOperator(Identifier, enum_eval);
         else if (enum_eval is IPrefixOperable operable)
-            return operable.PrefixOperate(Identifier, context) ?? Constant.UNDEFINED;
+            return operable.PrefixOperate(Identifier, context);
         else if (enum_eval is IEnumerableExpression enum_expr)
             return enum_expr.Map(e => e is IPrefixOperable e_operable
                 ? e_operable.PrefixOperate(Identifier, context)

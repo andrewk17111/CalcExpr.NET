@@ -1,4 +1,5 @@
-﻿using CalcExpr.Context;
+﻿using CalcExpr.BuiltInFunctions;
+using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Interfaces;
 
@@ -8,7 +9,7 @@ namespace CalcExpr.Expressions;
 /// Initializes a new instance of the the <see cref="Constant"/> class.
 /// </summary>
 /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Constant"/>.</param>
-public class Constant(string identifier) : IExpression, IBoolConvertible, IPrefixOperable
+public class Constant(string identifier) : IExpression, IBoolConvertible, IPrefixOperable, IPostfixOperable
 {
     private static readonly Dictionary<string, IExpression> _values = new Dictionary<string, IExpression>()
     {
@@ -101,6 +102,23 @@ public class Constant(string identifier) : IExpression, IBoolConvertible, IPrefi
                 return this;
             default:
                 return UNDEFINED;
+        };
+    }
+
+    public IExpression PostfixOperate(string identifier, ExpressionContext context)
+    {
+        return identifier switch
+        {
+            "π" or "pi" or "τ" or "tau" or "e" or "true" or "false"
+                => ((Number)Evaluate(context)).PostfixOperate(identifier, context),
+            "∞" or "inf" or "infinity" or "∅" or "empty" or "empty_set" => this,
+            "-∞" or "-inf" or "-infinity" => identifier switch
+            {
+                PostfixOperator.PERCENT or PostfixOperator.POST_DECREMENT or PostfixOperator.POST_INCREMENT
+                    => NEGATIVE_INFINITY,
+                _ => UNDEFINED,
+            },
+            _ => UNDEFINED,
         };
     }
 

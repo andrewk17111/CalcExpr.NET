@@ -1,6 +1,7 @@
 ﻿using CalcExpr.BuiltInFunctions;
 using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.Expressions;
 
@@ -11,19 +12,12 @@ namespace CalcExpr.Expressions;
 /// <param name="expression">The <see cref="IExpression"/> operand for this operator.</param>
 public class PostfixOperator(string op, IExpression expression) : IExpression
 {
-    private static readonly Dictionary<string, Func<IExpression, ExpressionContext, IExpression>> _postfixes
-        = new Dictionary<string, Func<IExpression, ExpressionContext, IExpression>>
-        {
-            { "!", Factorial },
-            { "%", Percent },
-            { "!!", DoubleFactorial },
-            { "#", Primorial },
-            { "--", PostDecrement },
-            { "++", PostIncrement },
-        };
-
-    private Func<IExpression, ExpressionContext, IExpression> _operation
-        => _postfixes[Identifier];
+    public const string FACTORIAL = "!";
+    public const string PERCENT = "%";
+    public const string DOUBLE_FACTORIAL = "!!";
+    public const string PRIMORIAL = "#";
+    public const string POST_DECREMENT = "--";
+    public const string POST_INCREMENT = "++";
 
     public readonly string Identifier = op;
     public readonly IExpression Inside = expression;
@@ -31,26 +25,46 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext variables)
-        => _operation(Inside, variables);
+    public IExpression Evaluate(ExpressionContext context)
+    {
+        IExpression evaluated = Inside.Evaluate(context);
+
+        if (evaluated is IPostfixOperable operable)
+        {
+            IExpression result = operable.PostfixOperate(Identifier, context);
+
+            return result;
+        }
+        else if (evaluated is IEnumerableExpression enum_expr)
+        {
+            return enum_expr.Map(e => e is IPostfixOperable e_operable
+                ? e_operable.PostfixOperate(Identifier, context)
+                : e);
+        }
+
+        return Constant.UNDEFINED;
+    }
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
     public IExpression StepEvaluate(ExpressionContext context)
     {
-        if (Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside))
-            return _operation(Inside, context);
-
         IExpression enum_eval = Inside.StepEvaluate(context);
 
         if (!enum_eval.Equals(Inside))
             return new PostfixOperator(Identifier, enum_eval);
-        else
-            return _operation(enum_eval, context);
+        else if (enum_eval is IPostfixOperable operable)
+            return operable.PostfixOperate(Identifier, context);
+        else if (enum_eval is IEnumerableExpression enum_expr)
+            return enum_expr.Map(e => e is IPostfixOperable e_operable
+                ? e_operable.PostfixOperate(Identifier, context)
+                : e);
+
+        return Constant.UNDEFINED;
     }
 
-    public override string ToString()
+public override string ToString()
         => ToString(null);
 
     public override bool Equals(object? obj)
