@@ -40,7 +40,7 @@ public static class LogicalFunctions
 
     [BuiltInFunction("is_na")]
     public static bool IsNa(IExpression x, ExpressionContext _)
-        => Constant.UNDEFINED.Equals(x);
+        => Undefined.UNDEFINED.Equals(x);
 
     [BuiltInFunction("is_num", "is_number")]
     public static bool IsNum(IExpression x, ExpressionContext _)

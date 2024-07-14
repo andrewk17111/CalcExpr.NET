@@ -91,7 +91,7 @@ public class TestRules
         string regex = @"[A-Z][a-z]+(\s*String\s*)";
         RegexRuleOptions options = RegexRuleOptions.Trim | RegexRuleOptions.PadReferences;
         Token[] matches = [new Token("New String ", 0), new Token("Input String", 11)];
-        IExpression parsed = Constant.UNDEFINED;
+        IExpression parsed = Undefined.UNDEFINED;
         ReferenceRegexRule rule = new ReferenceRegexRule(name, regex_template, options);
         string input = "New String Input String";
 

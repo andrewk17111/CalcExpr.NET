@@ -17,7 +17,7 @@ public class FloatTypeConverter<T> : ITypeConverter<T?>
                 else if (T.IsNegativeInfinity(value.Value))
                     return Constant.NEGATIVE_INFINITY;
                 else if (T.IsNaN(value.Value))
-                    return Constant.UNDEFINED;
+                    return Undefined.UNDEFINED;
 
                 return (Number)Convert.ToDouble(value.Value);
             }
@@ -26,7 +26,7 @@ public class FloatTypeConverter<T> : ITypeConverter<T?>
         {
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     public T? ConvertFromExpression(IExpression? expression)

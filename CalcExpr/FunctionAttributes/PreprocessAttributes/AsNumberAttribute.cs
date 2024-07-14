@@ -9,5 +9,5 @@ public class AsNumberAttribute : PreprocessAttribute
             ? expression
             : Constant.TRUE.Equals(expression) || Constant.FALSE.Equals(expression)
                 ? expression.Evaluate()
-                : Constant.UNDEFINED;
+                : Undefined.UNDEFINED;
 }

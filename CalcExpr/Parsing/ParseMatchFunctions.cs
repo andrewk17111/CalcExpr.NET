@@ -108,6 +108,9 @@ internal static class ParseMatchFunctions
     internal static Indexer ParseMatchIndexer(string input, Token match, Parser parser)
         => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
 
+    internal static Undefined ParseMatchUndefined(string _, Token match, Parser parser)
+        => new Undefined(match.Value);
+
     internal static Constant ParseMatchConstant(string _, Token match, Parser parser)
         => new Constant(match.Value);
 

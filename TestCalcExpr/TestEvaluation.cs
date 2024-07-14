@@ -135,7 +135,7 @@ public class TestEvaluation
                         (t_max == t_min && max.Value - min.Value < 1 &&
                             min.Value != t_min && Math.Sign(min.Value) == Math.Sign(max.Value)))
                     {
-                        Assert.AreEqual(Constant.UNDEFINED, element,
+                        Assert.AreEqual(Undefined.UNDEFINED, element,
                             $"Min: {min.Value}. Max: {max.Value}. Element is not undefined.");
                         continue;
                     }

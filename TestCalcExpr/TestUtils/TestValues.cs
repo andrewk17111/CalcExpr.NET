@@ -4,7 +4,7 @@ namespace TestCalcExpr.TestUtils;
 
 public static class TestValues
 {
-    public static readonly Constant UNDEFINED = Constant.UNDEFINED;
+    public static readonly Undefined UNDEFINED = Undefined.UNDEFINED;
     public static readonly Constant INFINITY = Constant.INFINITY;
     public static readonly Constant NEGATIVE_INFINITY = Constant.NEGATIVE_INFINITY;
     public static readonly Number ZERO = new Number(0);
@@ -36,13 +36,13 @@ public static class TestValues
         => new BinaryOperator("+", new BinaryOperator("*", m, x), b).Evaluate();
 
     public static IExpression P(IExpression x)
-        => x is Number n ? new Number(n.Value + 1) : Constant.UNDEFINED;
+        => x is Number n ? new Number(n.Value + 1) : Undefined.UNDEFINED;
 
     public static IExpression SubFromTen(IExpression x)
         => new BinaryOperator("-", new Number(10), x).Evaluate();
 
     public static IExpression IsEven(IExpression x)
-        => x is Number n ? new Number(n.Value % 2 == 0 ? 1 : 0) : Constant.UNDEFINED;
+        => x is Number n ? new Number(n.Value % 2 == 0 ? 1 : 0) : Undefined.UNDEFINED;
 
     public static IExpression Aggregate(IExpression a, IExpression b)
         => new BinaryOperator("+", a, b).Evaluate();

@@ -18,7 +18,7 @@ public class Number(double value) : IExpression
         {
             Double.PositiveInfinity => Constant.INFINITY,
             Double.NegativeInfinity => Constant.NEGATIVE_INFINITY,
-            Double.NaN => Constant.UNDEFINED,
+            Double.NaN => Undefined.UNDEFINED,
             _ => this
         };
 

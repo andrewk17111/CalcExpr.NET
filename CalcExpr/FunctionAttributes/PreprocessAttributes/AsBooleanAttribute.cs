@@ -6,8 +6,8 @@ public class AsBooleanAttribute : PreprocessAttribute
 {
     public override IExpression Preprocess(IExpression expression)
     {
-        if (Constant.UNDEFINED.Equals(expression))
-            return Constant.UNDEFINED;
+        if (Undefined.UNDEFINED.Equals(expression))
+            return Undefined.UNDEFINED;
         else if (Constant.TRUE.Equals(expression) || Constant.FALSE.Equals(expression))
             return expression;
         else if (new Number(0).Equals(expression))

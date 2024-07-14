@@ -12,7 +12,7 @@ public class BooleanTypeConverter : ITypeConverter<bool?>
             return value.Value ? Constant.TRUE : Constant.FALSE;
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     public bool? ConvertFromExpression(IExpression? expression)
@@ -22,7 +22,7 @@ public class BooleanTypeConverter : ITypeConverter<bool?>
 
         IExpression result = new AsBooleanAttribute().Preprocess(expression);
 
-        if (Constant.UNDEFINED.Equals(result))
+        if (Undefined.UNDEFINED.Equals(result))
             return null;
 
         return Constant.TRUE.Equals(result);

@@ -87,7 +87,7 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
             return enum_expr.Map(e => Percent(e, context));
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     private static IExpression DoubleFactorial(IExpression x, ExpressionContext context)

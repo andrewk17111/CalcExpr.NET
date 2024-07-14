@@ -92,7 +92,7 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
         }
 
         // Other IExpressions should evaluate to either a Number, Constant, or UnaryOperator dealt with previously.
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     private static IExpression Subfactorial(IExpression x, ExpressionContext context)
