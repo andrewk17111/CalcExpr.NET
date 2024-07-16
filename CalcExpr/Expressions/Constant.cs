@@ -19,8 +19,6 @@ public class Constant(string identifier) : IExpression
         { "τ", new Number(Math.Tau) },
         { "tau", new Number(Math.Tau) },
         { "e", new Number(Math.E) },
-        { "true", new Number(1) },
-        { "false", new Number(0) },
         { "-∞", new Constant("-∞") },
         { "-inf", new Constant("-inf") },
         { "-infinity", new Constant("-infinity") },
@@ -40,12 +38,6 @@ public class Constant(string identifier) : IExpression
 
     public static Constant E
         => new Constant("e");
-
-    public static Constant TRUE
-        => new Constant("true");
-
-    public static Constant FALSE
-        => new Constant("false");
 
     public static Constant NEGATIVE_INFINITY
         => new Constant("-∞");
@@ -72,7 +64,7 @@ public class Constant(string identifier) : IExpression
                     c.Identifier == "infinity",
                 "π" or "pi" => c.Identifier == "π" || c.Identifier == "pi",
                 "τ" or "tau" => c.Identifier == "τ" || c.Identifier == "tau",
-                "e" or "true" or "false" => c.Identifier == Identifier,
+                "e" => c.Identifier == Identifier,
                 "-∞" or "-inf" or "-infinity" => c.Identifier == "-∞" || c.Identifier == "-inf" ||
                     c.Identifier == "-infinity",
                 "∅" or "empty" or "empty_set" => c.Identifier == "∅" || c.Identifier == "empty" ||

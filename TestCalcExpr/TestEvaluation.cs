@@ -121,7 +121,7 @@ public class TestEvaluation
 
                 // Test the random function with the integer argument set to true.
                 IEnumerableExpression results = (IEnumerableExpression)new FunctionCall("random",
-                        [(Number)i, min, max, Constant.TRUE])
+                        [(Number)i, min, max, Logical.TRUE])
                     .Evaluate(new ExpressionContext());
 
                 Assert.AreEqual(i, results.Count(), "The number of elements in the enumeration is incorrect.");
@@ -155,7 +155,7 @@ public class TestEvaluation
                 }
 
                 // Test the random function with the integer argument set to false.
-                results = (IEnumerableExpression)new FunctionCall("random", [(Number)i, min, max, Constant.FALSE])
+                results = (IEnumerableExpression)new FunctionCall("random", [(Number)i, min, max, Logical.FALSE])
                     .Evaluate(new ExpressionContext());
 
                 Assert.AreEqual(i, results.Count(), "The number of elements in the enumeration is incorrect.");

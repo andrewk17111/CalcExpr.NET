@@ -48,10 +48,14 @@ public class FloatTypeConverter<T> : ITypeConverter<T?>
                     return T.PositiveInfinity;
                 else if (Constant.NEGATIVE_INFINITY.Equals(expression))
                     return T.NegativeInfinity;
-                else if (Constant.TRUE.Equals(expression))
-                    return T.One;
-                else if (Constant.FALSE.Equals(expression))
-                    return T.Zero;
+            }
+            else if (expression is Logical logical)
+            {
+                return logical.Value ? T.One : T.Zero;
+            }
+            else if (expression is Undefined)
+            {
+                return T.NaN;
             }
         }
         catch

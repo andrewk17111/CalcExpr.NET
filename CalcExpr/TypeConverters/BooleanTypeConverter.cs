@@ -9,7 +9,7 @@ public class BooleanTypeConverter : ITypeConverter<bool?>
     {
         if (value.HasValue)
         {
-            return value.Value ? Constant.TRUE : Constant.FALSE;
+            return value.Value ? Logical.TRUE : Logical.FALSE;
         }
 
         return Undefined.UNDEFINED;
@@ -25,6 +25,6 @@ public class BooleanTypeConverter : ITypeConverter<bool?>
         if (Undefined.UNDEFINED.Equals(result))
             return null;
 
-        return Constant.TRUE.Equals(result);
+        return Logical.TRUE.Equals(result);
     }
 }

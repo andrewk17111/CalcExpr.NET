@@ -52,7 +52,7 @@ public static class LogicalFunctions
 
     [BuiltInFunction("is_logical")]
     public static bool IsLogical(IExpression x, ExpressionContext _)
-        => Constant.TRUE.Equals(x) || Constant.FALSE.Equals(x);
+        => Logical.TRUE.Equals(x) || Logical.FALSE.Equals(x);
 
     [BuiltInFunction("is_even")]
     public static bool? IsEven(double x)

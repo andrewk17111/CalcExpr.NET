@@ -21,7 +21,7 @@ public class TestParser
     {
         (string Name, string? Regex)[] default_rules =
         [
-            ("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            ("DiscreteOperand", "({Prefix}*({Variable}|{Undefined}|{Logical}|{Constant}|{Number}|{Token}){Postfix}*)"),
             ("Operand", @"[\[\{]?({DiscreteOperand}|{Parameter}|{TokenizedParameter})[\]\}]?"),
             ("Token", @"\[\d+\]"),
             ("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)"),
@@ -46,7 +46,8 @@ public class TestParser
             ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
             ("Indexer", null),
             ("Undefined", "undefined|dne"),
-            ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|(empty(_set)?)|∅|e)"),
+            ("Logical", "true|false"),
+            ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|(empty(_set)?)|∅|e)"),
             ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
             ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),
         ];

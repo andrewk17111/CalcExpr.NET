@@ -111,6 +111,9 @@ internal static class ParseMatchFunctions
     internal static Undefined ParseMatchUndefined(string _, Token match, Parser parser)
         => new Undefined(match.Value);
 
+    internal static Logical ParseMatchLogical(string _, Token match, Parser parser)
+        => new Logical(Boolean.Parse(match.Value));
+
     internal static Constant ParseMatchConstant(string _, Token match, Parser parser)
         => new Constant(match.Value);
 

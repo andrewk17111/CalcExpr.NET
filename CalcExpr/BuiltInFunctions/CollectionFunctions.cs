@@ -23,7 +23,7 @@ public static class CollectionFunctions
     {
         IEnumerable<IExpression> expressions = collection
             .Select(x => x.Evaluate(context))
-            .Where(x => !Constant.FALSE.Equals(new AsBooleanAttribute().Preprocess(selector.Invoke([x], context))));
+            .Where(x => !Logical.FALSE.Equals(new AsBooleanAttribute().Preprocess(selector.Invoke([x], context))));
         IExpression? result = (IExpression?)Activator.CreateInstance(collection.GetType(), expressions);
 
         return result ?? Undefined.UNDEFINED;
@@ -57,7 +57,7 @@ public static class CollectionFunctions
     {
         Random random = new Random();
 
-        if (Constant.TRUE.Equals(int_only))
+        if (Logical.TRUE.Equals(int_only))
         {
             long minimum = Convert.ToInt64(Math.Truncate(min.Value + (min.Value <= 0 ? 0 : 1)));
             long maximum = Convert.ToInt64(Math.Truncate(max.Value - (max.Value >= 0 ? 0 : 1)));
@@ -156,14 +156,14 @@ public static class CollectionFunctions
     public static bool Any(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
     {
         return ((IEnumerableExpression)collection.Evaluate(context))
-            .Any(x => Constant.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
+            .Any(x => Logical.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
     }
 
     [BuiltInFunction("all")]
     public static bool All(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
     {
         return ((IEnumerableExpression)collection.Evaluate(context))
-            .All(x => Constant.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
+            .All(x => Logical.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
     }
 
     [BuiltInFunction("find")]

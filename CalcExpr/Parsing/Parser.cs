@@ -26,7 +26,8 @@ public class Parser
     /// <param name="build_rules">Whether or not grammar rules should be prebuilt.</param>
     public Parser(bool build_rules = true)
         : this ([
-            new ReferenceRegexRule("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)",
+            new ReferenceRegexRule("DiscreteOperand",
+                "({Prefix}*({Variable}|{Undefined}|{Logical}|{Constant}|{Number}|{Token}){Postfix}*)",
                 RegexRuleOptions.PadReferences),
             new ReferenceRegexRule("Operand", @"[\[\{]?({DiscreteOperand}|{Parameter}|{TokenizedParameter})[\]\}]?"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
@@ -71,7 +72,9 @@ public class Parser
             new Rule("Indexer", ParseMatchIndexer, MatchIndexer),
             new RegexRule("Undefined", "undefined|dne", RegexRuleOptions.Only | RegexRuleOptions.Trim,
                 ParseMatchUndefined),
-            new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|(empty(_set)?)|∅|e)",
+            new RegexRule("Logical", "true|false", RegexRuleOptions.Only | RegexRuleOptions.Trim,
+                ParseMatchLogical),
+            new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|(empty(_set)?)|∅|e)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchConstant),
             new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchVariable),
