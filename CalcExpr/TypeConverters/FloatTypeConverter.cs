@@ -13,9 +13,9 @@ public class FloatTypeConverter<T> : ITypeConverter<T?>
             if (value.HasValue)
             {
                 if (T.IsPositiveInfinity(value.Value))
-                    return Constant.INFINITY;
+                    return Infinity.POSITIVE;
                 else if (T.IsNegativeInfinity(value.Value))
-                    return Constant.NEGATIVE_INFINITY;
+                    return Infinity.NEGATIVE;
                 else if (T.IsNaN(value.Value))
                     return Undefined.UNDEFINED;
 
@@ -42,12 +42,9 @@ public class FloatTypeConverter<T> : ITypeConverter<T?>
                 
                 return (T?)Convert.ChangeType(num.Value, typeof(T));
             }
-            else if (expression is Constant)
+            else if (expression is Infinity infinity)
             {
-                if (Constant.INFINITY.Equals(expression))
-                    return T.PositiveInfinity;
-                else if (Constant.NEGATIVE_INFINITY.Equals(expression))
-                    return T.NegativeInfinity;
+                return infinity.Positive ? T.PositiveInfinity : T.NegativeInfinity;
             }
             else if (expression is Logical logical)
             {

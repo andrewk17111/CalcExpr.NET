@@ -16,8 +16,8 @@ public class Number(double value) : IExpression
     public IExpression Evaluate(ExpressionContext variables)
         => Value switch
         {
-            Double.PositiveInfinity => Constant.INFINITY,
-            Double.NegativeInfinity => Constant.NEGATIVE_INFINITY,
+            Double.PositiveInfinity => Infinity.POSITIVE,
+            Double.NegativeInfinity => Infinity.NEGATIVE,
             Double.NaN => Undefined.UNDEFINED,
             _ => this
         };

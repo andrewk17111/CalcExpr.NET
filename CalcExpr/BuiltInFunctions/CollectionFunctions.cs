@@ -83,11 +83,11 @@ public static class CollectionFunctions
             if (a is null || b is null || a.Equals(b))
                 return 0;
 
-            if (Constant.INFINITY.Equals(a) || Constant.NEGATIVE_INFINITY.Equals(b))
+            if (Infinity.POSITIVE.Equals(a) || Infinity.NEGATIVE.Equals(b))
                 return 1;
 
-            if (Constant.INFINITY.Equals(a) || Constant.NEGATIVE_INFINITY.Equals(b))
-                return 1;
+            if (Infinity.POSITIVE.Equals(b) || Infinity.NEGATIVE.Equals(a))
+                return -1;
 
             if (a is Number num_a && b is Number num_b)
                 return num_a.Value.CompareTo(num_b.Value);

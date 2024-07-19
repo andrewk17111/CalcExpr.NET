@@ -96,17 +96,17 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(a_num.Value + b_num.Value).Evaluate();
         }
-        else if (Constant.INFINITY.Equals(a_eval) || Constant.INFINITY.Equals(b_eval) &&
+        else if (Infinity.POSITIVE.Equals(a_eval) || Infinity.POSITIVE.Equals(b_eval) &&
             (a_eval is Number || b_eval is Number ||
-            (Constant.INFINITY.Equals(a_eval) && Constant.INFINITY.Equals(b_eval))))
+            (Infinity.POSITIVE.Equals(a_eval) && Infinity.POSITIVE.Equals(b_eval))))
         { 
-            return Constant.INFINITY;
+            return Infinity.POSITIVE;
         }
-        else if ((Constant.NEGATIVE_INFINITY.Equals(a_eval) || Constant.NEGATIVE_INFINITY.Equals(b_eval)) &&
+        else if ((Infinity.NEGATIVE.Equals(a_eval) || Infinity.NEGATIVE.Equals(b_eval)) &&
             ((a_eval is Number || b_eval is Number) ||
-            (Constant.NEGATIVE_INFINITY.Equals(a_eval) && Constant.NEGATIVE_INFINITY.Equals(b_eval))))
+            (Infinity.NEGATIVE.Equals(a_eval) && Infinity.NEGATIVE.Equals(b_eval))))
         {
-            return Constant.NEGATIVE_INFINITY;
+            return Infinity.NEGATIVE;
         }
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
@@ -132,15 +132,15 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(a_num.Value - b_num.Value).Evaluate();
         }
-        else if ((a_eval is Number || Constant.INFINITY.Equals(a_eval)) &&
-            (b_eval is Number || Constant.NEGATIVE_INFINITY.Equals(b_eval)))
+        else if ((a_eval is Number || Infinity.POSITIVE.Equals(a_eval)) &&
+            (b_eval is Number || Infinity.NEGATIVE.Equals(b_eval)))
         {
-            return Constant.INFINITY;
+            return Infinity.POSITIVE;
         }
-        else if ((a_eval is Number || Constant.NEGATIVE_INFINITY.Equals(a_eval)) &&
-            (b_eval is Number || Constant.INFINITY.Equals(b_eval)))
+        else if ((a_eval is Number || Infinity.NEGATIVE.Equals(a_eval)) &&
+            (b_eval is Number || Infinity.POSITIVE.Equals(b_eval)))
         {
-            return Constant.NEGATIVE_INFINITY;
+            return Infinity.NEGATIVE;
         }
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
@@ -166,18 +166,18 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(num_a.Value * num_b.Value).Evaluate();
         }
-        else if ((a_eval is Number a_num && a_num.Value != 0 && Constant.INFINITY.Equals(b_eval)) ||
-            (b_eval is Number b_num && b_num.Value != 0 && Constant.INFINITY.Equals(a_eval)) ||
-            (Constant.INFINITY.Equals(a_eval) && Constant.INFINITY.Equals(b_eval)) ||
-            (Constant.NEGATIVE_INFINITY.Equals(a_eval) && Constant.NEGATIVE_INFINITY.Equals(b_eval)))
+        else if ((a_eval is Number a_num && a_num.Value != 0 && Infinity.POSITIVE.Equals(b_eval)) ||
+            (b_eval is Number b_num && b_num.Value != 0 && Infinity.POSITIVE.Equals(a_eval)) ||
+            (Infinity.POSITIVE.Equals(a_eval) && Infinity.POSITIVE.Equals(b_eval)) ||
+            (Infinity.NEGATIVE.Equals(a_eval) && Infinity.NEGATIVE.Equals(b_eval)))
         {
-            return Constant.INFINITY;
+            return Infinity.POSITIVE;
         }
-        else if ((Constant.NEGATIVE_INFINITY.Equals(a_eval) && (b_eval is Number ||
-                Constant.INFINITY.Equals(b_eval))) ||
-            (Constant.NEGATIVE_INFINITY.Equals(b_eval) && (a_eval is Number || Constant.INFINITY.Equals(a_eval))))
+        else if ((Infinity.NEGATIVE.Equals(a_eval) && (b_eval is Number ||
+                Infinity.POSITIVE.Equals(b_eval))) ||
+            (Infinity.NEGATIVE.Equals(b_eval) && (a_eval is Number || Infinity.POSITIVE.Equals(a_eval))))
         {
-            return Constant.NEGATIVE_INFINITY;
+            return Infinity.NEGATIVE;
         }
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
@@ -203,17 +203,17 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(a_num.Value / b_num.Value);
         }
-        else if (a_eval is Number && (Constant.INFINITY.Equals(b_eval) || Constant.NEGATIVE_INFINITY.Equals(b_eval)))
+        else if (a_eval is Number && (Infinity.POSITIVE.Equals(b_eval) || Infinity.NEGATIVE.Equals(b_eval)))
         {
             return new Number(0);
         }
-        else if (Constant.INFINITY.Equals(a_eval) && b_eval is Number b_n && b_n.Value != 0)
+        else if (Infinity.POSITIVE.Equals(a_eval) && b_eval is Number b_n && b_n.Value != 0)
         {
-            return Constant.INFINITY;
+            return Infinity.POSITIVE;
         }
-        else if (Constant.NEGATIVE_INFINITY.Equals(a_eval) && b_eval is Number)
+        else if (Infinity.NEGATIVE.Equals(a_eval) && b_eval is Number)
         {
-            return Constant.NEGATIVE_INFINITY;
+            return Infinity.NEGATIVE;
         }
         else if (a_eval is IEnumerableExpression a_enum_expr)
         {
@@ -239,32 +239,32 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(Math.Pow(a_num.Value, b_num.Value));
         }
-        else if (Constant.INFINITY.Equals(a_eval) && b_eval is Number b_num_inf)
+        else if (Infinity.POSITIVE.Equals(a_eval) && b_eval is Number b_num_inf)
         {
             if (b_num_inf.Value < 0)
                 return new Number(0);
             else if (b_num_inf.Value > 0)
-                return Constant.INFINITY;
+                return Infinity.POSITIVE;
         }
-        else if (Constant.NEGATIVE_INFINITY.Equals(a_eval) && b_eval is Number b_num_neg_inf)
+        else if (Infinity.NEGATIVE.Equals(a_eval) && b_eval is Number b_num_neg_inf)
         {
             if (b_num_neg_inf.Value < 0)
                 return new Number(0);
             else if (b_num_neg_inf.Value > 0)
                 if (b_num_neg_inf.Value % 2 == 0)
-                    return Constant.INFINITY;
+                    return Infinity.POSITIVE;
                 else if (b_num_neg_inf.Value % 2 == 1)
-                    return Constant.NEGATIVE_INFINITY;
+                    return Infinity.NEGATIVE;
         }
-        else if ((Constant.INFINITY.Equals(a_eval) || Constant.NEGATIVE_INFINITY.Equals(a_eval)) &&
-            Constant.INFINITY.Equals(b_eval))
+        else if ((Infinity.POSITIVE.Equals(a_eval) || Infinity.NEGATIVE.Equals(a_eval)) &&
+            Infinity.POSITIVE.Equals(b_eval))
         {
-            return Constant.INFINITY;
+            return Infinity.POSITIVE;
         }
-        else if ((Constant.NEGATIVE_INFINITY.Equals(b_eval) && ((a_eval is Number a_num_neg_inf &&
+        else if ((Infinity.NEGATIVE.Equals(b_eval) && ((a_eval is Number a_num_neg_inf &&
             (a_num_neg_inf.Value != 0 &&
-                a_num_neg_inf.Value != 1 && a_num_neg_inf.Value != -1)) || Constant.INFINITY.Equals(a_eval))) &&
-            (a_eval is Number a_n && a_n.Value == 0 && Constant.INFINITY.Equals(b_eval)))
+                a_num_neg_inf.Value != 1 && a_num_neg_inf.Value != -1)) || Infinity.POSITIVE.Equals(a_eval))) &&
+            (a_eval is Number a_n && a_n.Value == 0 && Infinity.POSITIVE.Equals(b_eval)))
         {
             return new Number(0);
         }
@@ -375,9 +375,13 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(a_num.Equals(b_eval) ? 1 : 0);
         }
-        else if (a_eval is Constant a_const)
+        else if (a_eval is Logical a_logic && b_eval is Logical b_logic)
         {
-            return new Number(a_const.Equals(b_eval) ? 1 : 0);
+            return new Number(a_logic.Value == b_logic.Value ? 1 : 0);
+        }
+        else if (a_eval is Constant || a_eval is Infinity || a_eval is Undefined)
+        {
+            return new Number(a_eval.Equals(b_eval) ? 1 : 0);
         }
         else if (a_eval is PrefixOperator a_unop)
         {
@@ -423,11 +427,11 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(a_num.Value < b_num.Value ? 1 : 0);
         }
-        else if (Constant.INFINITY.Equals(a_eval) || Constant.NEGATIVE_INFINITY.Equals(b_eval))
+        else if (Infinity.POSITIVE.Equals(a_eval) || Infinity.NEGATIVE.Equals(b_eval))
         {
             return new Number(0);
         }
-        else if (Constant.INFINITY.Equals(b_eval) || Constant.NEGATIVE_INFINITY.Equals(a_eval))
+        else if (Infinity.POSITIVE.Equals(b_eval) || Infinity.NEGATIVE.Equals(a_eval))
         {
             return new Number(1);
         }
@@ -482,11 +486,11 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         {
             return new Number(a_num.Value > b_num.Value ? 1 : 0);
         }
-        else if (Constant.INFINITY.Equals(b_eval) || Constant.NEGATIVE_INFINITY.Equals(a_eval))
+        else if (Infinity.POSITIVE.Equals(b_eval) || Infinity.NEGATIVE.Equals(a_eval))
         {
             return new Number(0);
         }
-        else if (Constant.INFINITY.Equals(a_eval) || Constant.NEGATIVE_INFINITY.Equals(b_eval))
+        else if (Infinity.POSITIVE.Equals(a_eval) || Infinity.NEGATIVE.Equals(b_eval))
         {
             return new Number(1);
         }

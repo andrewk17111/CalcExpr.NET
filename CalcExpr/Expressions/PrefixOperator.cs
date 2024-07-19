@@ -40,7 +40,7 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
 
     public IExpression StepEvaluate(ExpressionContext context)
     {
-        if (Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside))
+        if (Inside is Number || Infinity.POSITIVE.Equals(Inside) || Infinity.NEGATIVE.Equals(Inside))
             return _operation(Inside, context);
 
         IExpression enum_eval = Inside.StepEvaluate(context);
@@ -75,10 +75,10 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
         {
             return new Number(-n.Value);
         }
-        else if (Constant.INFINITY.Equals(x_eval))
+        else if (Infinity.POSITIVE.Equals(x_eval))
         {
             // Other constants (except for undefined) should evaluate to a Number.
-            return Constant.NEGATIVE_INFINITY;
+            return Infinity.NEGATIVE;
         }
         else if (x_eval is PrefixOperator uo && uo.Identifier == "-")
         {

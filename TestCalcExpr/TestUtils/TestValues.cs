@@ -5,8 +5,8 @@ namespace TestCalcExpr.TestUtils;
 public static class TestValues
 {
     public static readonly Undefined UNDEFINED = Undefined.UNDEFINED;
-    public static readonly Constant INFINITY = Constant.INFINITY;
-    public static readonly Constant NEGATIVE_INFINITY = Constant.NEGATIVE_INFINITY;
+    public static readonly Infinity INFINITY = Infinity.POSITIVE;
+    public static readonly Infinity NEGATIVE_INFINITY = Infinity.NEGATIVE;
     public static readonly Number ZERO = new Number(0);
     public static readonly Number ONE = new Number(1);
     public static readonly Number NEGATIVE_ONE = new Number(-1);

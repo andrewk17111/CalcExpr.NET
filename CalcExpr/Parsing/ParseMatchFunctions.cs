@@ -119,6 +119,9 @@ internal static class ParseMatchFunctions
     internal static Logical ParseMatchLogical(string _, Token match, Parser __)
         => new Logical(Boolean.Parse(match.Value));
 
+    internal static Infinity ParseMatchInfinity(string _, Token match, Parser __)
+        => new Infinity(match.Value);
+
     internal static Constant ParseMatchConstant(string _, Token match, Parser __)
         => new Constant(match.Value);
 

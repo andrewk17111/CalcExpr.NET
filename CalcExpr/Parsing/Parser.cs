@@ -27,7 +27,7 @@ public class Parser
     public Parser(bool build_rules = true)
         : this ([
             new ReferenceRegexRule("DiscreteOperand",
-                "({Prefix}*({Variable}|{Undefined}|{Logical}|{Constant}|{Number}|{Token}){Postfix}*)",
+                "({Prefix}*({Variable}|{Undefined}|{Logical}|{Infinity}|{Constant}|{Number}|{Token}){Postfix}*)",
                 RegexRuleOptions.PadReferences),
             new ReferenceRegexRule("Operand", @"[\[\{]?({DiscreteOperand}|{Parameter}|{TokenizedParameter})[\]\}]?"),
             new ReferenceRegexRule("Token", @"\[\d+\]"),
@@ -74,7 +74,9 @@ public class Parser
                 ParseMatchUndefined),
             new RegexRule("Logical", "true|false", RegexRuleOptions.Only | RegexRuleOptions.Trim,
                 ParseMatchLogical),
-            new RegexRule("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|(empty(_set)?)|∅|e)",
+            new RegexRule("Infinity", "∞|(inf(inity)?)", RegexRuleOptions.Only | RegexRuleOptions.Trim,
+                ParseMatchInfinity),
+            new RegexRule("Constant", "(π|pi|τ|tau|(empty(_set)?)|∅|e)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchConstant),
             new RegexRule("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)",
                 RegexRuleOptions.Only | RegexRuleOptions.Trim, ParseMatchVariable),
