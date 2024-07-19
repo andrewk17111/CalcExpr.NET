@@ -2,6 +2,10 @@
 
 namespace CalcExpr.Expressions;
 
+/// <summary>
+/// Creates a new instance of the <see cref="Logical"/> class.
+/// </summary>
+/// <param name="value">The value of the <see cref="Logical"/>.</param>
 public class Logical(bool value) : IExpression
 {
     public static readonly Logical TRUE = new Logical(true);

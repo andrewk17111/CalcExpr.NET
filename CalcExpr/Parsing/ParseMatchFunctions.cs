@@ -108,13 +108,18 @@ internal static class ParseMatchFunctions
     internal static Indexer ParseMatchIndexer(string input, Token match, Parser parser)
         => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
 
-    internal static Undefined ParseMatchUndefined(string _, Token match, Parser parser)
-        => new Undefined(match.Value);
+    internal static Undefined ParseMatchUndefined(string _, Token match, Parser __)
+        => match.Value switch
+        {
+            "undefined" => Undefined.UNDEFINED,
+            "dne" => Undefined.DNE,
+            _ => throw new Exception($"The input was not in the correct format: '{match.Value}'")
+        };
 
-    internal static Logical ParseMatchLogical(string _, Token match, Parser parser)
+    internal static Logical ParseMatchLogical(string _, Token match, Parser __)
         => new Logical(Boolean.Parse(match.Value));
 
-    internal static Constant ParseMatchConstant(string _, Token match, Parser parser)
+    internal static Constant ParseMatchConstant(string _, Token match, Parser __)
         => new Constant(match.Value);
 
     internal static Variable ParseMatchVariable(string _, Token match, Parser parser)

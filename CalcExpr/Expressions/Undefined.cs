@@ -2,12 +2,15 @@
 
 namespace CalcExpr.Expressions;
 
-public class Undefined(string identifier) : IExpression
+public class Undefined : IExpression
 {
     public static readonly Undefined UNDEFINED = new Undefined("undefined");
     public static readonly Undefined DNE = new Undefined("dne");
 
-    public readonly string Identifier = identifier;
+    public readonly string Identifier;
+
+    private Undefined(string identifier)
+        => Identifier = identifier;
 
     public IExpression Evaluate()
         => this;
