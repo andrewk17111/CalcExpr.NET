@@ -9,8 +9,8 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
 
     public readonly IExpression Body = body;
 
-    public Parameter[] Parameters
-        => _parameters.ToArray();
+    public IParameter[] Parameters
+        => _parameters.Cast<IParameter>().ToArray();
 
     public bool IsElementwise
         => false;
@@ -18,16 +18,17 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
         ExpressionContext inner_context = context.Clone();
-        IExpression[]? args = ((IFunction)this).ProcessArguments(arguments);
+        IExpression[]? args = ((IFunction)this).ProcessArguments(arguments, context)?.Cast<IExpression>().ToArray();
 
         if (args is null)
-            return Constant.UNDEFINED;
+            return Undefined.UNDEFINED;
 
-        foreach ((Parameter parameter, IExpression argument) in Parameters.Zip(args))
-            inner_context[parameter.Name] = argument;
+        foreach ((IParameter parameter, IExpression? argument) in _parameters.Zip(args))
+            if (parameter is Parameter param)
+                inner_context[param.Name] = argument;
 
         IExpression result = Body.Evaluate(inner_context);
-        string[] parameters = Parameters.Select(p => p.Name).ToArray();
+        string[] parameters = _parameters.Select(p => p.Name).ToArray();
 
         foreach (string variable in inner_context.Variables)
             if (!parameters.Contains(variable))
@@ -53,7 +54,7 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
         if (obj is not null && obj is LambdaFunction lambda)
         {
             bool parameters_equal = lambda.Parameters.Length == Parameters.Length &&
-                (Parameters.Length == 0 || !lambda.Parameters.Select((arg, i) => arg == Parameters[i]).Any(x => !x));
+                (Parameters.Length == 0 || !lambda.Parameters.Select((arg, i) => arg.Equals(Parameters[i])).Any(x => !x));
             bool bodies_equal = lambda.Body.Equals(Body);
 
             return parameters_equal && bodies_equal;
@@ -69,5 +70,5 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
         => ToString(null);
 
     public string ToString(string? format)
-        => $"({String.Join(",", Parameters)})=>{Body.ToString(format)}";
+        => $"({String.Join(",", _parameters)})=>{Body.ToString(format)}";
 }

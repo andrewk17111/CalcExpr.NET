@@ -8,18 +8,18 @@ namespace CalcExpr.BuiltInFunctions;
 public static class StatisticalFunctions
 {
     [BuiltInFunction("count", "length", "len")]
-    public static IExpression Count(IExpression expressions)
+    public static int Count(IExpression expressions)
     {
         return expressions is IEnumerableExpression enum_expr
-            ? (Number)enum_expr.Count()
-            : (Number)1;
+            ? enum_expr.Count()
+            : 1;
     }
 
     [BuiltInFunction("max", "maximum")]
     public static IExpression Max([AreNumbers] IExpression expressions)
     {
         return expressions is IEnumerableExpression enum_expr
-            ? enum_expr.MaxBy(x => ((Number)x).Value) ?? Constant.UNDEFINED
+            ? enum_expr.MaxBy(x => ((Number)x).Value) ?? Undefined.UNDEFINED
             : expressions;
     }
 
@@ -31,7 +31,7 @@ public static class StatisticalFunctions
             int count = enum_expr.Count();
             
             return count == 0
-                ? Constant.UNDEFINED
+                ? Undefined.UNDEFINED
                 : (Number)(enum_expr.Select(x => ((Number)x).Value).Aggregate((a, b) => a + b) / count);
         }
 
@@ -59,7 +59,7 @@ public static class StatisticalFunctions
     public static IExpression Min([AreNumbers] IExpression expressions)
     {
         return expressions is IEnumerableExpression enum_expr
-            ? enum_expr.MinBy(x => ((Number)x).Value) ?? Constant.UNDEFINED
+            ? enum_expr.MinBy(x => ((Number)x).Value) ?? Undefined.UNDEFINED
             : expressions;
     }
 
@@ -79,29 +79,26 @@ public static class StatisticalFunctions
                 .Where(kvp => kvp.Value == max)
                 .Select(kvp => kvp.Key);
 
-            // TODO: Change to Set.
             return modes.Count() == 1
                 ? modes.Single()
-                : new Vector(modes);
+                : new Set(modes);
         }
 
         return expressions;
     }
 
     [BuiltInFunction("percentile")]
-    public static IExpression Percentile([AreNumbers] IExpression expressions, [IsNumber] IExpression p)
+    public static IExpression Percentile([AreNumbers] IExpression expressions, double p)
     {
         if (expressions is IEnumerableExpression enum_expr)
         {
-            double p_val = ((Number)p).Value;
-
-            if (!enum_expr.Any() || p_val < 0 || p_val > 1)
-                return Constant.UNDEFINED;
+            if (!enum_expr.Any() || p < 0 || p > 1)
+                return Undefined.UNDEFINED;
             else if (enum_expr.Count() == 1)
                 return enum_expr.Single();
 
             IEnumerable<Number> values = enum_expr.Select(x => (Number)x).OrderBy(x => x.Value);
-            double i = (values.Count() - 1) * p_val;
+            double i = (values.Count() - 1) * p;
             int prev_i = (int)Math.Floor(i);
 
             if (prev_i == values.Count() - 1)
@@ -119,9 +116,9 @@ public static class StatisticalFunctions
     }
 
     [BuiltInFunction("quartile")]
-    public static IExpression Quartile([AreNumbers] IExpression expressions, [IsNumber] IExpression q)
+    public static IExpression Quartile([AreNumbers] IExpression expressions, [Range(0, 4)] double q)
     {
-        return Percentile(expressions, (Number)(((Number)q).Value / 4));
+        return Percentile(expressions, q / 4);
     }
 
     [BuiltInFunction("stdev", "stdevs")]
@@ -135,7 +132,7 @@ public static class StatisticalFunctions
                 ((Number)Sum(enum_expr.Map(x => (Number)Math.Pow(((Number)x).Value - mean, 2)))).Value);
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     [BuiltInFunction("stdevp")]

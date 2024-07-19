@@ -21,7 +21,8 @@ public class TestParser
     {
         (string Name, string? Regex)[] default_rules =
         [
-            ("DiscreteOperand", "({Prefix}*({Variable}|{Constant}|{Number}|{Token}){Postfix}*)"),
+            ("DiscreteOperand",
+                "({Prefix}*({Variable}|{Undefined}|{Logical}|{Infinity}|{Constant}|{Number}|{Token}){Postfix}*)"),
             ("Operand", @"[\[\{]?({DiscreteOperand}|{Parameter}|{TokenizedParameter})[\]\}]?"),
             ("Token", @"\[\d+\]"),
             ("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)"),
@@ -45,7 +46,10 @@ public class TestParser
             ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
             ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
             ("Indexer", null),
-            ("Constant", "(∞|(inf(inity)?)|π|pi|τ|tau|true|false|undefined|dne|(empty(_set)?)|∅|e)"),
+            ("Undefined", "undefined|dne"),
+            ("Logical", "true|false"),
+            ("Infinity", "∞|(inf(inity)?)"),
+            ("Constant", "(π|pi|τ|tau|(empty(_set)?)|∅|e)"),
             ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
             ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),
         ];
@@ -54,7 +58,7 @@ public class TestParser
 
         for (int i = 0; i < default_rules.Length; i++)
         {
-            Rule rule = parser.Grammar[i];
+            IRule rule = parser.Grammar[i];
 
             Assert.AreEqual(default_rules[i].Name, rule.Name);
 
@@ -67,10 +71,10 @@ public class TestParser
             Assert.AreEqual(rule, parser.GetGrammarRule(i));
         }
 
-        parser = new Parser(new Rule[] { CUSTOM_RULE });
+        parser = new Parser([CUSTOM_RULE]);
 
         Assert.IsTrue(parser.Grammar.Length == 1);
-        Assert.IsTrue(parser.Grammar[0] == CUSTOM_RULE);
+        Assert.IsTrue((RegexRule)parser.Grammar[0] == CUSTOM_RULE);
     }
 
     /// <summary>
@@ -142,9 +146,9 @@ public class TestParser
         Assert.IsFalse(parser.Grammar.Contains(CUSTOM_RULE));
         Assert.IsFalse(parser.Grammar.Contains(tau));
         Assert.IsTrue(parser.AddGrammarRule(CUSTOM_RULE, 0));
-        Assert.IsTrue(parser.Grammar[0] == CUSTOM_RULE);
+        Assert.IsTrue((RegexRule)parser.Grammar[0] == CUSTOM_RULE);
         Assert.IsTrue(parser.AddGrammarRule(tau, -1));
-        Assert.IsTrue(parser.Grammar.Last() == tau);
+        Assert.IsTrue((RegexRule)parser.Grammar.Last() == tau);
         Assert.IsTrue(parser.GrammarContains(tau.Name));
         Assert.IsTrue(parser.RemoveGrammarRule(CUSTOM_RULE.Name));
         Assert.IsFalse(parser.GrammarContains(CUSTOM_RULE.Name));

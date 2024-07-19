@@ -2,8 +2,8 @@
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
-public class NotUndefinedAttribute : ConditionAttribute
+public class IsIntegerAttribute : ConditionAttribute
 {
     public override bool CheckCondition(IExpression expression)
-        => !Undefined.UNDEFINED.Equals(expression);
+        => expression is Number num && num.Value % 0 == 0;
 }

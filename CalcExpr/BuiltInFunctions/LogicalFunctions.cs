@@ -10,91 +10,75 @@ public static class LogicalFunctions
 {
     [BuiltInFunction("and")]
     [Elementwise]
-    public static IExpression And([AsBoolean][NotUndefined] IExpression a, [AsBoolean][NotUndefined] IExpression b)
-        => Constant.FALSE.Equals(a) || Constant.FALSE.Equals(b)
-            ? Constant.FALSE
-            : Constant.TRUE;
+    public static bool And(bool a, bool b)
+        => a && b;
 
     [BuiltInFunction("or")]
     [Elementwise]
-    public static IExpression Or([AsBoolean][NotUndefined] IExpression a, [AsBoolean][NotUndefined] IExpression b)
-        => Constant.TRUE.Equals(a) || Constant.TRUE.Equals(b)
-            ? Constant.TRUE
-            : Constant.FALSE;
+    public static bool Or(bool a, bool b)
+        => a || b;
 
     [BuiltInFunction("xor")]
     [Elementwise]
-    public static IExpression Xor([AsBoolean][NotUndefined] IExpression a, [AsBoolean][NotUndefined] IExpression b)
-    {
-        bool a_bool = Constant.TRUE.Equals(a);
-        bool b_bool = Constant.TRUE.Equals(b);
-
-        return (a_bool || b_bool) && !(a_bool && b_bool)
-            ? Constant.TRUE
-            : Constant.FALSE;
-    }
+    public static bool Xor(bool a, bool b)
+        => (a || b) && !(a && b);
 
     [BuiltInFunction("not")]
     [Elementwise]
-    public static IExpression Not([AsBoolean][NotUndefined] IExpression x)
-        => Constant.TRUE.Equals(x) ? Constant.FALSE : Constant.TRUE;
+    public static bool Not(bool x)
+        => !x;
 
     [BuiltInFunction("bool")]
     [Elementwise]
-    public static IExpression Bool([AsBoolean][NotUndefined] IExpression x)
+    public static bool Bool(bool x)
         => x;
 
     [BuiltInFunction("if")]
     [Elementwise]
-    public static IExpression If([AsBoolean][NotUndefined] IExpression condition, IExpression is_true,
-        IExpression is_false)
-        => Constant.TRUE.Equals(condition) ? is_true : is_false;
+    public static IExpression If(bool condition, IExpression is_true, IExpression is_false)
+        => condition ? is_true : is_false;
 
     [BuiltInFunction("is_na")]
-    public static IExpression IsNa(IExpression x, ExpressionContext _)
-        => Constant.UNDEFINED.Equals(x) ? Constant.TRUE : Constant.FALSE;
+    public static bool IsNa(IExpression x, ExpressionContext _)
+        => Undefined.UNDEFINED.Equals(x);
 
     [BuiltInFunction("is_num", "is_number")]
-    public static IExpression IsNum(IExpression x, ExpressionContext _)
-        => x is Number ? Constant.TRUE : Constant.FALSE;
+    public static bool IsNum(IExpression x, ExpressionContext _)
+        => x is Number;
 
     [BuiltInFunction("is_int", "is_integer")]
-    public static IExpression IsInt(IExpression x, ExpressionContext _)
-        => x is Number num && num.Value % 1 == 0
-            ? Constant.TRUE
-            : Constant.FALSE;
+    public static bool IsInt(IExpression x, ExpressionContext _)
+        => x is Number num && num.Value % 1 == 0;
 
     [BuiltInFunction("is_logical")]
-    public static IExpression IsLogical(IExpression x, ExpressionContext _)
-        => Constant.TRUE.Equals(x) || Constant.FALSE.Equals(x)
-            ? Constant.TRUE
-            : Constant.FALSE;
+    public static bool IsLogical(IExpression x, ExpressionContext _)
+        => Logical.TRUE.Equals(x) || Logical.FALSE.Equals(x);
 
     [BuiltInFunction("is_even")]
-    public static IExpression IsEven(Number x)
-        => x.Value % 2 == 0
-            ? Constant.TRUE
-            : Constant.FALSE;
+    public static bool? IsEven(double x)
+        => Double.IsFinite(x)
+            ? x % 2 == 0
+            : null;
 
     [BuiltInFunction("is_odd")]
-    public static IExpression IsOdd(Number x)
-        => Math.Abs(x.Value % 2) == 1
-            ? Constant.TRUE
-            : Constant.FALSE;
+    public static bool? IsOdd(double x)
+        => Double.IsFinite(x)
+            ? Math.Abs(x) % 2 == 1
+            : null;
 
     [BuiltInFunction("is_positive")]
-    public static IExpression IsPositive(IExpression x)
-        => (x is Number num && num.Value > 0) || Constant.INFINITY.Equals(x)
-            ? Constant.TRUE
-            : !Constant.UNDEFINED.Equals(x)
-                ? Constant.FALSE
-                : Constant.UNDEFINED;
+    public static bool? IsPositive(double x)
+        => x > 0
+            ? true
+            : !Double.IsNaN(x)
+                ? false
+                : null;
 
     [BuiltInFunction("is_negative")]
-    public static IExpression IsNegative(IExpression x, ExpressionContext _)
-        => (x is Number num && num.Value < 0) || Constant.NEGATIVE_INFINITY.Equals(x)
-            ? Constant.TRUE
-            : !Constant.UNDEFINED.Equals(x)
-                ? Constant.FALSE
-                : Constant.UNDEFINED;
+    public static bool? IsNegative(double x, ExpressionContext _)
+        => x < 0
+            ? true
+            : !Double.IsNaN(x)
+                ? false
+                : null;
 }
