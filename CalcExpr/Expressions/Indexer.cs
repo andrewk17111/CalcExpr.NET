@@ -27,7 +27,7 @@ public class Indexer(IExpression collection, IExpression index) : IExpression
             return collection_enum.ElementAt(index);
         }
 
-        return Undefined.UNDEFINED;
+        return Constant.UNDEFINED;
     }
 
     public IExpression StepEvaluate()
@@ -46,7 +46,7 @@ public class Indexer(IExpression collection, IExpression index) : IExpression
             return new Indexer(Collection, index_eval);
 
         if (Collection is not IEnumerableExpression || Index is not Number)
-            return Undefined.UNDEFINED;
+            return Constant.UNDEFINED;
 
         return Evaluate(context);
     }

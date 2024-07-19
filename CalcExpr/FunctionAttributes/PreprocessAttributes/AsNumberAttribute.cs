@@ -7,7 +7,7 @@ public class AsNumberAttribute : PreprocessAttribute
     public override IExpression Preprocess(IExpression expression)
         => expression is Number
             ? expression
-            : Logical.TRUE.Equals(expression) || Logical.FALSE.Equals(expression)
+            : Constant.TRUE.Equals(expression) || Constant.FALSE.Equals(expression)
                 ? expression.Evaluate()
-                : Undefined.UNDEFINED;
+                : Constant.UNDEFINED;
 }

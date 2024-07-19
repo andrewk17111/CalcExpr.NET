@@ -28,9 +28,6 @@ internal static class EnumerableExtensions
 
             yield return element;
         }
-
-        if (index == 0)
-            yield return item;
     }
 
     public static IEnumerable<T> Remove<T>(this IEnumerable<T> enumerable, int index)

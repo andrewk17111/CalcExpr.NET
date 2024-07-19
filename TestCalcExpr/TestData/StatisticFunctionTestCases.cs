@@ -41,9 +41,9 @@ public static partial class TestCases
         new FunctionTestCase("mode", new Dictionary<IExpression, IExpression>
         {
             { TestValues.UNDEFINED, TestValues.UNDEFINED },
-            { UtilFunctions.Range<Vector>(1, 10), UtilFunctions.Range<Set>(1, 10) },
+            { UtilFunctions.Range<Vector>(1, 10), UtilFunctions.Range<Vector>(1, 10) },
             { UtilFunctions.Range<Vector>(1, 10).Map(x => (Number)(((Number)x).Value * 2)),
-                UtilFunctions.Range<Set>(1, 10).Map(x => (Number)(((Number)x).Value * 2)) },
+                UtilFunctions.Range<Vector>(1, 10).Map(x => (Number)(((Number)x).Value * 2)) },
             { new Vector([(Number)1, (Number)1, (Number)2]), (Number)1 },
         }),
         new FunctionTestCase("percentile", new Dictionary<IExpression[], IExpression>
