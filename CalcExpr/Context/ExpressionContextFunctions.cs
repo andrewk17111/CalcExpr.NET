@@ -20,7 +20,7 @@ public partial class ExpressionContext
             return IFunction.ForEach(func, arguments, this);
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     public void SetFunctions(Assembly assembly)

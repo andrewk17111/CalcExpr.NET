@@ -39,7 +39,7 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
 
     public IExpression StepEvaluate(ExpressionContext context)
     {
-        if (Inside is Number || Constant.INFINITY.Equals(Inside) || Constant.NEGATIVE_INFINITY.Equals(Inside))
+        if (Inside is Number || Infinity.POSITIVE.Equals(Inside) || Infinity.NEGATIVE.Equals(Inside))
             return _operation(Inside, context);
 
         IExpression enum_eval = Inside.StepEvaluate(context);
@@ -74,11 +74,11 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
         {
             return new Number(n.Value / 100);
         }
-        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
+        else if (x_eval is Constant c && Infinity.POSITIVE.Equals(c))
         {
             return x_eval;
         }
-        else if (x_eval is PostfixOperator uo && Constant.INFINITY.Equals(uo.Inside))
+        else if (x_eval is PostfixOperator uo && Infinity.POSITIVE.Equals(uo.Inside))
         {
             return uo;
         }
@@ -87,7 +87,7 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
             return enum_expr.Map(e => Percent(e, context));
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     private static IExpression DoubleFactorial(IExpression x, ExpressionContext context)

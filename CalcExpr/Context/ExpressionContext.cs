@@ -42,7 +42,7 @@ public partial class ExpressionContext
                     ? _functions[name]
                     : _variables[name];
             
-            return Constant.UNDEFINED;
+            return Undefined.UNDEFINED;
         }
         set => SetVariable(name, value);
     }
