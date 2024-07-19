@@ -10,11 +10,7 @@ public class TestExpressionContext
     [TestMethod]
     public void TestInit()
     {
-        ExpressionContext context = new ExpressionContext(TestCases.ContextVariables, false);
-
-        // TODO: Replace with streamlined function when created.
-        foreach (KeyValuePair<string, IFunction> func in TestCases.ContextFunctions)
-            context.SetFunction(func.Key, func.Value);
+        ExpressionContext context = new ExpressionContext(TestCases.ContextVariables, TestCases.ContextFunctions);
 
         foreach (string variable in TestCases.ContextVariables.Keys)
         {
@@ -47,7 +43,7 @@ public class TestExpressionContext
             Assert.AreEqual(TestCases.ContextVariables[variable], context[variable]);
             context.RemoveVariable(variable);
             Assert.IsFalse(context.ContainsVariable(variable));
-            Assert.AreEqual(Undefined.UNDEFINED, context[variable]);
+            Assert.AreEqual(Constant.UNDEFINED, context[variable]);
         }
     }
 
@@ -65,7 +61,7 @@ public class TestExpressionContext
             Assert.IsTrue(context.RemoveVariable(function));
             Assert.IsFalse(context.ContainsVariable(function));
             Assert.IsFalse(context.ContainsFunction(function));
-            Assert.AreEqual(Undefined.UNDEFINED, context[function]);
+            Assert.AreEqual(Constant.UNDEFINED, context[function]);
 
             Assert.IsTrue(context.SetFunction(function, TestCases.ContextFunctions[function]));
             Assert.IsTrue(context.ContainsVariable(function));
@@ -74,7 +70,7 @@ public class TestExpressionContext
             Assert.IsTrue(context.RemoveFunction(function));
             Assert.IsFalse(context.ContainsVariable(function));
             Assert.IsFalse(context.ContainsFunction(function));
-            Assert.AreEqual(Undefined.UNDEFINED, context[function]);
+            Assert.AreEqual(Constant.UNDEFINED, context[function]);
         }
     }
 }

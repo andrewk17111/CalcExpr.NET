@@ -40,18 +40,17 @@ internal static class UtilFunctions
 
                 while (exp_enumerator.MoveNext() && act_enumerator.MoveNext())
                     AreEqual(exp_enumerator.Current, act_enumerator.Current, decimal_places, message);
-
-                return;
             }
         }
         else if (expected is Number exp_num && actual is Number act_num)
         {
             Assert.AreEqual(Math.Round(exp_num.Value, decimal_places), Math.Round(act_num.Value, decimal_places),
                 message);
-            return;
         }
-        
-        Assert.AreEqual(expected, actual, message);
+        else
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
     }
 
     public static void IsLessThan(double expected, double actual, string message = "")

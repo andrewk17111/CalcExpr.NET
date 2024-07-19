@@ -2,7 +2,6 @@
 using CalcExpr.Expressions.Components;
 using System.Linq.Expressions;
 using System.Reflection;
-using TestCalcExpr.Extensions;
 using TestCalcExpr.TestData;
 
 namespace TestCalcExpr.Expressions;
@@ -18,8 +17,11 @@ public class TestFunction
     {
         foreach (MethodInfo method in typeof(TestCases).GetMethods(BindingFlags.Static))
         {
-            Delegate del = method.ToDelegate();
-            IParameter[] parameters = [.. method.GetParameters().ToParameters([])];
+            Delegate del = method.CreateDelegate(Expression.GetDelegateType(method.GetParameters()
+                .Select(p => p.ParameterType)
+                .Concat(new Type[] { method.ReturnType })
+                .ToArray()));
+            Parameter[] parameters = method.GetParameters().Select(p => (Parameter)p).ToArray();
             Function function = new Function(del);
 
             Assert.AreEqual(method, function.Body.Method);

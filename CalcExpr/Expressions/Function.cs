@@ -2,33 +2,58 @@
 using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
-using CalcExpr.Extensions;
-using CalcExpr.TypeConverters;
+using CalcExpr.FunctionAttributes;
+using CalcExpr.FunctionAttributes.ConditionalAttributes;
+using CalcExpr.FunctionAttributes.PreprocessAttributes;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace CalcExpr.Expressions;
 
-public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is_elementwise = false) : IFunction
+public class Function(IEnumerable<Parameter> parameters, Delegate body, bool is_elementwise = false) : IFunction
 {
-    private readonly IReadOnlyList<IParameter> _parameters = parameters.ToArray() ?? [];
+    private readonly IReadOnlyList<Parameter> _parameters = parameters.ToArray() ?? [];
 
     public readonly Delegate Body = body;
-    public readonly bool RequiresContext = parameters
-        .Any(p => p is ContextParameter);
+    public readonly bool RequiresContext = body.Method.GetParameters()
+        .Select(p => p.ParameterType == typeof(ExpressionContext))
+        .Contains(true);
 
-    public IParameter[] Parameters
+    public Parameter[] Parameters
         => _parameters.ToArray();
 
     public bool IsElementwise
         => is_elementwise;
 
     public Function(MethodInfo method)
-        : this (method.ToDelegate(), method.GetCustomAttribute(typeof(ElementwiseAttribute)) is not null)
+        : this (method.CreateDelegate(Expression.GetDelegateType(method
+            .GetParameters()
+            .Select(p => p.ParameterType)
+            .Append(method.ReturnType)
+            .ToArray())),
+        method.GetCustomAttribute(typeof(ElementwiseAttribute)) is not null)
     { }
 
     public Function(Delegate body, bool is_elementwise = false)
-        : this(body.Method.GetParameters().ToParameters(ExpressionContext.DEFAULT_TYPES)!, body, is_elementwise)
+        : this(body.Method.GetParameters().Select(p => (Parameter)p), body, is_elementwise)
     { }
+
+    public static bool IsValidFunction(MethodInfo method, out string[]? aliases)
+    {
+        BuiltInFunctionAttribute? bif = method.GetCustomAttribute<BuiltInFunctionAttribute>();
+
+        aliases = bif?.Aliases;
+
+        if (bif is null)
+            return false;
+
+        if (!typeof(IExpression).IsAssignableFrom(method.ReturnType))
+            return false;
+
+        return method.GetParameters()
+            .All(p => typeof(IExpression).IsAssignableFrom(p.ParameterType) ||
+                p.ParameterType == typeof(ExpressionContext));
+    }
 
     public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
@@ -36,46 +61,27 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
 
         if (RequiresContext)
         {
-            object?[]? processed_args = ((IFunction)this).ProcessArguments(arguments, context);
+            IExpression[]? processed_args = ((IFunction)this).ProcessArguments(arguments);
 
             if (processed_args is null)
-                return Undefined.UNDEFINED;
+                return Constant.UNDEFINED;
 
             int i = 0;
 
-            args = [.. Parameters.Select(p => p is ContextParameter ? context : processed_args[i++])];
+            args = [.. Parameters.Select(p => (object?)(p.IsContext ? context : processed_args[i++]))];
         }
         else
         {            
-            object?[]? processed_args = ((IFunction)this)
-                .ProcessArguments(arguments.Select(arg => arg.Evaluate(context)), context);
+            IExpression[]? processed_args = ((IFunction)this)
+                .ProcessArguments(arguments.Select(arg => arg.Evaluate(context)));
 
             if (processed_args is null)
-                return Undefined.UNDEFINED;
+                return Constant.UNDEFINED;
 
             args = [.. processed_args];
         }
-
-        object? result = Body.Method.Invoke(this, args);
-
-        if (result is null)
-        {
-            return Undefined.UNDEFINED;
-        }
-        else if (result is IExpression expr)
-        {
-            return expr;
-        }
-        else
-        {
-            Type return_type = Body.Method.ReturnType.IsGenericType &&
-                Body.Method.ReturnType.GetGenericTypeDefinition() == typeof(Nullable<>)
-                    ? Body.Method.ReturnType.GetGenericArguments().Single()
-                    : Body.Method.ReturnType;
-            ITypeConverter[] converter = context.GetTypeConverters(return_type);
-
-            return converter.ConvertToExpression(result) ?? Undefined.UNDEFINED;
-        }
+        
+        return (IExpression?)Body.Method.Invoke(this, args) ?? Constant.UNDEFINED;
     }
 
     public IExpression Evaluate()
@@ -106,7 +112,7 @@ public class Function(IEnumerable<IParameter> parameters, Delegate body, bool is
 
 public interface IFunction : IExpression
 {
-    public IParameter[] Parameters { get; }
+    public Parameter[] Parameters { get; }
 
     public bool IsElementwise { get; }
 
@@ -119,18 +125,28 @@ public interface IFunction : IExpression
         return outer_context;
     }
 
-    public object?[]? ProcessArguments(IEnumerable<IExpression> arguments, ExpressionContext context)
+    public IExpression[]? ProcessArguments(IEnumerable<IExpression> arguments)
     {
-        IParameter[] parameters = Parameters.Where(p => p is not ContextParameter).ToArray();
         IExpression[] args = arguments.ToArray();
-        List<object?> results = [];
+        List<IExpression> results = [];
 
-        for (int i = 0; i < parameters.Length; i++)
+        for (int i = 0; i < Parameters.Where(p => !p.IsContext).Count(); i++)
         {
-            object? argument = parameters[i].ProcessArgument(args[i], context);
+            Parameter parameter = Parameters[i];
+            IExpression argument = args[i];
 
-            if (argument is null && !parameters[i].AllowNull)
-                return null;
+            foreach (FunctionAttribute attribute in parameter.Attributes)
+            {
+                if (attribute is ConditionAttribute condition)
+                {
+                    if (!condition.CheckCondition(argument))
+                        return null;
+                }
+                else if (attribute is PreprocessAttribute preprocess)
+                {
+                    argument = preprocess.Preprocess(argument);
+                }
+            }
 
             results.Add(argument);
         }
@@ -145,8 +161,8 @@ public interface IFunction : IExpression
 
     public static IExpression ForEach(IFunction function, IEnumerable<IExpression> arguments, ExpressionContext context)
     {
-        if (arguments.Count() != function.Parameters.Where(p => p is not ContextParameter).Count())
-            return Undefined.UNDEFINED;
+        if (arguments.Count() != function.Parameters.Where(p => !p.IsContext).Count())
+            return Constant.UNDEFINED;
 
         if (function.IsElementwise && arguments.Any(arg => arg is IEnumerableExpression))
         {

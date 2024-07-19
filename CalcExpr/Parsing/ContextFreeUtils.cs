@@ -110,32 +110,6 @@ public static class ContextFreeUtils
     }
 
     /// <summary>
-    /// Tokenizes the input string by replacing all bracketed expressions with a token.
-    /// </summary>
-    /// <param name="input">The input string to tokenize.</param>
-    /// <param name="tokens">The tokens that were created from the input string.</param>
-    /// <param name="tokenized">The tokenized string.</param>
-    /// <param name="brackets">Type of brackets to tokenize.</param>
-    /// <returns>
-    /// <see langword="true"/> if the input string was tokenized successfully, <see langword="false"/> otherwise.
-    /// </returns>"
-    public static bool TryTokenizeInput(this string input, out Token[] tokens, out string? tokenized,
-        Brackets brackets = Brackets.All)
-    {
-        try
-        {
-            tokenized = input.TokenizeInput(out tokens, brackets);
-            return true;
-        }
-        catch
-        {
-            tokens = [];
-            tokenized = null;
-            return false;
-        }
-    }
-
-    /// <summary>
     /// Checks if the input string has balanced brackets.
     /// </summary>
     /// <param name="input">The input string to check.</param>
