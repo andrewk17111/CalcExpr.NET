@@ -47,7 +47,7 @@ public class TestExpressionContext
             Assert.AreEqual(TestCases.ContextVariables[variable], context[variable]);
             context.RemoveVariable(variable);
             Assert.IsFalse(context.ContainsVariable(variable));
-            Assert.AreEqual(Constant.UNDEFINED, context[variable]);
+            Assert.AreEqual(Undefined.UNDEFINED, context[variable]);
         }
     }
 
@@ -65,7 +65,7 @@ public class TestExpressionContext
             Assert.IsTrue(context.RemoveVariable(function));
             Assert.IsFalse(context.ContainsVariable(function));
             Assert.IsFalse(context.ContainsFunction(function));
-            Assert.AreEqual(Constant.UNDEFINED, context[function]);
+            Assert.AreEqual(Undefined.UNDEFINED, context[function]);
 
             Assert.IsTrue(context.SetFunction(function, TestCases.ContextFunctions[function]));
             Assert.IsTrue(context.ContainsVariable(function));
@@ -74,7 +74,7 @@ public class TestExpressionContext
             Assert.IsTrue(context.RemoveFunction(function));
             Assert.IsFalse(context.ContainsVariable(function));
             Assert.IsFalse(context.ContainsFunction(function));
-            Assert.AreEqual(Constant.UNDEFINED, context[function]);
+            Assert.AreEqual(Undefined.UNDEFINED, context[function]);
         }
     }
 }

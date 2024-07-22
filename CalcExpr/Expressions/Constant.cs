@@ -13,21 +13,11 @@ public class Constant(string identifier) : IExpression, IBoolConvertible, IPrefi
 {
     private static readonly Dictionary<string, IExpression> _values = new Dictionary<string, IExpression>()
     {
-        { "∞", new Constant("∞") },
-        { "inf", new Constant("inf") },
-        { "infinity", new Constant("infinity") },
         { "π", new Number(Math.PI) },
         { "pi", new Number(Math.PI) },
         { "τ", new Number(Math.Tau) },
         { "tau", new Number(Math.Tau) },
         { "e", new Number(Math.E) },
-        { "true", new Number(1) },
-        { "false", new Number(0) },
-        { "undefined", new Constant("undefined") },
-        { "dne", new Constant("dne") },
-        { "-∞", new Constant("-∞") },
-        { "-inf", new Constant("-inf") },
-        { "-infinity", new Constant("-infinity") },
         { "∅", new Set() },
         { "empty", new Set() },
         { "empty_set", new Set() },
@@ -126,14 +116,9 @@ public class Constant(string identifier) : IExpression, IBoolConvertible, IPrefi
         => obj is not null && obj is Constant c && 
             (c.Identifier == Identifier || Identifier switch
             {
-                "∞" or "inf" or "infinity" => c.Identifier == "∞" || c.Identifier == "inf" ||
-                    c.Identifier == "infinity",
                 "π" or "pi" => c.Identifier == "π" || c.Identifier == "pi",
                 "τ" or "tau" => c.Identifier == "τ" || c.Identifier == "tau",
-                "e" or "true" or "false" => c.Identifier == Identifier,
-                "undefined" or "dne" => c.Identifier == "undefined" || c.Identifier == "dne",
-                "-∞" or "-inf" or "-infinity" => c.Identifier == "-∞" || c.Identifier == "-inf" ||
-                    c.Identifier == "-infinity",
+                "e" => c.Identifier == Identifier,
                 "∅" or "empty" or "empty_set" => c.Identifier == "∅" || c.Identifier == "empty" ||
                     c.Identifier == "empty_set",
                 _ => false,

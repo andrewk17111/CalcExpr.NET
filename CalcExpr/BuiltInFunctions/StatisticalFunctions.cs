@@ -19,7 +19,7 @@ public static class StatisticalFunctions
     public static IExpression Max([AreNumbers] IExpression expressions)
     {
         return expressions is IEnumerableExpression enum_expr
-            ? enum_expr.MaxBy(x => ((Number)x).Value) ?? Constant.UNDEFINED
+            ? enum_expr.MaxBy(x => ((Number)x).Value) ?? Undefined.UNDEFINED
             : expressions;
     }
 
@@ -31,7 +31,7 @@ public static class StatisticalFunctions
             int count = enum_expr.Count();
             
             return count == 0
-                ? Constant.UNDEFINED
+                ? Undefined.UNDEFINED
                 : (Number)(enum_expr.Select(x => ((Number)x).Value).Aggregate((a, b) => a + b) / count);
         }
 
@@ -59,7 +59,7 @@ public static class StatisticalFunctions
     public static IExpression Min([AreNumbers] IExpression expressions)
     {
         return expressions is IEnumerableExpression enum_expr
-            ? enum_expr.MinBy(x => ((Number)x).Value) ?? Constant.UNDEFINED
+            ? enum_expr.MinBy(x => ((Number)x).Value) ?? Undefined.UNDEFINED
             : expressions;
     }
 
@@ -93,7 +93,7 @@ public static class StatisticalFunctions
         if (expressions is IEnumerableExpression enum_expr)
         {
             if (!enum_expr.Any() || p < 0 || p > 1)
-                return Constant.UNDEFINED;
+                return Undefined.UNDEFINED;
             else if (enum_expr.Count() == 1)
                 return enum_expr.Single();
 
@@ -132,7 +132,7 @@ public static class StatisticalFunctions
                 ((Number)Sum(enum_expr.Map(x => (Number)Math.Pow(((Number)x).Value - mean, 2)))).Value);
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     [BuiltInFunction("stdevp")]

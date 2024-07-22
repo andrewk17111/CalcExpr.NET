@@ -88,11 +88,11 @@ public override string ToString()
         {
             return new Number(n.Value / 100);
         }
-        else if (x_eval is Constant c && Constant.INFINITY.Equals(c))
+        else if (x_eval is Constant c && Infinity.POSITIVE.Equals(c))
         {
             return x_eval;
         }
-        else if (x_eval is PostfixOperator uo && Constant.INFINITY.Equals(uo.Inside))
+        else if (x_eval is PostfixOperator uo && Infinity.POSITIVE.Equals(uo.Inside))
         {
             return uo;
         }
@@ -101,7 +101,7 @@ public override string ToString()
             return enum_expr.Map(e => Percent(e, context));
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     private static IExpression DoubleFactorial(IExpression x, ExpressionContext context)
