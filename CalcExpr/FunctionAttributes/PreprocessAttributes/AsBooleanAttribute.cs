@@ -12,6 +12,6 @@ public class AsBooleanAttribute : PreprocessAttribute
         else if (expression is IBoolConvertible convertible)
             return convertible.ToBool();
 
-        return Logical.TRUE;
+        return Undefined.UNDEFINED;
     }
 }

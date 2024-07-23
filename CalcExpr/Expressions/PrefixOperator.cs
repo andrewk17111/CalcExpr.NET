@@ -42,7 +42,7 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
                 : e);
         }
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     public IExpression StepEvaluate()
@@ -61,7 +61,7 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
                 ? e_operable.PrefixOperate(Identifier, context)
                 : e);
 
-        return Constant.UNDEFINED;
+        return Undefined.UNDEFINED;
     }
 
     public override string ToString()

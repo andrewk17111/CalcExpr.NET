@@ -30,11 +30,11 @@ public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperab
     public IExpression StepEvaluate(ExpressionContext variables)
         => Evaluate(variables);
 
-    public Constant ToBool()
+    public Logical ToBool()
         => Value switch
         {
-            0 => Constant.FALSE,
-            _ => Constant.TRUE
+            0 => Logical.FALSE,
+            _ => Logical.TRUE
         };
 
     public IExpression PrefixOperate(string identifier, ExpressionContext _)
@@ -43,11 +43,11 @@ public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperab
         {
             PrefixOperator.POSITIVE => this,
             PrefixOperator.NEGATIVE => new Number(-Value),
-            PrefixOperator.NOT or PrefixOperator.NOT_ALT => Value == 0 ? Constant.TRUE : Constant.FALSE,
+            PrefixOperator.NOT or PrefixOperator.NOT_ALT => Value == 0 ? Logical.TRUE : Logical.FALSE,
             PrefixOperator.SUBFACTORIAL => new Number(FactorialFunctions.Subfactorial(Value)),
             PrefixOperator.PRE_DECREMENT => new Number(Value - 1),
             PrefixOperator.PRE_INCREMENT => new Number(Value + 1),
-            _ => Constant.UNDEFINED,
+            _ => Undefined.UNDEFINED,
         };
     }
 
@@ -60,7 +60,7 @@ public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperab
             PostfixOperator.DOUBLE_FACTORIAL => new Number(FactorialFunctions.DoubleFactorial(Value)),
             PostfixOperator.PRIMORIAL => new Number(FactorialFunctions.Primorial(Value)),
             PostfixOperator.POST_DECREMENT or PostfixOperator.POST_INCREMENT => this,
-            _ => Constant.UNDEFINED,
+            _ => Undefined.UNDEFINED,
         };
     }
 

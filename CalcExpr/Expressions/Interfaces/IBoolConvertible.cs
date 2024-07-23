@@ -2,5 +2,5 @@
 
 public interface IBoolConvertible : IExpression
 {
-    Constant ToBool();
+    Logical ToBool();
 }

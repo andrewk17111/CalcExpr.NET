@@ -41,7 +41,7 @@ public class Variable(string name) : IExpression, IPrefixOperable, IPostfixOpera
                 if (context[Name] is IPrefixOperable operable)
                     return operable.PrefixOperate(identifier, context);
                 
-            return Constant.UNDEFINED;
+            return Undefined.UNDEFINED;
         };
     }
 
@@ -63,7 +63,7 @@ public class Variable(string name) : IExpression, IPrefixOperable, IPostfixOpera
                 if (context[Name] is IPostfixOperable operable)
                     return operable.PostfixOperate(identifier, context);
 
-            return Constant.UNDEFINED;
+            return Undefined.UNDEFINED;
         };
     }
 
