@@ -39,7 +39,7 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
         {
             return enum_expr.Map(e => e is IPrefixOperable e_operable
                 ? e_operable.PrefixOperate(Identifier, context)
-                : e);
+                : Undefined.UNDEFINED);
         }
 
         return Undefined.UNDEFINED;

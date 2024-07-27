@@ -1,4 +1,6 @@
-﻿using CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+using CalcExpr.Expressions;
+using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
@@ -12,11 +14,13 @@ public class RangeAttribute(double minimum, double maximum, bool allow_undefined
 
     public override bool CheckCondition(IExpression expression)
     {
-        IExpression lower_condition_result = new BinaryOperator(Inclusive ? ">=" : ">", expression, Minimum).Evaluate();
+        IBinaryOperable? binaryOperable = expression as IBinaryOperable;
+        IExpression lower_condition_result = binaryOperable?.BinaryLeftOperate(Inclusive ? ">=" : ">", Minimum,
+            new ExpressionContext()) ?? Undefined.UNDEFINED;
 
-        if (lower_condition_result is Number low_num)
+        if (lower_condition_result is Logical isHigher)
         {
-            if (low_num.Value == 0)
+            if (!isHigher.Value)
             {
                 return false;
             }
@@ -26,8 +30,9 @@ public class RangeAttribute(double minimum, double maximum, bool allow_undefined
             return false;
         }
 
-        IExpression upper_condition_result = new BinaryOperator(Inclusive ? "<=" : "<", expression, Maximum).Evaluate();
+        IExpression upper_condition_result = binaryOperable?.BinaryLeftOperate(Inclusive ? "<=" : "<", Maximum,
+            new ExpressionContext()) ?? Undefined.UNDEFINED;
 
-        return upper_condition_result is Number high_num ? high_num.Value != 0 : AllowUndefined;
+        return upper_condition_result is Logical isLower ? isLower.Value : AllowUndefined;
     }
 }

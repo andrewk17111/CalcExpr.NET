@@ -39,7 +39,7 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
         {
             return enum_expr.Map(e => e is IPostfixOperable e_operable
                 ? e_operable.PostfixOperate(Identifier, context)
-                : e);
+                : Undefined.UNDEFINED);
         }
 
         return Undefined.UNDEFINED;

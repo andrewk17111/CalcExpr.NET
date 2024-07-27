@@ -1,6 +1,8 @@
 ﻿using CalcExpr.BuiltInFunctions;
 using CalcExpr.Context;
 using CalcExpr.Expressions.Interfaces;
+using CalcExpr.TypeConverters;
+using System;
 
 namespace CalcExpr.Expressions;
 
@@ -8,9 +10,22 @@ namespace CalcExpr.Expressions;
 /// Initializes a new instance of the the <see cref="Number"/> class.
 /// </summary>
 /// <param name="value">The numeric value.</param>
-public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperable, IPostfixOperable
+public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperable, IPostfixOperable, IBinaryOperable
 {
+    public static readonly Number ZERO = (Number)0;
+    public static readonly Number ONE = (Number)1;
+
     public double Value { get; set; } = value;
+
+    public bool IsInteger { get; set; } = value % 1 == 0;
+
+    public bool IsEven { get; set; } = value % 2 == 0;
+
+    public bool IsOdd { get; set; } = value % 2 != 0;
+
+    public bool IsPositive { get; set; } = value > 0;
+
+    public bool IsNegative { get; set; } = value < 0;
 
     public IExpression Evaluate()
         => Evaluate(null!);
@@ -62,6 +77,95 @@ public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperab
             PostfixOperator.POST_DECREMENT or PostfixOperator.POST_INCREMENT => this,
             _ => Undefined.UNDEFINED,
         };
+    }
+
+    public IExpression? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext context)
+    {
+        if (right is Number num)
+        {
+            switch (identifier)
+            {
+                case BinaryOperator.ADDITION:
+                    return (Number)(Value + num.Value);
+                case BinaryOperator.SUBTRACTION:
+                    return (Number)(Value - num.Value);
+                case BinaryOperator.MULTIPLICATION:
+                case BinaryOperator.CROSS_MULTIPLICATION:
+                    return (Number)(Value * num.Value);
+                case BinaryOperator.SLASH_DIVISION:
+                case BinaryOperator.DIVISION:
+                    return (Number)(Value / num.Value);
+                case BinaryOperator.EXPONENT:
+                    return (Number)Math.Pow(Value, num.Value);
+                case BinaryOperator.EUCLIDEAN_MODULUS:
+                    return (Number)(Value - Math.Abs(num.Value) * Math.Floor(Value / Math.Abs(num.Value)));
+                case BinaryOperator.TRUC_MODULUS:
+                    return (Number)(Value % num.Value);
+                case BinaryOperator.INT_DIVISION:
+                    return (Number)(Math.Sign(num.Value) * Math.Floor(Value / Math.Abs(num.Value)));
+                case BinaryOperator.AND:
+                case BinaryOperator.AND_ALT:
+                case BinaryOperator.OR:
+                case BinaryOperator.OR_ALT:
+                case BinaryOperator.XOR:
+                    return ToBool().BinaryLeftOperate(identifier, num.ToBool(), context);
+                case BinaryOperator.IS_EQUAL:
+                    return (Logical)(Value == num.Value);
+                case BinaryOperator.NOT_EQUAL:
+                case BinaryOperator.NOT_EQUAL_ALT:
+                case BinaryOperator.GREATER_OR_LESS_THAN:
+                    return (Logical)(Value != num.Value);
+                case BinaryOperator.LESS_THAN:
+                    return (Logical)(Value < num.Value);
+                case BinaryOperator.LESS_THAN_OR_EQUAL:
+                case BinaryOperator.LESS_THAN_OR_EQUAL_ALT:
+                    return (Logical)(Value <= num.Value);
+                case BinaryOperator.GREATER_THAN:
+                    return (Logical)(Value > num.Value);
+                case BinaryOperator.GREATER_THAN_OR_EQUAL:
+                case BinaryOperator.GREATER_THAN_OR_EQUAL_ALT:
+                    return (Logical)(Value >= num.Value);
+            }
+
+            return null;
+        }
+
+        return null;
+    }
+
+    public IExpression? BinaryRightOperate(string identifier, IExpression left, ExpressionContext context)
+    {
+        switch (identifier)
+        {
+            case BinaryOperator.ADDITION:
+            case BinaryOperator.SUBTRACTION:
+            case BinaryOperator.MULTIPLICATION:
+            case BinaryOperator.CROSS_MULTIPLICATION:
+            case BinaryOperator.SLASH_DIVISION:
+            case BinaryOperator.DIVISION:
+            case BinaryOperator.EXPONENT:
+            case BinaryOperator.EUCLIDEAN_MODULUS:
+            case BinaryOperator.TRUC_MODULUS:
+            case BinaryOperator.INT_DIVISION:
+            case BinaryOperator.AND:
+            case BinaryOperator.AND_ALT:
+            case BinaryOperator.OR:
+            case BinaryOperator.OR_ALT:
+            case BinaryOperator.XOR:
+            case BinaryOperator.IS_EQUAL:
+            case BinaryOperator.NOT_EQUAL:
+            case BinaryOperator.NOT_EQUAL_ALT:
+            case BinaryOperator.GREATER_OR_LESS_THAN:
+            case BinaryOperator.LESS_THAN:
+            case BinaryOperator.LESS_THAN_OR_EQUAL:
+            case BinaryOperator.LESS_THAN_OR_EQUAL_ALT:
+            case BinaryOperator.GREATER_THAN:
+            case BinaryOperator.GREATER_THAN_OR_EQUAL:
+            case BinaryOperator.GREATER_THAN_OR_EQUAL_ALT:
+                return null;
+        }
+
+        return null;
     }
 
     public override bool Equals(object? obj)

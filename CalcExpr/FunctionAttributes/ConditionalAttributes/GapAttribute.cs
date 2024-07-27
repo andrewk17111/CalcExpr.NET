@@ -1,4 +1,6 @@
-﻿using CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+using CalcExpr.Expressions;
+using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
@@ -12,11 +14,13 @@ public class GapAttribute(double start, double end, bool allow_undefined = false
 
     public override bool CheckCondition(IExpression expression)
     {
-        IExpression lower_condition_result = new BinaryOperator(Inclusive ? "<" : "<=", expression, Start).Evaluate();
+        IBinaryOperable? binaryOperable = expression as IBinaryOperable;
+        IExpression lower_condition_result = binaryOperable?.BinaryLeftOperate(Inclusive ? "<" : "<=", Start,
+            new ExpressionContext()) ?? Undefined.UNDEFINED;
 
-        if (lower_condition_result is Number low_num)
+        if (lower_condition_result is Logical isLower)
         {
-            if (low_num.Value == 1)
+            if (isLower.Value)
             {
                 return true;
             }
@@ -26,8 +30,9 @@ public class GapAttribute(double start, double end, bool allow_undefined = false
             return false;
         }
 
-        IExpression upper_condition_result = new BinaryOperator(Inclusive ? ">" : ">=", expression, End).Evaluate();
+        IExpression upper_condition_result = binaryOperable?.BinaryLeftOperate(Inclusive ? ">" : ">=", End,
+            new ExpressionContext()) ?? Undefined.UNDEFINED;
 
-        return upper_condition_result is Number high_num ? high_num.Value == 1 : AllowUndefined;
+        return upper_condition_result is Logical isHigher ? isHigher.Value : AllowUndefined;
     }
 }

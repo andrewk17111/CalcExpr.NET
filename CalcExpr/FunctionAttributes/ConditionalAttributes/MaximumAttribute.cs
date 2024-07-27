@@ -1,4 +1,6 @@
-﻿using CalcExpr.Expressions;
+﻿using CalcExpr.Context;
+using CalcExpr.Expressions;
+using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
@@ -10,8 +12,9 @@ public class MaximumAttribute(double maximum, bool allow_undefined = false, bool
 
     public override bool CheckCondition(IExpression expression)
     {
-        IExpression condition_result = new BinaryOperator(Inclusive ? "<=" : "<", expression, Maximum).Evaluate();
+        IExpression condition_result = (expression as IBinaryOperable)?
+            .BinaryLeftOperate(Inclusive ? "<=" : "<", Maximum, new ExpressionContext()) ?? Undefined.UNDEFINED;
 
-        return condition_result is Number num && num.Value != 0 || AllowUndefined;
+        return condition_result is Logical isLower ? isLower.Value : AllowUndefined;
     }
 }
