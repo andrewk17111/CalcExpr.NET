@@ -9,7 +9,7 @@ namespace CalcExpr.Expressions;
 /// </summary>
 /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Infinity"/>.</param>
 /// <param name="positive">Boolean value indicating whether this <see cref="Infinity"/> is positive.</param>
-public class Infinity(string identifier, bool positive = true) : IExpression, IBoolConvertible, IPrefixOperable,
+public class Infinity(string identifier, bool positive = true) : IExpression, ILogicalConvertible, IPrefixOperable,
     IPostfixOperable, IBinaryOperable
 {
     public static readonly Infinity POSITIVE = new Infinity("∞", true);
@@ -31,7 +31,7 @@ public class Infinity(string identifier, bool positive = true) : IExpression, IB
     public IExpression StepEvaluate(ExpressionContext _)
         => this;
 
-    public Logical ToBool()
+    public Logical ToLogical()
         => Logical.TRUE;
 
     public IExpression PrefixOperate(string identifier, ExpressionContext _)
@@ -104,8 +104,8 @@ public class Infinity(string identifier, bool positive = true) : IExpression, IB
             case BinaryOperator.OR:
             case BinaryOperator.OR_ALT:
             case BinaryOperator.XOR:
-                if (right is IBoolConvertible boolConvertible)
-                    return ToBool().BinaryLeftOperate(identifier, boolConvertible.ToBool(), context);
+                if (right is ILogicalConvertible boolConvertible)
+                    return ToLogical().BinaryLeftOperate(identifier, boolConvertible.ToLogical(), context);
                 break;
             case BinaryOperator.IS_EQUAL:
                 return (Logical)Equals(right);
@@ -189,8 +189,8 @@ public class Infinity(string identifier, bool positive = true) : IExpression, IB
             case BinaryOperator.OR:
             case BinaryOperator.OR_ALT:
             case BinaryOperator.XOR:
-                if (left is IBoolConvertible boolConvertible)
-                    return ToBool().BinaryRightOperate(identifier, boolConvertible.ToBool(), context);
+                if (left is ILogicalConvertible boolConvertible)
+                    return ToLogical().BinaryRightOperate(identifier, boolConvertible.ToLogical(), context);
                 break;
             case BinaryOperator.IS_EQUAL:
                 return (Logical)Equals(left);

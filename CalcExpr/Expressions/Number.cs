@@ -10,7 +10,7 @@ namespace CalcExpr.Expressions;
 /// Initializes a new instance of the the <see cref="Number"/> class.
 /// </summary>
 /// <param name="value">The numeric value.</param>
-public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperable, IPostfixOperable, IBinaryOperable
+public class Number(double value) : IExpression, ILogicalConvertible, IPrefixOperable, IPostfixOperable, IBinaryOperable
 {
     public static readonly Number ZERO = (Number)0;
     public static readonly Number ONE = (Number)1;
@@ -45,7 +45,7 @@ public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperab
     public IExpression StepEvaluate(ExpressionContext variables)
         => Evaluate(variables);
 
-    public Logical ToBool()
+    public Logical ToLogical()
         => Value switch
         {
             0 => Logical.FALSE,
@@ -108,7 +108,7 @@ public class Number(double value) : IExpression, IBoolConvertible, IPrefixOperab
                 case BinaryOperator.OR:
                 case BinaryOperator.OR_ALT:
                 case BinaryOperator.XOR:
-                    return ToBool().BinaryLeftOperate(identifier, num.ToBool(), context);
+                    return ToLogical().BinaryLeftOperate(identifier, num.ToLogical(), context);
                 case BinaryOperator.IS_EQUAL:
                     return (Logical)(Value == num.Value);
                 case BinaryOperator.NOT_EQUAL:

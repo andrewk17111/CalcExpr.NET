@@ -55,7 +55,7 @@ public class Logical(bool value) : IExpression, IPrefixOperable, IPostfixOperabl
 
     public IExpression? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext context)
     {
-        Logical? rightLogical = right as Logical ?? (right as IBoolConvertible)?.ToBool();
+        Logical? rightLogical = ILogicalConvertible.ConvertToLogical(right);
 
         if (rightLogical is null)
             return null;
@@ -72,7 +72,7 @@ public class Logical(bool value) : IExpression, IPrefixOperable, IPostfixOperabl
 
     public IExpression? BinaryRightOperate(string identifier, IExpression left, ExpressionContext context)
     {
-        Logical? leftLogical = left as Logical ?? (left as IBoolConvertible)?.ToBool();
+        Logical? leftLogical = ILogicalConvertible.ConvertToLogical(left);
 
         if (leftLogical is null)
             return null;

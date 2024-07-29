@@ -9,8 +9,8 @@ public class AsBooleanAttribute : PreprocessAttribute
     {
         if (expression is Logical)
             return expression;
-        else if (expression is IBoolConvertible convertible)
-            return convertible.ToBool();
+        else if (expression is ILogicalConvertible convertible)
+            return convertible.ToLogical();
 
         return Undefined.UNDEFINED;
     }
