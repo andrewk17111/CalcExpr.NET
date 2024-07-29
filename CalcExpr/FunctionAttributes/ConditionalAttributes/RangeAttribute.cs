@@ -4,21 +4,19 @@ using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
-public class RangeAttribute(double minimum, double maximum, bool allow_undefined = false, bool inclusive = true)
+public class RangeAttribute(double minimum, double maximum, bool allowUndefined = false, bool inclusive = true)
     : ConditionAttribute
 {
     public readonly IExpression Minimum = ((Number)minimum).Evaluate();
     public readonly IExpression Maximum = ((Number)maximum).Evaluate();
-    public readonly bool AllowUndefined = allow_undefined;
+    public readonly bool AllowUndefined = allowUndefined;
     public readonly bool Inclusive = inclusive;
 
     public override bool CheckCondition(IExpression expression)
     {
-        IBinaryOperable? binaryOperable = expression as IBinaryOperable;
-        IExpression lower_condition_result = binaryOperable?.BinaryLeftOperate(Inclusive ? ">=" : ">", Minimum,
-            new ExpressionContext()) ?? Undefined.UNDEFINED;
+        IExpression lowerConditionResult = IBinaryOperable.Operate(Inclusive ? ">=" : ">", expression, Minimum);
 
-        if (lower_condition_result is Logical isHigher)
+        if (lowerConditionResult is Logical isHigher)
         {
             if (!isHigher.Value)
             {
@@ -30,9 +28,8 @@ public class RangeAttribute(double minimum, double maximum, bool allow_undefined
             return false;
         }
 
-        IExpression upper_condition_result = binaryOperable?.BinaryLeftOperate(Inclusive ? "<=" : "<", Maximum,
-            new ExpressionContext()) ?? Undefined.UNDEFINED;
+        IExpression upperConditionResult = IBinaryOperable.Operate(Inclusive ? "<=" : "<", expression, Maximum);
 
-        return upper_condition_result is Logical isLower ? isLower.Value : AllowUndefined;
+        return upperConditionResult is Logical isLower ? isLower.Value : AllowUndefined;
     }
 }

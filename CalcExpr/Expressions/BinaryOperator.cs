@@ -51,43 +51,7 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
         IExpression leftEvaluated = Left.Evaluate(context);
         IExpression rightEvaluated = Right.Evaluate(context);
 
-        if (leftEvaluated is IBinaryOperable leftOperable)
-        {
-            IExpression? result = leftOperable.BinaryLeftOperate(Identifier, rightEvaluated, context);
-
-            if (result is not null)
-                return result;
-        }
-
-        if (rightEvaluated is IBinaryOperable rightOperable)
-        {
-            IExpression? result = rightOperable.BinaryRightOperate(Identifier, leftEvaluated, context);
-
-            if (result is not null)
-                return result;
-        }
-
-        if (leftEvaluated is IEnumerableExpression leftEnumExpr)
-        {
-            if (rightEvaluated is IEnumerableExpression rightEnumExpr)
-            {
-                if (leftEnumExpr.Count() == rightEnumExpr.Count())
-                {
-                    return leftEnumExpr.Combine(rightEnumExpr, (x, y) =>
-                        new BinaryOperator(Identifier, x, y).Evaluate(context));
-                }
-            }
-            else
-            {
-                return leftEnumExpr.Map(e => new BinaryOperator(Identifier, e, rightEvaluated).Evaluate(context));
-            }
-        }
-        else if (rightEvaluated is IEnumerableExpression rightEnumExpr)
-        {
-            return rightEnumExpr.Map(e => new BinaryOperator(Identifier, leftEvaluated, e).Evaluate(context));
-        }
-
-        return Undefined.UNDEFINED;
+        return IBinaryOperable.Operate(Identifier, leftEvaluated, rightEvaluated, context);
     }
 
     public IExpression StepEvaluate()
