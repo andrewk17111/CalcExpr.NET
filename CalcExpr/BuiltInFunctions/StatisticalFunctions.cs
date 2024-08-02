@@ -92,16 +92,18 @@ public static class StatisticalFunctions
     {
         if (expressions is IEnumerableExpression enum_expr)
         {
-            if (!enum_expr.Any() || p < 0 || p > 1)
+            int count = enum_expr.Count();
+
+            if (count == 0 || p < 0 || p > 1)
                 return Undefined.UNDEFINED;
-            else if (enum_expr.Count() == 1)
+            else if (count == 1)
                 return enum_expr.Single();
 
-            IEnumerable<Number> values = enum_expr.Select(x => (Number)x).OrderBy(x => x.Value);
-            double i = (values.Count() - 1) * p;
+            IEnumerable<Number> values = enum_expr.Cast<Number>().OrderBy(x => x.Value);
+            double i = (count - 1) * p;
             int prev_i = (int)Math.Floor(i);
 
-            if (prev_i == values.Count() - 1)
+            if (prev_i == count - 1)
                 return values.Last();
 
             double prev = values.ElementAt(prev_i).Value;

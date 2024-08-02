@@ -1,6 +1,7 @@
-﻿using CalcExpr.BuiltInFunctions;
-using CalcExpr.Context;
+﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Interfaces;
+using System.ComponentModel;
 
 namespace CalcExpr.Expressions;
 
@@ -12,40 +13,31 @@ namespace CalcExpr.Expressions;
 /// <param name="right">The <see cref="IExpression"/> right operand for this operator.</param>
 public class BinaryOperator(string op, IExpression left, IExpression right) : IExpression
 {
-    private static readonly Dictionary<string, Func<IExpression, IExpression, ExpressionContext, IExpression>> _operators
-        = new Dictionary<string, Func<IExpression, IExpression, ExpressionContext, IExpression>>
-        {
-            { "+", Add },
-            { "-", Subtract },
-            { "*", Multiply },
-            { "×", Multiply },
-            { "/", Divide },
-            { "÷", Divide },
-            { "^", Exponent },
-            { "%", EuclideanModulus },
-            { "%%", TruncatedModulus },
-            { "//", IntDivide },
-            { "&&", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.And, true), [a, b], cxt) },
-            { "∧", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.And, true), [a, b], cxt) },
-            { "||", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Or, true), [a, b], cxt) },
-            { "∨", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Or, true), [a, b], cxt) },
-            { "⊕", (a, b, cxt) => IFunction.ForEach(new Function(LogicalFunctions.Xor, true), [a, b], cxt) },
-            { "==", IsEqual },
-            { "!=", IsNotEqual },
-            { "≠", IsNotEqual },
-            { "<>", IsNotEqual },
-            { "<", IsLessThan },
-            { "<=", IsLessThanOrEqualTo },
-            { "≤", IsLessThanOrEqualTo },
-            { ">", IsGreaterThan },
-            { ">=", IsGreaterThanOrEqualTo },
-            { "≥", IsGreaterThanOrEqualTo },
-        };
-
-    private Func<IExpression, IExpression, ExpressionContext, IExpression> _operation
-        => (a, b, vars) => Undefined.UNDEFINED.Equals(a) || Undefined.UNDEFINED.Equals(b)
-            ? Undefined.UNDEFINED
-            : _operators[Identifier](a, b, vars);
+    public const string ADDITION = "+";
+    public const string SUBTRACTION = "-";
+    public const string MULTIPLICATION = "*";
+    public const string CROSS_MULTIPLICATION = "×";
+    public const string SLASH_DIVISION = "/";
+    public const string DIVISION = "÷";
+    public const string EXPONENT = "^";
+    public const string EUCLIDEAN_MODULUS = "%";
+    public const string TRUC_MODULUS = "%%";
+    public const string INT_DIVISION = "//";
+    public const string AND = "&&";
+    public const string AND_ALT = "∧";
+    public const string OR = "||";
+    public const string OR_ALT = "∨";
+    public const string XOR = "⊕";
+    public const string IS_EQUAL = "==";
+    public const string NOT_EQUAL = "!=";
+    public const string NOT_EQUAL_ALT = "≠";
+    public const string GREATER_OR_LESS_THAN = "<>";
+    public const string LESS_THAN = "<";
+    public const string LESS_THAN_OR_EQUAL = "<=";
+    public const string LESS_THAN_OR_EQUAL_ALT = "≤";
+    public const string GREATER_THAN = ">";
+    public const string GREATER_THAN_OR_EQUAL = ">=";
+    public const string GREATER_THAN_OR_EQUAL_ALT = "≥";
 
     public readonly string Identifier = op;
     public readonly IExpression Left = left;
@@ -54,21 +46,26 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext variables)
-        => _operation(Left, Right, variables);
+    public IExpression Evaluate(ExpressionContext context)
+    {
+        IExpression leftEvaluated = Left.Evaluate(context);
+        IExpression rightEvaluated = Right.Evaluate(context);
+
+        return IBinaryOperable.Operate(Identifier, leftEvaluated, rightEvaluated, context);
+    }
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
-    public IExpression StepEvaluate(ExpressionContext variables)
+    public IExpression StepEvaluate(ExpressionContext context)
     {
-        IExpression l = Left.StepEvaluate(variables);
+        IExpression l = Left.StepEvaluate(context);
 
         if (l.Equals(Left))
         {
-            IExpression r = Right.StepEvaluate(variables);
+            IExpression r = Right.StepEvaluate(context);
 
-            return r.Equals(Right) ? _operation(l, r, variables) : new BinaryOperator(Identifier, Left, r);
+            return r.Equals(Right) ? Evaluate(context) : new BinaryOperator(Identifier, Left, r);
         }
 
         return new BinaryOperator(Identifier, l, Right);

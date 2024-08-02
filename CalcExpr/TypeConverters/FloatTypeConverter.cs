@@ -44,7 +44,7 @@ public class FloatTypeConverter<T> : ITypeConverter<T?>
             }
             else if (expression is Infinity infinity)
             {
-                return infinity.Positive ? T.PositiveInfinity : T.NegativeInfinity;
+                return infinity.IsPositive ? T.PositiveInfinity : T.NegativeInfinity;
             }
             else if (expression is Logical logical)
             {

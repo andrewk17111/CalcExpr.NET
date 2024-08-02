@@ -21,16 +21,11 @@ public class Constant(string identifier) : IExpression
         { "empty_set", new Set() },
     };
 
-    public static Constant PI
-        => new Constant("π");
-
-    public static Constant TAU
-        => new Constant("τ");
-
-    public static Constant E
-        => new Constant("e");
-
     public readonly string Identifier = identifier;
+
+    public static Constant PI { get; } = new Constant("π");
+    public static Constant TAU { get; } = new Constant("τ");
+    public static Constant E { get; } = new Constant("e");
 
     public IExpression Evaluate()
         => Evaluate(new ExpressionContext());
