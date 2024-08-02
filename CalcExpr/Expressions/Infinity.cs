@@ -14,6 +14,10 @@ public class Infinity(string identifier, bool positive = true) : IExpression, IL
 {
     public static readonly Infinity POSITIVE = new Infinity("∞", true);
     public static readonly Infinity NEGATIVE = new Infinity("∞", false);
+    public static readonly Infinity POSITIVE_INFINITY = new Infinity("infinity", true);
+    public static readonly Infinity NEGATIVE_INFINITY = new Infinity("infinity", false);
+    public static readonly Infinity POSITIVE_INF = new Infinity("inf", true);
+    public static readonly Infinity NEGATIVE_INF = new Infinity("inf", false);
 
     public readonly string Identifier = identifier;
     public readonly bool IsPositive = positive;
