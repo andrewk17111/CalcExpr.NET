@@ -29,20 +29,7 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
     {
         IExpression evaluated = Inside.Evaluate(context);
 
-        if (evaluated is IPostfixOperable operable)
-        {
-            IExpression result = operable.PostfixOperate(Identifier, context);
-
-            return result;
-        }
-        else if (evaluated is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => e is IPostfixOperable e_operable
-                ? e_operable.PostfixOperate(Identifier, context)
-                : Undefined.UNDEFINED);
-        }
-
-        return Undefined.UNDEFINED;
+        return IPostfixOperable.Operate(Identifier, evaluated, context);
     }
 
     public IExpression StepEvaluate()

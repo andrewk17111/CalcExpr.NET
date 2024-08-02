@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Context;
+using CalcExpr.Expressions.Collections;
 
 namespace CalcExpr.Expressions.Interfaces;
 
@@ -10,8 +11,16 @@ public interface IPrefixOperable
     {
         context ??= new ExpressionContext();
 
-        if (inside is IPrefixOperable prefixOperable)
-            return prefixOperable.PrefixOperate(identifier, context);
+        if (inside is IPrefixOperable operable)
+        {
+            IExpression result = operable.PrefixOperate(identifier, context);
+
+            return result;
+        }
+        else if (inside is IEnumerableExpression enumExpr)
+        {
+            return enumExpr.Map(e => Operate(identifier, e, context));
+        }
 
         return Undefined.UNDEFINED;
     }

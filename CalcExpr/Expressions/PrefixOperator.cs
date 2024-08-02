@@ -29,20 +29,7 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
     {
         IExpression evaluated = Inside.Evaluate(context);
 
-        if (evaluated is IPrefixOperable operable)
-        {
-            IExpression result = operable.PrefixOperate(Identifier, context);
-
-            return result;
-        }
-        else if (evaluated is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => e is IPrefixOperable e_operable
-                ? e_operable.PrefixOperate(Identifier, context)
-                : Undefined.UNDEFINED);
-        }
-
-        return Undefined.UNDEFINED;
+        return IPrefixOperable.Operate(Identifier, evaluated, context);
     }
 
     public IExpression StepEvaluate()
