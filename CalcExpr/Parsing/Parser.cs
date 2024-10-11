@@ -282,17 +282,16 @@ public class Parser
     /// <summary>
     /// Replaces the current <see cref="IRule"/> with the specified name with a new <see cref="IRule"/>.
     /// </summary>
-    /// <param name="name">The name of the <see cref="IRule"/> to be replaced.</param>
-    /// <param name="newRule"></param>
-    /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
+    /// <param name="newRule">The new rule to replace the old rule.</param>
+    /// <param name="buildRules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// The index of the replaced rule if the <see cref="IRule"/> was successfully replaced; otherwise, -1.
     /// </returns>
-    public int ReplaceGrammarRule(string name, IRule newRule, bool buildRules = true)
+    public int ReplaceGrammarRule(IRule newRule, bool buildRules = true)
     {
         for (int i = 0; i < _grammar.Count; i++)
         {
-            if (_grammar[i].Name == name)
+            if (_grammar[i].Name == newRule.Name)
             {
                 _grammar[i] = newRule;
                 return i;
