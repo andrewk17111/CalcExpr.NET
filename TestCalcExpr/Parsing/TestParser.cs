@@ -150,7 +150,9 @@ public class TestParser
         Assert.IsTrue(parser.AddGrammarRule(tau, -1));
         Assert.IsTrue((RegexRule)parser.Grammar.Last() == tau);
         Assert.IsTrue(parser.GrammarContains(tau.Name));
-        Assert.IsTrue(parser.RemoveGrammarRule(CUSTOM_RULE.Name));
+        Assert.AreNotEqual(-1, parser.ReplaceGrammarRule(new Rule("tau", null!, null!)));
+        Assert.IsNotInstanceOfType(parser.GetGrammarRule("tau"), typeof(RegexRule));
+        Assert.AreNotEqual(-1, parser.RemoveGrammarRule(CUSTOM_RULE.Name));
         Assert.IsFalse(parser.GrammarContains(CUSTOM_RULE.Name));
         Assert.IsTrue(parser.RemoveGrammarRuleAt(parser.Grammar.Length - 1));
         Assert.IsFalse(parser.GrammarContains(tau.Name));
