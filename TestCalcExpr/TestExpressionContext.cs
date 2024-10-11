@@ -77,4 +77,27 @@ public class TestExpressionContext
             Assert.AreEqual(Undefined.UNDEFINED, context[function]);
         }
     }
+
+    private class ExtendedContext : ExpressionContext
+    {
+        public override IExpression this[string name]
+        {
+            get => Undefined.UNDEFINED;
+        }
+
+        public ExtendedContext() : base([], false, [])
+        {
+            SetVariable("abcd", Infinity.POSITIVE);
+        }
+    }
+
+    [TestMethod]
+    public void TestExention()
+    {
+        ExtendedContext context = new ExtendedContext();
+        Variable variable = new Variable("abcd");
+
+        Assert.IsTrue(context.ContainsVariable("abcd"));
+        Assert.AreEqual(Undefined.UNDEFINED, variable.Evaluate(context));
+    }
 }
