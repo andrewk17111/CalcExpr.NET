@@ -1,11 +1,12 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.TypeConverters;
+using System.Collections.ObjectModel;
 
 namespace CalcExpr.Context;
 
 public partial class ExpressionContext
 {
-    internal static readonly Dictionary<Type, List<ITypeConverter>> DEFAULT_CONVERTERS =
+    protected internal static readonly ReadOnlyDictionary<Type, List<ITypeConverter>> DEFAULT_CONVERTERS =
         new Dictionary<Type, List<ITypeConverter>>
         {
             { typeof(bool), [new BooleanTypeConverter()] },
@@ -23,17 +24,17 @@ public partial class ExpressionContext
             { typeof(float), [new FloatTypeConverter<float>()] },
             { typeof(double), [new FloatTypeConverter<double>()] },
             { typeof(decimal), [new DecimalTypeConverter()] },
-        };
-    internal static readonly Type[] DEFAULT_TYPES = [.. DEFAULT_CONVERTERS.Keys];
+        }.AsReadOnly();
+    protected internal static readonly IReadOnlyList<Type> DEFAULT_TYPES = [.. DEFAULT_CONVERTERS.Keys];
 
-    private readonly Dictionary<string, IExpression> _variables;
-    private readonly Dictionary<Type, List<ITypeConverter>> _type_converters;
-    private readonly Dictionary<string, bool> _aliases;
+    protected readonly Dictionary<string, IExpression> _variables;
+    protected readonly ReadOnlyDictionary<Type, List<ITypeConverter>> _type_converters;
+    protected readonly Dictionary<string, bool> _aliases;
 
     public string[] Variables
         => [.. _aliases.Keys];
 
-    public IExpression this[string name]
+    public virtual IExpression this[string name]
     {
         get
         {
@@ -74,7 +75,7 @@ public partial class ExpressionContext
 
         if (type_converters is null)
         {
-            types = DEFAULT_CONVERTERS;
+            types = DEFAULT_CONVERTERS.ToDictionary();
         }
         else
         {
@@ -99,7 +100,7 @@ public partial class ExpressionContext
             }
         }
 
-        _type_converters = types;
+        _type_converters = types.AsReadOnly();
         _aliases = aliases;
         _variables = vars;
         _functions = funcs;
@@ -108,7 +109,7 @@ public partial class ExpressionContext
             SetFunctions(GetType().Assembly);
     }
 
-    public ExpressionContext Clone()
+    public virtual ExpressionContext Clone()
     {
         Dictionary<string, IExpression> vars = [];
         Dictionary<string, IFunction> funcs = [];
@@ -128,7 +129,7 @@ public partial class ExpressionContext
         return result;
     }
 
-    public bool SetVariable(string name, IExpression expression)
+    public virtual bool SetVariable(string name, IExpression expression)
     {
         if (expression is null)
             return RemoveVariable(name);
@@ -146,16 +147,16 @@ public partial class ExpressionContext
         }
     }
 
-    public bool RemoveVariable(string name)
+    public virtual bool RemoveVariable(string name)
         => _aliases.Remove(name) && (_variables.Remove(name) || _functions.Remove(name));
 
-    public bool ContainsVariable(string name)
+    public virtual bool ContainsVariable(string name)
         => _aliases.ContainsKey(name);
 
-    public ITypeConverter[] GetTypeConverters<T>()
+    public virtual ITypeConverter[] GetTypeConverters<T>()
         => GetTypeConverters(typeof(T));
 
-    public ITypeConverter[] GetTypeConverters(Type type)
+    public virtual ITypeConverter[] GetTypeConverters(Type type)
     {
         if (_type_converters.TryGetValue(type, out List<ITypeConverter>? converters))
             return [.. converters];

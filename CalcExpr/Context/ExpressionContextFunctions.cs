@@ -6,12 +6,12 @@ namespace CalcExpr.Context;
 
 public partial class ExpressionContext
 {
-    private readonly Dictionary<string, IFunction> _functions;
+    protected readonly Dictionary<string, IFunction> _functions;
 
     public string[] Functions
         => [.. _functions.Keys];
 
-    public IExpression InvokeFunction(string function, IEnumerable<IExpression> arguments)
+    public virtual IExpression InvokeFunction(string function, IEnumerable<IExpression> arguments)
     {
         if (ContainsFunction(function))
         {
@@ -23,7 +23,7 @@ public partial class ExpressionContext
         return Undefined.UNDEFINED;
     }
 
-    public void SetFunctions(Assembly assembly)
+    public virtual void SetFunctions(Assembly assembly)
     {
         foreach (Type t in assembly.GetTypes())
         {
@@ -33,19 +33,19 @@ public partial class ExpressionContext
         }
     }
 
-    public void SetFunctions(IEnumerable<KeyValuePair<string[], IFunction>> functions)
+    public virtual void SetFunctions(IEnumerable<KeyValuePair<string[], IFunction>> functions)
     {
         foreach (KeyValuePair<string[], IFunction> func in functions)
             SetFunctions(func.Key.ToDictionary(k => k, k => func.Value));
     }
 
-    public void SetFunctions(IEnumerable<KeyValuePair<string, IFunction>> functions)
+    public virtual void SetFunctions(IEnumerable<KeyValuePair<string, IFunction>> functions)
     {
         foreach (KeyValuePair<string, IFunction> func in functions)
             SetFunction(func.Key, func.Value);
     }
 
-    public bool SetFunction(string name, IFunction function)
+    public virtual bool SetFunction(string name, IFunction function)
     {
         if (function is null)
             return _functions.Remove(name) && _aliases.Remove(name);
@@ -56,9 +56,9 @@ public partial class ExpressionContext
         return true;
     }
 
-    public bool RemoveFunction(string name)
+    public virtual bool RemoveFunction(string name)
         => _functions.Remove(name) && _aliases.Remove(name);
 
-    public bool ContainsFunction(string name)
+    public virtual bool ContainsFunction(string name)
         => _functions.ContainsKey(name);
 }
