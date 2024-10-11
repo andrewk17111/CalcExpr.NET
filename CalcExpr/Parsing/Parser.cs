@@ -234,17 +234,17 @@ public class Parser
     /// Removes the <see cref="IRule"/> with the specified name from the grammar of the <see cref="Parser"/>.
     /// </summary>
     /// <param name="name">The name of the <see cref="IRule"/> to be removed.</param>
-    /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
+    /// <param name="buildRules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// The index of the removed rule if the <see cref="IRule"/> was successfully removed; otherwise, -1.
     /// </returns>
-    public int RemoveGrammarRule(string name, bool build_rules = true)
+    public int RemoveGrammarRule(string name, bool buildRules = true)
     {
         for (int i = 0; i < _grammar.Count; i++)
         {
             if (_grammar[i].Name == name)
             {
-                if (RemoveGrammarRuleAt(i, build_rules))
+                if (RemoveGrammarRuleAt(i, buildRules))
                     return i;
                 else
                     break;
@@ -277,6 +277,32 @@ public class Parser
         {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Replaces the current <see cref="IRule"/> with the specified name with a new <see cref="IRule"/>.
+    /// </summary>
+    /// <param name="name">The name of the <see cref="IRule"/> to be replaced.</param>
+    /// <param name="newRule"></param>
+    /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
+    /// <returns>
+    /// The index of the replaced rule if the <see cref="IRule"/> was successfully replaced; otherwise, -1.
+    /// </returns>
+    public int ReplaceGrammarRule(string name, IRule newRule, bool buildRules = true)
+    {
+        for (int i = 0; i < _grammar.Count; i++)
+        {
+            if (_grammar[i].Name == name)
+            {
+                _grammar[i] = newRule;
+                return i;
+            }
+        }
+
+        if (buildRules)
+            RebuildGrammarRules();
+
+        return -1;
     }
 
     /// <summary>
