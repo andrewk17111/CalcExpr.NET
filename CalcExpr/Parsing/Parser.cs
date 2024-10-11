@@ -212,6 +212,9 @@ public class Parser
 
         try
         {
+            if (GrammarContains(rule.Name))
+                return false;
+
             if (index <= 0)
                 _grammar.Insert(0, rule);
             else if (index >= _grammar.Count)
