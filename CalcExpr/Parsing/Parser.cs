@@ -236,15 +236,22 @@ public class Parser
     /// <param name="name">The name of the <see cref="IRule"/> to be removed.</param>
     /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
-    /// <see langword="true"/> if the <see cref="IRule"/> was successfully removed; otherwise, <see langword="false"/>.
+    /// The index of the removed rule if the <see cref="IRule"/> was successfully removed; otherwise, -1.
     /// </returns>
-    public bool RemoveGrammarRule(string name, bool build_rules = true)
+    public int RemoveGrammarRule(string name, bool build_rules = true)
     {
         for (int i = 0; i < _grammar.Count; i++)
+        {
             if (_grammar[i].Name == name)
-                return RemoveGrammarRuleAt(i, build_rules);
+            {
+                if (RemoveGrammarRuleAt(i, build_rules))
+                    return i;
+                else
+                    break;
+            }
+        }
 
-        return false;
+        return -1;
     }
 
     /// <summary>
