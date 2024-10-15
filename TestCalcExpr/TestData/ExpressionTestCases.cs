@@ -1,6 +1,7 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
+using CalcExpr.Expressions.Functions;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using TestCalcExpr.TestUtils;
 
@@ -559,14 +560,14 @@ public static partial class TestCases
         { "abc_123", new Number(4) },
         { "αβγ_123", new Number(5) },
         { "abcd_αβγ_xyz", new Number(6) },
-        { "p", new Function(TestValues.P) },
+        { "p", new NativeFunction(TestValues.P) },
         { "n", new Number(5) }
     };
 
     public readonly static Dictionary<string, IFunction> ContextFunctions = new Dictionary<string, IFunction>
     {
-        { "f", new Function(TestValues.F) },
-        { "g", new Function(TestValues.G) },
+        { "f", new NativeFunction(TestValues.F) },
+        { "g", new NativeFunction(TestValues.G) },
         { "l", new LambdaFunction(["a", "b", "c", "d"], new BinaryOperator("+", new BinaryOperator("+",
             new BinaryOperator("+", new Variable("a"), new Variable("b")), new Variable("c")), new Variable("d"))) },
         { "triangle", new LambdaFunction(["n"], new BinaryOperator("/", new BinaryOperator("*",

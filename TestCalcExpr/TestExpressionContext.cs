@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions;
+using CalcExpr.Expressions.Functions;
 using TestCalcExpr.TestData;
 
 namespace TestCalcExpr;
@@ -20,7 +21,7 @@ public class TestExpressionContext
         {
             Assert.IsTrue(context.ContainsVariable(variable));
 
-            if (TestCases.ContextVariables[variable] is Function)
+            if (TestCases.ContextVariables[variable] is NativeFunction)
                 Assert.IsTrue(context.ContainsFunction(variable));
         }
 
@@ -41,7 +42,7 @@ public class TestExpressionContext
             context.SetVariable(variable, TestCases.ContextVariables[variable]);
             Assert.IsTrue(context.ContainsVariable(variable));
 
-            if (TestCases.ContextVariables[variable].GetType() == typeof(Function))
+            if (TestCases.ContextVariables[variable].GetType() == typeof(NativeFunction))
                 Assert.IsTrue(context.ContainsFunction(variable));
 
             Assert.AreEqual(TestCases.ContextVariables[variable], context[variable]);

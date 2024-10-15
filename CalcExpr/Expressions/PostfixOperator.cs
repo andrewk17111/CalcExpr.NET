@@ -1,6 +1,7 @@
 ﻿using CalcExpr.BuiltInFunctions;
 using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Functions;
 using CalcExpr.Expressions.Interfaces;
 
 namespace CalcExpr.Expressions;
@@ -65,7 +66,7 @@ public override string ToString()
         => $"{Inside.ToString(format)}{Identifier}";
 
     private static IExpression Factorial(IExpression x, ExpressionContext context)
-        => IFunction.ForEach(new Function(FactorialFunctions.Factorial, true), [x], context);
+        => IFunction.ForEach(new NativeFunction(FactorialFunctions.Factorial, true), [x], context);
 
     private static IExpression Percent(IExpression x, ExpressionContext context)
     {
@@ -92,10 +93,10 @@ public override string ToString()
     }
 
     private static IExpression DoubleFactorial(IExpression x, ExpressionContext context)
-        => IFunction.ForEach(new Function(FactorialFunctions.DoubleFactorial, true), [x], context);
+        => IFunction.ForEach(new NativeFunction(FactorialFunctions.DoubleFactorial, true), [x], context);
 
     private static IExpression Primorial(IExpression x, ExpressionContext context)
-        => IFunction.ForEach(new Function(FactorialFunctions.Primorial, true), [x], context);
+        => IFunction.ForEach(new NativeFunction(FactorialFunctions.Primorial, true), [x], context);
 
     private static IExpression PostDecrement(IExpression x, ExpressionContext context)
     {

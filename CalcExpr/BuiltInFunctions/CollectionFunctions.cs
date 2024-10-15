@@ -2,6 +2,7 @@
 using CalcExpr.Context;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Functions;
 using CalcExpr.Extensions;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
 

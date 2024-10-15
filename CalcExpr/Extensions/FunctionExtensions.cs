@@ -2,6 +2,7 @@
 using CalcExpr.Context;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Components;
+using CalcExpr.Expressions.Functions;
 using CalcExpr.FunctionAttributes;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using System.Linq.Expressions;
@@ -92,7 +93,7 @@ internal static class FunctionExtensions
                 if (parameters is not null)
                 {
                     bool is_elementwise = method.GetCustomAttribute<ElementwiseAttribute>() is not null;
-                    Function function = new Function(parameters, method.ToDelegate(), is_elementwise);
+                    NativeFunction function = new NativeFunction(parameters, method.ToDelegate(), is_elementwise);
 
                     candidates[bif.Aliases] = function;
                 }

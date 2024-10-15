@@ -1,7 +1,7 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Components;
 
-namespace CalcExpr.Expressions;
+namespace CalcExpr.Expressions.Functions;
 
 public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body) : IFunction
 {
@@ -70,5 +70,5 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
         => ToString(null);
 
     public string ToString(string? format)
-        => $"({String.Join(",", _parameters)})=>{Body.ToString(format)}";
+        => $"({string.Join(",", _parameters)})=>{Body.ToString(format)}";
 }

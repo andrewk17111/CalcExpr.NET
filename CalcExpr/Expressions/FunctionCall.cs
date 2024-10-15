@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Context;
+using CalcExpr.Expressions.Functions;
 
 namespace CalcExpr.Expressions;
 
@@ -24,7 +25,7 @@ public class FunctionCall(string name, IEnumerable<IExpression> arguments) : IEx
     {
         IExpression variable = context[Name];
 
-        if (!(variable is Function function && function.RequiresContext))
+        if (!(variable is NativeFunction function && function.RequiresContext))
         {
             for (int i = 0; i < _arguments.Count; i++)
             {
