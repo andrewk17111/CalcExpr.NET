@@ -18,7 +18,7 @@ public partial class ExpressionContext
         {
             IFunction func = _functions[function];
 
-            return IFunction.ForEach(func, arguments, this);
+            return Function.ForEach(func, arguments, this);
         }
 
         return Undefined.UNDEFINED;

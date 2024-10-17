@@ -1,9 +1,10 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Components;
+using CalcExpr.Expressions.Terminals;
 
 namespace CalcExpr.Expressions.Functions;
 
-public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body) : IFunction
+public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body) : Terminal, IFunction
 {
     private readonly IReadOnlyList<Parameter> _parameters = parameters.ToArray();
 
@@ -37,18 +38,6 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
         return result;
     }
 
-    public IExpression Evaluate()
-        => this;
-
-    public IExpression Evaluate(ExpressionContext context)
-        => this;
-
-    public IExpression StepEvaluate()
-        => this;
-
-    public IExpression StepEvaluate(ExpressionContext context)
-        => this;
-
     public override bool Equals(object? obj)
     {
         if (obj is not null && obj is LambdaFunction lambda)
@@ -66,9 +55,6 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
     public override int GetHashCode()
         => Parameters.GetHashCode();
 
-    public override string ToString()
-        => ToString(null);
-
-    public string ToString(string? format)
+    public override string ToString(string? format)
         => $"({string.Join(",", _parameters)})=>{Body.ToString(format)}";
 }

@@ -1,22 +1,22 @@
 ﻿using CalcExpr.Attributes;
 using CalcExpr.Context;
 using CalcExpr.Expressions.Components;
+using CalcExpr.Expressions.Terminals;
 using CalcExpr.Extensions;
 using CalcExpr.TypeConverters;
 using System.Reflection;
 
 namespace CalcExpr.Expressions.Functions;
 
-public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, bool is_elementwise = false) : IFunction
+public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, bool is_elementwise = false)
+    : Terminal, IFunction
 {
     private readonly IReadOnlyList<IParameter> _parameters = parameters.ToArray() ?? [];
 
     public readonly Delegate Body = body;
-    public readonly bool RequiresContext = parameters
-        .Any(p => p is ContextParameter);
+    public readonly bool RequiresContext = parameters.Any(p => p is ContextParameter);
 
-    public IParameter[] Parameters
-        => _parameters.ToArray();
+    public IParameter[] Parameters => [.. _parameters];
 
     public bool IsElementwise
         => is_elementwise;
@@ -77,18 +77,6 @@ public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, b
         }
     }
 
-    public IExpression Evaluate()
-        => this;
-
-    public IExpression Evaluate(ExpressionContext context)
-        => this;
-
-    public IExpression StepEvaluate()
-        => this;
-
-    public IExpression StepEvaluate(ExpressionContext context)
-        => this;
-
     public override bool Equals(object? obj)
         => obj is not null && obj is NativeFunction func && func.Body.Equals(Body) &&
             func.Parameters.Select((p, i) => p.Equals(Parameters[i])).Aggregate((a, b) => a && b);
@@ -96,9 +84,6 @@ public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, b
     public override int GetHashCode()
         => HashCode.Combine(Parameters, Body);
 
-    public override string ToString()
-        => ToString(null);
-
-    public string ToString(string? format)
+    public override string ToString(string? _)
         => $"";
 }

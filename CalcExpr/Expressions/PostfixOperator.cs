@@ -66,7 +66,7 @@ public override string ToString()
         => $"{Inside.ToString(format)}{Identifier}";
 
     private static IExpression Factorial(IExpression x, ExpressionContext context)
-        => IFunction.ForEach(new NativeFunction(FactorialFunctions.Factorial, true), [x], context);
+        => Function.ForEach(new NativeFunction(FactorialFunctions.Factorial, true), [x], context);
 
     private static IExpression Percent(IExpression x, ExpressionContext context)
     {
@@ -93,10 +93,10 @@ public override string ToString()
     }
 
     private static IExpression DoubleFactorial(IExpression x, ExpressionContext context)
-        => IFunction.ForEach(new NativeFunction(FactorialFunctions.DoubleFactorial, true), [x], context);
+        => Function.ForEach(new NativeFunction(FactorialFunctions.DoubleFactorial, true), [x], context);
 
     private static IExpression Primorial(IExpression x, ExpressionContext context)
-        => IFunction.ForEach(new NativeFunction(FactorialFunctions.Primorial, true), [x], context);
+        => Function.ForEach(new NativeFunction(FactorialFunctions.Primorial, true), [x], context);
 
     private static IExpression PostDecrement(IExpression x, ExpressionContext context)
     {
