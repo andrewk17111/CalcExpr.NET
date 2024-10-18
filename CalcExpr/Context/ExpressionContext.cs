@@ -54,14 +54,14 @@ public partial class ExpressionContext
     {
         Dictionary<string, bool> aliases = [];
         Dictionary<string, IExpression> vars = [];
-        Dictionary<string, IFunction> funcs = [];
+        Dictionary<string, Function> funcs = [];
         Dictionary<Type, List<ITypeConverter>> types = [];
 
         if (variables is not null)
         {
             foreach (string var in variables.Keys)
             {
-                if (variables[var] is IFunction func)
+                if (variables[var] is Function func)
                 {
                     funcs[var] = func;
                     aliases[var] = true;
@@ -113,7 +113,7 @@ public partial class ExpressionContext
     public virtual ExpressionContext Clone()
     {
         Dictionary<string, IExpression> vars = [];
-        Dictionary<string, IFunction> funcs = [];
+        Dictionary<string, Function> funcs = [];
 
         foreach (string var in _variables.Keys)
             vars.Add(var, _variables[var]);
@@ -124,7 +124,7 @@ public partial class ExpressionContext
         foreach (string func in _functions.Keys)
             funcs.Add(func, _functions[func]);
 
-        foreach (KeyValuePair<string, IFunction> func in _functions)
+        foreach (KeyValuePair<string, Function> func in _functions)
             result.SetFunction(func.Key, func.Value);
 
         return result;
@@ -135,7 +135,7 @@ public partial class ExpressionContext
         if (expression is null)
             return RemoveVariable(name);
 
-        if (expression is not IFunction function)
+        if (expression is not Function function)
         {
             _functions.Remove(name);
             _aliases[name] = false;

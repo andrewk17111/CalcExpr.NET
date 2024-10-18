@@ -1,58 +1,54 @@
 ﻿using CalcExpr.Attributes;
 using CalcExpr.Context;
 using CalcExpr.Expressions.Components;
-using CalcExpr.Expressions.Terminals;
 using CalcExpr.Extensions;
 using CalcExpr.TypeConverters;
 using System.Reflection;
 
 namespace CalcExpr.Expressions.Functions;
 
-public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, bool is_elementwise = false)
-    : Terminal, IFunction
+public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, bool isElementwise = false) : Function
 {
     private readonly IReadOnlyList<IParameter> _parameters = parameters.ToArray() ?? [];
 
     public readonly Delegate Body = body;
     public readonly bool RequiresContext = parameters.Any(p => p is ContextParameter);
 
-    public IParameter[] Parameters => [.. _parameters];
+    public override IParameter[] Parameters => [.. _parameters];
 
-    public bool IsElementwise
-        => is_elementwise;
+    public override bool IsElementwise => isElementwise;
 
     public NativeFunction(MethodInfo method)
         : this(method.ToDelegate(), method.GetCustomAttribute(typeof(ElementwiseAttribute)) is not null)
     { }
 
-    public NativeFunction(Delegate body, bool is_elementwise = false)
-        : this(body.Method.GetParameters().ToParameters(ExpressionContext.DEFAULT_TYPES)!, body, is_elementwise)
+    public NativeFunction(Delegate body, bool isElementwise = false)
+        : this(body.Method.GetParameters().ToParameters(ExpressionContext.DEFAULT_TYPES)!, body, isElementwise)
     { }
 
-    public IExpression Invoke(IExpression[] arguments, ExpressionContext context)
+    public override IExpression Invoke(IExpression[] arguments, ExpressionContext context)
     {
         object?[] args;
 
         if (RequiresContext)
         {
-            object?[]? processed_args = ((IFunction)this).ProcessArguments(arguments, context);
+            object?[]? processedArgs = ProcessArguments(arguments, context);
 
-            if (processed_args is null)
+            if (processedArgs is null)
                 return Undefined.UNDEFINED;
 
             int i = 0;
 
-            args = [.. Parameters.Select(p => p is ContextParameter ? context : processed_args[i++])];
+            args = [.. Parameters.Select(p => p is ContextParameter ? context : processedArgs[i++])];
         }
         else
         {
-            object?[]? processed_args = ((IFunction)this)
-                .ProcessArguments(arguments.Select(arg => arg.Evaluate(context)), context);
+            object?[]? processedArgs = ProcessArguments(arguments.Select(arg => arg.Evaluate(context)), context);
 
-            if (processed_args is null)
+            if (processedArgs is null)
                 return Undefined.UNDEFINED;
 
-            args = [.. processed_args];
+            args = [.. processedArgs];
         }
 
         object? result = Body.Method.Invoke(this, args);
@@ -67,11 +63,11 @@ public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, b
         }
         else
         {
-            Type return_type = Body.Method.ReturnType.IsGenericType &&
+            Type returnType = Body.Method.ReturnType.IsGenericType &&
                 Body.Method.ReturnType.GetGenericTypeDefinition() == typeof(Nullable<>)
                     ? Body.Method.ReturnType.GetGenericArguments().Single()
                     : Body.Method.ReturnType;
-            ITypeConverter[] converter = context.GetTypeConverters(return_type);
+            ITypeConverter[] converter = context.GetTypeConverters(returnType);
 
             return converter.ConvertToExpression(result) ?? Undefined.UNDEFINED;
         }

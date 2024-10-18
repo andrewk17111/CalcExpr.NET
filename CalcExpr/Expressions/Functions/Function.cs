@@ -6,15 +6,32 @@ using System.Reflection;
 
 namespace CalcExpr.Expressions.Functions;
 
-internal abstract class Function : Terminal, IFunction
+public abstract class Function : Terminal
 {
     public abstract IParameter[] Parameters { get; }
 
     public abstract bool IsElementwise { get; }
 
     public abstract IExpression Invoke(IExpression[] arguments, ExpressionContext context);
-    
-    public abstract override string ToString(string? format);
+
+    public object?[]? ProcessArguments(IEnumerable<IExpression> arguments, ExpressionContext context)
+    {
+        IParameter[] parameters = Parameters.Where(p => p is not ContextParameter).ToArray();
+        IExpression[] args = arguments.ToArray();
+        List<object?> results = [];
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            object? argument = parameters[i].ProcessArgument(args[i], context);
+
+            if (argument is null && !parameters[i].AllowNull)
+                return null;
+
+            results.Add(argument);
+        }
+
+        return [.. results];
+    }
 
     public static ExpressionContext ContextReconciliation(ExpressionContext outer_context,
         ExpressionContext inner_context, IEnumerable<Parameter> parameters)
@@ -28,7 +45,7 @@ internal abstract class Function : Terminal, IFunction
     public static IExpression ForEach(MethodInfo function, IEnumerable<IExpression> arguments, ExpressionContext context)
         => ForEach(new NativeFunction(function), arguments, context);
 
-    public static IExpression ForEach(IFunction function, IEnumerable<IExpression> arguments, ExpressionContext context)
+    public static IExpression ForEach(Function function, IEnumerable<IExpression> arguments, ExpressionContext context)
     {
         if (arguments.Count() != function.Parameters.Where(p => p is not ContextParameter).Count())
             return Undefined.UNDEFINED;

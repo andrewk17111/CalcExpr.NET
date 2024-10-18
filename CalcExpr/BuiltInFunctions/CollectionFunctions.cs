@@ -11,7 +11,7 @@ namespace CalcExpr.BuiltInFunctions;
 public static class CollectionFunctions
 {
     [BuiltInFunction("map")]
-    public static IExpression Map(IEnumerableExpression collection, IFunction operation, ExpressionContext context)
+    public static IExpression Map(IEnumerableExpression collection, Function operation, ExpressionContext context)
     {
         IEnumerable<IExpression> expressions = collection.Select(x => operation.Invoke([x.Evaluate(context)], context));
         IExpression? result = (IExpression?)Activator.CreateInstance(collection.GetType(), expressions);
@@ -20,7 +20,7 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("filter", "where")]
-    public static IExpression Filter(IEnumerableExpression collection, IFunction selector, ExpressionContext context)
+    public static IExpression Filter(IEnumerableExpression collection, Function selector, ExpressionContext context)
     {
         IEnumerable<IExpression> expressions = collection
             .Select(x => x.Evaluate(context))
@@ -31,7 +31,7 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("aggregate")]
-    public static IExpression Aggregate(IEnumerableExpression collection, IFunction aggregator,
+    public static IExpression Aggregate(IEnumerableExpression collection, Function aggregator,
         ExpressionContext context)
     {
         if (!collection.Any())
@@ -154,14 +154,14 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("any", "some")]
-    public static bool Any(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
+    public static bool Any(IEnumerableExpression collection, Function condition, ExpressionContext context)
     {
         return ((IEnumerableExpression)collection.Evaluate(context))
             .Any(x => Logical.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
     }
 
     [BuiltInFunction("all")]
-    public static bool All(IEnumerableExpression collection, IFunction condition, ExpressionContext context)
+    public static bool All(IEnumerableExpression collection, Function condition, ExpressionContext context)
     {
         return ((IEnumerableExpression)collection.Evaluate(context))
             .All(x => Logical.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
@@ -209,7 +209,7 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("zip")]
-    public static IExpression Zip(IEnumerableExpression a, IEnumerableExpression b, IFunction combiner,
+    public static IExpression Zip(IEnumerableExpression a, IEnumerableExpression b, Function combiner,
         ExpressionContext context)
     {
         return (IExpression?)((IEnumerableExpression)a.Evaluate(context)).GetType().GetMethod("ConvertIEnumerable")?

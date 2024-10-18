@@ -14,7 +14,7 @@ public class TestExpressionContext
         ExpressionContext context = new ExpressionContext(TestCases.ContextVariables, false);
 
         // TODO: Replace with streamlined function when created.
-        foreach (KeyValuePair<string, IFunction> func in TestCases.ContextFunctions)
+        foreach (KeyValuePair<string, Function> func in TestCases.ContextFunctions)
             context.SetFunction(func.Key, func.Value);
 
         foreach (string variable in TestCases.ContextVariables.Keys)

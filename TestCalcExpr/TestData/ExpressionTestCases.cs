@@ -564,7 +564,7 @@ public static partial class TestCases
         { "n", new Number(5) }
     };
 
-    public readonly static Dictionary<string, IFunction> ContextFunctions = new Dictionary<string, IFunction>
+    public readonly static Dictionary<string, Function> ContextFunctions = new Dictionary<string, Function>
     {
         { "f", new NativeFunction(TestValues.F) },
         { "g", new NativeFunction(TestValues.G) },
