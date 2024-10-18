@@ -1,12 +1,21 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
+using CalcExpr.Expressions.Terminals;
 using System.Reflection;
 
 namespace CalcExpr.Expressions.Functions;
 
-internal class Function
+internal abstract class Function : Terminal, IFunction
 {
+    public abstract IParameter[] Parameters { get; }
+
+    public abstract bool IsElementwise { get; }
+
+    public abstract IExpression Invoke(IExpression[] arguments, ExpressionContext context);
+    
+    public abstract override string ToString(string? format);
+
     public static ExpressionContext ContextReconciliation(ExpressionContext outer_context,
         ExpressionContext inner_context, IEnumerable<Parameter> parameters)
     {
@@ -15,7 +24,6 @@ internal class Function
 
         return outer_context;
     }
-
 
     public static IExpression ForEach(MethodInfo function, IEnumerable<IExpression> arguments, ExpressionContext context)
         => ForEach(new NativeFunction(function), arguments, context);
