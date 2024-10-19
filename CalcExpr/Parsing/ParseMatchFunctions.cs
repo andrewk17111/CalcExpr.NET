@@ -6,6 +6,7 @@ using CalcExpr.Expressions.Functions;
 using CalcExpr.Parsing.Rules;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using CalcExpr.Expressions.Terminals;
 
 namespace CalcExpr.Parsing;
 

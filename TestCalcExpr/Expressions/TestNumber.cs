@@ -1,4 +1,4 @@
-﻿using CalcExpr.Expressions;
+﻿using CalcExpr.Expressions.Terminals;
 
 namespace TestCalcExpr.Expressions;
 
@@ -15,7 +15,7 @@ public class TestNumber
 
         for (int i = 0; i < 100; i++)
         {
-            double val = random.NextDouble() * (double.MaxValue - double.MinValue) + double.MinValue;
+            double val = random.NextDouble() * double.MaxValue * Math.Sign(random.Next(-1, 1));
 
             Assert.AreEqual(val, new Number(val).Value);
         }

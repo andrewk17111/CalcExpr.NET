@@ -1,4 +1,6 @@
-﻿namespace CalcExpr.Expressions.Interfaces;
+﻿using CalcExpr.Expressions.Terminals;
+
+namespace CalcExpr.Expressions.Interfaces;
 
 public interface ILogicalConvertible : IExpression
 {

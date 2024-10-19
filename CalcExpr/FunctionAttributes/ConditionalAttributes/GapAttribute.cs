@@ -1,14 +1,15 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Interfaces;
+using CalcExpr.Expressions.Terminals;
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
 public class GapAttribute(double start, double end, bool allowUndefined = false, bool inclusive = false)
     : ConditionAttribute
 {
-    public readonly IExpression Start = ((Number)start).Evaluate();
-    public readonly IExpression End = ((Number)end).Evaluate();
+    public readonly Terminal Start = (Terminal)start;
+    public readonly Terminal End = (Terminal)end;
     public readonly bool AllowUndefined = allowUndefined;
     public readonly bool Inclusive = inclusive;
 

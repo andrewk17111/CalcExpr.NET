@@ -3,6 +3,7 @@ using CalcExpr.Context;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Functions;
+using CalcExpr.Expressions.Terminals;
 using CalcExpr.Extensions;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
 
@@ -73,7 +74,7 @@ public static class CollectionFunctions
             double range = max.Value - min.Value;
 
             return new Vector(Enumerable.Range(1, Convert.ToInt32(count.Value))
-                .Select(x => (Number)(random.NextDouble() * range + min.Value)));
+                .Select(x => (Terminal)(random.NextDouble() * range + min.Value)));
         }
     }
 

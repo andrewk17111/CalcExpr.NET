@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Expressions.Functions;
+using CalcExpr.Expressions.Terminals;
 using CalcExpr.TypeConverters;
 using System.Collections.ObjectModel;
 

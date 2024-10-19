@@ -1,14 +1,14 @@
-﻿using CalcExpr.Context;
-using CalcExpr.Expressions;
+﻿using CalcExpr.Expressions;
 using CalcExpr.Expressions.Interfaces;
+using CalcExpr.Expressions.Terminals;
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
 public class RangeAttribute(double minimum, double maximum, bool allowUndefined = false, bool inclusive = true)
     : ConditionAttribute
 {
-    public readonly IExpression Minimum = ((Number)minimum).Evaluate();
-    public readonly IExpression Maximum = ((Number)maximum).Evaluate();
+    public readonly Terminal Minimum = (Terminal)minimum;
+    public readonly Terminal Maximum = (Terminal)maximum;
     public readonly bool AllowUndefined = allowUndefined;
     public readonly bool Inclusive = inclusive;
 

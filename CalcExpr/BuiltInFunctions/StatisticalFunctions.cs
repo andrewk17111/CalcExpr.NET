@@ -1,6 +1,7 @@
 ﻿using CalcExpr.Attributes;
 using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Terminals;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 
 namespace CalcExpr.BuiltInFunctions;

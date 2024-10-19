@@ -2,6 +2,7 @@
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
 using CalcExpr.Expressions.Functions;
+using CalcExpr.Expressions.Terminals;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 using TestCalcExpr.TestUtils;
 

@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Expressions.Terminals;
 using System.Numerics;
 
 namespace CalcExpr.TypeConverters;
@@ -11,7 +12,7 @@ public class IntegerTypeConverter<T> : ITypeConverter<T?>
         try
         {
             return value.HasValue
-                ? (Number)Convert.ToDouble(value.Value)
+                ? (Terminal)Convert.ToDouble(value.Value)
                 : Undefined.UNDEFINED;
         }
         catch

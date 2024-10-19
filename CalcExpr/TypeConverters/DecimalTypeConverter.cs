@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Expressions.Terminals;
 
 namespace CalcExpr.TypeConverters;
 
@@ -9,7 +10,7 @@ public class DecimalTypeConverter : ITypeConverter<decimal?>
         try
         {
             if (value.HasValue)
-                return (Number)Convert.ToDouble(value.Value);
+                return (Terminal)Convert.ToDouble(value.Value);
         }
         catch
         {

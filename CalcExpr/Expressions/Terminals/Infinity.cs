@@ -2,14 +2,14 @@
 using CalcExpr.Context;
 using CalcExpr.Expressions.Interfaces;
 
-namespace CalcExpr.Expressions;
+namespace CalcExpr.Expressions.Terminals;
 
 /// <summary>
 /// Initializes a new instance of the the <see cref="Infinity"/> class.
 /// </summary>
 /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Infinity"/>.</param>
 /// <param name="positive">Boolean value indicating whether this <see cref="Infinity"/> is positive.</param>
-public class Infinity(string identifier, bool positive = true) : IExpression, ILogicalConvertible, IPrefixOperable,
+public class Infinity(string identifier, bool positive = true) : Terminal, ILogicalConvertible, IPrefixOperable,
     IPostfixOperable, IBinaryOperable
 {
     public static readonly Infinity POSITIVE = new Infinity("∞", true);
@@ -23,18 +23,6 @@ public class Infinity(string identifier, bool positive = true) : IExpression, IL
     public readonly bool IsPositive = positive;
     public readonly bool IsNegative = !positive;
 
-    public IExpression Evaluate()
-        => this;
-
-    public IExpression Evaluate(ExpressionContext _)
-        => this;
-
-    public IExpression StepEvaluate()
-        => this;
-
-    public IExpression StepEvaluate(ExpressionContext _)
-        => this;
-
     public Logical ToLogical()
         => Logical.TRUE;
 
@@ -45,7 +33,7 @@ public class Infinity(string identifier, bool positive = true) : IExpression, IL
             PrefixOperator.POSITIVE => this,
             PrefixOperator.NEGATIVE => new Infinity(Identifier, IsNegative),
             PrefixOperator.NOT or PrefixOperator.NOT_ALT => Logical.FALSE,
-            PrefixOperator.SUBFACTORIAL => ((Number)FactorialFunctions.Subfactorial(this)).Evaluate(),
+            PrefixOperator.SUBFACTORIAL => ((Terminal)FactorialFunctions.Subfactorial(this)).Evaluate(),
             PrefixOperator.PRE_DECREMENT or PrefixOperator.PRE_INCREMENT => this,
             _ => Undefined.UNDEFINED,
         };
@@ -55,9 +43,9 @@ public class Infinity(string identifier, bool positive = true) : IExpression, IL
     {
         return identifier switch
         {
-            PostfixOperator.FACTORIAL => ((Number)FactorialFunctions.Factorial(this)).Evaluate(),
-            PostfixOperator.DOUBLE_FACTORIAL => ((Number)FactorialFunctions.DoubleFactorial(this)).Evaluate(),
-            PostfixOperator.PRIMORIAL => ((Number)FactorialFunctions.Primorial(this)).Evaluate(),
+            PostfixOperator.FACTORIAL => ((Terminal)FactorialFunctions.Factorial(this)).Evaluate(),
+            PostfixOperator.DOUBLE_FACTORIAL => ((Terminal)FactorialFunctions.DoubleFactorial(this)).Evaluate(),
+            PostfixOperator.PRIMORIAL => ((Terminal)FactorialFunctions.Primorial(this)).Evaluate(),
             PostfixOperator.PERCENT or PostfixOperator.POST_DECREMENT or PostfixOperator.POST_INCREMENT => this,
             _ => Undefined.UNDEFINED,
         };
@@ -239,12 +227,9 @@ public class Infinity(string identifier, bool positive = true) : IExpression, IL
     public override int GetHashCode()
         => IsPositive.GetHashCode();
 
-    public override string ToString()
-        => ToString(null);
-
-    public string ToString(string? format)
+    public override string ToString(string? format)
         => $"{(IsPositive ? "" : '-')}{Identifier}";
 
     public static implicit operator double(Infinity infinity)
-        => infinity.IsPositive ? Double.PositiveInfinity : Double.NegativeInfinity;
+        => infinity.IsPositive ? double.PositiveInfinity : double.NegativeInfinity;
 }

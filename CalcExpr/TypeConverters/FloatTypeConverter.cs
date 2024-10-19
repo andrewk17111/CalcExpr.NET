@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Expressions.Terminals;
 using System.Numerics;
 
 namespace CalcExpr.TypeConverters;
@@ -19,7 +20,7 @@ public class FloatTypeConverter<T> : ITypeConverter<T?>
                 else if (T.IsNaN(value.Value))
                     return Undefined.UNDEFINED;
 
-                return (Number)Convert.ToDouble(value.Value);
+                return (Terminal)Convert.ToDouble(value.Value);
             }
         }
         catch

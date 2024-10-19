@@ -2,30 +2,18 @@
 using CalcExpr.Context;
 using CalcExpr.Expressions.Interfaces;
 
-namespace CalcExpr.Expressions;
+namespace CalcExpr.Expressions.Terminals;
 
 /// <summary>
 /// Creates a new instance of the <see cref="Logical"/> class.
 /// </summary>
 /// <param name="value">The value of the <see cref="Logical"/>.</param>
-public class Logical(bool value) : IExpression, IPrefixOperable, IPostfixOperable, IBinaryOperable
+public class Logical(bool value) : Terminal, IPrefixOperable, IPostfixOperable, IBinaryOperable
 {
     public static readonly Logical TRUE = new Logical(true);
     public static readonly Logical FALSE = new Logical(false);
 
     public readonly bool Value = value;
-
-    public IExpression Evaluate()
-        => this;
-
-    public IExpression Evaluate(ExpressionContext _)
-        => this;
-
-    public IExpression StepEvaluate()
-        => this;
-
-    public IExpression StepEvaluate(ExpressionContext _)
-        => this;
 
     public IExpression PrefixOperate(string identifier, ExpressionContext _)
     {
@@ -93,10 +81,7 @@ public class Logical(bool value) : IExpression, IPrefixOperable, IPostfixOperabl
     public override int GetHashCode()
         => Value.GetHashCode();
 
-    public override string ToString()
-        => ToString(null);
-
-    public string ToString(string? _)
+    public override string ToString(string? _)
         => Value ? "true" : "false";
 
     public static implicit operator bool(Logical logical)

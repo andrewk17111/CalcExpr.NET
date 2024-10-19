@@ -3,6 +3,7 @@ using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Functions;
 using CalcExpr.Expressions.Interfaces;
+using CalcExpr.Expressions.Terminals;
 
 namespace CalcExpr.Expressions;
 
