@@ -79,7 +79,7 @@ internal static class FunctionExtensions
         foreach (MethodInfo method in type.GetMethods().Where(x => x.IsStatic))
         {
             string name = method.Name;
-            BuiltInFunctionAttribute? bif = method.GetCustomAttribute<BuiltInFunctionAttribute>();
+            NativeFunctionAttribute? bif = method.GetCustomAttribute<NativeFunctionAttribute>();
             Type return_type = method.ReturnType.IsGenericType &&
                 method.ReturnType.GetGenericTypeDefinition() == typeof(Nullable<>)
                     ? method.ReturnType.GetGenericArguments().Single()

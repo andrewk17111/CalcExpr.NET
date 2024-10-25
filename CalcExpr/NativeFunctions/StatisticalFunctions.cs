@@ -4,11 +4,11 @@ using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Terminals;
 using CalcExpr.FunctionAttributes.ConditionalAttributes;
 
-namespace CalcExpr.BuiltInFunctions;
+namespace CalcExpr.NativeFunctions;
 
 public static class StatisticalFunctions
 {
-    [BuiltInFunction("count", "length", "len")]
+    [NativeFunction("count", "length", "len")]
     public static int Count(IExpression expressions)
     {
         return expressions is IEnumerableExpression enum_expr
@@ -16,7 +16,7 @@ public static class StatisticalFunctions
             : 1;
     }
 
-    [BuiltInFunction("max", "maximum")]
+    [NativeFunction("max", "maximum")]
     public static Terminal Max([AreNumbers] IExpression expressions)
     {
         return expressions is IEnumerableExpression enumExpr
@@ -24,7 +24,7 @@ public static class StatisticalFunctions
             : (Number)expressions;
     }
 
-    [BuiltInFunction("average", "mean")]
+    [NativeFunction("average", "mean")]
     public static Terminal Mean([AreNumbers] IExpression expressions)
     {
         if (expressions is IEnumerableExpression enumExpr)
@@ -39,7 +39,7 @@ public static class StatisticalFunctions
         return (Number)expressions;
     }
 
-    [BuiltInFunction("median")]
+    [NativeFunction("median")]
     public static Terminal Median([AreNumbers] IExpression expressions)
     {
         if (expressions is IEnumerableExpression enumExpr)
@@ -56,7 +56,7 @@ public static class StatisticalFunctions
         return (Number)expressions;
     }
 
-    [BuiltInFunction("min", "minimum")]
+    [NativeFunction("min", "minimum")]
     public static Terminal Min([AreNumbers] IExpression expressions)
     {
         return expressions is IEnumerableExpression enumExpr
@@ -64,7 +64,7 @@ public static class StatisticalFunctions
             : (Number)expressions;
     }
 
-    [BuiltInFunction("mode")]
+    [NativeFunction("mode")]
     public static Terminal Mode([AreNumbers] IExpression expressions)
     {
         if (expressions is IEnumerableExpression enumExpr)
@@ -88,7 +88,7 @@ public static class StatisticalFunctions
         return (Number)expressions;
     }
 
-    [BuiltInFunction("percentile")]
+    [NativeFunction("percentile")]
     public static Terminal Percentile([AreNumbers] IExpression expressions, double p)
     {
         if (expressions is IEnumerableExpression enumExpr)
@@ -116,13 +116,13 @@ public static class StatisticalFunctions
         return (Number)expressions;
     }
 
-    [BuiltInFunction("quartile")]
+    [NativeFunction("quartile")]
     public static Terminal Quartile([AreNumbers] IExpression expressions, [Range(0, 4)] double q)
     {
         return Percentile(expressions, q / 4);
     }
 
-    [BuiltInFunction("stdev", "stdevs")]
+    [NativeFunction("stdev", "stdevs")]
     public static Terminal SampleStandardDeviation([AreNumbers] IExpression expressions)
     {
         if (expressions is IEnumerableExpression enum_expr)
@@ -136,7 +136,7 @@ public static class StatisticalFunctions
         return Undefined.UNDEFINED;
     }
 
-    [BuiltInFunction("stdevp")]
+    [NativeFunction("stdevp")]
     public static Terminal PopulationStandardDeviation([AreNumbers] IExpression expressions)
     {
         if (expressions is IEnumerableExpression enum_expr)
@@ -150,7 +150,7 @@ public static class StatisticalFunctions
         return (Number)0;
     }
 
-    [BuiltInFunction("sum", "total")]
+    [NativeFunction("sum", "total")]
     public static Terminal Sum([AreNumbers] IExpression expressions)
     {
         return expressions is IEnumerableExpression enumExpr

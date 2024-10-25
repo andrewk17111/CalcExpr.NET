@@ -1,4 +1,4 @@
-﻿using CalcExpr.BuiltInFunctions;
+﻿using CalcExpr.NativeFunctions;
 using CalcExpr.Context;
 using CalcExpr.Expressions.Interfaces;
 

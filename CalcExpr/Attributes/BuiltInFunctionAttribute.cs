@@ -1,10 +1,10 @@
 ﻿namespace CalcExpr.Attributes;
 
-public class BuiltInFunctionAttribute : Attribute
+public class NativeFunctionAttribute : Attribute
 {
     public string[] Aliases { get; }
 
-    public BuiltInFunctionAttribute(params string[] aliases)
+    public NativeFunctionAttribute(params string[] aliases)
     {
         Aliases = aliases;
     }

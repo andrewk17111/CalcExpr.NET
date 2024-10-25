@@ -7,11 +7,11 @@ using CalcExpr.Expressions.Terminals;
 using CalcExpr.Extensions;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
 
-namespace CalcExpr.BuiltInFunctions;
+namespace CalcExpr.NativeFunctions;
 
 public static class CollectionFunctions
 {
-    [BuiltInFunction("map")]
+    [NativeFunction("map")]
     public static Terminal Map(IEnumerableExpression collection, Function operation, ExpressionContext context)
     {
         IEnumerable<Terminal> expressions = collection.Select(x => operation.Invoke([x.Evaluate(context)], context));
@@ -20,7 +20,7 @@ public static class CollectionFunctions
         return TerminalCollection.TerminateCollection(result);
     }
 
-    [BuiltInFunction("filter", "where")]
+    [NativeFunction("filter", "where")]
     public static Terminal Filter(IEnumerableExpression collection, Function selector, ExpressionContext context)
     {
         IEnumerable<Terminal> expressions = collection
@@ -31,7 +31,7 @@ public static class CollectionFunctions
         return TerminalCollection.TerminateCollection(result); ;
     }
 
-    [BuiltInFunction("aggregate")]
+    [NativeFunction("aggregate")]
     public static Terminal Aggregate(IEnumerableExpression collection, Function aggregator, ExpressionContext context)
     {
         if (!collection.Any())
@@ -46,7 +46,7 @@ public static class CollectionFunctions
             : Undefined.UNDEFINED;
     }
 
-    [BuiltInFunction("range")]
+    [NativeFunction("range")]
     public static Terminal Range(int start, int count, int step)
     {
         if (start % 1 != 0 || count % 1 != 0 || step % 1 != 0 || count < 0)
@@ -55,7 +55,7 @@ public static class CollectionFunctions
         return TerminalCollection.TerminateCollection(Vector.ConvertIEnumerable(Enumerable.Range(0, count).Select(i => (Number)(start + i * step))));
     }
 
-    [BuiltInFunction("random")]
+    [NativeFunction("random")]
     public static Terminal Random(Number count, Number min, Number max, [AsBoolean] IExpression intOnly)
     {
         Random random = new Random();
@@ -99,7 +99,7 @@ public static class CollectionFunctions
         }
     }
 
-    [BuiltInFunction("sort", "order")]
+    [NativeFunction("sort", "order")]
     public static Terminal Sort(IEnumerableExpression collection)
     {
         List<IExpression> values = [.. collection];
@@ -109,25 +109,25 @@ public static class CollectionFunctions
         return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), values));
     }
 
-    [BuiltInFunction("concat", "concatenate")]
+    [NativeFunction("concat", "concatenate")]
     public static Terminal Concat(IEnumerableExpression a, IEnumerableExpression b)
     {
         return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(a.GetType(), a.Concat(b)));
     }
 
-    [BuiltInFunction("append")]
+    [NativeFunction("append")]
     public static Terminal Append(IEnumerableExpression collection, IExpression element)
     {
         return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Append(element)));
     }
 
-    [BuiltInFunction("prepend")]
+    [NativeFunction("prepend")]
     public static Terminal Prepend(IEnumerableExpression collection, IExpression element)
     {
         return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Prepend(element)));
     }
 
-    [BuiltInFunction("insert")]
+    [NativeFunction("insert")]
     public static Terminal Insert(IEnumerableExpression collection, IExpression element, int index)
     {
         if (index % 1 != 0 || index < -collection.Count() || index > collection.Count())
@@ -137,7 +137,7 @@ public static class CollectionFunctions
             IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Insert(index, element)));
     }
 
-    [BuiltInFunction("remove")]
+    [NativeFunction("remove")]
     public static Terminal Remove(IEnumerableExpression collection, int index)
     {
         if (!collection.Any() || index % 1 != 0 || index < -collection.Count() || index >= collection.Count())
@@ -146,21 +146,21 @@ public static class CollectionFunctions
         return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Remove(index)));
     }
 
-    [BuiltInFunction("any", "some")]
+    [NativeFunction("any", "some")]
     public static bool Any(IEnumerableExpression collection, Function condition, ExpressionContext context)
     {
         return ((IEnumerableExpression)collection.Evaluate(context))
             .Any(x => Logical.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
     }
 
-    [BuiltInFunction("all")]
+    [NativeFunction("all")]
     public static bool All(IEnumerableExpression collection, Function condition, ExpressionContext context)
     {
         return ((IEnumerableExpression)collection.Evaluate(context))
             .All(x => Logical.TRUE.Equals(new AsBooleanAttribute().Preprocess(condition.Invoke([x], context))));
     }
 
-    [BuiltInFunction("find")]
+    [NativeFunction("find")]
     public static int? Find(IEnumerableExpression collection, IExpression item)
     {
         try
@@ -177,7 +177,7 @@ public static class CollectionFunctions
         }
     }
 
-    [BuiltInFunction("find_last")]
+    [NativeFunction("find_last")]
     public static Terminal FindLast(IEnumerableExpression collection, IExpression item)
     {
         try
@@ -194,13 +194,13 @@ public static class CollectionFunctions
         }
     }
 
-    [BuiltInFunction("reverse")]
+    [NativeFunction("reverse")]
     public static Terminal Reverse(IEnumerableExpression collection)
     {
         return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Reverse()));
     }
 
-    [BuiltInFunction("zip")]
+    [NativeFunction("zip")]
     public static Terminal Zip(IEnumerableExpression a, IEnumerableExpression b, Function combiner, ExpressionContext context)
     {
         return TerminalCollection.TerminateCollection(
