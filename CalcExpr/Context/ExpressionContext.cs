@@ -1,5 +1,4 @@
-﻿using CalcExpr.Expressions;
-using CalcExpr.Expressions.Functions;
+﻿using CalcExpr.Expressions.Functions;
 using CalcExpr.Expressions.Terminals;
 using CalcExpr.TypeConverters;
 using System.Collections.ObjectModel;
@@ -29,14 +28,14 @@ public partial class ExpressionContext
         }.AsReadOnly();
     protected internal static readonly IReadOnlyList<Type> DEFAULT_TYPES = [.. DEFAULT_CONVERTERS.Keys];
 
-    protected readonly Dictionary<string, IExpression> _variables;
+    protected readonly Dictionary<string, Terminal> _variables;
     protected readonly ReadOnlyDictionary<Type, List<ITypeConverter>> _type_converters;
     protected readonly Dictionary<string, bool> _aliases;
 
     public string[] Variables
         => [.. _aliases.Keys];
 
-    public virtual IExpression this[string name]
+    public virtual Terminal this[string name]
     {
         get
         {
@@ -50,11 +49,11 @@ public partial class ExpressionContext
         set => SetVariable(name, value);
     }
 
-    public ExpressionContext(Dictionary<string, IExpression>? variables = null,
+    public ExpressionContext(Dictionary<string, Terminal>? variables = null,
         bool register_default_functions = true, IEnumerable<ITypeConverter>? type_converters = null)
     {
         Dictionary<string, bool> aliases = [];
-        Dictionary<string, IExpression> vars = [];
+        Dictionary<string, Terminal> vars = [];
         Dictionary<string, Function> funcs = [];
         Dictionary<Type, List<ITypeConverter>> types = [];
 
@@ -113,7 +112,7 @@ public partial class ExpressionContext
 
     public virtual ExpressionContext Clone()
     {
-        Dictionary<string, IExpression> vars = [];
+        Dictionary<string, Terminal> vars = [];
         Dictionary<string, Function> funcs = [];
 
         foreach (string var in _variables.Keys)
@@ -131,7 +130,7 @@ public partial class ExpressionContext
         return result;
     }
 
-    public virtual bool SetVariable(string name, IExpression expression)
+    public virtual bool SetVariable(string name, Terminal expression)
     {
         if (expression is null)
             return RemoveVariable(name);

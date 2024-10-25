@@ -12,28 +12,27 @@ namespace CalcExpr.BuiltInFunctions;
 public static class CollectionFunctions
 {
     [BuiltInFunction("map")]
-    public static IExpression Map(IEnumerableExpression collection, Function operation, ExpressionContext context)
+    public static Terminal Map(IEnumerableExpression collection, Function operation, ExpressionContext context)
     {
-        IEnumerable<IExpression> expressions = collection.Select(x => operation.Invoke([x.Evaluate(context)], context));
-        IExpression? result = (IExpression?)Activator.CreateInstance(collection.GetType(), expressions);
+        IEnumerable<Terminal> expressions = collection.Select(x => operation.Invoke([x.Evaluate(context)], context));
+        IEnumerableExpression? result = (IEnumerableExpression?)Activator.CreateInstance(collection.GetType(), expressions);
 
-        return result ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(result);
     }
 
     [BuiltInFunction("filter", "where")]
-    public static IExpression Filter(IEnumerableExpression collection, Function selector, ExpressionContext context)
+    public static Terminal Filter(IEnumerableExpression collection, Function selector, ExpressionContext context)
     {
-        IEnumerable<IExpression> expressions = collection
+        IEnumerable<Terminal> expressions = collection
             .Select(x => x.Evaluate(context))
             .Where(x => !Logical.FALSE.Equals(new AsBooleanAttribute().Preprocess(selector.Invoke([x], context))));
-        IExpression? result = (IExpression?)Activator.CreateInstance(collection.GetType(), expressions);
+        IEnumerableExpression? result = (IEnumerableExpression?)Activator.CreateInstance(collection.GetType(), expressions);
 
-        return result ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(result); ;
     }
 
     [BuiltInFunction("aggregate")]
-    public static IExpression Aggregate(IEnumerableExpression collection, Function aggregator,
-        ExpressionContext context)
+    public static Terminal Aggregate(IEnumerableExpression collection, Function aggregator, ExpressionContext context)
     {
         if (!collection.Any())
             return Undefined.UNDEFINED;
@@ -42,39 +41,41 @@ public static class CollectionFunctions
             .Select(x => x.Evaluate(context))
             .Aggregate((a, b) => aggregator.Invoke([a, b], context));
 
-        return result ?? Undefined.UNDEFINED;
+        return result is Terminal term
+            ? term
+            : Undefined.UNDEFINED;
     }
 
     [BuiltInFunction("range")]
-    public static IExpression Range(int start, int count, int step)
+    public static Terminal Range(int start, int count, int step)
     {
         if (start % 1 != 0 || count % 1 != 0 || step % 1 != 0 || count < 0)
             return Undefined.UNDEFINED;
 
-        return Vector.ConvertIEnumerable(Enumerable.Range(0, count).Select(i => (Number)(start + i * step)));
+        return TerminalCollection.TerminateCollection(Vector.ConvertIEnumerable(Enumerable.Range(0, count).Select(i => (Number)(start + i * step))));
     }
 
     [BuiltInFunction("random")]
-    public static IExpression Random(Number count, Number min, Number max, [AsBoolean] IExpression int_only)
+    public static Terminal Random(Number count, Number min, Number max, [AsBoolean] IExpression intOnly)
     {
         Random random = new Random();
 
-        if (Logical.TRUE.Equals(int_only))
+        if (Logical.TRUE.Equals(intOnly))
         {
             long minimum = Convert.ToInt64(Math.Truncate(min.Value + (min.Value <= 0 ? 0 : 1)));
             long maximum = Convert.ToInt64(Math.Truncate(max.Value - (max.Value >= 0 ? 0 : 1)));
 
-            return new Vector(Enumerable.Range(1, Convert.ToInt32(count.Value))
+            return TerminalCollection.TerminateCollection(new Vector(Enumerable.Range(1, Convert.ToInt32(count.Value))
                 .Select(x => maximum < minimum
-                    ? (IExpression)Undefined.UNDEFINED
-                    : (Number)random.NextInt64(minimum, Math.Max(maximum, minimum))));
+                    ? (Terminal)Undefined.UNDEFINED
+                    : (Number)random.NextInt64(minimum, Math.Max(maximum, minimum)))));
         }
         else
         {
             double range = max.Value - min.Value;
 
-            return new Vector(Enumerable.Range(1, Convert.ToInt32(count.Value))
-                .Select(x => (Terminal)(random.NextDouble() * range + min.Value)));
+            return TerminalCollection.TerminateCollection(new Vector(Enumerable.Range(1, Convert.ToInt32(count.Value))
+                .Select(x => (Terminal)(random.NextDouble() * range + min.Value))));
         }
     }
 
@@ -99,59 +100,50 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("sort", "order")]
-    public static IExpression Sort(IEnumerableExpression collection)
+    public static Terminal Sort(IEnumerableExpression collection)
     {
         List<IExpression> values = [.. collection];
 
         values.Sort(new ExpressionComparer());
 
-        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?.Invoke(null, [values])
-            ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), values));
     }
 
     [BuiltInFunction("concat", "concatenate")]
-    public static IExpression Concat(IEnumerableExpression a, IEnumerableExpression b)
+    public static Terminal Concat(IEnumerableExpression a, IEnumerableExpression b)
     {
-        return (IExpression?)a.GetType().GetMethod("ConvertIEnumerable")?.Invoke(null, [a.Concat(b)])
-            ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(a.GetType(), a.Concat(b)));
     }
 
     [BuiltInFunction("append")]
-    public static IExpression Append(IEnumerableExpression collection, IExpression element)
+    public static Terminal Append(IEnumerableExpression collection, IExpression element)
     {
-        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
-            .Invoke(null, [collection.Append(element)])
-            ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Append(element)));
     }
 
     [BuiltInFunction("prepend")]
-    public static IExpression Prepend(IEnumerableExpression collection, IExpression element)
+    public static Terminal Prepend(IEnumerableExpression collection, IExpression element)
     {
-        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
-            .Invoke(null, [collection.Prepend(element)])
-            ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Prepend(element)));
     }
 
     [BuiltInFunction("insert")]
-    public static IExpression Insert(IEnumerableExpression collection, IExpression element, int index)
+    public static Terminal Insert(IEnumerableExpression collection, IExpression element, int index)
     {
         if (index % 1 != 0 || index < -collection.Count() || index > collection.Count())
             return Undefined.UNDEFINED;
 
-        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
-            .Invoke(null, [collection.Insert(index, element)])
-            ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(
+            IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Insert(index, element)));
     }
 
     [BuiltInFunction("remove")]
-    public static IExpression Remove(IEnumerableExpression collection, int index)
+    public static Terminal Remove(IEnumerableExpression collection, int index)
     {
         if (!collection.Any() || index % 1 != 0 || index < -collection.Count() || index >= collection.Count())
             return Undefined.UNDEFINED;
 
-        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?
-            .Invoke(null, [collection.Remove(index)])
-            ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Remove(index)));
     }
 
     [BuiltInFunction("any", "some")]
@@ -186,7 +178,7 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("find_last")]
-    public static IExpression FindLast(IEnumerableExpression collection, IExpression item)
+    public static Terminal FindLast(IEnumerableExpression collection, IExpression item)
     {
         try
         {
@@ -203,18 +195,15 @@ public static class CollectionFunctions
     }
 
     [BuiltInFunction("reverse")]
-    public static IExpression Reverse(IEnumerableExpression collection)
+    public static Terminal Reverse(IEnumerableExpression collection)
     {
-        return (IExpression?)collection.GetType().GetMethod("ConvertIEnumerable")?.Invoke(null, [collection.Reverse()])
-            ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Reverse()));
     }
 
     [BuiltInFunction("zip")]
-    public static IExpression Zip(IEnumerableExpression a, IEnumerableExpression b, Function combiner,
-        ExpressionContext context)
+    public static Terminal Zip(IEnumerableExpression a, IEnumerableExpression b, Function combiner, ExpressionContext context)
     {
-        return (IExpression?)((IEnumerableExpression)a.Evaluate(context)).GetType().GetMethod("ConvertIEnumerable")?
-            .Invoke(null, [a.Zip(b, (x, y) => combiner.Invoke([x, y], context) ?? Undefined.UNDEFINED)])
-            ?? Undefined.UNDEFINED;
+        return TerminalCollection.TerminateCollection(
+            IEnumerableExpression.ConvertIEnumerable(a.GetType(), a.Zip(b, (x, y) => combiner.Invoke([x, y], context) ?? Undefined.UNDEFINED)));
     }
 }

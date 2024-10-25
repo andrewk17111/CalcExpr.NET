@@ -31,11 +31,11 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
     public Set() : this([])
     { }
 
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext context)
-        => new Set(elements.Select(x => x.Evaluate(context)));
+    public Terminal Evaluate(ExpressionContext context)
+        => new TerminalCollection<Set>(elements.Select(x => x.Evaluate(context)));
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
@@ -48,13 +48,13 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
             IExpression evaluated = element.StepEvaluate(context);
 
             if (!evaluated.Equals(element))
-                return new Set(_elements.Select((x, j) => j == i ? evaluated : x.Value));
+                return TerminalCollection.ConvertIEnumerable(new Set(_elements.Select((x, j) => j == i ? evaluated : x.Value)));
         }
 
         return this;
     }
 
-    public IExpression? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext _)
+    public Terminal? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext _)
     {
         if (right is IEnumerableExpression)
             return identifier switch
@@ -68,7 +68,7 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
         return null;
     }
 
-    public IExpression? BinaryRightOperate(string identifier, IExpression left, ExpressionContext _)
+    public Terminal? BinaryRightOperate(string identifier, IExpression left, ExpressionContext _)
     {
         if (left is IEnumerableExpression)
             return identifier switch
@@ -102,10 +102,10 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
 
     public override bool Equals(object? obj)
     {
-        if (obj is not null && obj is Set set)
+        if (obj is not null && obj is IEnumerableExpression enumExpr && obj is Set or TerminalCollection<Set>)
         {
-            bool elements_equal = set.Count == Count &&
-                (Count == 0 || !set.Select((arg, i) => arg.Equals(this.ElementAt(i))).Any(x => !x));
+            bool elements_equal = enumExpr.Count() == Count &&
+                (Count == 0 || !enumExpr.Select((arg, i) => arg.Equals(this.ElementAt(i))).Any(x => !x));
 
             return elements_equal;
         }

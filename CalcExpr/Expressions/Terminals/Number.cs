@@ -32,7 +32,7 @@ public class Number(double value) : Terminal, ILogicalConvertible, IPrefixOperab
             _ => Logical.TRUE
         };
 
-    public IExpression PrefixOperate(string identifier, ExpressionContext _)
+    public Terminal PrefixOperate(string identifier, ExpressionContext _)
     {
         return identifier switch
         {
@@ -46,7 +46,7 @@ public class Number(double value) : Terminal, ILogicalConvertible, IPrefixOperab
         };
     }
 
-    public IExpression PostfixOperate(string identifier, ExpressionContext _)
+    public Terminal PostfixOperate(string identifier, ExpressionContext _)
     {
         return identifier switch
         {
@@ -59,7 +59,7 @@ public class Number(double value) : Terminal, ILogicalConvertible, IPrefixOperab
         };
     }
 
-    public IExpression? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext context)
+    public Terminal? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext context)
     {
         if (right is Number num)
         {
@@ -89,7 +89,7 @@ public class Number(double value) : Terminal, ILogicalConvertible, IPrefixOperab
         return null;
     }
 
-    public IExpression? BinaryRightOperate(string identifier, IExpression left, ExpressionContext context)
+    public Terminal? BinaryRightOperate(string _, IExpression __, ExpressionContext ___)
     {
         return null;
     }

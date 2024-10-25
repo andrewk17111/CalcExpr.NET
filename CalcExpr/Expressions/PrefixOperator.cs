@@ -23,12 +23,12 @@ public class PrefixOperator(string op, IExpression expression) : IExpression
     public readonly string Identifier = op;
     public readonly IExpression Inside = expression;
 
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext context)
+    public Terminal Evaluate(ExpressionContext context)
     {
-        IExpression evaluated = Inside.Evaluate(context);
+        Terminal evaluated = Inside.Evaluate(context);
 
         return IPrefixOperable.Operate(Identifier, evaluated, context);
     }

@@ -2,7 +2,6 @@
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Interfaces;
 using CalcExpr.Expressions.Terminals;
-using System.ComponentModel;
 
 namespace CalcExpr.Expressions;
 
@@ -44,13 +43,13 @@ public class BinaryOperator(string op, IExpression left, IExpression right) : IE
     public readonly IExpression Left = left;
     public readonly IExpression Right = right;
 
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext context)
+    public Terminal Evaluate(ExpressionContext context)
     {
-        IExpression leftEvaluated = Left.Evaluate(context);
-        IExpression rightEvaluated = Right.Evaluate(context);
+        Terminal leftEvaluated = Left.Evaluate(context);
+        Terminal rightEvaluated = Right.Evaluate(context);
 
         return IBinaryOperable.Operate(Identifier, leftEvaluated, rightEvaluated, context);
     }

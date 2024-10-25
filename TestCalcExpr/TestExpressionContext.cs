@@ -82,7 +82,7 @@ public class TestExpressionContext
 
     private class ExtendedContext : ExpressionContext
     {
-        public override IExpression this[string name]
+        public override Terminal this[string name]
         {
             get => Undefined.UNDEFINED;
         }

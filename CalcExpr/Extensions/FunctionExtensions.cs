@@ -85,7 +85,7 @@ internal static class FunctionExtensions
                     ? method.ReturnType.GetGenericArguments().Single()
                     : method.ReturnType;
 
-            if (bif is not null && (method.ReturnType.IsAssignableFrom(typeof(IExpression)) ||
+            if (bif is not null && (method.ReturnType.IsAssignableTo(typeof(IExpression)) ||
                 compatible_types.Contains(return_type)))
             {
                 List<IParameter>? parameters = method.GetParameters().ToParameters(compatible_types);

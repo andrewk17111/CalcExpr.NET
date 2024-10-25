@@ -4,10 +4,10 @@ namespace CalcExpr.Expressions.Terminals;
 
 public abstract class Terminal : IExpression
 {
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => this;
 
-    public IExpression Evaluate(ExpressionContext _)
+    public Terminal Evaluate(ExpressionContext _)
         => this;
 
     public IExpression StepEvaluate()

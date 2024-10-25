@@ -15,7 +15,7 @@ public class Logical(bool value) : Terminal, IPrefixOperable, IPostfixOperable, 
 
     public readonly bool Value = value;
 
-    public IExpression PrefixOperate(string identifier, ExpressionContext _)
+    public Terminal PrefixOperate(string identifier, ExpressionContext _)
     {
         return identifier switch
         {
@@ -28,7 +28,7 @@ public class Logical(bool value) : Terminal, IPrefixOperable, IPostfixOperable, 
         };
     }
 
-    public IExpression PostfixOperate(string identifier, ExpressionContext _)
+    public Terminal PostfixOperate(string identifier, ExpressionContext _)
     {
         return identifier switch
         {
@@ -41,7 +41,7 @@ public class Logical(bool value) : Terminal, IPrefixOperable, IPostfixOperable, 
         };
     }
 
-    public IExpression? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext context)
+    public Terminal? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext context)
     {
         Logical? rightLogical = ILogicalConvertible.ConvertToLogical(right);
 
@@ -51,14 +51,14 @@ public class Logical(bool value) : Terminal, IPrefixOperable, IPostfixOperable, 
         return identifier switch
         {
             BinaryOperator.AND or BinaryOperator.AND_ALT => Value ? rightLogical : FALSE,
-            BinaryOperator.OR or BinaryOperator.OR_ALT => Value ? TRUE : right,
+            BinaryOperator.OR or BinaryOperator.OR_ALT => Value ? TRUE : right.Evaluate(context),
             BinaryOperator.XOR => Value != rightLogical.Value ? TRUE : FALSE,
             _ => (Value ? Number.ONE : Number.ZERO)
                 .BinaryLeftOperate(identifier, rightLogical.Value ? Number.ONE : Number.ZERO, context),
         };
     }
 
-    public IExpression? BinaryRightOperate(string identifier, IExpression left, ExpressionContext context)
+    public Terminal? BinaryRightOperate(string identifier, IExpression left, ExpressionContext context)
     {
         Logical? leftLogical = ILogicalConvertible.ConvertToLogical(left);
 

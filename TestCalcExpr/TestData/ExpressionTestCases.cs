@@ -553,7 +553,7 @@ public static partial class TestCases
             new BinaryOperator("^", Infinity.NEGATIVE, Infinity.NEGATIVE)),
     ];
 
-    public readonly static Dictionary<string, IExpression> ContextVariables = new Dictionary<string, IExpression>()
+    public readonly static Dictionary<string, Terminal> ContextVariables = new Dictionary<string, Terminal>()
     {
         { "abc_1", new Number(1) },
         { "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz", new Number(2) },

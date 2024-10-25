@@ -10,16 +10,16 @@ namespace CalcExpr.Expressions;
 /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Constant"/>.</param>
 public class Constant(string identifier) : IExpression
 {
-    private static readonly Dictionary<string, IExpression> _values = new Dictionary<string, IExpression>()
+    private static readonly Dictionary<string, Terminal> _values = new Dictionary<string, Terminal>()
     {
         { "π", new Number(Math.PI) },
         { "pi", new Number(Math.PI) },
         { "τ", new Number(Math.Tau) },
         { "tau", new Number(Math.Tau) },
         { "e", new Number(Math.E) },
-        { "∅", new Set() },
-        { "empty", new Set() },
-        { "empty_set", new Set() },
+        { "∅", new TerminalCollection<Set>(new Set()) },
+        { "empty", new TerminalCollection<Set>(new Set()) },
+        { "empty_set", new TerminalCollection<Set>(new Set()) },
     };
 
     public readonly string Identifier = identifier;
@@ -28,16 +28,16 @@ public class Constant(string identifier) : IExpression
     public static Constant TAU { get; } = new Constant("τ");
     public static Constant E { get; } = new Constant("e");
 
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext variables)
+    public Terminal Evaluate(ExpressionContext _)
         => _values[Identifier];
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
 
-    public IExpression StepEvaluate(ExpressionContext variables)
+    public IExpression StepEvaluate(ExpressionContext _)
         => _values[Identifier];
 
     public override bool Equals(object? obj)

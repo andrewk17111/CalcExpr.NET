@@ -12,7 +12,7 @@ public abstract class Function : Terminal
 
     public abstract bool IsElementwise { get; }
 
-    public abstract IExpression Invoke(IExpression[] arguments, ExpressionContext context);
+    public abstract Terminal Invoke(IExpression[] arguments, ExpressionContext context);
 
     public object?[]? ProcessArguments(IEnumerable<IExpression> arguments, ExpressionContext context)
     {
@@ -42,10 +42,10 @@ public abstract class Function : Terminal
         return outer_context;
     }
 
-    public static IExpression ForEach(MethodInfo function, IEnumerable<IExpression> arguments, ExpressionContext context)
+    public static Terminal ForEach(MethodInfo function, IEnumerable<IExpression> arguments, ExpressionContext context)
         => ForEach(new NativeFunction(function), arguments, context);
 
-    public static IExpression ForEach(Function function, IEnumerable<IExpression> arguments, ExpressionContext context)
+    public static Terminal ForEach(Function function, IEnumerable<IExpression> arguments, ExpressionContext context)
     {
         if (arguments.Count() != function.Parameters.Where(p => p is not ContextParameter).Count())
             return Undefined.UNDEFINED;
@@ -65,8 +65,7 @@ public abstract class Function : Terminal
             Type enum_type = arguments.First(arg => arg is IEnumerableExpression).GetType();
             MethodInfo? create_method = enum_type.GetMethod("ConvertIEnumerable", [typeof(IEnumerable<IExpression>)]);
 
-            MethodInfo[] methods = enum_type.GetMethods(BindingFlags.Static | BindingFlags.Public);
-            return (IEnumerableExpression?)create_method!.Invoke(null, [results])!;
+            return TerminalCollection.TerminateCollection((IEnumerableExpression?)create_method!.Invoke(null, [results])!);
         }
         else
         {

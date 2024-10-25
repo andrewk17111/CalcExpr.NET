@@ -17,90 +17,90 @@ public static class StatisticalFunctions
     }
 
     [BuiltInFunction("max", "maximum")]
-    public static IExpression Max([AreNumbers] IExpression expressions)
+    public static Terminal Max([AreNumbers] IExpression expressions)
     {
-        return expressions is IEnumerableExpression enum_expr
-            ? enum_expr.MaxBy(x => ((Number)x).Value) ?? Undefined.UNDEFINED
-            : expressions;
+        return expressions is IEnumerableExpression enumExpr
+            ? (Terminal)(enumExpr.MaxBy(x => ((Number)x).Value) ?? Undefined.UNDEFINED)
+            : (Number)expressions;
     }
 
     [BuiltInFunction("average", "mean")]
-    public static IExpression Mean([AreNumbers] IExpression expressions)
+    public static Terminal Mean([AreNumbers] IExpression expressions)
     {
-        if (expressions is IEnumerableExpression enum_expr)
+        if (expressions is IEnumerableExpression enumExpr)
         {
-            int count = enum_expr.Count();
+            int count = enumExpr.Count();
             
             return count == 0
                 ? Undefined.UNDEFINED
-                : (Number)(enum_expr.Select(x => ((Number)x).Value).Aggregate((a, b) => a + b) / count);
+                : (Number)(enumExpr.Select(x => ((Number)x).Value).Aggregate((a, b) => a + b) / count);
         }
 
-        return expressions;
+        return (Number)expressions;
     }
 
     [BuiltInFunction("median")]
-    public static IExpression Median([AreNumbers] IExpression expressions)
+    public static Terminal Median([AreNumbers] IExpression expressions)
     {
-        if (expressions is IEnumerableExpression enum_expr)
+        if (expressions is IEnumerableExpression enumExpr)
         {
-            IEnumerable<IExpression> sorted = enum_expr.OrderBy(x => ((Number)x).Value);
+            IEnumerable<IExpression> sorted = enumExpr.OrderBy(x => ((Number)x).Value);
             int half = sorted.Count() / 2;
 
             return sorted.Count() % 2 == 0
-                ? (Number)((((Number)enum_expr.ElementAt(half - 1)).Value +
-                    ((Number)enum_expr.ElementAt(half)).Value) / 2)
-                : enum_expr.ElementAt(half);
+                ? (Number)((((Number)enumExpr.ElementAt(half - 1)).Value +
+                    ((Number)enumExpr.ElementAt(half)).Value) / 2)
+                : (Number)enumExpr.ElementAt(half);
         }
 
-        return expressions;
+        return (Number)expressions;
     }
 
     [BuiltInFunction("min", "minimum")]
-    public static IExpression Min([AreNumbers] IExpression expressions)
+    public static Terminal Min([AreNumbers] IExpression expressions)
     {
-        return expressions is IEnumerableExpression enum_expr
-            ? enum_expr.MinBy(x => ((Number)x).Value) ?? Undefined.UNDEFINED
-            : expressions;
+        return expressions is IEnumerableExpression enumExpr
+            ? (Terminal)(enumExpr.MinBy(x => ((Number)x).Value) ?? Undefined.UNDEFINED)
+            : (Number)expressions;
     }
 
     [BuiltInFunction("mode")]
-    public static IExpression Mode([AreNumbers] IExpression expressions)
+    public static Terminal Mode([AreNumbers] IExpression expressions)
     {
-        if (expressions is IEnumerableExpression enum_expr)
+        if (expressions is IEnumerableExpression enumExpr)
         {
-            Dictionary<IExpression, ushort> counts = [];
+            Dictionary<Number, ushort> counts = [];
 
-            foreach (IExpression expression in enum_expr)
+            foreach (Number expression in enumExpr.Cast<Number>())
                 if (!counts.TryAdd(expression, 1))
                     counts[expression]++;
 
             int max = counts.MaxBy(kvp => kvp.Value).Value;
-            IEnumerable<IExpression> modes = counts.OrderBy(kvp => ((Number)kvp.Value).Value)
+            IEnumerable<Number> modes = counts.OrderBy(kvp => kvp.Value)
                 .Where(kvp => kvp.Value == max)
                 .Select(kvp => kvp.Key);
 
             return modes.Count() == 1
                 ? modes.Single()
-                : new Set(modes);
+                : TerminalCollection.TerminateCollection(new Set(modes));
         }
 
-        return expressions;
+        return (Number)expressions;
     }
 
     [BuiltInFunction("percentile")]
-    public static IExpression Percentile([AreNumbers] IExpression expressions, double p)
+    public static Terminal Percentile([AreNumbers] IExpression expressions, double p)
     {
-        if (expressions is IEnumerableExpression enum_expr)
+        if (expressions is IEnumerableExpression enumExpr)
         {
-            int count = enum_expr.Count();
+            int count = enumExpr.Count();
 
             if (count == 0 || p < 0 || p > 1)
                 return Undefined.UNDEFINED;
             else if (count == 1)
-                return enum_expr.Single();
+                return (Number)enumExpr.Single();
 
-            IEnumerable<Number> values = enum_expr.Cast<Number>().OrderBy(x => x.Value);
+            IEnumerable<Number> values = enumExpr.Cast<Number>().OrderBy(x => x.Value);
             double i = (count - 1) * p;
             int prev_i = (int)Math.Floor(i);
 
@@ -110,22 +110,20 @@ public static class StatisticalFunctions
             double prev = values.ElementAt(prev_i).Value;
             double next = values.ElementAt(prev_i + 1).Value;
 
-            return (Number)(prev + (i % 1) * (next - prev));
+            return (Terminal)(prev + (i % 1) * (next - prev));
         }
-        else
-        {
-            return expressions;
-        }
+            
+        return (Number)expressions;
     }
 
     [BuiltInFunction("quartile")]
-    public static IExpression Quartile([AreNumbers] IExpression expressions, [Range(0, 4)] double q)
+    public static Terminal Quartile([AreNumbers] IExpression expressions, [Range(0, 4)] double q)
     {
         return Percentile(expressions, q / 4);
     }
 
     [BuiltInFunction("stdev", "stdevs")]
-    public static IExpression SampleStandardDeviation([AreNumbers] IExpression expressions)
+    public static Terminal SampleStandardDeviation([AreNumbers] IExpression expressions)
     {
         if (expressions is IEnumerableExpression enum_expr)
         {
@@ -139,7 +137,7 @@ public static class StatisticalFunctions
     }
 
     [BuiltInFunction("stdevp")]
-    public static IExpression PopulationStandardDeviation([AreNumbers] IExpression expressions)
+    public static Terminal PopulationStandardDeviation([AreNumbers] IExpression expressions)
     {
         if (expressions is IEnumerableExpression enum_expr)
         {
@@ -153,10 +151,10 @@ public static class StatisticalFunctions
     }
 
     [BuiltInFunction("sum", "total")]
-    public static IExpression Sum([AreNumbers] IExpression expressions)
+    public static Terminal Sum([AreNumbers] IExpression expressions)
     {
-        return expressions is IEnumerableExpression enum_expr
-            ? (Number)enum_expr.Select(x => ((Number)x).Value).Aggregate((a, b) => a + b)
-            : expressions;
+        return expressions is IEnumerableExpression enumExpr
+            ? (Number)enumExpr.Select(x => ((Number)x).Value).Aggregate((a, b) => a + b)
+            : (Number)expressions;
     }
 }

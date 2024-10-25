@@ -14,19 +14,19 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
 
     public override bool IsElementwise => false;
 
-    public override IExpression Invoke(IExpression[] arguments, ExpressionContext context)
+    public override Terminal Invoke(IExpression[] arguments, ExpressionContext context)
     {
         ExpressionContext innerContext = context.Clone();
-        IExpression[]? args = ProcessArguments(arguments, context)?.Cast<IExpression>().ToArray();
+        Terminal[]? args = ProcessArguments(arguments, context)?.Cast<Terminal>().ToArray();
 
         if (args is null)
             return Undefined.UNDEFINED;
 
-        foreach ((IParameter parameter, IExpression? argument) in _parameters.Zip(args))
+        foreach ((IParameter parameter, Terminal? argument) in _parameters.Zip(args))
             if (parameter is Parameter param)
                 innerContext[param.Name] = argument;
 
-        IExpression result = Body.Evaluate(innerContext);
+        Terminal result = Body.Evaluate(innerContext);
         string[] parameters = _parameters.Select(p => p.Name).ToArray();
 
         foreach (string variable in innerContext.Variables)

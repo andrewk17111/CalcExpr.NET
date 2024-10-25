@@ -12,11 +12,11 @@ public class Variable(string name) : IExpression, IPrefixOperable, IPostfixOpera
 {
     public readonly string Name = name;
 
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext variables)
-        => variables[Name];
+    public Terminal Evaluate(ExpressionContext context)
+        => context[Name];
     
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
@@ -24,17 +24,17 @@ public class Variable(string name) : IExpression, IPrefixOperable, IPostfixOpera
     public IExpression StepEvaluate(ExpressionContext variables)
         => variables[Name];
 
-    public IExpression PrefixOperate(string identifier, ExpressionContext context)
+    public Terminal PrefixOperate(string identifier, ExpressionContext context)
     {
         switch (identifier)
         {
             case PrefixOperator.PRE_DECREMENT:
-                IExpression dec_val = new BinaryOperator("-", context[Name], new Number(1)).Evaluate(context);
+                Terminal dec_val = new BinaryOperator("-", context[Name], new Number(1)).Evaluate(context);
 
                 context[Name] = dec_val;
                 return dec_val;
             case PrefixOperator.PRE_INCREMENT:
-                IExpression inc_val = new BinaryOperator("+", context[Name], new Number(1)).Evaluate(context);
+                Terminal inc_val = new BinaryOperator("+", context[Name], new Number(1)).Evaluate(context);
 
                 context[Name] = inc_val;
                 return inc_val;
@@ -46,20 +46,20 @@ public class Variable(string name) : IExpression, IPrefixOperable, IPostfixOpera
         };
     }
 
-    public IExpression PostfixOperate(string identifier, ExpressionContext context)
+    public Terminal PostfixOperate(string identifier, ExpressionContext context)
     {
         switch (identifier)
         {
             case PostfixOperator.POST_DECREMENT:
-                IExpression dec_val = new BinaryOperator("-", context[Name], new Number(1)).Evaluate(context);
+                Terminal decVal = new BinaryOperator("-", context[Name], new Number(1)).Evaluate(context);
 
-                context[Name] = dec_val;
-                return this;
+                context[Name] = decVal;
+                return decVal;
             case PostfixOperator.POST_INCREMENT:
-                IExpression inc_val = new BinaryOperator("-", context[Name], new Number(1)).Evaluate(context);
+                Terminal incVal = new BinaryOperator("-", context[Name], new Number(1)).Evaluate(context);
 
-                context[Name] = inc_val;
-                return this;
+                context[Name] = incVal;
+                return incVal;
             default:
                 if (context[Name] is IPostfixOperable operable)
                     return operable.PostfixOperate(identifier, context);

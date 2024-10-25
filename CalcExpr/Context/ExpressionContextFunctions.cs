@@ -13,7 +13,7 @@ public partial class ExpressionContext
     public string[] Functions
         => [.. _functions.Keys];
 
-    public virtual IExpression InvokeFunction(string function, IEnumerable<IExpression> arguments)
+    public virtual Terminal InvokeFunction(string function, IEnumerable<IExpression> arguments)
     {
         if (ContainsFunction(function))
         {

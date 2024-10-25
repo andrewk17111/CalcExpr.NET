@@ -27,7 +27,7 @@ public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, b
         : this(body.Method.GetParameters().ToParameters(ExpressionContext.DEFAULT_TYPES)!, body, isElementwise)
     { }
 
-    public override IExpression Invoke(IExpression[] arguments, ExpressionContext context)
+    public override Terminal Invoke(IExpression[] arguments, ExpressionContext context)
     {
         object?[] args;
 
@@ -58,7 +58,7 @@ public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, b
         {
             return Undefined.UNDEFINED;
         }
-        else if (result is IExpression expr)
+        else if (result is Terminal expr)
         {
             return expr;
         }

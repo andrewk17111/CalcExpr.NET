@@ -26,7 +26,7 @@ public class Infinity(string identifier, bool positive = true) : Terminal, ILogi
     public Logical ToLogical()
         => Logical.TRUE;
 
-    public IExpression PrefixOperate(string identifier, ExpressionContext _)
+    public Terminal PrefixOperate(string identifier, ExpressionContext _)
     {
         return identifier switch
         {
@@ -39,7 +39,7 @@ public class Infinity(string identifier, bool positive = true) : Terminal, ILogi
         };
     }
 
-    public IExpression PostfixOperate(string identifier, ExpressionContext _)
+    public Terminal PostfixOperate(string identifier, ExpressionContext _)
     {
         return identifier switch
         {
@@ -51,7 +51,7 @@ public class Infinity(string identifier, bool positive = true) : Terminal, ILogi
         };
     }
 
-    public IExpression? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext context)
+    public Terminal? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext context)
     {
         if (right is Undefined)
             return null;
@@ -136,7 +136,7 @@ public class Infinity(string identifier, bool positive = true) : Terminal, ILogi
         return null;
     }
 
-    public IExpression? BinaryRightOperate(string identifier, IExpression left, ExpressionContext context)
+    public Terminal? BinaryRightOperate(string identifier, IExpression left, ExpressionContext context)
     {
         if (left is Undefined)
             return null;

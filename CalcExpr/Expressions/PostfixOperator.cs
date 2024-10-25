@@ -1,7 +1,5 @@
-﻿using CalcExpr.BuiltInFunctions;
-using CalcExpr.Context;
+﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Collections;
-using CalcExpr.Expressions.Functions;
 using CalcExpr.Expressions.Interfaces;
 using CalcExpr.Expressions.Terminals;
 
@@ -24,12 +22,12 @@ public class PostfixOperator(string op, IExpression expression) : IExpression
     public readonly string Identifier = op;
     public readonly IExpression Inside = expression;
 
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext context)
+    public Terminal Evaluate(ExpressionContext context)
     {
-        IExpression evaluated = Inside.Evaluate(context);
+        Terminal evaluated = Inside.Evaluate(context);
 
         return IPostfixOperable.Operate(Identifier, evaluated, context);
     }
@@ -65,83 +63,4 @@ public override string ToString()
 
     public string ToString(string? format)
         => $"{Inside.ToString(format)}{Identifier}";
-
-    private static IExpression Factorial(IExpression x, ExpressionContext context)
-        => Function.ForEach(new NativeFunction(FactorialFunctions.Factorial, true), [x], context);
-
-    private static IExpression Percent(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x_eval is Number n)
-        {
-            return new Number(n.Value / 100);
-        }
-        else if (x_eval is Constant c && Infinity.POSITIVE.Equals(c))
-        {
-            return x_eval;
-        }
-        else if (x_eval is PostfixOperator uo && Infinity.POSITIVE.Equals(uo.Inside))
-        {
-            return uo;
-        }
-        else if (x_eval is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => Percent(e, context));
-        }
-
-        return Undefined.UNDEFINED;
-    }
-
-    private static IExpression DoubleFactorial(IExpression x, ExpressionContext context)
-        => Function.ForEach(new NativeFunction(FactorialFunctions.DoubleFactorial, true), [x], context);
-
-    private static IExpression Primorial(IExpression x, ExpressionContext context)
-        => Function.ForEach(new NativeFunction(FactorialFunctions.Primorial, true), [x], context);
-
-    private static IExpression PostDecrement(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => PostDecrement(e, context));
-        }
-        else if (x_eval is IEnumerableExpression eval_enum_expr)
-        {
-            return eval_enum_expr.Map(e => PostDecrement(e, context));
-        }
-
-        IExpression new_val = new BinaryOperator("-", x_eval, new Number(1)).Evaluate(context);
-
-        context ??= new ExpressionContext();
-
-        if (x is Variable v)
-            context[v.Name] = new_val;
-
-        return x_eval;
-    }
-
-    private static IExpression PostIncrement(IExpression x, ExpressionContext context)
-    {
-        IExpression x_eval = x.Evaluate(context);
-
-        if (x is IEnumerableExpression enum_expr)
-        {
-            return enum_expr.Map(e => PostIncrement(e, context));
-        }
-        else if (x_eval is IEnumerableExpression eval_enum_expr)
-        {
-            return eval_enum_expr.Map(e => PostIncrement(e, context));
-        }
-
-        IExpression new_val = new BinaryOperator("+", x_eval, new Number(1)).Evaluate(context);
-
-        context ??= new ExpressionContext();
-
-        if (x is Variable v)
-            context[v.Name] = new_val;
-
-        return x_eval;
-    }
 }
