@@ -48,7 +48,12 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
             IExpression evaluated = element.StepEvaluate(context);
 
             if (!evaluated.Equals(element))
-                return TerminalCollection.ConvertIEnumerable(new Set(_elements.Select((x, j) => j == i ? evaluated : x.Value)));
+            {
+                IExpression[] elements = [.. this];
+
+                elements[i] = evaluated;
+                return TerminalCollection.ConvertIEnumerable(new Set(elements));
+            }
         }
 
         return this;
@@ -104,10 +109,9 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
     {
         if (obj is not null && obj is IEnumerableExpression enumExpr && obj is Set or TerminalCollection<Set>)
         {
-            bool elements_equal = enumExpr.Count() == Count &&
-                (Count == 0 || !enumExpr.Select((arg, i) => arg.Equals(this.ElementAt(i))).Any(x => !x));
+            bool elementsEqual = enumExpr.SequenceEqual(this);
 
-            return elements_equal;
+            return elementsEqual;
         }
 
         return false;

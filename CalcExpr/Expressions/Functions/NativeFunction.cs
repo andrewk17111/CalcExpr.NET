@@ -75,8 +75,7 @@ public class NativeFunction(IEnumerable<IParameter> parameters, Delegate body, b
     }
 
     public override bool Equals(object? obj)
-        => obj is not null && obj is NativeFunction func && func.Body.Equals(Body) &&
-            func.Parameters.Select((p, i) => p.Equals(Parameters[i])).Aggregate((a, b) => a && b);
+        => obj is NativeFunction func && func.Body.Equals(Body) && func.Parameters.SequenceEqual(Parameters);
 
     public override int GetHashCode()
         => HashCode.Combine(Parameters, Body);

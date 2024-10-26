@@ -34,8 +34,8 @@ public static class LogicalFunctions
 
     [NativeFunction("if")]
     [Elementwise]
-    public static IExpression If(bool condition, IExpression is_true, IExpression is_false)
-        => condition ? is_true : is_false;
+    public static Terminal If(bool condition, Terminal isTrue, Terminal isFalse)
+        => condition ? isTrue : isFalse;
 
     [NativeFunction("is_na")]
     public static bool IsNa(IExpression x, ExpressionContext _)

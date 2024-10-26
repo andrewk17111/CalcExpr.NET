@@ -5,7 +5,7 @@ using CalcExpr.Expressions.Terminals;
 namespace CalcExpr.Expressions;
 
 /// <summary>
-/// Initializes a new instance of the the <see cref="Variable"/> class.
+/// Initializes a new instance of the <see cref="Variable"/> class.
 /// </summary>
 /// <param name="name">The name of the <see cref="Variable"/> for reference.</param>
 public class Variable(string name) : IExpression, IPrefixOperable, IPostfixOperable
@@ -51,15 +51,17 @@ public class Variable(string name) : IExpression, IPrefixOperable, IPostfixOpera
         switch (identifier)
         {
             case PostfixOperator.POST_DECREMENT:
-                Terminal decVal = new BinaryOperator("-", context[Name], new Number(1)).Evaluate(context);
+                Terminal preDecValue = context[Name];
+                Terminal decVal = new BinaryOperator("-", preDecValue, new Number(1)).Evaluate(context);
 
                 context[Name] = decVal;
-                return decVal;
+                return preDecValue;
             case PostfixOperator.POST_INCREMENT:
-                Terminal incVal = new BinaryOperator("-", context[Name], new Number(1)).Evaluate(context);
+                Terminal preIncValue = context[Name];
+                Terminal incVal = new BinaryOperator("+", preIncValue, new Number(1)).Evaluate(context);
 
                 context[Name] = incVal;
-                return incVal;
+                return preIncValue;
             default:
                 if (context[Name] is IPostfixOperable operable)
                     return operable.PostfixOperate(identifier, context);

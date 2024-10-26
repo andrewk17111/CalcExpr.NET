@@ -5,7 +5,7 @@ using CalcExpr.Expressions.Interfaces;
 namespace CalcExpr.Expressions.Terminals;
 
 /// <summary>
-/// Initializes a new instance of the the <see cref="Number"/> class.
+/// Initializes a new instance of the <see cref="Number"/> class.
 /// </summary>
 /// <param name="value">The numeric value.</param>
 public class Number(double value) : Terminal, ILogicalConvertible, IPrefixOperable, IPostfixOperable, IBinaryOperable

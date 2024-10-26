@@ -6,7 +6,7 @@ using CalcExpr.Expressions.Terminals;
 namespace CalcExpr.Expressions;
 
 /// <summary>
-/// Initializes a new instance of the the <see cref="PostfixOperator"/> class.
+/// Initializes a new instance of the <see cref="PostfixOperator"/> class.
 /// </summary>
 /// <param name="op">The identifier for the operator.</param>
 /// <param name="expression">The <see cref="IExpression"/> operand for this operator.</param>

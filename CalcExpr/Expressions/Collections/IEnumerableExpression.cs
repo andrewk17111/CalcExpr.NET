@@ -33,7 +33,7 @@ public interface IEnumerableExpression : IExpression, IEnumerable<IExpression>
 
     public static IEnumerableExpression ConvertIEnumerable(Type type, IEnumerable<IExpression> expressions)
     {
-        if (!type.GetInterfaces().Any(x => x == typeof(IEnumerableExpression)))
+        if (!typeof(IEnumerableExpression).IsAssignableFrom(type))
             throw new ArgumentException($"{nameof(type)} must implement {nameof(IEnumerableExpression)}");
 
         return (IEnumerableExpression)type.GetMethod(nameof(ConvertIEnumerable))?.Invoke(null, [expressions])!;

@@ -5,7 +5,7 @@ using CalcExpr.Expressions.Interfaces;
 namespace CalcExpr.Expressions.Terminals;
 
 /// <summary>
-/// Initializes a new instance of the the <see cref="Infinity"/> class.
+/// Initializes a new instance of the <see cref="Infinity"/> class.
 /// </summary>
 /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Infinity"/>.</param>
 /// <param name="positive">Boolean value indicating whether this <see cref="Infinity"/> is positive.</param>
@@ -43,9 +43,9 @@ public class Infinity(string identifier, bool positive = true) : Terminal, ILogi
     {
         return identifier switch
         {
-            PostfixOperator.FACTORIAL => ((Terminal)FactorialFunctions.Factorial(this)).Evaluate(),
-            PostfixOperator.DOUBLE_FACTORIAL => ((Terminal)FactorialFunctions.DoubleFactorial(this)).Evaluate(),
-            PostfixOperator.PRIMORIAL => ((Terminal)FactorialFunctions.Primorial(this)).Evaluate(),
+            PostfixOperator.FACTORIAL => (Terminal)FactorialFunctions.Factorial(this),
+            PostfixOperator.DOUBLE_FACTORIAL => (Terminal)FactorialFunctions.DoubleFactorial(this),
+            PostfixOperator.PRIMORIAL => (Terminal)FactorialFunctions.Primorial(this),
             PostfixOperator.PERCENT or PostfixOperator.POST_DECREMENT or PostfixOperator.POST_INCREMENT => this,
             _ => Undefined.UNDEFINED,
         };

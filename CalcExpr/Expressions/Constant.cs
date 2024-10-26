@@ -5,7 +5,7 @@ using CalcExpr.Expressions.Terminals;
 namespace CalcExpr.Expressions;
 
 /// <summary>
-/// Initializes a new instance of the the <see cref="Constant"/> class.
+/// Initializes a new instance of the <see cref="Constant"/> class.
 /// </summary>
 /// <param name="identifier">The identifier <see cref="string"/> for this <see cref="Constant"/>.</param>
 public class Constant(string identifier) : IExpression
@@ -29,16 +29,16 @@ public class Constant(string identifier) : IExpression
     public static Constant E { get; } = new Constant("e");
 
     public Terminal Evaluate()
-        => Evaluate(new ExpressionContext());
+        => _values[Identifier];
 
     public Terminal Evaluate(ExpressionContext _)
-        => _values[Identifier];
+        => Evaluate();
 
     public IExpression StepEvaluate()
-        => StepEvaluate(new ExpressionContext());
+        => Evaluate();
 
     public IExpression StepEvaluate(ExpressionContext _)
-        => _values[Identifier];
+        => Evaluate();
 
     public override bool Equals(object? obj)
         => obj is not null && obj is Constant c && 

@@ -5,7 +5,7 @@ namespace CalcExpr.TypeConverters;
 
 public class DecimalTypeConverter : ITypeConverter<decimal?>
 {
-    public IExpression ConvertToExpression(decimal? value)
+    public Terminal ConvertToExpression(decimal? value)
     {
         try
         {

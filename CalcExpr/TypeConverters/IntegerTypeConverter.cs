@@ -7,7 +7,7 @@ namespace CalcExpr.TypeConverters;
 public class IntegerTypeConverter<T> : ITypeConverter<T?>
     where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
 {
-    public IExpression ConvertToExpression(T? value)
+    public Terminal ConvertToExpression(T? value)
     {
         try
         {

@@ -33,7 +33,7 @@ public static class StatisticalFunctions
             
             return count == 0
                 ? Undefined.UNDEFINED
-                : (Number)(enumExpr.Select(x => ((Number)x).Value).Aggregate((a, b) => a + b) / count);
+                : (Number)(enumExpr.Select(x => ((Number)x).Value).Sum() / count);
         }
 
         return (Number)expressions;
@@ -48,9 +48,9 @@ public static class StatisticalFunctions
             int half = sorted.Count() / 2;
 
             return sorted.Count() % 2 == 0
-                ? (Number)((((Number)enumExpr.ElementAt(half - 1)).Value +
-                    ((Number)enumExpr.ElementAt(half)).Value) / 2)
-                : (Number)enumExpr.ElementAt(half);
+                ? (Number)((((Number)sorted.ElementAt(half - 1)).Value +
+                    ((Number)sorted.ElementAt(half)).Value) / 2)
+                : (Number)sorted.ElementAt(half);
         }
 
         return (Number)expressions;
@@ -125,12 +125,12 @@ public static class StatisticalFunctions
     [NativeFunction("stdev", "stdevs")]
     public static Terminal SampleStandardDeviation([AreNumbers] IExpression expressions)
     {
-        if (expressions is IEnumerableExpression enum_expr)
+        if (expressions is IEnumerableExpression enumExpr && enumExpr.Count() > 1)
         {
             double mean = ((Number)Mean(expressions)).Value;
 
-            return (Number)Math.Sqrt(((double)1 / (enum_expr.Count() - 1)) *
-                ((Number)Sum(enum_expr.Map(x => (Number)Math.Pow(((Number)x).Value - mean, 2)))).Value);
+            return (Number)Math.Sqrt(((double)1 / (enumExpr.Count() - 1)) *
+                ((Number)Sum(enumExpr.Map(x => (Number)Math.Pow(((Number)x).Value - mean, 2)))).Value);
         }
 
         return Undefined.UNDEFINED;
@@ -139,12 +139,12 @@ public static class StatisticalFunctions
     [NativeFunction("stdevp")]
     public static Terminal PopulationStandardDeviation([AreNumbers] IExpression expressions)
     {
-        if (expressions is IEnumerableExpression enum_expr)
+        if (expressions is IEnumerableExpression enumExpr && enumExpr.Count() > 1)
         {
             double mean = ((Number)Mean(expressions)).Value;
 
-            return (Number)Math.Sqrt(((double)1 / enum_expr.Count()) *
-                ((Number)Sum(enum_expr.Map(x => (Number)Math.Pow(((Number)x).Value - mean, 2)))).Value);
+            return (Number)Math.Sqrt(((double)1 / enumExpr.Count()) *
+                ((Number)Sum(enumExpr.Map(x => (Number)Math.Pow(((Number)x).Value - mean, 2)))).Value);
         }
 
         return (Number)0;
@@ -154,7 +154,7 @@ public static class StatisticalFunctions
     public static Terminal Sum([AreNumbers] IExpression expressions)
     {
         return expressions is IEnumerableExpression enumExpr
-            ? (Number)enumExpr.Select(x => ((Number)x).Value).Aggregate((a, b) => a + b)
+            ? (Number)enumExpr.Select(x => ((Number)x).Value).Sum()
             : (Number)expressions;
     }
 }

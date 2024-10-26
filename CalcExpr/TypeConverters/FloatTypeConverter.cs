@@ -7,7 +7,7 @@ namespace CalcExpr.TypeConverters;
 public class FloatTypeConverter<T> : ITypeConverter<T?>
     where T : struct, IFloatingPointIeee754<T>, IMinMaxValue<T>
 {
-    public IExpression ConvertToExpression(T? value)
+    public Terminal ConvertToExpression(T? value)
     {
         try
         {

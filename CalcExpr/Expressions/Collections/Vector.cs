@@ -37,7 +37,12 @@ public class Vector(IEnumerable<IExpression> elements) : IEnumerableExpression, 
             IExpression evaluated = this[i].StepEvaluate(context);
 
             if (!this[i].Equals(evaluated))
-                return TerminalCollection.ConvertIEnumerable(new Vector(this[..i].Append(evaluated).Concat(this[(i + 1)..])));
+            {
+                IExpression[] elements = [.. this];
+
+                elements[i] = evaluated;
+                return TerminalCollection.ConvertIEnumerable(new Vector(elements));
+            }
         }
 
         return this;
@@ -93,10 +98,9 @@ public class Vector(IEnumerable<IExpression> elements) : IEnumerableExpression, 
     {
         if (obj is not null && obj is IEnumerableExpression enumExpr && obj is Vector or TerminalCollection<Vector>)
         {
-            bool elements_equal = enumExpr.Count() == Length &&
-                (Length == 0 || !enumExpr.Select((arg, i) => arg.Equals(this[i])).Any(x => !x));
+            bool elementsEqual = enumExpr.SequenceEqual(this);
 
-            return elements_equal;
+            return elementsEqual;
         }
 
         return false;

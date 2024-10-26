@@ -28,7 +28,7 @@ public static class CollectionFunctions
             .Where(x => !Logical.FALSE.Equals(new AsBooleanAttribute().Preprocess(selector.Invoke([x], context))));
         IEnumerableExpression? result = (IEnumerableExpression?)Activator.CreateInstance(collection.GetType(), expressions);
 
-        return TerminalCollection.TerminateCollection(result); ;
+        return TerminalCollection.TerminateCollection(result);
     }
 
     [NativeFunction("aggregate")]
@@ -56,11 +56,11 @@ public static class CollectionFunctions
     }
 
     [NativeFunction("random")]
-    public static Terminal Random(Number count, Number min, Number max, [AsBoolean] IExpression intOnly)
+    public static Terminal Random(Number count, Number min, Number max, bool intOnly)
     {
         Random random = new Random();
 
-        if (Logical.TRUE.Equals(intOnly))
+        if (intOnly)
         {
             long minimum = Convert.ToInt64(Math.Truncate(min.Value + (min.Value <= 0 ? 0 : 1)));
             long maximum = Convert.ToInt64(Math.Truncate(max.Value - (max.Value >= 0 ? 0 : 1)));
@@ -130,7 +130,7 @@ public static class CollectionFunctions
     [NativeFunction("insert")]
     public static Terminal Insert(IEnumerableExpression collection, IExpression element, int index)
     {
-        if (index % 1 != 0 || index < -collection.Count() || index > collection.Count())
+        if (index < -collection.Count() || index > collection.Count())
             return Undefined.UNDEFINED;
 
         return TerminalCollection.TerminateCollection(
@@ -140,7 +140,7 @@ public static class CollectionFunctions
     [NativeFunction("remove")]
     public static Terminal Remove(IEnumerableExpression collection, int index)
     {
-        if (!collection.Any() || index % 1 != 0 || index < -collection.Count() || index >= collection.Count())
+        if (!collection.Any() || index < -collection.Count() || index >= collection.Count())
             return Undefined.UNDEFINED;
 
         return TerminalCollection.TerminateCollection(IEnumerableExpression.ConvertIEnumerable(collection.GetType(), collection.Remove(index)));

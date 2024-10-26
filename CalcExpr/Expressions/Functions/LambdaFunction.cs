@@ -38,13 +38,11 @@ public class LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
 
     public override bool Equals(object? obj)
     {
-        if (obj is not null && obj is LambdaFunction lambda)
+        if (obj is LambdaFunction lambda)
         {
-            bool parameters_equal = lambda.Parameters.Length == Parameters.Length &&
-                (Parameters.Length == 0 || !lambda.Parameters.Select((arg, i) => arg.Equals(Parameters[i])).Any(x => !x));
-            bool bodies_equal = lambda.Body.Equals(Body);
+            bool parametersEqual = lambda.Parameters.SequenceEqual(Parameters);
 
-            return parameters_equal && bodies_equal;
+            return parametersEqual && lambda.Body.Equals(Body);
         }
 
         return false;

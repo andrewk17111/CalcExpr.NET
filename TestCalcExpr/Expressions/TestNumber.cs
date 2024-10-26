@@ -15,7 +15,7 @@ public class TestNumber
 
         for (int i = 0; i < 100; i++)
         {
-            double val = random.NextDouble() * double.MaxValue * Math.Sign(random.Next(-1, 1));
+            double val = random.NextDouble() * double.MaxValue * (random.Next(2) == 0 ? -1 : 1);
 
             Assert.AreEqual(val, new Number(val).Value);
         }
