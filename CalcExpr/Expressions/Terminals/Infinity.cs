@@ -33,7 +33,7 @@ public class Infinity(string identifier, bool positive = true) : Terminal, ILogi
             PrefixOperator.POSITIVE => this,
             PrefixOperator.NEGATIVE => new Infinity(Identifier, IsNegative),
             PrefixOperator.NOT or PrefixOperator.NOT_ALT => Logical.FALSE,
-            PrefixOperator.SUBFACTORIAL => ((Terminal)FactorialFunctions.Subfactorial(this)).Evaluate(),
+            PrefixOperator.SUBFACTORIAL => (Terminal)FactorialFunctions.Subfactorial(this),
             PrefixOperator.PRE_DECREMENT or PrefixOperator.PRE_INCREMENT => this,
             _ => Undefined.UNDEFINED,
         };

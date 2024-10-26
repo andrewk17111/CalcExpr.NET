@@ -49,10 +49,10 @@ public static class CollectionFunctions
     [NativeFunction("range")]
     public static Terminal Range(int start, int count, int step)
     {
-        if (start % 1 != 0 || count % 1 != 0 || step % 1 != 0 || count < 0)
+        if (count < 0)
             return Undefined.UNDEFINED;
 
-        return TerminalCollection.TerminateCollection(Vector.ConvertIEnumerable(Enumerable.Range(0, count).Select(i => (Number)(start + i * step))));
+        return TerminalCollection.TerminateCollection(new Vector(Enumerable.Range(0, count).Select(i => (Terminal)(start + i * step))));
     }
 
     [NativeFunction("random")]

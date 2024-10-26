@@ -28,13 +28,9 @@ public static class StatisticalFunctions
     public static Terminal Mean([AreNumbers] IExpression expressions)
     {
         if (expressions is IEnumerableExpression enumExpr)
-        {
-            int count = enumExpr.Count();
-            
-            return count == 0
+            return enumExpr.Any()
                 ? Undefined.UNDEFINED
-                : (Number)(enumExpr.Select(x => ((Number)x).Value).Sum() / count);
-        }
+                : (Terminal)enumExpr.Cast<Number>().Select(x => x.Value).Average();
 
         return (Number)expressions;
     }
@@ -44,6 +40,9 @@ public static class StatisticalFunctions
     {
         if (expressions is IEnumerableExpression enumExpr)
         {
+            if (!enumExpr.Any())
+                return Undefined.UNDEFINED;
+
             IEnumerable<IExpression> sorted = enumExpr.OrderBy(x => ((Number)x).Value);
             int half = sorted.Count() / 2;
 

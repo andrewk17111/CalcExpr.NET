@@ -35,7 +35,7 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
         => Evaluate(new ExpressionContext());
 
     public Terminal Evaluate(ExpressionContext context)
-        => new TerminalCollection<Set>(elements.Select(x => x.Evaluate(context)));
+        => new TerminalCollection<Set>(this.Select(x => x.Evaluate(context)));
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
@@ -124,7 +124,7 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
         => ToString(null);
 
     public string ToString(string? format)
-        => $"{{{String.Join(", ", elements.Select(e => e.ToString(format)))}}}";
+        => $"{{{String.Join(", ", _elements.Select(e => e.Value.ToString(format)))}}}";
 
     public IEnumerator<IExpression> GetEnumerator()
         => _elements.Select(h => h.Value).GetEnumerator();
