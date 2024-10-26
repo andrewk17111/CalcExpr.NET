@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Context;
 using CalcExpr.Expressions.Interfaces;
+using CalcExpr.Expressions.Terminals;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
@@ -30,11 +31,11 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
     public Set() : this([])
     { }
 
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext context)
-        => new Set(elements.Select(x => x.Evaluate(context)));
+    public Terminal Evaluate(ExpressionContext context)
+        => new TerminalCollection<Set>(this.Select(x => x.Evaluate(context)));
 
     public IExpression StepEvaluate()
         => StepEvaluate(new ExpressionContext());
@@ -47,13 +48,18 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
             IExpression evaluated = element.StepEvaluate(context);
 
             if (!evaluated.Equals(element))
-                return new Set(_elements.Select((x, j) => j == i ? evaluated : x.Value));
+            {
+                IExpression[] elements = [.. this];
+
+                elements[i] = evaluated;
+                return TerminalCollection.ConvertIEnumerable(new Set(elements));
+            }
         }
 
         return this;
     }
 
-    public IExpression? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext _)
+    public Terminal? BinaryLeftOperate(string identifier, IExpression right, ExpressionContext _)
     {
         if (right is IEnumerableExpression)
             return identifier switch
@@ -67,7 +73,7 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
         return null;
     }
 
-    public IExpression? BinaryRightOperate(string identifier, IExpression left, ExpressionContext _)
+    public Terminal? BinaryRightOperate(string identifier, IExpression left, ExpressionContext _)
     {
         if (left is IEnumerableExpression)
             return identifier switch
@@ -101,12 +107,11 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
 
     public override bool Equals(object? obj)
     {
-        if (obj is not null && obj is Set set)
+        if (obj is IEnumerableExpression enumExpr and (Set or TerminalCollection<Set>))
         {
-            bool elements_equal = set.Count == Count &&
-                (Count == 0 || !set.Select((arg, i) => arg.Equals(this.ElementAt(i))).Any(x => !x));
+            bool elementsEqual = enumExpr.SequenceEqual(this);
 
-            return elements_equal;
+            return elementsEqual;
         }
 
         return false;
@@ -119,7 +124,7 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
         => ToString(null);
 
     public string ToString(string? format)
-        => $"{{{String.Join(", ", elements.Select(e => e.ToString(format)))}}}";
+        => $"{{{String.Join(", ", this.Select(e => e.ToString(format)))}}}";
 
     public IEnumerator<IExpression> GetEnumerator()
         => _elements.Select(h => h.Value).GetEnumerator();

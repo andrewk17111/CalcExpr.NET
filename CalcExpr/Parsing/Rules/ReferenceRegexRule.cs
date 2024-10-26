@@ -1,5 +1,5 @@
 ﻿using CalcExpr.Attributes;
-using CalcExpr.Expressions;
+using CalcExpr.Expressions.Terminals;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing.Rules;

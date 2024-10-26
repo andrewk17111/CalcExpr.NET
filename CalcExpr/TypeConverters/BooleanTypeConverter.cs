@@ -1,11 +1,12 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Expressions.Terminals;
 using CalcExpr.FunctionAttributes.PreprocessAttributes;
 
 namespace CalcExpr.TypeConverters;
 
 public class BooleanTypeConverter : ITypeConverter<bool?>
 {
-    public IExpression ConvertToExpression(bool? value)
+    public Terminal ConvertToExpression(bool? value)
     {
         if (value.HasValue)
         {

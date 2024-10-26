@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Terminals;
 using TestCalcExpr.TestUtils;
 
 namespace TestCalcExpr.Expressions.Collections;

@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Expressions.Terminals;
 using CalcExpr.Parsing;
 using CalcExpr.Parsing.Rules;
 

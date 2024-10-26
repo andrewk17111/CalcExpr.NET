@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
+using CalcExpr.Expressions.Terminals;
 using System.Xml.Linq;
 using TestCalcExpr.TestUtils;
 
@@ -61,7 +62,7 @@ public class TestSet
     {
         for (int i = 0; i < 20; i++)
         {
-            IExpression[] elements = [.. UtilFunctions.Random(i)];
+            IExpression[] elements = [.. UtilFunctions.Random(i).OrderBy(x => x.GetHashCode())];
             Set set = new Set(elements);
 
             Assert.AreEqual($"{{{string.Join<IExpression>(", ", elements)}}}", set.ToString());

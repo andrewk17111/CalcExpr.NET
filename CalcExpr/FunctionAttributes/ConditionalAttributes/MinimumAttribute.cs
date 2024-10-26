@@ -1,12 +1,12 @@
-﻿using CalcExpr.Context;
-using CalcExpr.Expressions;
+﻿using CalcExpr.Expressions;
 using CalcExpr.Expressions.Interfaces;
+using CalcExpr.Expressions.Terminals;
 
 namespace CalcExpr.FunctionAttributes.ConditionalAttributes;
 
 public class MinimumAttribute(double minimum, bool allowUndefined = false, bool inclusive = true) : ConditionAttribute
 {
-    public readonly IExpression Minimum = ((Number)minimum).Evaluate();
+    public readonly Terminal Minimum = (Terminal)minimum;
     public readonly bool AllowUndefined = allowUndefined;
     public readonly bool Inclusive = inclusive;
 

@@ -1,4 +1,6 @@
 ﻿using CalcExpr.Context;
+using CalcExpr.Expressions.Functions;
+using CalcExpr.Expressions.Terminals;
 
 namespace CalcExpr.Expressions;
 
@@ -11,10 +13,10 @@ public class FunctionCall(string name, IEnumerable<IExpression> arguments) : IEx
     public IExpression[] Arguments
         => _arguments.ToArray();
 
-    public IExpression Evaluate()
+    public Terminal Evaluate()
         => Evaluate(new ExpressionContext());
 
-    public IExpression Evaluate(ExpressionContext context)
+    public Terminal Evaluate(ExpressionContext context)
         => context.InvokeFunction(Name, _arguments);
 
     public IExpression StepEvaluate()
@@ -24,7 +26,7 @@ public class FunctionCall(string name, IEnumerable<IExpression> arguments) : IEx
     {
         IExpression variable = context[Name];
 
-        if (!(variable is Function function && function.RequiresContext))
+        if (!(variable is NativeFunction function && function.RequiresContext))
         {
             for (int i = 0; i < _arguments.Count; i++)
             {
