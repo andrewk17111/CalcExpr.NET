@@ -96,7 +96,7 @@ public class Vector(IEnumerable<IExpression> elements) : IEnumerableExpression, 
 
     public override bool Equals(object? obj)
     {
-        if (obj is not null && obj is IEnumerableExpression enumExpr && obj is Vector or TerminalCollection<Vector>)
+        if (obj is IEnumerableExpression enumExpr and (Vector or TerminalCollection<Vector>))
         {
             bool elementsEqual = enumExpr.SequenceEqual(this);
 

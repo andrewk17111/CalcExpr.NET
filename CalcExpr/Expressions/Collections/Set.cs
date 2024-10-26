@@ -107,7 +107,7 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
 
     public override bool Equals(object? obj)
     {
-        if (obj is not null && obj is IEnumerableExpression enumExpr && obj is Set or TerminalCollection<Set>)
+        if (obj is IEnumerableExpression enumExpr and (Set or TerminalCollection<Set>))
         {
             bool elementsEqual = enumExpr.SequenceEqual(this);
 
@@ -124,7 +124,7 @@ public class Set(IEnumerable<IExpression> elements) : IEnumerableExpression, IBi
         => ToString(null);
 
     public string ToString(string? format)
-        => $"{{{String.Join(", ", _elements.Select(e => e.Value.ToString(format)))}}}";
+        => $"{{{String.Join(", ", this.Select(e => e.ToString(format)))}}}";
 
     public IEnumerator<IExpression> GetEnumerator()
         => _elements.Select(h => h.Value).GetEnumerator();

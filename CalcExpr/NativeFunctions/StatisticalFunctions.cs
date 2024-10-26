@@ -29,8 +29,8 @@ public static class StatisticalFunctions
     {
         if (expressions is IEnumerableExpression enumExpr)
             return enumExpr.Any()
-                ? Undefined.UNDEFINED
-                : (Terminal)enumExpr.Cast<Number>().Select(x => x.Value).Average();
+                ? (Terminal)enumExpr.Cast<Number>().Select(x => x.Value).Average()
+                : Undefined.UNDEFINED;
 
         return (Number)expressions;
     }
