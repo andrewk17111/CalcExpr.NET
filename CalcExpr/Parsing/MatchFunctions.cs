@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Parsing.Rules;
+using CalcExpr.Tokenization.Tokens;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
@@ -40,7 +41,7 @@ internal static class MatchFunctions
 
             if (parentheses is not null)
                 return new Token(
-                    input[..(function_name.Length + parentheses.Value.Index + parentheses.Value.Length + 1)],
+                    input[..(function_name.Length + parentheses.Index + parentheses.Length + 1)],
                     0);
         }
 

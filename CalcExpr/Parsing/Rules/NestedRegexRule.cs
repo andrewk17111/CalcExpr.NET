@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Exceptions;
 using CalcExpr.Expressions;
+using CalcExpr.Tokenization.Tokens;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing.Rules;

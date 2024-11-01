@@ -7,6 +7,7 @@ using CalcExpr.Parsing.Rules;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using CalcExpr.Expressions.Terminals;
+using CalcExpr.Tokenization.Tokens;
 
 namespace CalcExpr.Parsing;
 
@@ -78,10 +79,10 @@ internal static class ParseMatchFunctions
 
             Token? match = rule.Match(tokenized_input, parser.Grammar);
 
-            if (match.HasValue)
+            if (match is not null)
             {
                 IExpression? result = rule.Parse(input,
-                    new Token(match.Value, ContextFreeUtils.DetokenizeIndex(match.Value.Index, tokenized_input,
+                    new Token(match, ContextFreeUtils.DetokenizeIndex(match.Index, tokenized_input,
                         tokens)),
                     parser);
 

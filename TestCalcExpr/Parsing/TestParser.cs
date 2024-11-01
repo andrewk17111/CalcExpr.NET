@@ -1,8 +1,8 @@
 ﻿using CalcExpr.Expressions;
-using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Terminals;
 using CalcExpr.Parsing;
 using CalcExpr.Parsing.Rules;
+using CalcExpr.Tokenization.Tokens;
 using System.Text.RegularExpressions;
 using TestCalcExpr.TestData;
 using TestCalcExpr.TestUtils;

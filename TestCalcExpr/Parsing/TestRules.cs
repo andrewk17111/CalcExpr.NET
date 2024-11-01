@@ -2,6 +2,7 @@
 using CalcExpr.Expressions.Terminals;
 using CalcExpr.Parsing;
 using CalcExpr.Parsing.Rules;
+using CalcExpr.Tokenization.Tokens;
 
 namespace TestCalcExpr.Parsing;
 

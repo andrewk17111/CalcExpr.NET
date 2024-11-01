@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Tokenization.Tokens;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing.Rules;
@@ -48,7 +49,7 @@ public class RegexRule(string name, string regex, RegexRuleOptions options,
     {
         Token? match = Match(input, parser.Grammar);
 
-        return match.HasValue ? Parse(input, match.Value, parser) : null;
+        return match is not null ? Parse(input, match, parser) : null;
     }
 
     public IExpression? Parse(string input, Token match, Parser parser)
@@ -65,11 +66,11 @@ public class RegexRule(string name, string regex, RegexRuleOptions options,
         {
             Token? match = Match(input[(rtl ? 0 : index)..(rtl ? index : input.Length)], rules);
 
-            if (!match.HasValue)
+            if (match is null)
                 break;
 
-            yield return match.Value;
-            index = rtl ? match.Value.Index : (index + match.Value.Index + match.Value.Length);
+            yield return match;
+            index = rtl ? match.Index : (index + match.Index + match.Length);
         }
     }
 

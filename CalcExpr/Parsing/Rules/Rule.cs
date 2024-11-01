@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Expressions;
+using CalcExpr.Tokenization.Tokens;
 
 namespace CalcExpr.Parsing.Rules;
 
@@ -37,8 +38,8 @@ public class Rule(string name, Func<string, Parser, IExpression?> parse, Func<st
         return (i, p) => {
             Token? token = match(i, p.Grammar);
 
-            return token.HasValue
-                ? parse(i, token.Value, p)
+            return token is not null
+                ? parse(i, token, p)
                 : null;
         };
     }
