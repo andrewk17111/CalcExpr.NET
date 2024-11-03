@@ -22,18 +22,15 @@ public class Tokenizer(IEnumerable<ITokenizerRule> rules, bool trimWhitespace = 
     /// Creates a <see cref="Tokenizer"/> with the default rules list.
     /// </summary>
     public Tokenizer() : this([
-        new OptionRule("Symbol", [
-            ",", "=>", "=", "||", "∨", "⊕", "&&", "∧", "==", "!=", "<>", "≠", ">=", "<=", ">", "<", "≤",
-            "≥", "%%", "//", "*", "×", "/", "÷", "%", "^", "+", "-", "~", "¬", "!!", "!", "%", "#", "∞", "∅",
-        ], (match, index) => new SymbolToken(match, index)),
-        new CharSetRule("OpenBracket", "^([{<", (match, index) => new CloseBracketToken(match switch {
+        new CharSetRule("Symbol", ",=|∨⊕&∧≠≤≥*×/÷%^+-~¬!#∞∅", (match, index) => new SymbolToken(match, index)),
+        new CharSetRule("OpenBracket", "^([{<", (match, index) => new OpenBracketToken(match switch {
             '(' => Bracket.Parenthesis,
             '[' => Bracket.Square,
             '{' => Bracket.Curly,
             '<' => Bracket.Angle,
             _ => throw new NotSupportedException()
         }, index)),
-        new CharSetRule("CloseBracket", ")]}>", (match, index) => new OpenBracketToken(match switch {
+        new CharSetRule("CloseBracket", ")]}>", (match, index) => new CloseBracketToken(match switch {
             ')' => Bracket.Parenthesis,
             ']' => Bracket.Square,
             '}' => Bracket.Curly,
@@ -41,7 +38,7 @@ public class Tokenizer(IEnumerable<ITokenizerRule> rules, bool trimWhitespace = 
             _ => throw new NotSupportedException()
         }, index)),
         new RegexRule("Word", "^[A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*", (match, index) => new WordToken(match.Value, index)),
-        new RegexRule("Number", @"^(\d+\.?\d*)|(\d*\.?\d+)", (match, index) => new NumberToken(match.Value, index)),
+        new RegexRule("Number", @"^((\d+\.?\d*)|(\d*\.?\d+))", (match, index) => new NumberToken(match.Value, index)),
     ]) { }
 
     /// <summary>
@@ -56,6 +53,14 @@ public class Tokenizer(IEnumerable<ITokenizerRule> rules, bool trimWhitespace = 
 
         List<IToken> tokens = [];
         int i = 0;
+
+        if (TrimWhitespace)
+        {
+            string trimmedInput = input.TrimStart();
+
+            i += input.Length - trimmedInput.Length;
+            input = trimmedInput;
+        }
 
         while (input.Length != 0)
         {

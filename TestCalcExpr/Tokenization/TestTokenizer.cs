@@ -44,7 +44,10 @@ public class TestTokenizer
         {
             List<IToken> tokenized = tokenizer.Tokenize(testCase.ExpressionString);
 
-            Assert.AreEqual(testCase.Tokenized, tokenized);
+            Assert.AreEqual(testCase.Tokenized.Length, tokenized.Count, $"The lengths of the tokenized results do not match for test case '{testCase.ExpressionString}'");
+
+            for (int i = 0; i < tokenized.Count; i++)
+                Assert.AreEqual(testCase.Tokenized[i], tokenized[i], $"Token did not match for test case '{testCase.ExpressionString}'");
         }
     }
 }

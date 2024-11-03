@@ -1,13 +1,15 @@
 ﻿namespace CalcExpr.Tokenization.Tokens;
 
 /// <summary>
-/// A substring that represents a symbol in an expression.
+/// A character that represents a symbol in an expression.
 /// </summary>
-/// <param name="value">The <see cref="string"/> contained within the <see cref="SymbolToken"/>.</param>
+/// <param name="value">The <see cref="char"/> contained within the <see cref="SymbolToken"/>.</param>
 /// <param name="index">The starting index within the containing <see cref="string"/>.</param>
-public class SymbolToken(string value, int index) : IToken
+public class SymbolToken(char value, int index) : IToken
 {
-    public string Value { get; } = value;
+    public string Value { get; } = value.ToString();
+
+    public char Character { get; } = value;
 
     public int Index { get; } = index;
 
