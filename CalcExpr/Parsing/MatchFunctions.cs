@@ -1,73 +1,49 @@
 ﻿using CalcExpr.Parsing.Rules;
+using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization.Tokens;
-using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
 
 internal static class MatchFunctions
 {
-    internal static Token? MatchCollection(string input, IEnumerable<IRule> _)
+    internal static TokenMatch? MatchCollection(List<IToken> input, IEnumerable<IParserRule> _)
     {
-        Match match = Regex.Match(input, @"(?<=^\s*)[\[\{].*?[\]\}](?=\s*$)");
-
-        if (match.Success && match.Value[^1] - match.Value[0] == 2)
+        if (input.Count >= 2 && input.First() is OpenBracketToken open && input.Last() is CloseBracketToken close &&
+            open.BracketType == close.BracketType && (Bracket.Square | Bracket.Curly).HasFlag(open.BracketType))
         {
-            try
-            {
-                if (ContextFreeUtils.CheckBalancedBrackets(match.Value[1..^1], Brackets.Square | Brackets.Curly))
-                    return match;
-            }
-            catch
-            {
-                throw;
-            }
+            return new TokenMatch(input, 0);
         }
 
         return null;
     }
 
-    internal static Token? MatchFunctionCall(string input, IEnumerable<IRule> rules)
+    internal static TokenMatch? MatchFunctionCall(List<IToken> input, IEnumerable<IParserRule> _)
     {
-        input = input.Trim();
-
-        if (String.IsNullOrWhiteSpace(input))
-            return null;
-
-        Match function_name = Regex.Match(input, @"^([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
-
-        if (function_name.Success)
+        if (input.Count >= 3 && input.First() is WordToken && input[1] is OpenBracketToken { BracketType: Bracket.Parenthesis } &&
+            input.Last() is CloseBracketToken { BracketType: Bracket.Parenthesis })
         {
-            Token? parentheses = MatchParentheses(input[function_name.Length..], rules);
-
-            if (parentheses is not null)
-                return new Token(
-                    input[..(function_name.Length + parentheses.Index + parentheses.Length + 1)],
-                    0);
+            return new TokenMatch(input, 0);
         }
 
         return null;
     }
 
-    internal static Token? MatchParentheses(string input, IEnumerable<IRule> _)
+    internal static TokenMatch? MatchParentheses(List<IToken> input, IEnumerable<IParserRule> _)
     {
-        input = input.Trim();
-
-        if (String.IsNullOrWhiteSpace(input))
-            return null;
-
-        if (input[0] == '(' && input[^1] == ')')
+        if (input.Count >= 2 && input.First() is OpenBracketToken { BracketType: Bracket.Parenthesis } &&
+            input.Last() is CloseBracketToken { BracketType: Bracket.Parenthesis })
         {
             int depth = 0;
 
-            for (int i = 1; i < input.Length - 1; i++)
+            for (int i = 1; i < input.Count - 1; i++)
             {
-                char current = input[i];
+                IToken current = input[i];
 
-                if (current == '(')
+                if (current is OpenBracketToken { BracketType: Bracket.Parenthesis })
                 {
                     depth++;
                 }
-                else if (current == ')')
+                else if (current is CloseBracketToken { BracketType: Bracket.Parenthesis })
                 {
                     if (depth == 0)
                         return null;
@@ -77,22 +53,24 @@ internal static class MatchFunctions
             }
 
             if (depth == 0)
-                return new Token(input[1..^1], 1);
+                return new TokenMatch(input[1..^1], 1);
         }
 
         return null;
     }
 
-    internal static Token? MatchIndexer(string input, IEnumerable<IRule> _)
+    internal static TokenMatch? MatchIndexer(List<IToken> input, IEnumerable<IParserRule> _)
     {
-        ContextFreeUtils.TokenizeInput(input, out Token[] tokens, Brackets.Square);
+        IEnumerable<CondensedToken> tokens = ContextFreeUtils.Condense(input, Brackets.Square)
+            .Where(token => token is CondensedToken condensed && (condensed.Tokens.First() as OpenBracketToken)?.BracketType == Bracket.Square)
+            .Cast<CondensedToken>();
 
-        if (tokens.Length > 0)
+        if (tokens.Any())
         {
-            Token match = tokens.Last();
+            CondensedToken match = tokens.Last();
 
-            if (!match[1..^1].Contains(','))
-                return match;
+            if (match.Tokens.Count == 3 && match.Tokens[1] is NumberToken)
+                return new TokenMatch(match.Tokens, match.Index);
         }
 
         return null;

@@ -3,115 +3,102 @@ using CalcExpr.Expressions;
 using CalcExpr.Expressions.Collections;
 using CalcExpr.Expressions.Components;
 using CalcExpr.Expressions.Functions;
-using CalcExpr.Parsing.Rules;
-using System.Text.RegularExpressions;
-using System.Reflection;
 using CalcExpr.Expressions.Terminals;
+using CalcExpr.Extensions;
+using CalcExpr.Parsing.Rules;
+using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization.Tokens;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
 
 internal static class ParseMatchFunctions
 {
-    internal static IEnumerableExpression ParseMatchCollection(string _, Token token, Parser parser)
+    internal static IEnumerableExpression ParseMatchCollection(List<IToken> _, TokenMatch match, Parser parser)
     {
-        string tokenized = ContextFreeUtils.TokenizeInput(token.Value[1..^1], out Token[] tokens,
-            Brackets.Square | Brackets.Curly);
-        IEnumerable<IExpression> enumerable = tokenized.Split(',')
-            .Select(e => parser.Parse(Regex.Replace(e, @"(?<!(^|[^\\])\\(\\\\)*)\[\d+\]", m => m.Value[1..^1])));
+        List<IToken> condensed = ContextFreeUtils.Condense(match[1..^1], Brackets.Square | Brackets.Curly);
+        IEnumerable<IExpression> enumerable = condensed.Split(',').Select(element => parser.Parse(element.Uncondense()));
 
-        return token.Value[0] == '['
+        return (match.First() as OpenBracketToken)!.BracketType == Bracket.Square
             ? new Vector(enumerable)
             : new Set(enumerable);
     }
 
-    internal static FunctionCall ParseMatchFunctionCall(string input, Token token, Parser parser)
+    internal static FunctionCall ParseMatchFunctionCall(List<IToken> _, TokenMatch match, Parser parser)
     {
-        Match function_name = Regex.Match(input, @"(?<=^\s*)([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)");
-        string tokenized_args = token.Value[(function_name.Length + 1)..^1].TokenizeInput(out Token[] tokens);
+        string functionName = match.First().Value;
+        List<IToken> condensedArgs = match[2..^1].Condense();
 
-        string[] args = tokenized_args
-            .Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(arg => !arg.Contains('[')
-                ? arg
-                : Regex.Replace(arg, @"\[\d+\]", match => tokens[Convert.ToInt32(match.Value[1..^1])]))
-            .ToArray();
+        IEnumerable<IExpression> args = condensedArgs
+            .Split(',')
+            .Select(arg => parser.Parse(arg.Uncondense()));
 
-        return new FunctionCall(function_name.Value, args.Select(arg => parser.Parse(arg)));
+        return new FunctionCall(functionName, args);
     }
 
-    internal static LambdaFunction ParseMatchLambdaFunction(string input, Token token, Parser parser)
+    internal static LambdaFunction ParseMatchLambdaFunction(List<IToken> input, TokenMatch match, Parser parser)
     {
-        string parameters_string = Regex.Match(token.Value.Trim(), @"(?<=^\(?).*?(?=\)?\s*=>)").Value.TrimStart('(');
-        string tokenized_parameters_string = parameters_string.TokenizeInput(out Token[] attribute_tokens,
-            Brackets.Square);
-        IEnumerable<Parameter> parameters = tokenized_parameters_string
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        List<IToken> parameterTokens = match.First() is OpenBracketToken { BracketType: Bracket.Parenthesis }
+            ? match[1..^3]
+            : match[..^2];
+        List<IToken> condensedParameters = parameterTokens.Condense(Brackets.Square);
+        IEnumerable<Parameter> parameters = condensedParameters.Split(',')
             .Select(p =>
             {
-                Match attribute_match = Regex.Match(p, @"(?<=^\s*\[)\d+(?=\])");
-                string? attribute_string = attribute_match.Success
-                    ? attribute_tokens[Convert.ToInt32(attribute_match.Value)].Value[1..^1]
-                    : null;
-                IEnumerable<string> attributes = attribute_string is null
-                    ? Enumerable.Empty<string>()
-                    : Regex.Split(attribute_string, @"(?<!\([^\)]*?),(?![^\(]*?\))");
+                List<IToken>[] attributes = p.First() is CondensedToken attribute
+                    ? attribute.Tokens[1..^1].Split(',')
+                    : [];
 
-                return new Parameter(Regex.Match(p,
-                    @$"(?<=\]?\s*){((RegexRule?)parser.GetGrammarRule("Variable"))!.RegularExpression}(?=\s*$)").Value,
-                    attributes);
+                return new Parameter(p.Last().Value, attributes);
             }).ToArray();
 
-        return new LambdaFunction(parameters, parser.Parse(input[(token.Index + token.Length)..]));
+        return new LambdaFunction(parameters, parser.Parse(input[match.Length..]));
     }
 
-    internal static Parentheses ParseMatchParentheses(string _, Token token, Parser parser)
-        => new Parentheses(parser.Parse(token));
+    internal static Parentheses ParseMatchParentheses(List<IToken> _, TokenMatch match, Parser parser)
+        => new Parentheses(parser.Parse(match[..]));
 
-    internal static IExpression ParseMatchWithParentheses(string input, Token _, Parser parser)
+    internal static IExpression ParseMatchWithParentheses(List<IToken> input, TokenMatch _, Parser parser)
     {
-        string tokenized_input = input.TokenizeInput(out Token[] tokens, Brackets.Parenthesis);
+        List<IToken> condensed = input.Condense(Brackets.Parenthesis);
 
-        foreach (IRule rule in parser.Grammar)
+        foreach (IParserRule rule in parser.Grammar)
         {
             if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
                 continue;
 
-            Token? match = rule.Match(tokenized_input, parser.Grammar);
+            TokenMatch? subMatch = rule.Match(condensed, parser.Grammar);
 
-            if (match is not null)
+            if (subMatch is not null)
             {
-                IExpression? result = rule.Parse(input,
-                    new Token(match, ContextFreeUtils.DetokenizeIndex(match.Index, tokenized_input,
-                        tokens)),
-                    parser);
+                IExpression? expression = rule.Parse(input, new TokenMatch(subMatch.Match.ToList().Uncondense(),
+                    condensed.UncondenseIndex(subMatch.Index)), parser);
 
-                if (result is not null)
-                    return result;
+                if (expression is not null)
+                    return expression;
             }
         }
 
-        throw new Exception($"The input was not in the correct format: '{input}'");
+        throw new Exception($"The input was not in the correct format: '{input.JoinTokens()}'");
     }
 
-    internal static AssignmentOperator ParseMatchAssignmentOperator(string input, Token match, Parser parser)
-        => new AssignmentOperator((parser.Parse(input[..match.Index]) as Variable)!,
-            parser.Parse(input[(match.Index + match.Length)..]));
+    internal static AssignmentOperator ParseMatchAssignmentOperator(List<IToken> input, TokenMatch match, Parser parser)
+        => new AssignmentOperator((parser.Parse(input[..match.Index]) as Variable)!, parser.Parse(input[(match.Index + match.Length)..]));
 
-    internal static BinaryOperator ParseMatchBinaryOperator(string input, Token match, Parser parser)
-        => new BinaryOperator(match.Value, parser.Parse(input[..match.Index]),
-            parser.Parse(input[(match.Index + match.Length)..]));
+    internal static BinaryOperator ParseMatchBinaryOperator(List<IToken> input, TokenMatch match, Parser parser)
+        => new BinaryOperator(match.Value, parser.Parse(input[..match.Index]), parser.Parse(input[(match.Index + match.Length)..]));
 
-    internal static PrefixOperator ParseMatchPrefix(string input, Token match, Parser parser)
+    internal static PrefixOperator ParseMatchPrefix(List<IToken> input, TokenMatch match, Parser parser)
         => new PrefixOperator(match.Value, parser.Parse(input[(match.Index + match.Length)..]));
 
-    internal static PostfixOperator ParseMatchPostfix(string input, Token match, Parser parser)
+    internal static PostfixOperator ParseMatchPostfix(List<IToken> input, TokenMatch match, Parser parser)
         => new PostfixOperator(match.Value, parser.Parse(input[..match.Index]));
 
-    internal static Indexer ParseMatchIndexer(string input, Token match, Parser parser)
+    internal static Indexer ParseMatchIndexer(List<IToken> input, TokenMatch match, Parser parser)
         => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
 
-    internal static Undefined ParseMatchUndefined(string _, Token match, Parser __)
+    internal static Undefined ParseMatchUndefined(List<IToken> _, TokenMatch match, Parser __)
         => match.Value switch
         {
             "undefined" => Undefined.UNDEFINED,
@@ -119,18 +106,18 @@ internal static class ParseMatchFunctions
             _ => throw new Exception($"The input was not in the correct format: '{match.Value}'")
         };
 
-    internal static Logical ParseMatchLogical(string _, Token match, Parser __)
+    internal static Logical ParseMatchLogical(List<IToken> _, TokenMatch match, Parser __)
         => new Logical(Boolean.Parse(match.Value));
 
-    internal static Infinity ParseMatchInfinity(string _, Token match, Parser __)
+    internal static Infinity ParseMatchInfinity(List<IToken> _, TokenMatch match, Parser __)
         => new Infinity(match.Value);
 
-    internal static Constant ParseMatchConstant(string _, Token match, Parser __)
+    internal static Constant ParseMatchConstant(List<IToken> _, TokenMatch match, Parser __)
         => new Constant(match.Value);
 
-    internal static Variable ParseMatchVariable(string _, Token match, Parser parser)
+    internal static Variable ParseMatchVariable(List<IToken> _, TokenMatch match, Parser __)
         => new Variable(match.Value);
 
-    internal static Number ParseMatchNumber(string _, Token match, Parser parser)
-        => new Number(Convert.ToDouble(match.Value));
+    internal static Number ParseMatchNumber(List<IToken> _, TokenMatch match, Parser __)
+        => new Number(((NumberToken)match.Match.Single()).ParsedValue);
 }

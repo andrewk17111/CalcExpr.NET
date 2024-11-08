@@ -1,98 +1,92 @@
 ﻿using CalcExpr.Exceptions;
+using CalcExpr.Extensions;
+using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization.Tokens;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace CalcExpr.Parsing;
 
 public static class ContextFreeUtils
 {
-    private static (string, string) GetBracketStrings(Brackets brackets = Brackets.All)
+    /// <summary>
+    /// Checks if the input has balanced brackets.
+    /// </summary>
+    /// <param name="input">The input to check.</param>
+    /// <param name="brackets">Type of brackets to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if the input string has balanced brackets, <see langword="false"/> otherwise.
+    /// </returns>
+    public static bool CheckBalancedBrackets(this List<IToken> input, Brackets brackets = Brackets.All)
     {
-        string open_brackets = (brackets.HasFlag(Brackets.Parenthesis) ? "(" : "") +
-            (brackets.HasFlag(Brackets.Square) ? "[" : "") +
-            (brackets.HasFlag(Brackets.Curly) ? "{" : "") +
-            (brackets.HasFlag(Brackets.Angle) ? "<" : "");
-        string close_brackets = (brackets.HasFlag(Brackets.Parenthesis) ? ")" : "") +
-            (brackets.HasFlag(Brackets.Square) ? "]" : "") +
-            (brackets.HasFlag(Brackets.Curly) ? "}" : "") +
-            (brackets.HasFlag(Brackets.Angle) ? ">" : "");
+        if (brackets == Brackets.None)
+            return true;
 
-        return (open_brackets, close_brackets);
+        Dictionary<Bracket, int> openCounts = Enum.GetValues<Bracket>().Where(b => brackets.HasFlag((Brackets)b)).ToDictionary(c => c, c => 0);
+        Dictionary<Bracket, int> closeCounts = Enum.GetValues<Bracket>().Where(b => brackets.HasFlag((Brackets)b)).ToDictionary(c => c, c => 0);
+
+        for (int i = 0; i < input.Count; i++)
+        {
+            IToken current = input[i];
+
+            if (current is OpenBracketToken open)
+            {
+                openCounts[open.BracketType]++;
+            }
+            else if (current is CloseBracketToken close)
+            {
+                if (openCounts[close.BracketType] == 0)
+                    return false;
+
+                closeCounts[close.BracketType]++;
+            }
+        }
+
+        return !openCounts.Select(kvp => kvp.Value == closeCounts[kvp.Key]).Any(x => !x);
     }
 
     /// <summary>
-    /// Tokenizes the input string by replacing all bracketed expressions with a token.
+    /// Condenses the input by replacing all bracketed subsets with a <see cref="CondensedToken"/>.
     /// </summary>
-    /// <param name="input">The input string to tokenize.</param>
-    /// <param name="tokens">The tokens that were created from the input string.</param>
-    /// <param name="brackets">Type of brackets to tokenize.</param>
-    /// <returns>The tokenized string.</returns>
+    /// <param name="input">The input to condense.</param>
+    /// <param name="brackets">Type of brackets to condense.</param>
+    /// <returns>The condensed list of tokens.</returns>
     /// <exception cref="UnbalancedParenthesesException">
-    /// Thrown when the input string has unbalanced brackets.
+    /// Thrown when the input has unbalanced brackets.
     /// </exception>
-    public static string TokenizeInput(this string input, out Token[] tokens, Brackets brackets = Brackets.All)
+    public static List<IToken> Condense(this List<IToken> input, Brackets brackets = Brackets.All)
     {
         if (brackets == Brackets.None)
-        {
-            tokens = [];
             return input;
-        }
 
-        input = Regex.Replace(input, brackets.HasFlag(Brackets.Square) ? @"[\\]" : @"[\[\]\\]",
-            match => @$"\{match.Value}");
-
-        (string open_brackets, string close_brackets) = GetBracketStrings(brackets);
-        List<Token> toks = [];
-        StringBuilder output = new StringBuilder();
+        int toks = 0;
+        List<IToken> output = [];
         int start = -1;
         int offset = 0;
-        int local_offset = 0;
-        Stack<char> depth = [];
+        int localOffset = 0;
+        Stack<Bracket> depth = [];
 
-        for (int i = 0; i < input.Length; i++)
+        for (int i = 0; i < input.Count; i++)
         {
-            char current = input[i];
+            IToken current = input[i];
 
-            if (current == '\\')
-            {
-                if (start < 0)
-                {
-                    output.Append($"{current}{input[++i]}");
-                }
-                else
-                {
-                    i++;
-                    local_offset++;
-                }
-
-                offset++;
-                continue;
-            }
-
-            if (open_brackets.Contains(current))
+            if (current is OpenBracketToken openBracket && brackets.HasFlag((Brackets)openBracket.BracketType))
             {
                 if (start == -1)
                 {
                     start = i;
-                    local_offset = 0;
+                    localOffset = 0;
                 }
 
-                depth.Push(current);
+                depth.Push(openBracket.BracketType);
             }
-            
-            int close_index = close_brackets.IndexOf(current);
-
-            if (close_index != -1)
+            else if (current is CloseBracketToken closeBracket && brackets.HasFlag((Brackets)closeBracket.BracketType))
             {
-                if (start < 0 || open_brackets[close_index] != depth.Pop())
+                if (start < 0 || closeBracket.BracketType != depth.Pop())
                 {
-                    throw new UnbalancedParenthesesException(input, i);
+                    throw new UnbalancedParenthesesException(string.Join(' ', input.Select(x => x.Value)), i);
                 }
                 else if (depth.Count == 0)
                 {
-                    output.Append($"[{toks.Count}]");
-                    toks.Add(new Token(input[start..(i + 1)], start - (offset - local_offset)));
+                    output.Add(new CondensedToken(input[start..(i + 1)], start - (offset - localOffset), toks++));
                     start = -1;
                     depth.Clear();
                 }
@@ -100,165 +94,72 @@ public static class ContextFreeUtils
             else
             {
                 if (start < 0)
-                    output.Append(current);
-                else if (i == input.Length - 1)
-                    throw new UnbalancedParenthesesException(input, i);
+                    output.Add(current);
+                else if (i == input.Count - 1)
+                    throw new UnbalancedParenthesesException(input.JoinTokens(), i);
             }
         }
 
-        tokens = [.. toks];
-        return output.ToString();
+        return output;
     }
 
     /// <summary>
-    /// Tokenizes the input string by replacing all bracketed expressions with a token.
+    /// Condenses the input by replacing all bracketed subsets with a <see cref="CondensedToken"/>.
     /// </summary>
-    /// <param name="input">The input string to tokenize.</param>
-    /// <param name="tokens">The tokens that were created from the input string.</param>
-    /// <param name="tokenized">The tokenized string.</param>
-    /// <param name="brackets">Type of brackets to tokenize.</param>
-    /// <returns>
-    /// <see langword="true"/> if the input string was tokenized successfully, <see langword="false"/> otherwise.
-    /// </returns>"
-    public static bool TryTokenizeInput(this string input, out Token[] tokens, out string? tokenized,
-        Brackets brackets = Brackets.All)
+    /// <param name="input">The input to condense.</param>
+    /// <param name="condensed">The condensed list of tokens.</param>
+    /// <param name="brackets">Type of brackets to condense.</param>
+    /// <returns>The condensed list of tokens.</returns>
+    /// <exception cref="UnbalancedParenthesesException">
+    /// Thrown when the input has unbalanced brackets.
+    /// </exception>
+    public static bool TryCondense(this List<IToken> input, out List<IToken>? condensed, Brackets brackets = Brackets.All)
     {
         try
         {
-            tokenized = input.TokenizeInput(out tokens, brackets);
+            condensed = input.Condense(brackets);
             return true;
         }
         catch
         {
-            tokens = [];
-            tokenized = null;
+            condensed = null;
             return false;
         }
     }
 
     /// <summary>
-    /// Checks if the input string has balanced brackets.
+    /// Uncondenses a list of tokens.
     /// </summary>
-    /// <param name="input">The input string to check.</param>
-    /// <param name="brackets">Type of brackets to check.</param>
-    /// <returns>
-    /// <see langword="true"/> if the input string has balanced brackets, <see langword="false"/> otherwise.
-    /// </returns>
-    public static bool CheckBalancedBrackets(this string input, Brackets brackets = Brackets.All)
+    /// <param name="input">The condensed list of tokens.</param>
+    /// <returns>The uncondensed form of the tokens.</returns>
+    public static List<IToken> Uncondense(this List<IToken> input)
     {
-        if (brackets == Brackets.None)
-            return true;
+        List<IToken> result = [];
 
-        input = Regex.Replace(input, brackets.HasFlag(Brackets.Square) ? @"[\\]" : @"[\[\]\\]",
-            match => @$"\{match.Value}");
-
-        (string open_brackets, string close_brackets) = GetBracketStrings(brackets);
-        Dictionary<char, int> open_counts = open_brackets.ToDictionary(c => c, c => 0);
-        Dictionary<char, int> close_counts = close_brackets.ToDictionary(c => c, c => 0);
-
-        for (int i = 0; i < input.Length; i++)
+        foreach (IToken token in input)
         {
-            char current = input[i];
-
-            if (current == '\\')
+            if (token is CondensedToken condensed)
             {
-                i++;
+                result.AddRange(condensed.Tokens);
             }
-            else if (open_brackets.Contains(current))
-            {
-                open_counts[current]++;
-            }
-            else if (close_brackets.Contains(current))
-            {
-                if (open_counts[open_brackets[close_brackets.IndexOf(current)]] == 0)
-                    return false;
-
-                close_counts[current]++;
-            }
-        }
-
-        return !open_brackets.Select((c, i) => open_counts[c] == close_counts[close_brackets[i]])
-            .Any(x => !x);
-    }
-
-    /// <summary>
-    /// Converts the index of the tokenized string to the index of the original string.
-    /// </summary>
-    /// <param name="index">The index to detokenize.</param>
-    /// <param name="tokenized_string">The tokenized string.</param>
-    /// <param name="tokens">The tokens that were created from the input string.</param>
-    /// <returns>The index of the original string.</returns>
-    public static int DetokenizeIndex(int index, string tokenized_string, Token[] tokens)
-    {
-        string[] matches =
-            [.. Regex.Matches(tokenized_string[..index], @"((?<=^|([^\\]([\\][\\])*))\[\d+\])|(\\[\[\]\\])")
-                .Select(m => m.Value)];
-
-        foreach (string match in matches)
-            if (match.StartsWith('\\'))
-                index -= 1;
             else
-                index += tokens[Convert.ToInt32(match[1..^1])].Length - 3;
+            {
+                result.Add(token);
+            }
+        }
 
-        return index;
+        return result;
     }
 
     /// <summary>
-    /// Converts the indexes of the tokenized string to the indexes of the original string.
+    /// Converts an index in a list that might contain <see cref="CondensedToken"/>s to the corresponding index in the non-condensed list.
     /// </summary>
-    /// <param name="indexes">The indexes to detokenize.</param>
-    /// <param name="tokenized_string">The tokenized string.</param>
-    /// <param name="tokens">The tokens that were created from the input string.</param>
-    /// <param name="sort">Whether to sort the indexes before detokenizing.</param>
-    /// <returns>The indexes of the original string.</returns>
-    public static IEnumerable<int> DetokenizeIndexes(IEnumerable<int> indexes, string tokenized_string,
-        Token[] tokens, bool sort = true)
+    /// <param name="input">The list of tokens.</param>
+    /// <param name="index">The index in the condensed list.</param>
+    /// <returns>The corresponding index from the uncondensed list of tokens.</returns>
+    public static int UncondenseIndex(this List<IToken> input, int index)
     {
-        if (!sort)
-        {
-            foreach (int idx in indexes.Select(i => DetokenizeIndex(i, tokenized_string, tokens)))
-                yield return idx;
-
-            yield break;
-        }
-
-        if (!indexes.Any())
-            yield break;
-
-        int[] sorted_indexes = [.. indexes.Order()];
-        Match[] matches = [.. Regex.Matches(tokenized_string[..sorted_indexes.Last()],
-                @"((?<=^|([^\\]([\\][\\])*))\[\d+\])|(\\[\[\]\\])")
-            .Where(m => !m.Value.StartsWith('\\'))];
-        int match_index = -1;
-
-        if (matches.Length != 0)
-        {
-            Match? match = null;
-
-            for (int i = 0; i < sorted_indexes.Length; i++)
-            {
-                while (match_index < matches.Length - 1 && matches[match_index + 1].Index < sorted_indexes[i])
-                    match = matches[++match_index];
-
-                if (match is null)
-                    yield return sorted_indexes[i] - Regex.Matches(tokenized_string[..sorted_indexes[i]], @"\\.").Count;
-                else
-                    yield return tokens[Convert.ToInt32(match.Value[1..^1])].Index +
-                        tokens[Convert.ToInt32(match.Value[1..^1])].Length - 3 + (sorted_indexes[i] - match.Index);
-            }
-        }
-        else
-        {
-            int prev_index = 0;
-            int offset = 0;
-
-            for (int i = 0; i < sorted_indexes.Length; i++)
-            {
-                offset += Regex.Matches(tokenized_string[prev_index..sorted_indexes[i]], @"\\.").Count;
-                yield return sorted_indexes[i] - offset;
-                prev_index = sorted_indexes[i];
-            }
-        }
+        return index + input[..index].Where(t => t is CondensedToken).Cast<CondensedToken>().Select(t => t.Tokens.Count - 1).Sum();
     }
 }
 
