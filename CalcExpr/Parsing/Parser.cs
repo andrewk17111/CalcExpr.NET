@@ -264,10 +264,8 @@ public class Parser
                 (input, _) => input.Count == 1 && ((string[])["π", "pi", "τ", "tau", "empty_set", "empty", "∅", "e"]).Contains(input.Single().Value)
                     ? new TokenMatch(input, 0)
                     : null),
-            new ParserRule("Variable", ParseMatchVariable,
-                (input, _) => input.Count == 1 && input.Single() is WordToken ? new TokenMatch(input, 0) : null),
-            new ParserRule("Number", ParseMatchNumber,
-                (input, _) => input.Count == 1 && input.Single() is NumberToken ? new TokenMatch(input, 0) : null),
+            new TypeParserRule<WordToken>("Variable", ParseMatchVariable),
+            new TypeParserRule<NumberToken>("Number", ParseMatchNumber),
         ],
         build_rules)
     { }

@@ -115,9 +115,9 @@ internal static class ParseMatchFunctions
     internal static Constant ParseMatchConstant(List<IToken> _, TokenMatch match, Parser __)
         => new Constant(match.Value);
 
-    internal static Variable ParseMatchVariable(List<IToken> _, TokenMatch match, Parser __)
+    internal static Variable ParseMatchVariable(WordToken match, Parser __)
         => new Variable(match.Value);
 
-    internal static Number ParseMatchNumber(List<IToken> _, TokenMatch match, Parser __)
-        => new Number(((NumberToken)match.Match.Single()).ParsedValue);
+    internal static Number ParseMatchNumber(NumberToken match, Parser __)
+        => new Number(match.ParsedValue);
 }
