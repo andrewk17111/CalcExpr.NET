@@ -248,24 +248,12 @@ public class Parser
                         ? new TokenMatch(input[^1..], input.Count - 1)
                         : null),
             new ParserRule("Indexer", ParseMatchIndexer, MatchIndexer),
-            new ParserRule("Undefined", ParseMatchUndefined,
-                (input, _) => input.Count == 1 && ((string[])["undefined", "dne"]).Contains(input.Single().Value)
-                    ? new TokenMatch(input, 0)
-                    : null),
-            new ParserRule("Logical", ParseMatchLogical,
-                (input, _) => input.Count == 1 && ((string[])["true", "false"]).Contains(input.Single().Value)
-                    ? new TokenMatch(input, 0)
-                    : null),
-            new ParserRule("Infinity", ParseMatchInfinity,
-                (input, _) => input.Count == 1 && ((string[])["∞", "inf", "infinity"]).Contains(input.Single().Value)
-                    ? new TokenMatch(input, 0)
-                    : null),
-            new ParserRule("Constant", ParseMatchConstant,
-                (input, _) => input.Count == 1 && ((string[])["π", "pi", "τ", "tau", "empty_set", "empty", "∅", "e"]).Contains(input.Single().Value)
-                    ? new TokenMatch(input, 0)
-                    : null),
-            new TypeParserRule<WordToken>("Variable", ParseMatchVariable),
-            new TypeParserRule<NumberToken>("Number", ParseMatchNumber),
+            new OptionRule("Undefined", ["undefined", "dne"], ParseMatchUndefined),
+            new OptionRule("Logical", ["true", "false"], ParseMatchLogical),
+            new OptionRule("Infinity", ["∞", "inf", "infinity"], ParseMatchInfinity),
+            new OptionRule("Constant", ["π", "pi", "τ", "tau", "empty_set", "empty", "∅", "e"], ParseMatchConstant),
+            new TypeRule<WordToken>("Variable", ParseMatchVariable),
+            new TypeRule<NumberToken>("Number", ParseMatchNumber),
         ],
         build_rules)
     { }

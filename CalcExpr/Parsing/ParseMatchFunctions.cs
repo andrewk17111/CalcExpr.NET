@@ -98,7 +98,7 @@ internal static class ParseMatchFunctions
     internal static Indexer ParseMatchIndexer(List<IToken> input, TokenMatch match, Parser parser)
         => new Indexer(parser.Parse(input[..match.Index]), parser.Parse(match[1..^1]));
 
-    internal static Undefined ParseMatchUndefined(List<IToken> _, TokenMatch match, Parser __)
+    internal static Undefined ParseMatchUndefined(IToken match, Parser __)
         => match.Value switch
         {
             "undefined" => Undefined.UNDEFINED,
@@ -106,13 +106,24 @@ internal static class ParseMatchFunctions
             _ => throw new Exception($"The input was not in the correct format: '{match.Value}'")
         };
 
-    internal static Logical ParseMatchLogical(List<IToken> _, TokenMatch match, Parser __)
-        => new Logical(Boolean.Parse(match.Value));
+    internal static Logical ParseMatchLogical(IToken match, Parser __)
+        => match.Value switch
+        {
+            "true" => Logical.TRUE,
+            "false" => Logical.FALSE,
+            _ => throw new Exception($"The input was not in the correct format: '{match.Value}'")
+        };
 
-    internal static Infinity ParseMatchInfinity(List<IToken> _, TokenMatch match, Parser __)
-        => new Infinity(match.Value);
+    internal static Infinity ParseMatchInfinity(IToken match, Parser __)
+        => match.Value switch
+        {
+            "∞" => Infinity.POSITIVE,
+            "infinity" => Infinity.POSITIVE_INFINITY,
+            "inf" => Infinity.POSITIVE_INF,
+            _ => throw new Exception($"The input was not in the correct format: '{match.Value}'")
+        };
 
-    internal static Constant ParseMatchConstant(List<IToken> _, TokenMatch match, Parser __)
+    internal static Constant ParseMatchConstant(IToken match, Parser __)
         => new Constant(match.Value);
 
     internal static Variable ParseMatchVariable(WordToken match, Parser __)

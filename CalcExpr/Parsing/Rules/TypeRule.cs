@@ -3,9 +3,11 @@ using CalcExpr.Tokenization.Tokens;
 
 namespace CalcExpr.Parsing.Rules;
 
-public class TypeParserRule<T>(string name, Func<T, Parser, IExpression> parse) : IParserRule
+public class TypeRule<T>(string name, Func<T, Parser, IExpression> parse) : IParserRule
     where T : IToken
 {
+    private readonly Func<T, Parser, IExpression> _parse = parse;
+
     public string Name { get; } = name;
 
     public TokenMatch? Match(List<IToken> input, IEnumerable<IParserRule> rules)
@@ -19,7 +21,7 @@ public class TypeParserRule<T>(string name, Func<T, Parser, IExpression> parse) 
     public IExpression? Parse(List<IToken> input, Parser parser)
     {
         if (input.Count == 1 && input.First() is T token)
-            return parse(token, parser);
+            return _parse(token, parser);
 
         return null;
     }
