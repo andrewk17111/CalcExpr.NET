@@ -14,6 +14,8 @@ public partial class WordToken(string value, int index) : IToken
 
     public int Index { get; } = index;
 
+    public char RegexAlias => 'a';
+
     public override bool Equals([NotNullWhen(true)] object? obj)
         => obj is WordToken token && token.Value == Value;
 

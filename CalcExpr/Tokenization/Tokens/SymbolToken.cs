@@ -13,6 +13,8 @@ public class SymbolToken(char value, int index) : IToken
 
     public int Index { get; } = index;
 
+    public char RegexAlias => Character;
+
     public override bool Equals(object? obj)
         => obj is SymbolToken token && token.Value == Value;
 

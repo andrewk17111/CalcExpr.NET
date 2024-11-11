@@ -10,6 +10,8 @@ public partial class NumberToken(string value, int index) : IToken
 
     public int Index { get; } = index;
 
+    public char RegexAlias => '0';
+
     public override bool Equals(object? obj)
         => obj is NumberToken token && token.Value == Value;
 

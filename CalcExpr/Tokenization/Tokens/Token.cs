@@ -14,7 +14,7 @@ public class Token(string value, int index) : IToken
 
     public int Index { get; } = index;
 
-    public int Length => Value.Length;
+    public char RegexAlias => Value.First();
 
     public char this[int index] => Value[index];
 

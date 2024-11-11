@@ -5,6 +5,7 @@ using CalcExpr.Parsing.Rules;
 using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization;
 using CalcExpr.Tokenization.Tokens;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using static CalcExpr.Parsing.MatchFunctions;
@@ -22,6 +23,15 @@ public class Parser
 
     public string[] Cache => [.. _cache.Keys];
 
+    // lang=regex
+    private const string PREFIX = @"((\+{2})|(\-{2})|[\+\-!~¬])";
+    // lang=regex
+    private const string POSTFIX = @"((\+{2})|(\-{2})|((?<![^!](!!)*!)!!)|[!%#])";
+    private const string OPERAND = @$"({PREFIX}*(\d|\w|[\[\{{\]\}}\u001A]){POSTFIX}*)";
+    // lang=regex
+    private const string ATTRIBUTE = @"(\w(\(\d(,\d)*\))?)";
+    private const string PARAMETER = @$"((\[{ATTRIBUTE}(,{ATTRIBUTE})*\])?\w)";
+
     /// <summary>
     /// Creates a <see cref="Parser"/> with the default grammar.
     /// </summary>
@@ -30,223 +40,20 @@ public class Parser
         : this([
             new ParserRule("Collection", ParseCollection, MatchCollection, ParseMatchCollection),
             new ParserRule("FunctionCall", ParseFunctionCall, MatchFunctionCall, ParseMatchFunctionCall),
-            new ParserRule("LambdaFunction", ParseMatchLambdaFunction,
-                (input, _) => {
-                    if (input.Count >= 4)
-                    {
-                        if (input.First() is WordToken &&
-                            input[1] is SymbolToken { Character: '=' } && input[2] is CloseBracketToken { BracketType: Bracket.Angle })
-                        {
-                            return new TokenMatch(input[..3], 0);
-                        }
-                        else
-                        {
-                            List<IToken> condensed = input.Condense(~Brackets.Angle);
-
-                            if (condensed.Count >= 4 && condensed.First() is CondensedToken condensedParams &&
-                                condensedParams.Tokens.First() is OpenBracketToken { BracketType: Bracket.Parenthesis} &&
-                                condensed[1] is SymbolToken { Character: '=' } && condensed[2] is CloseBracketToken { BracketType: Bracket.Angle })
-                            {
-                                return new TokenMatch(input[..condensed.UncondenseIndex(3)], 0);
-                            }
-                            else if (condensed.Count >= 5 && condensed.First() is CondensedToken condensedParam &&
-                                condensedParam.Tokens.First() is OpenBracketToken { BracketType: Bracket.Square} &&
-                                condensed[1] is WordToken &&
-                                condensed[2] is SymbolToken { Character: '=' } && condensed[3] is CloseBracketToken { BracketType: Bracket.Angle })
-                            {
-                                return new TokenMatch(input[..condensed.UncondenseIndex(4)], 0);
-                            }
-                        }
-                    }
-
-                    return null;
-                }),
+            new RegexRule("LambdaFunction", @$"^({PARAMETER}|(\({PARAMETER}?\))|(\({PARAMETER}(,{PARAMETER})*\)))=>", ParseMatchLambdaFunction),
             new ParserRule("Parentheses", ParseMatchParentheses, MatchParentheses),
-            new ParserRule("WithParentheses", ParseMatchWithParentheses,
-                (input, _) => input.Any(x => x is OpenBracketToken { BracketType: Bracket.Parenthesis } || x is CloseBracketToken { BracketType: Bracket.Parenthesis })
-                    ? new TokenMatch([], 0)
-                    : null),
-            new ParserRule("AssignBinOp", ParseMatchAssignmentOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken { Character: '=' } && input[i - 1] is not OpenBracketToken { BracketType: Bracket.Angle } &&
-                            input[i - 1] is not CloseBracketToken { BracketType: Bracket.Angle } &&
-                            input[i - 1].Value != "=" && input[i - 1].Value != "!" &&
-                            input[i + 1] is not CloseBracketToken { BracketType: Bracket.Angle } && input[i + 1].Value != "=")
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("OrBinOp", ParseMatchBinaryOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken { Character: '∨' })
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                        else if (input[i] is SymbolToken { Character: '|' } && input[i - 1] is SymbolToken { Character: '|' })
-                        {
-                            return new TokenMatch(input[(i - 1)..(i + 1)], i - 1);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("XorBinOp", ParseMatchBinaryOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken { Character: '⊕' })
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("AndBinOp", ParseMatchBinaryOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken { Character: '∧' })
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                        else if (input[i] is SymbolToken { Character: '&' } && input[i - 1] is SymbolToken { Character: '&' })
-                        {
-                            return new TokenMatch(input[(i - 1)..(i + 1)], i - 1);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("EqBinOp", ParseMatchBinaryOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken { Character: '≠' })
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                        else if (input[i] is CloseBracketToken { BracketType: Bracket.Angle } &&
-                            input[i - 1] is OpenBracketToken { BracketType: Bracket.Angle })
-                        {
-                            return new TokenMatch(input[(i - 1)..(i + 1)], i - 1);
-                        }
-                        else if (input[i] is SymbolToken { Character: '=' } && input[i - 1] is SymbolToken other &&
-                            (other.Character == '=' || other.Character == '!'))
-                        {
-                            return new TokenMatch(input[(i - 1)..(i + 1)], i - 1);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("IneqBinOp", ParseMatchBinaryOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken ineq && "≤≥".Contains(ineq.Character))
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                        else if (input[i] is CloseBracketToken { BracketType: Bracket.Angle } &&
-                            input[i - 1] is OpenBracketToken { BracketType: Bracket.Angle })
-                        {
-                            return new TokenMatch(input[(i - 1)..(i + 1)], i - 1);
-                        }
-                        else if (input[i] is SymbolToken { Character: '=' } &&
-                            input[i - 1] is OpenBracketToken { BracketType: Bracket.Angle } or CloseBracketToken { BracketType: Bracket.Angle })
-                        {
-                            return new TokenMatch(input[(i - 1)..(i + 1)], i - 1);
-                        }
-                        else if (input[i] is OpenBracketToken { BracketType: Bracket.Angle } &&
-                            input[i + 1] is not CloseBracketToken { BracketType: Bracket.Angle })
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                        else if (input[i] is CloseBracketToken { BracketType: Bracket.Angle } &&
-                            input[i - 1] is not OpenBracketToken { BracketType: Bracket.Angle })
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("AddBinOp", ParseMatchBinaryOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken symbol && (symbol.Character == '+' || symbol.Character == '-') &&
-                            (input[i - 1] is not SymbolToken || !((string[])["+", "-", "~", "¬", "/", "%", "*", "^"]).Contains(input[i - 1].Value)) &&
-                            (input[i + 1] is not SymbolToken || !((string[])["/", "%", "*"]).Contains(input[i + 1].Value) &&
-                            (i < input.Count - 2 || !((string[])["+", "-"]).Contains(input[i + 1].Value))))
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("MultBinOp", ParseMatchBinaryOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken symbol && "*×÷".Contains(symbol.Character) &&
-                            (input[i - 1] is not SymbolToken || !((string[])["+", "-", "!", "~", "¬"]).Contains(input[i - 1].Value)))
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                        else if (input[i] is SymbolToken { Character: '/' } && input[i - 1].Value != "/")
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                        else if (input[i] is SymbolToken { Character: '%' } && input[i - 1].Value != "%" && input[i + 1].Value != "%")
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                        else if (input[i] is SymbolToken symbol2 && "%/".Contains(symbol2.Character) && input[i - 1].Value == symbol2.Value &&
-                            (input[i - 2] is not SymbolToken || !((string[])["+", "-", "!", "~", "¬", "/", "%"]).Contains(input[i - 2].Value)))
-                        {
-                            return new TokenMatch(input[(i - 1)..(i + 1)], i - 1);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("ExpBinOp", ParseMatchBinaryOperator,
-                (input, _) => {
-                    for (int i = input.Count - 2; i > 0; i--)
-                    {
-                        if (input[i] is SymbolToken symbol && symbol.Character == '^' &&
-                            (input[i - 1] is not SymbolToken || !((string[])["+", "-", "!", "~", "¬", "/", "%"]).Contains(input[i - 1].Value)))
-                        {
-                            return new TokenMatch([input[i]], i);
-                        }
-                    }
-
-                    return null;
-                }),
-            new ParserRule("Prefix", ParseMatchPrefix,
-                (input, _) => (input[0].Value == "+" && input[1].Value == "+") || (input[0].Value == "-" && input[1].Value == "-")
-                    ? new TokenMatch(input[..2], 0)
-                    : ((string[])["+", "-", "!", "~", "¬"]).Contains(input.First().Value)
-                        ? new TokenMatch(input[..1], 0)
-                        : null),
-            new ParserRule("Postfix", ParseMatchPostfix,
-                (input, _) => (input[^1].Value == "+" && input[^2].Value == "+") || (input[^1].Value == "-" && input[^2].Value == "-") ||
-                    ((string.Join("", input.Select(x => x.Value)).Length - string.Join("", input.Select(x => x.Value)).TrimEnd('!').Length) % 2 == 0 &&
-                        input[^1].Value == "!" && input[^2].Value == "!")
-                    ? new TokenMatch(input[^2..], input.Count - 2)
-                    : ((string[])["!", "%", "#"]).Contains(input.Last().Value)
-                        ? new TokenMatch(input[^1..], input.Count - 1)
-                        : null),
+            new RegexRule("WithParentheses", @"[\(\)]", ParseMatchWithParentheses),
+            new RegexRule("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})", ParseMatchAssignmentOperator, RegexOptions.RightToLeft),
+            new RegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
+            new RegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
+            new RegexRule("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
+            new RegexRule("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
+            new RegexRule("IneqBinOp", @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
+            new RegexRule("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
+            new RegexRule("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
+            new RegexRule("ExpBinOp", @"(?<=.)(\^)(?=.)", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
+            new RegexRule("Prefix", $"^{PREFIX}", ParseMatchPrefix),
+            new RegexRule("Postfix", $"{POSTFIX}$", ParseMatchPostfix),
             new ParserRule("Indexer", ParseMatchIndexer, MatchIndexer),
             new OptionRule("Undefined", ["undefined", "dne"], ParseMatchUndefined),
             new OptionRule("Logical", ["true", "false"], ParseMatchLogical),

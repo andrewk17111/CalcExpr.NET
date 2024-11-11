@@ -13,4 +13,6 @@ public class CondensedToken(List<IToken> value, int index, int tokenIndex) : ITo
     public int TokenIndex { get; } = tokenIndex;
 
     public List<IToken> Tokens => [.. _value];
+
+    public char RegexAlias => '\u001A';
 }

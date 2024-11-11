@@ -22,6 +22,8 @@ public partial class OpenBracketToken(Bracket bracketType, int index) : IToken
 
     public Bracket BracketType { get; } = bracketType;
 
+    public char RegexAlias => Value.First();
+
     public override bool Equals(object? obj)
         => obj is OpenBracketToken token && token.Value == Value;
 
@@ -57,6 +59,8 @@ public partial class CloseBracketToken(Bracket bracketType, int index) : IToken
     public int Index { get; } = index;
 
     public Bracket BracketType { get; } = bracketType;
+
+    public char RegexAlias => Value.First();
 
     public override bool Equals([NotNullWhen(true)] object? obj)
         => obj is CloseBracketToken token && token.Value == Value;

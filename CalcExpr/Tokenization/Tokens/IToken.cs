@@ -8,6 +8,8 @@ public interface IToken
 
     public int Length => Value.Length;
 
+    public char RegexAlias { get; }
+
     public char this[int index] => Value[index];
 
     public string this[Range range] => Value[range];
