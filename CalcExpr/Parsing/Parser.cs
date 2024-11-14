@@ -2,10 +2,8 @@
 using CalcExpr.Expressions;
 using CalcExpr.Extensions;
 using CalcExpr.Parsing.Rules;
-using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization;
 using CalcExpr.Tokenization.Tokens;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using static CalcExpr.Parsing.MatchFunctions;
@@ -14,9 +12,15 @@ using static CalcExpr.Parsing.ParseMatchFunctions;
 
 namespace CalcExpr.Parsing;
 
-public class Parser
+/// <summary>
+/// Create a <see cref="Parser"/> using the specified grammar.
+/// </summary>
+/// <param name="grammar">
+/// The specified <see cref="IEnumerable{Rule}"/> to be used as the grammar of the <see cref="Parser"/>.
+/// </param>
+public class Parser(IEnumerable<IParserRule> grammar)
 {
-    private readonly List<IParserRule> _grammar = [];
+    private readonly List<IParserRule> _grammar = grammar.ToList();
     private readonly Dictionary<string, IExpression> _cache = [];
 
     public IParserRule[] Grammar => [.. _grammar];
@@ -35,8 +39,7 @@ public class Parser
     /// <summary>
     /// Creates a <see cref="Parser"/> with the default grammar.
     /// </summary>
-    /// <param name="build_rules">Whether or not grammar rules should be prebuilt.</param>
-    public Parser(bool build_rules = true)
+    public Parser()
         : this([
             new ParserRule("Collection", ParseCollection, MatchCollection, ParseMatchCollection),
             new ParserRule("FunctionCall", ParseFunctionCall, MatchFunctionCall, ParseMatchFunctionCall),
@@ -61,24 +64,8 @@ public class Parser
             new OptionRule("Constant", ["π", "pi", "τ", "tau", "empty_set", "empty", "∅", "e"], ParseMatchConstant),
             new TypeRule<WordToken>("Variable", ParseMatchVariable),
             new TypeRule<NumberToken>("Number", ParseMatchNumber),
-        ],
-        build_rules)
+        ])
     { }
-
-    /// <summary>
-    /// Create a <see cref="Parser"/> using the specified grammar.
-    /// </summary>
-    /// <param name="grammar">
-    /// The specified <see cref="IEnumerable{Rule}"/> to be used as the grammar of the <see cref="Parser"/>.
-    /// </param>
-    /// <param name="build_rules">Whether or not grammar rules should be prebuilt.</param>
-    public Parser(IEnumerable<IParserRule> grammar, bool build_rules = true)
-    {
-        _grammar = grammar.ToList();
-
-        if (build_rules)
-            BuildGrammarRules(_grammar);
-    }
 
     /// <summary>
     /// Parses an expression <see cref="string"/> into an <see cref="IExpression"/>.
@@ -192,12 +179,11 @@ public class Parser
     /// </summary>
     /// <param name="rule">The <see cref="IParserRule"/> to be added to the grammar.</param>
     /// <param name="index">The index to put the <see cref="IParserRule"/> in the grammar.</param>
-    /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="IParserRule"/> was successfully added to the grammar; otherwise, 
     /// <see langword="false"/>.
     /// </returns>
-    public bool AddGrammarRule(IParserRule rule, int index = -1, bool build_rules = true)
+    public bool AddGrammarRule(IParserRule rule, int index = -1)
     {
         if (index < 0)
             index += _grammar.Count + 1;
@@ -214,9 +200,6 @@ public class Parser
             else
                 _grammar.Insert(index, rule);
 
-            if (build_rules)
-                RebuildGrammarRules();
-
             return true;
         }
         catch
@@ -229,17 +212,16 @@ public class Parser
     /// Removes the <see cref="IParserRule"/> with the specified name from the grammar of the <see cref="Parser"/>.
     /// </summary>
     /// <param name="name">The name of the <see cref="IParserRule"/> to be removed.</param>
-    /// <param name="buildRules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// The index of the removed rule if the <see cref="IParserRule"/> was successfully removed; otherwise, -1.
     /// </returns>
-    public int RemoveGrammarRule(string name, bool buildRules = true)
+    public int RemoveGrammarRule(string name)
     {
         for (int i = 0; i < _grammar.Count; i++)
         {
             if (_grammar[i].Name == name)
             {
-                if (RemoveGrammarRuleAt(i, buildRules))
+                if (RemoveGrammarRuleAt(i))
                     return i;
                 else
                     break;
@@ -253,18 +235,14 @@ public class Parser
     /// Removes the <see cref="IParserRule"/> at the specified index from the grammar of the <see cref="Parser"/>.
     /// </summary>
     /// <param name="index">The index for the <see cref="IParserRule"/> to be removed.</param>
-    /// <param name="build_rules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// <see langword="true"/> if the <see cref="IParserRule"/> was successfully removed; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool RemoveGrammarRuleAt(int index, bool build_rules = true)
+    public bool RemoveGrammarRuleAt(int index)
     {
         try
         {
             _grammar.RemoveAt(index);
-
-            if (build_rules)
-                RebuildGrammarRules();
 
             return true;
         }
@@ -278,11 +256,10 @@ public class Parser
     /// Replaces the current <see cref="IParserRule"/> with the specified name with a new <see cref="IParserRule"/>.
     /// </summary>
     /// <param name="newRule">The new rule to replace the old rule.</param>
-    /// <param name="buildRules">Whether or not grammar rules should be rebuilt.</param>
     /// <returns>
     /// The index of the replaced rule if the <see cref="IParserRule"/> was successfully replaced; otherwise, -1.
     /// </returns>
-    public int ReplaceGrammarRule(IParserRule newRule, bool buildRules = true)
+    public int ReplaceGrammarRule(IParserRule newRule)
     {
         for (int i = 0; i < _grammar.Count; i++)
         {
@@ -292,9 +269,6 @@ public class Parser
                 return i;
             }
         }
-
-        if (buildRules)
-            RebuildGrammarRules();
 
         return -1;
     }
@@ -337,17 +311,4 @@ public class Parser
     /// <returns>The <see cref="IParserRule"/> in the grammar at the index of <paramref name="index"/>.</returns>
     public IParserRule? GetGrammarRule(int index)
         => index >= 0 && index < _grammar.Count ? _grammar[index] : null;
-
-    /// <summary>
-    /// Rebuilds all of the grammar rules in the <see cref="Parser"/>.
-    /// </summary>
-    public void RebuildGrammarRules()
-        => BuildGrammarRules(_grammar);
-
-    private static void BuildGrammarRules(IEnumerable<IParserRule> rules)
-    {
-        //foreach (IParserRule rule in rules)
-        //    if (rule is NestedRegexRule regex_rule)
-        //        regex_rule.Build(rules);
-    }
 }
