@@ -14,7 +14,6 @@ public partial class OpenBracketToken(Bracket bracketType, int index) : IToken
         Bracket.Parenthesis => "(",
         Bracket.Square => "[",
         Bracket.Curly => "{",
-        Bracket.Angle => "<",
         _ => throw new NotSupportedException()
     };
 
@@ -52,7 +51,6 @@ public partial class CloseBracketToken(Bracket bracketType, int index) : IToken
         Bracket.Parenthesis => ")",
         Bracket.Square => "]",
         Bracket.Curly => "}",
-        Bracket.Angle => ">",
         _ => throw new NotSupportedException()
     };
 
@@ -83,5 +81,4 @@ public enum Bracket
     Parenthesis = 1,
     Square = 2,
     Curly = 4,
-    Angle = 8,
 }

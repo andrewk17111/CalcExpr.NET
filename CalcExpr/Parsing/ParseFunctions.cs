@@ -33,7 +33,7 @@ internal static class ParseFunctions
 
             if (args.Length > 0)
             {
-                ImmutableArray<IToken> condensedArgs = args.Condense(~Brackets.Angle);
+                ImmutableArray<IToken> condensedArgs = args.Condense(Brackets.All);
                 IEnumerable<IExpression> arguments = condensedArgs.Split(',').Select(arg => parser.Parse(arg.Uncondense()));
 
                 return new FunctionCall(functionName.Value, arguments);

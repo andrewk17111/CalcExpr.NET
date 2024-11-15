@@ -173,7 +173,6 @@ public class TestParser
     //        { Brackets.Parenthesis, @"[0] \[1234\] {12{cs}34} <dfsg{dfg}dsa\[234\]54>" },
     //        { Brackets.Square, @"(0) [0] {12{cs}34} <dfsg{dfg}dsa[1]54>" },
     //        { Brackets.Curly, @"(0) \[1234\] [0] <dfsg[1]dsa\[234\]54>" },
-    //        { Brackets.Angle, @"(0) \[1234\] {12{cs}34} [0]" },
     //        { Brackets.All, @"[0] [1] [2] [3]" },
     //    };
 

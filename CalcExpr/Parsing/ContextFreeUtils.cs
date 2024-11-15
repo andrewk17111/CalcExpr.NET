@@ -171,6 +171,5 @@ public enum Brackets
     Parenthesis = 1,
     Square = 2,
     Curly = 4,
-    Angle = 8,
     All = 0xFF,
 }
