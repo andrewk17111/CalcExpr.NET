@@ -1,6 +1,7 @@
 ﻿using CalcExpr.Extensions;
 using CalcExpr.Tokenization.Tokens;
 using System.Collections;
+using System.Collections.Immutable;
 
 namespace CalcExpr.Parsing;
 
@@ -18,7 +19,7 @@ public class TokenMatch(IEnumerable<IToken> match, int index) : IEnumerable<ITok
 
     public IToken this[int index] => _match[index];
 
-    public List<IToken> this[Range range] => [.. _match[range]];
+    public ImmutableArray<IToken> this[Range range] => [.. _match[range]];
 
     public IEnumerator<IToken> GetEnumerator() => ((IEnumerable<IToken>)_match).GetEnumerator();
 

@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Tokenization;
 using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 using TestCalcExpr.TestData;
 using TestCalcExpr.TestUtils;
 
@@ -13,7 +14,7 @@ public class TestTokenizer
     {
         string input = "Hello World!";
         Tokenizer tokenizer = new Tokenizer([], false);
-        List<IToken> tokens = tokenizer.Tokenize(input);
+        ImmutableArray<IToken> tokens = tokenizer.Tokenize(input);
 
         Assert.AreEqual(input, string.Join("", tokens.Select(t => t.Value)));
     }
@@ -42,11 +43,11 @@ public class TestTokenizer
 
         foreach (TestCase testCase in testCases)
         {
-            List<IToken> tokenized = tokenizer.Tokenize(testCase.ExpressionString);
+            ImmutableArray<IToken> tokenized = tokenizer.Tokenize(testCase.ExpressionString);
 
-            Assert.AreEqual(testCase.Tokenized.Count, tokenized.Count, $"The lengths of the tokenized results do not match for test case '{testCase.ExpressionString}'");
+            Assert.AreEqual(testCase.Tokenized.Length, tokenized.Length, $"The lengths of the tokenized results do not match for test case '{testCase.ExpressionString}'");
 
-            for (int i = 0; i < tokenized.Count; i++)
+            for (int i = 0; i < tokenized.Length; i++)
                 Assert.AreEqual(testCase.Tokenized[i], tokenized[i], $"Token did not match for test case '{testCase.ExpressionString}'");
         }
     }

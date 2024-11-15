@@ -5,6 +5,7 @@ using CalcExpr.FunctionAttributes.PreprocessAttributes;
 using CalcExpr.Context;
 using CalcExpr.Tokenization.Tokens;
 using CalcExpr.Extensions;
+using System.Collections.Immutable;
 
 namespace CalcExpr.Expressions.Components;
 
@@ -19,7 +20,7 @@ public readonly struct Parameter(string name, IEnumerable<FunctionAttribute> att
     public Parameter(string name) : this(name, (IEnumerable<FunctionAttribute>)[])
     { }
 
-    public Parameter(string name, IEnumerable<List<IToken>> attributes) : this(name, attributes.Select(GetAttribute))
+    public Parameter(string name, IEnumerable<ImmutableArray<IToken>> attributes) : this(name, attributes.Select(GetAttribute))
     { }
 
     public object? ProcessArgument(IExpression argument, ExpressionContext _)
@@ -27,7 +28,7 @@ public readonly struct Parameter(string name, IEnumerable<FunctionAttribute> att
         return IParameter.ApplyAttributes(argument, Attributes);
     }
 
-    private static FunctionAttribute GetAttribute(List<IToken> attribute)
+    private static FunctionAttribute GetAttribute(ImmutableArray<IToken> attribute)
     {
         string attributeName = attribute.First().Value;
         Type? attributeType = AppDomain.CurrentDomain.GetAssemblies()
@@ -36,7 +37,7 @@ public readonly struct Parameter(string name, IEnumerable<FunctionAttribute> att
         
         if (attributeType is not null && attributeType.BaseType != typeof(FunctionAttribute))
         {
-            double[] parameters = attribute.Count > 3
+            double[] parameters = attribute.Length > 3
                 ? attribute[2..^1].Split(',')
                     .Select(p => Convert.ToDouble(p.JoinTokens())).ToArray()
                 : [];

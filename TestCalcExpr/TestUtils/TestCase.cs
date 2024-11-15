@@ -1,12 +1,13 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 
 namespace TestCalcExpr.TestUtils;
 
 public readonly struct TestCase
 {
     public readonly string ExpressionString;
-    public readonly List<IToken> Tokenized;
+    public readonly ImmutableArray<IToken> Tokenized;
     public readonly IExpression Parsed;
     public readonly IExpression Evaluated;
     public readonly IExpression[] StepEvaluated;

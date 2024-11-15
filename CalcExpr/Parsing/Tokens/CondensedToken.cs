@@ -1,10 +1,11 @@
 ﻿using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 
 namespace CalcExpr.Parsing.Tokens;
 
-public class CondensedToken(List<IToken> value, int index, int tokenIndex) : IToken
+public class CondensedToken(ImmutableArray<IToken> value, int index, int tokenIndex) : IToken
 {
-    private readonly List<IToken> _value = value;
+    private readonly ImmutableArray<IToken> _value = value;
 
     public string Value { get; } = $"[{tokenIndex}]";
 
@@ -12,7 +13,7 @@ public class CondensedToken(List<IToken> value, int index, int tokenIndex) : ITo
 
     public int TokenIndex { get; } = tokenIndex;
 
-    public List<IToken> Tokens => [.. _value];
+    public ImmutableArray<IToken> Tokens => [.. _value];
 
     public char RegexAlias => '\u001A';
 }

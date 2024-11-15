@@ -4,6 +4,7 @@ using CalcExpr.Extensions;
 using CalcExpr.Parsing.Rules;
 using CalcExpr.Tokenization;
 using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using static CalcExpr.Parsing.MatchFunctions;
@@ -82,7 +83,7 @@ public class Parser(IEnumerable<IParserRule> grammar)
             return _cache[CleanExpressionString(input)];
 
         // TODO: Change tokenizer initialization.
-        List<IToken> tokenizedInput = new Tokenizer().Tokenize(input);
+        ImmutableArray<IToken> tokenizedInput = new Tokenizer().Tokenize(input);
         IExpression result = Parse(tokenizedInput);
 
         AddCache(input, result);
@@ -95,7 +96,7 @@ public class Parser(IEnumerable<IParserRule> grammar)
     /// <param name="input">The tokenized expression to parse.</param>
     /// <returns>An <see cref="IExpression"/> parsed from the specified expression <see cref="string"/>.</returns>
     /// <exception cref="Exception"></exception>
-    public IExpression Parse(List<IToken> input)
+    public IExpression Parse(ImmutableArray<IToken> input)
     {
         foreach (IParserRule rule in _grammar)
         {

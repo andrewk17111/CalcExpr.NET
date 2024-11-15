@@ -16,22 +16,22 @@ public class OptionRule(string name, string[] options, Func<IToken, Parser, IExp
 
     public readonly StringComparison Comparison = stringComparison;
 
-    public TokenMatch? Match(List<IToken> input, IEnumerable<IParserRule> rules)
+    public TokenMatch? Match(ImmutableArray<IToken> input, IEnumerable<IParserRule> _)
     {
-        if (input.Count == 1 && Options.Contains(input.First().Value))
+        if (input.Length == 1 && Options.Contains(input.First().Value))
             return new TokenMatch([input.First()], 0);
 
         return null;
     }
 
-    public IExpression? Parse(List<IToken> input, Parser parser)
+    public IExpression? Parse(ImmutableArray<IToken> input, Parser parser)
     {
-        if (input.Count == 1 && Options.Contains(input.First().Value))
+        if (input.Length == 1 && Options.Contains(input.First().Value))
             return _parse(input.First(), parser);
 
         return null;
     }
 
-    public IExpression? Parse(List<IToken> input, TokenMatch match, Parser parser)
+    public IExpression? Parse(ImmutableArray<IToken> _, TokenMatch match, Parser parser)
         => Parse([.. match.Match], parser);
 }

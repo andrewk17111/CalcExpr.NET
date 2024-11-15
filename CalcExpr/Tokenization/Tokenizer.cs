@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Tokenization.Rules;
 using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 
 namespace CalcExpr.Tokenization;
 
@@ -47,7 +48,7 @@ public class Tokenizer(IEnumerable<ITokenizerRule> rules, bool trimWhitespace = 
     /// <param name="input">The expression <see cref="string"/> to parse.</param>
     /// <returns>An <see cref="IToken"/> parsed from the specified expression <see cref="string"/>.</returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public List<IToken> Tokenize(string input)
+    public ImmutableArray<IToken> Tokenize(string input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
@@ -95,7 +96,7 @@ public class Tokenizer(IEnumerable<ITokenizerRule> rules, bool trimWhitespace = 
             }
         }
 
-        return tokens;
+        return [.. tokens];
     }
 
     /// <summary>

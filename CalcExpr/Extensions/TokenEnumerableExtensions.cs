@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 using System.Text;
 
 namespace CalcExpr.Extensions;
@@ -19,16 +20,16 @@ internal static class TokenEnumerableExtensions
         return builder.ToString();
     }
 
-    internal static List<IToken>[] Split(this List<IToken> tokens, string separator)
+    internal static ImmutableArray<IToken>[] Split(this ImmutableArray<IToken> tokens, string separator)
     {
-        List<List<IToken>> result = [];
+        List<ImmutableArray<IToken>> result = [];
         List<IToken> subset = [];
 
         foreach (IToken token in tokens)
         {
             if (token.Value == separator)
             {
-                result.Add(subset);
+                result.Add([.. subset]);
                 subset = [];
             }
             else
@@ -38,24 +39,24 @@ internal static class TokenEnumerableExtensions
         }
 
         if (subset.Count > 0)
-            result.Add(subset);
+            result.Add([.. subset]);
 
         return [.. result];
     }
 
-    internal static List<IToken>[] Split(this List<IToken> tokens, char separator)
+    internal static ImmutableArray<IToken>[] Split(this ImmutableArray<IToken> tokens, char separator)
         => Split(tokens, separator.ToString());
 
-    internal static List<IToken>[] Split(this List<IToken> tokens, params string[] separator)
+    internal static ImmutableArray<IToken>[] Split(this ImmutableArray<IToken> tokens, params string[] separator)
     {
-        List<List<IToken>> result = [];
+        List<ImmutableArray<IToken>> result = [];
         List<IToken> subset = [];
 
-        for (int i = 0; i < tokens.Count - separator.Length; i++)
+        for (int i = 0; i < tokens.Length - separator.Length; i++)
         {
             if (tokens[i..(i + separator.Length)].Select(t => t.Value).SequenceEqual(separator))
             {
-                result.Add(subset);
+                result.Add([.. subset]);
                 subset = [];
                 i += separator.Length - 1;
             }
@@ -66,7 +67,7 @@ internal static class TokenEnumerableExtensions
         }
 
         if (subset.Count > 0)
-            result.Add(subset);
+            result.Add([.. subset]);
 
         return [.. result];
     }

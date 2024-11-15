@@ -1,5 +1,6 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 
 namespace CalcExpr.Parsing.Rules;
 
@@ -10,22 +11,22 @@ public class TypeRule<T>(string name, Func<T, Parser, IExpression> parse) : IPar
 
     public string Name { get; } = name;
 
-    public TokenMatch? Match(List<IToken> input, IEnumerable<IParserRule> rules)
+    public TokenMatch? Match(ImmutableArray<IToken> input, IEnumerable<IParserRule> rules)
     {
-        if (input.Count == 1 && input.First() is T)
+        if (input.Length == 1 && input.First() is T)
             return new TokenMatch([input.First()], 0);
 
         return null;
     }
 
-    public IExpression? Parse(List<IToken> input, Parser parser)
+    public IExpression? Parse(ImmutableArray<IToken> input, Parser parser)
     {
-        if (input.Count == 1 && input.First() is T token)
+        if (input.Length == 1 && input.First() is T token)
             return _parse(token, parser);
 
         return null;
     }
 
-    public IExpression? Parse(List<IToken> input, TokenMatch match, Parser parser)
+    public IExpression? Parse(ImmutableArray<IToken> _, TokenMatch match, Parser parser)
         => Parse([.. match.Match], parser);
 }

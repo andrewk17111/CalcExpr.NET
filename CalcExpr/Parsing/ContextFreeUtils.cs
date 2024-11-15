@@ -2,6 +2,7 @@
 using CalcExpr.Extensions;
 using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 
 namespace CalcExpr.Parsing;
 
@@ -15,7 +16,7 @@ public static class ContextFreeUtils
     /// <returns>
     /// <see langword="true"/> if the input string has balanced brackets, <see langword="false"/> otherwise.
     /// </returns>
-    public static bool CheckBalancedBrackets(this List<IToken> input, Brackets brackets = Brackets.All)
+    public static bool CheckBalancedBrackets(this ImmutableArray<IToken> input, Brackets brackets = Brackets.All)
     {
         if (brackets == Brackets.None)
             return true;
@@ -23,7 +24,7 @@ public static class ContextFreeUtils
         Dictionary<Bracket, int> openCounts = Enum.GetValues<Bracket>().Where(b => brackets.HasFlag((Brackets)b)).ToDictionary(c => c, c => 0);
         Dictionary<Bracket, int> closeCounts = Enum.GetValues<Bracket>().Where(b => brackets.HasFlag((Brackets)b)).ToDictionary(c => c, c => 0);
 
-        for (int i = 0; i < input.Count; i++)
+        for (int i = 0; i < input.Length; i++)
         {
             IToken current = input[i];
 
@@ -52,7 +53,7 @@ public static class ContextFreeUtils
     /// <exception cref="UnbalancedParenthesesException">
     /// Thrown when the input has unbalanced brackets.
     /// </exception>
-    public static List<IToken> Condense(this List<IToken> input, Brackets brackets = Brackets.All)
+    public static ImmutableArray<IToken> Condense(this ImmutableArray<IToken> input, Brackets brackets = Brackets.All)
     {
         if (brackets == Brackets.None)
             return input;
@@ -64,7 +65,7 @@ public static class ContextFreeUtils
         int localOffset = 0;
         Stack<Bracket> depth = [];
 
-        for (int i = 0; i < input.Count; i++)
+        for (int i = 0; i < input.Length; i++)
         {
             IToken current = input[i];
 
@@ -95,12 +96,12 @@ public static class ContextFreeUtils
             {
                 if (start < 0)
                     output.Add(current);
-                else if (i == input.Count - 1)
+                else if (i == input.Length - 1)
                     throw new UnbalancedParenthesesException(input.JoinTokens(), i);
             }
         }
 
-        return output;
+        return [.. output];
     }
 
     /// <summary>
@@ -113,7 +114,8 @@ public static class ContextFreeUtils
     /// <exception cref="UnbalancedParenthesesException">
     /// Thrown when the input has unbalanced brackets.
     /// </exception>
-    public static bool TryCondense(this List<IToken> input, out List<IToken>? condensed, Brackets brackets = Brackets.All)
+    public static bool TryCondense(this ImmutableArray<IToken> input, out ImmutableArray<IToken>? condensed,
+        Brackets brackets = Brackets.All)
     {
         try
         {
@@ -132,7 +134,7 @@ public static class ContextFreeUtils
     /// </summary>
     /// <param name="input">The condensed list of tokens.</param>
     /// <returns>The uncondensed form of the tokens.</returns>
-    public static List<IToken> Uncondense(this List<IToken> input)
+    public static ImmutableArray<IToken> Uncondense(this ImmutableArray<IToken> input)
     {
         List<IToken> result = [];
 
@@ -148,7 +150,7 @@ public static class ContextFreeUtils
             }
         }
 
-        return result;
+        return [.. result];
     }
 
     /// <summary>
@@ -157,9 +159,9 @@ public static class ContextFreeUtils
     /// <param name="input">The list of tokens.</param>
     /// <param name="index">The index in the condensed list.</param>
     /// <returns>The corresponding index from the uncondensed list of tokens.</returns>
-    public static int UncondenseIndex(this List<IToken> input, int index)
+    public static int UncondenseIndex(this ImmutableArray<IToken> input, int index)
     {
-        return index + input[..index].Where(t => t is CondensedToken).Cast<CondensedToken>().Select(t => t.Tokens.Count - 1).Sum();
+        return index + input[..index].Where(t => t is CondensedToken).Cast<CondensedToken>().Select(t => t.Tokens.Length - 1).Sum();
     }
 }
 
