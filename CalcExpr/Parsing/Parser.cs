@@ -7,9 +7,9 @@ using CalcExpr.Tokenization.Tokens;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using static CalcExpr.Parsing.MatchFunctions;
-using static CalcExpr.Parsing.ParseFunctions;
-using static CalcExpr.Parsing.ParseMatchFunctions;
+using static CalcExpr.Parsing.Defaults.MatchFunctions;
+using static CalcExpr.Parsing.Defaults.ParseFunctions;
+using static CalcExpr.Parsing.Defaults.ParseMatchFunctions;
 
 namespace CalcExpr.Parsing;
 
@@ -19,14 +19,13 @@ namespace CalcExpr.Parsing;
 /// <param name="grammar">
 /// The specified <see cref="IEnumerable{Rule}"/> to be used as the grammar of the <see cref="Parser"/>.
 /// </param>
-public class Parser(IEnumerable<IParserRule> grammar)
+public partial class Parser(IEnumerable<IParserRule> grammar)
 {
     private readonly List<IParserRule> _grammar = grammar.ToList();
-    private readonly Dictionary<string, IExpression> _cache = [];
-
+    // TODO: Change tokenizer initialization.
+    private readonly Tokenizer _tokenizer = new();
+    
     public IParserRule[] Grammar => [.. _grammar];
-
-    public string[] Cache => [.. _cache.Keys];
 
     // lang=regex
     private const string PREFIX = @"((\+{2})|(\-{2})|[\+\-!~¬])";
@@ -79,11 +78,7 @@ public class Parser(IEnumerable<IParserRule> grammar)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        if (ContainsCache(input))
-            return _cache[CleanExpressionString(input)];
-
-        // TODO: Change tokenizer initialization.
-        ImmutableArray<IToken> tokenizedInput = new Tokenizer().Tokenize(input);
+        ImmutableArray<IToken> tokenizedInput = _tokenizer.Tokenize(input);
         IExpression result = Parse(tokenizedInput);
 
         AddCache(input, result);
@@ -98,6 +93,9 @@ public class Parser(IEnumerable<IParserRule> grammar)
     /// <exception cref="Exception"></exception>
     public IExpression Parse(ImmutableArray<IToken> input)
     {
+        if (ContainsCache(input))
+            return _cache[input];
+
         foreach (IParserRule rule in _grammar)
         {
             if (rule.GetType().GetCustomAttribute<ReferenceRuleAttribute>() is not null)
@@ -110,69 +108,6 @@ public class Parser(IEnumerable<IParserRule> grammar)
         }
 
         throw new Exception($"The input was not in the correct format: '{input.JoinTokens()}'");
-    }
-
-    private static string CleanExpressionString(string expression)
-        => Regex.Replace(expression, @"\s+", "");
-
-    /// <summary>
-    /// Determines whether the cache of the <see cref="Parser"/> contains a specified expression <see cref="string"/>.
-    /// </summary>
-    /// <param name="expression">The expression to locate in the cache.</param>
-    /// <returns>
-    /// <see langword="true"/> if the cache contains an entry with the specified expression; otherwise, 
-    /// <see langword="false"/>.
-    /// </returns>
-    public bool ContainsCache(string expression)
-        => _cache.ContainsKey(CleanExpressionString(expression));
-
-    /// <summary>
-    /// Add expression <see cref="string"/> to the cache of the <see cref="Parser"/>.
-    /// </summary>
-    /// <param name="key">The expression <see cref="string"/> of the cached <see cref="IExpression"/>.</param>
-    /// <param name="value">The cached <see cref="IExpression"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the <see cref="IExpression"/> was successfully added to the cache; otherwise, 
-    /// <see langword="false"/>.
-    /// </returns>
-    public bool AddCache(string key, IExpression value)
-    {
-        try
-        {
-            _cache[CleanExpressionString(key)] = value;
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// Removes a cached <see cref="IExpression"/> based on the specified expression <see cref="string"/>.
-    /// </summary>
-    /// <param name="expression">The expression <see cref="string"/> of the cached <see cref="IExpression"/>.</param>
-    /// <returns>
-    /// <see langword="true"/> if the <see cref="IExpression"/> was successfully removed from the cache; otherwise,
-    /// <see langword="false"/>.
-    /// </returns>
-    public bool RemoveCache(string expression)
-    {
-        string clean_expression = CleanExpressionString(expression);
-
-        return _cache.ContainsKey(clean_expression) && _cache.Remove(clean_expression);
-    }
-
-    /// <summary>
-    /// Clears the cache of the parser.
-    /// </summary>
-    /// <returns>
-    /// <see langword="true"/> if the cache was successfully cleared; otherwise <see langword="false"/>.
-    /// </returns>
-    public bool ClearCache()
-    {
-        _cache.Clear();
-        return _cache.Count == 0;
     }
 
     /// <summary>
