@@ -10,15 +10,14 @@ using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization.Tokens;
 using System.Collections.Immutable;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
-namespace CalcExpr.Parsing;
+namespace CalcExpr.Parsing.Defaults;
 
 internal static class ParseMatchFunctions
 {
     internal static IEnumerableExpression ParseMatchCollection(ImmutableArray<IToken> _, TokenMatch match, Parser parser)
     {
-        ImmutableArray<IToken> condensed = ContextFreeUtils.Condense(match[1..^1], Brackets.Square | Brackets.Curly);
+        ImmutableArray<IToken> condensed = match[1..^1].Condense(Brackets.Square | Brackets.Curly);
         IEnumerable<IExpression> enumerable = condensed.Split(',').Select(element => parser.Parse(element.Uncondense()));
 
         return (match.First() as OpenBracketToken)!.BracketType == Bracket.Square

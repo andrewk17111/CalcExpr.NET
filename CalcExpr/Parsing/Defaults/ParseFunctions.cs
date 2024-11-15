@@ -4,7 +4,7 @@ using CalcExpr.Extensions;
 using CalcExpr.Tokenization.Tokens;
 using System.Collections.Immutable;
 
-namespace CalcExpr.Parsing;
+namespace CalcExpr.Parsing.Defaults;
 
 internal static class ParseFunctions
 {
@@ -40,6 +40,6 @@ internal static class ParseFunctions
             }
         }
 
-        return null;        
+        return null;
     }
 }

@@ -3,7 +3,7 @@ using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization.Tokens;
 using System.Collections.Immutable;
 
-namespace CalcExpr.Parsing;
+namespace CalcExpr.Parsing.Defaults;
 
 internal static class MatchFunctions
 {
@@ -62,7 +62,7 @@ internal static class MatchFunctions
 
     internal static TokenMatch? MatchIndexer(ImmutableArray<IToken> input, IEnumerable<IParserRule> _)
     {
-        IEnumerable<CondensedToken> tokens = ContextFreeUtils.Condense(input, Brackets.Square)
+        IEnumerable<CondensedToken> tokens = input.Condense(Brackets.Square)
             .Where(token => token is CondensedToken condensed &&
                 condensed.Tokens.First() is OpenBracketToken { BracketType: Bracket.Square })
             .Cast<CondensedToken>();
