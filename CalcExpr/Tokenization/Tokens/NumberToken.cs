@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace CalcExpr.Tokenization.Tokens;
 
@@ -12,8 +13,8 @@ public partial class NumberToken(string value, int index) : IToken
 
     public char RegexAlias => '0';
 
-    public override bool Equals(object? obj)
-        => obj is NumberToken token && token.Value == Value;
+    public override bool Equals([NotNullWhen(true)] object? obj)
+        => obj is NumberToken token && token.ParsedValue == ParsedValue;
 
     public override int GetHashCode()
         => Value.GetHashCode();

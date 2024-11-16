@@ -3,6 +3,7 @@ using CalcExpr.Expressions.Terminals;
 using CalcExpr.Parsing;
 using CalcExpr.Parsing.Rules;
 using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using TestCalcExpr.TestData;
 using TestCalcExpr.TestUtils;
@@ -12,8 +13,8 @@ namespace TestCalcExpr.Parsing;
 [TestClass]
 public class TestParser
 {
-    //readonly RegexRule CUSTOM_RULE = new RegexRule("Char", @"[A-Z]", RegexOptions.None,
-    //    (expression, token, _) => new Number(token.Value[0] - 65));
+    private static readonly RegexRule CUSTOM_RULE = new RegexRule("Char", "[A-Z]",
+        (_, match, _) => new Number(match.Value[0] - 65), RegexOptions.None);
 
     /// <summary>
     /// Tests that the Parser can be initialized properly from either constructor.
@@ -123,8 +124,10 @@ public class TestParser
         {
             parser.Parse(test_case.ExpressionString);
             Assert.IsTrue(parser.ContainsCache(test_case.ExpressionString));
-            parser.RemoveCache(test_case.ExpressionString);
+            Assert.IsTrue(parser.ContainsCache(test_case.Tokenized));
+            parser.RemoveCache(test_case.Tokenized);
             Assert.IsFalse(parser.ContainsCache(test_case.ExpressionString));
+            Assert.IsFalse(parser.ContainsCache(test_case.Tokenized));
         }
 
         (string, IExpression) pi = ("pi", new Number(3.1415926535));
@@ -142,22 +145,22 @@ public class TestParser
     [TestMethod]
     public void TestGrammar()
     {
-        //Parser parser = new Parser();
-        //RegexRule tau = new RegexRule("tau", "tau", RegexOptions.None, (expression, token, _) => new Number(6.28));
+        Parser parser = new Parser();
+        RegexRule tau = new RegexRule("tau", "tau", (_, _, _) => new Number(6.28), RegexOptions.None);
 
-        //Assert.IsFalse(parser.Grammar.Contains(CUSTOM_RULE));
-        //Assert.IsFalse(parser.Grammar.Contains(tau));
-        //Assert.IsTrue(parser.AddGrammarRule(CUSTOM_RULE, 0));
-        //Assert.IsTrue((RegexRule)parser.Grammar[0] == CUSTOM_RULE);
-        //Assert.IsTrue(parser.AddGrammarRule(tau, -1));
-        //Assert.IsTrue((RegexRule)parser.Grammar.Last() == tau);
-        //Assert.IsTrue(parser.GrammarContains(tau.Name));
-        //Assert.AreNotEqual(-1, parser.ReplaceGrammarRule(new Rule("tau", null!, null!)));
-        //Assert.IsNotInstanceOfType(parser.GetGrammarRule("tau"), typeof(RegexRule));
-        //Assert.AreNotEqual(-1, parser.RemoveGrammarRule(CUSTOM_RULE.Name));
-        //Assert.IsFalse(parser.GrammarContains(CUSTOM_RULE.Name));
-        //Assert.IsTrue(parser.RemoveGrammarRuleAt(parser.Grammar.Length - 1));
-        //Assert.IsFalse(parser.GrammarContains(tau.Name));
+        Assert.IsFalse(parser.Grammar.Contains(CUSTOM_RULE));
+        Assert.IsFalse(parser.Grammar.Contains(tau));
+        Assert.IsTrue(parser.AddGrammarRule(CUSTOM_RULE, 0));
+        Assert.IsTrue((RegexRule)parser.Grammar[0] == CUSTOM_RULE);
+        Assert.IsTrue(parser.AddGrammarRule(tau, -1));
+        Assert.IsTrue((RegexRule)parser.Grammar.Last() == tau);
+        Assert.IsTrue(parser.GrammarContains(tau.Name));
+        Assert.AreNotEqual(-1, parser.ReplaceGrammarRule(new ParserRule("tau", null!, null!)));
+        Assert.IsNotInstanceOfType(parser.GetGrammarRule("tau"), typeof(RegexRule));
+        Assert.AreNotEqual(-1, parser.RemoveGrammarRule(CUSTOM_RULE.Name));
+        Assert.IsFalse(parser.GrammarContains(CUSTOM_RULE.Name));
+        Assert.IsTrue(parser.RemoveGrammarRuleAt(parser.Grammar.Length - 1));
+        Assert.IsFalse(parser.GrammarContains(tau.Name));
     }
 
     /// <summary>

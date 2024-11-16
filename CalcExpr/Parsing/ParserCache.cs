@@ -1,14 +1,15 @@
 ﻿using CalcExpr.Expressions;
 using CalcExpr.Tokenization.Tokens;
+using System.Collections;
 using System.Collections.Immutable;
 
 namespace CalcExpr.Parsing;
 
 public partial class Parser
 {
-    private readonly Dictionary<ImmutableArray<IToken>, IExpression> _cache = [];
+    private readonly Dictionary<CacheKey, IExpression> _cache = [];
 
-    public ImmutableArray<IToken>[] Cache => [.. _cache.Keys];
+    public ImmutableArray<IToken>[] Cache => [.. _cache.Keys.Select(x => x.Value)];
 
     /// <summary>
     /// Determines whether the cache of the <see cref="Parser"/> contains a specified expression <see cref="string"/>.
@@ -19,7 +20,7 @@ public partial class Parser
     /// <see langword="false"/>.
     /// </returns>
     public bool ContainsCache(string expression)
-        => _cache.ContainsKey(_tokenizer.Tokenize(expression));
+        => ContainsCache(_tokenizer.Tokenize(expression));
 
     /// <summary>
     /// Determines whether the cache of the <see cref="Parser"/> contains a specified token sequence.
@@ -30,7 +31,7 @@ public partial class Parser
     /// <see langword="false"/>.
     /// </returns>
     public bool ContainsCache(IEnumerable<IToken> expression)
-        => _cache.ContainsKey([.. expression]);
+        => _cache.ContainsKey(expression.ToImmutableArray());
 
     /// <summary>
     /// Add expression <see cref="string"/> to the cache of the <see cref="Parser"/>.
@@ -57,7 +58,7 @@ public partial class Parser
     {
         try
         {
-            _cache[[.. key]] = value;
+            _cache[key.ToImmutableArray()] = value;
             return true;
         }
         catch
@@ -102,5 +103,23 @@ public partial class Parser
     {
         _cache.Clear();
         return _cache.Count == 0;
+    }
+
+    private readonly struct CacheKey(ImmutableArray<IToken> value) : IEnumerable<IToken>
+    {
+        public readonly ImmutableArray<IToken> Value = value;
+
+        public readonly override bool Equals(object? obj)
+            => obj is IEnumerable<IToken> enumerable && enumerable.SequenceEqual(Value);
+
+        public readonly override int GetHashCode()
+            => Value.Select(x => x.GetHashCode()).Aggregate((a, b) => HashCode.Combine(a, b));
+
+        public readonly IEnumerator<IToken> GetEnumerator() => ((IEnumerable<IToken>)Value).GetEnumerator();
+
+        readonly IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Value).GetEnumerator();
+
+        public static implicit operator CacheKey(ImmutableArray<IToken> value)
+            => new CacheKey(value);
     }
 }

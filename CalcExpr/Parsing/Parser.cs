@@ -6,10 +6,7 @@ using CalcExpr.Tokenization;
 using CalcExpr.Tokenization.Tokens;
 using System.Collections.Immutable;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using static CalcExpr.Parsing.Defaults.MatchFunctions;
-using static CalcExpr.Parsing.Defaults.ParseFunctions;
-using static CalcExpr.Parsing.Defaults.ParseMatchFunctions;
+using static CalcExpr.Parsing.Defaults.ParserDefaults;
 
 namespace CalcExpr.Parsing;
 
@@ -19,53 +16,22 @@ namespace CalcExpr.Parsing;
 /// <param name="grammar">
 /// The specified <see cref="IEnumerable{Rule}"/> to be used as the grammar of the <see cref="Parser"/>.
 /// </param>
-public partial class Parser(IEnumerable<IParserRule> grammar)
+public partial class Parser(IEnumerable<IParserRule> grammar, Tokenizer? tokenizer = null)
 {
     private readonly List<IParserRule> _grammar = grammar.ToList();
-    // TODO: Change tokenizer initialization.
-    private readonly Tokenizer _tokenizer = new();
+    private readonly Tokenizer _tokenizer = tokenizer ?? new();
     
     public IParserRule[] Grammar => [.. _grammar];
 
-    // lang=regex
-    private const string PREFIX = @"((\+{2})|(\-{2})|[\+\-!~¬])";
-    // lang=regex
-    private const string POSTFIX = @"((\+{2})|(\-{2})|((?<![^!](!!)*!)!!)|[!%#])";
-    private const string OPERAND = @$"({PREFIX}*(\d|\w|[\[\{{\]\}}\u001A]){POSTFIX}*)";
-    // lang=regex
-    private const string ATTRIBUTE = @"(\w(\(\d(,\d)*\))?)";
-    private const string PARAMETER = @$"((\[{ATTRIBUTE}(,{ATTRIBUTE})*\])?\w)";
+    /// <summary>
+    /// Creates a <see cref="Parser"/> with the default grammar and default tokenizer.
+    /// </summary>
+    public Parser() : this(DefaultRules) { }
 
     /// <summary>
     /// Creates a <see cref="Parser"/> with the default grammar.
     /// </summary>
-    public Parser()
-        : this([
-            new ParserRule("Collection", ParseCollection, MatchCollection, ParseMatchCollection),
-            new ParserRule("FunctionCall", ParseFunctionCall, MatchFunctionCall, ParseMatchFunctionCall),
-            new RegexRule("LambdaFunction", @$"^({PARAMETER}|(\({PARAMETER}?\))|(\({PARAMETER}(,{PARAMETER})*\)))=>", ParseMatchLambdaFunction),
-            new ParserRule("Parentheses", ParseMatchParentheses, MatchParentheses),
-            new RegexRule("WithParentheses", @"[\(\)]", ParseMatchWithParentheses),
-            new RegexRule("AssignBinOp", @$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})", ParseMatchAssignmentOperator, RegexOptions.RightToLeft),
-            new RegexRule("OrBinOp", @$"(?<={OPERAND})(\|\||∨)(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
-            new RegexRule("XorBinOp", @$"(?<={OPERAND})(⊕)(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
-            new RegexRule("AndBinOp", @$"(?<={OPERAND})(&&|∧)(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
-            new RegexRule("EqBinOp", @$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
-            new RegexRule("IneqBinOp", @$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
-            new RegexRule("AddBinOp", @$"(?<={OPERAND})([\+\-])(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
-            new RegexRule("MultBinOp", @$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
-            new RegexRule("ExpBinOp", @"(?<=.)(\^)(?=.)", ParseMatchBinaryOperator, RegexOptions.RightToLeft),
-            new RegexRule("Prefix", $"^{PREFIX}", ParseMatchPrefix),
-            new RegexRule("Postfix", $"{POSTFIX}$", ParseMatchPostfix),
-            new ParserRule("Indexer", ParseMatchIndexer, MatchIndexer),
-            new OptionRule("Undefined", ["undefined", "dne"], ParseMatchUndefined),
-            new OptionRule("Logical", ["true", "false"], ParseMatchLogical),
-            new OptionRule("Infinity", ["∞", "inf", "infinity"], ParseMatchInfinity),
-            new OptionRule("Constant", ["π", "pi", "τ", "tau", "empty_set", "empty", "∅", "e"], ParseMatchConstant),
-            new TypeRule<WordToken>("Variable", ParseMatchVariable),
-            new TypeRule<NumberToken>("Number", ParseMatchNumber),
-        ])
-    { }
+    public Parser(Tokenizer tokenizer) : this(DefaultRules, tokenizer) { }
 
     /// <summary>
     /// Parses an expression <see cref="string"/> into an <see cref="IExpression"/>.

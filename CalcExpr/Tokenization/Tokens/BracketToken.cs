@@ -24,7 +24,7 @@ public partial class OpenBracketToken(Bracket bracketType, int index) : IToken
     public char RegexAlias => Value.First();
 
     public override bool Equals(object? obj)
-        => obj is OpenBracketToken token && token.Value == Value;
+        => obj is OpenBracketToken token && token.BracketType == BracketType;
 
     public override int GetHashCode()
         => Value.GetHashCode();

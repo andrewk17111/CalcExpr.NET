@@ -1,4 +1,6 @@
-﻿namespace CalcExpr.Tokenization.Tokens;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace CalcExpr.Tokenization.Tokens;
 
 /// <summary>
 /// A character that represents a symbol in an expression.
@@ -15,8 +17,8 @@ public class SymbolToken(char value, int index) : IToken
 
     public char RegexAlias => Character;
 
-    public override bool Equals(object? obj)
-        => obj is SymbolToken token && token.Value == Value;
+    public override bool Equals([NotNullWhen(true)] object? obj)
+        => obj is SymbolToken token && token.Character == Character;
 
     public override int GetHashCode()
         => Value.GetHashCode();

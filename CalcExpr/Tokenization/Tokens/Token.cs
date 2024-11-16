@@ -1,4 +1,5 @@
 ﻿using CalcExpr.Tokenization.Rules;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace CalcExpr.Tokenization.Tokens;
@@ -20,7 +21,7 @@ public class Token(string value, int index) : IToken
 
     public string this[Range range] => Value[range];
 
-    public override bool Equals(object? obj)
+    public override bool Equals([NotNullWhen(true)] object? obj)
         => obj is Token token && token.Value == Value;
 
     public override int GetHashCode()
