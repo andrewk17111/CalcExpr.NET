@@ -2,7 +2,6 @@
 using CalcExpr.Expressions.Terminals;
 using CalcExpr.Parsing;
 using CalcExpr.Parsing.Rules;
-using CalcExpr.Tokenization.Tokens;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using TestCalcExpr.TestData;
@@ -13,6 +12,11 @@ namespace TestCalcExpr.Parsing;
 [TestClass]
 public class TestParser
 {
+    private const string PREFIX = @"((\+{2})|(\-{2})|[\+\-!~¬])";
+    private const string POSTFIX = @"((\+{2})|(\-{2})|((?<![^!](!!)*!)!!)|[!%#])";
+    private const string OPERAND = @$"({PREFIX}*(\d|\w|[\[\{{\]\}}\u001A]){POSTFIX}*)";
+    private const string ATTRIBUTE = @"(\w(\(\d(,\d)*\))?)";
+    private const string PARAMETER = @$"((\[{ATTRIBUTE}(,{ATTRIBUTE})*\])?\w)";
     private static readonly RegexRule CUSTOM_RULE = new RegexRule("Char", "[A-Z]",
         (_, match, _) => new Number(match.Value[0] - 65), RegexOptions.None);
 
@@ -22,62 +26,58 @@ public class TestParser
     [TestMethod]
     public void TestInit()
     {
-        //(string Name, string? Regex)[] default_rules =
-        //[
-        //    ("DiscreteOperand",
-        //        "({Prefix}*({Variable}|{Undefined}|{Logical}|{Infinity}|{Constant}|{Number}|{Token}){Postfix}*)"),
-        //    ("Operand", @"[\[\{]?({DiscreteOperand}|{Parameter}|{TokenizedParameter})[\]\}]?"),
-        //    ("Token", @"\[\d+\]"),
-        //    ("Attribute", @"([A-Za-z][A-Za-z_0-9]*(\({Number}(,{Number})*\))?)"),
-        //    ("Parameter", @"((\\?\[{Attribute}(,{Attribute})*\\?\])?{Variable})"),
-        //    ("TokenizedAttribute", @"([A-Za-z][A-Za-z_0-9]*({Token})?)"),
-        //    ("TokenizedParameter", @"((\\?\[{TokenizedAttribute}(,{TokenizedAttribute})*\\?\])?{Variable})"),
-        //    ("Collection", null),
-        //    ("FunctionCall", null),
-        //    ("LambdaFunction", @"({Parameter}|\(\s*(({Parameter},)*{Parameter})?\))\s*=>"),
-        //    ("Parentheses", null),
-        //    ("WithParentheses", @"\(|\)"),
-        //    ("AssignBinOp", @"(?<={Operand})(?<!!)(=)(?={Operand})"),
-        //    ("OrBinOp", @"(?<={Operand})(\|\||∨)(?={Operand})"),
-        //    ("XorBinOp", @"(?<={Operand})(⊕)(?={Operand})"),
-        //    ("AndBinOp", @"(?<={Operand})(&&|∧)(?={Operand})"),
-        //    ("EqBinOp", @"(?<={Operand})(==|!=|<>|≠)(?={Operand})"),
-        //    ("IneqBinOp", @"(?<={Operand})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={Operand})"),
-        //    ("AddBinOp", @"(?<={Operand})([\+\-])(?={Operand})"),
-        //    ("MultBinOp", @"(?<={Operand})(%%|//|[*×/÷%])(?={Operand})"),
-        //    ("ExpBinOp", @"(?<={Operand})(\^)(?={Operand})"),
-        //    ("Prefix", @"((\+{2})|(\-{2})|[\+\-!~¬])"),
-        //    ("Postfix", @"((\+{2})|(\-{2})|((?<![A-Za-zΑ-Ωα-ω0-9](!!)*!)!!)|[!%#])"),
-        //    ("Indexer", null),
-        //    ("Undefined", "undefined|dne"),
-        //    ("Logical", "true|false"),
-        //    ("Infinity", "∞|(inf(inity)?)"),
-        //    ("Constant", "(π|pi|τ|tau|(empty(_set)?)|∅|e)"),
-        //    ("Variable", "([A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*)"),
-        //    ("Number", @"((\d+\.?\d*)|(\d*\.?\d+))"),
-        //];
+        (string Name, string[]? Value)[] defaultRules =
+        [
+            ("Collection", null),
+            ("FunctionCall", null),
+            ("LambdaFunction", [@$"^({PARAMETER}|(\({PARAMETER}?\))|(\({PARAMETER}(,{PARAMETER})*\)))=>"]),
+            ("Parentheses", null),
+            ("WithParentheses", [@"[\(\)]"]),
+            ("AssignBinOp", [@$"(?<={OPERAND})(?<!!)(=)(?={OPERAND})"]),
+            ("OrBinOp", [@$"(?<={OPERAND})(\|\||∨)(?={OPERAND})"]),
+            ("XorBinOp", [@$"(?<={OPERAND})(⊕)(?={OPERAND})"]),
+            ("AndBinOp", [@$"(?<={OPERAND})(&&|∧)(?={OPERAND})"]),
+            ("EqBinOp", [@$"(?<={OPERAND})(==|!=|<>|≠)(?={OPERAND})"]),
+            ("IneqBinOp", [@$"(?<={OPERAND})(>=|<=|<(?!>)|(?<!<)>|[≤≥])(?={OPERAND})"]),
+            ("AddBinOp", [@$"(?<={OPERAND})([\+\-])(?={OPERAND})"]),
+            ("MultBinOp", [@$"(?<={OPERAND})(%%|//|[*×/÷%])(?={OPERAND})"]),
+            ("ExpBinOp", [@"(?<=.)(\^)(?=.)"]),
+            ("Prefix", [$"^{PREFIX}"]),
+            ("Postfix", [$"{POSTFIX}$"]),
+            ("Indexer", null),
+            ("Undefined", ["undefined", "dne"]),
+            ("Logical", ["true", "false"]),
+            ("Infinity", ["∞", "inf", "infinity"]),
+            ("Constant", ["π", "pi", "τ", "tau", "empty_set", "empty", "∅", "e"]),
+            ("Variable", ["WordToken"]),
+            ("Number", ["NumberToken"]),
+        ];
 
-        //Parser parser = new Parser();
+        Parser parser = new Parser();
 
-        //for (int i = 0; i < default_rules.Length; i++)
-        //{
-        //    IRule rule = parser.Grammar[i];
+        for (int i = 0; i < defaultRules.Length; i++)
+        {
+            IParserRule rule = parser.Grammar[i];
 
-        //    Assert.AreEqual(default_rules[i].Name, rule.Name);
+            Assert.AreEqual(defaultRules[i].Name, rule.Name);
 
-        //    if (rule is NestedRegexRule nested_regex_rule)
-        //        Assert.AreEqual(default_rules[i].Regex, nested_regex_rule.RegularExpressionTemplate);
-        //    else if (rule is RegexRule regex_rule)
-        //        Assert.AreEqual(default_rules[i].Regex, regex_rule.RegularExpression);
+            if (rule is RegexRule regexRule)
+                Assert.AreEqual(defaultRules[i].Value?.Single(), regexRule.Regex);
+            else if (rule is OptionRule optionRule)
+                UtilFunctions.AreEqual(defaultRules[i]!.Value ?? [], optionRule.Options);
+            else if (rule.GetType().IsGenericType && rule.GetType().GetGenericTypeDefinition() == typeof(TypeRule<>))
+                Assert.AreEqual(defaultRules[i].Value?.Single(), rule.GetType().GenericTypeArguments.Single().Name);
+            else
+                Assert.AreEqual(defaultRules[i].Value, null);
 
-        //    Assert.AreEqual(rule, parser.GetGrammarRule(rule.Name));
-        //    Assert.AreEqual(rule, parser.GetGrammarRule(i));
-        //}
+            Assert.AreEqual(rule, parser.GetGrammarRule(rule.Name));
+            Assert.AreEqual(rule, parser.GetGrammarRule(i));
+        }
 
-        //parser = new Parser([CUSTOM_RULE]);
+        parser = new Parser([CUSTOM_RULE]);
 
-        //Assert.IsTrue(parser.Grammar.Length == 1);
-        //Assert.IsTrue((RegexRule)parser.Grammar[0] == CUSTOM_RULE);
+        Assert.IsTrue(parser.Grammar.Length == 1);
+        Assert.IsTrue((RegexRule)parser.Grammar[0] == CUSTOM_RULE);
     }
 
     /// <summary>
