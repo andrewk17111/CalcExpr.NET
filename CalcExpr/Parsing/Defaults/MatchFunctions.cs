@@ -1,4 +1,5 @@
-﻿using CalcExpr.Parsing.Rules;
+﻿using CalcExpr.Extensions;
+using CalcExpr.Parsing.Rules;
 using CalcExpr.Parsing.Tokens;
 using CalcExpr.Tokenization.Tokens;
 using System.Collections.Immutable;
