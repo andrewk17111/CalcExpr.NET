@@ -1,6 +1,7 @@
 ﻿using CalcExpr.Tokenization.Rules;
 using CalcExpr.Tokenization.Tokens;
 using System.Collections.Immutable;
+using static CalcExpr.Tokenization.Tokens.Defaults.TokenizerDefaults;
 
 namespace CalcExpr.Tokenization;
 
@@ -22,23 +23,7 @@ public class Tokenizer(IEnumerable<ITokenizerRule> rules, bool trimWhitespace = 
     /// <summary>
     /// Creates a <see cref="Tokenizer"/> with the default rules list.
     /// </summary>
-    public Tokenizer() : this([
-        new CharSetRule("Symbol", ",=|∨⊕&∧≠<>≤≥*×/÷%^+-~¬!#∞∅", (match, index) => new SymbolToken(match, index)),
-        new CharSetRule("OpenBracket", "^([{", (match, index) => new OpenBracketToken(match switch {
-            '(' => Bracket.Parenthesis,
-            '[' => Bracket.Square,
-            '{' => Bracket.Curly,
-            _ => throw new NotSupportedException()
-        }, index)),
-        new CharSetRule("CloseBracket", ")]}", (match, index) => new CloseBracketToken(match switch {
-            ')' => Bracket.Parenthesis,
-            ']' => Bracket.Square,
-            '}' => Bracket.Curly,
-            _ => throw new NotSupportedException()
-        }, index)),
-        new RegexRule("Word", "^[A-Za-zΑ-Ωα-ω]+(_[A-Za-zΑ-Ωα-ω0-9]+)*", (match, index) => new WordToken(match.Value, index)),
-        new RegexRule("Number", @"^((\d+\.?\d*)|(\d*\.?\d+))", (match, index) => new NumberToken(match.Value, index)),
-    ]) { }
+    public Tokenizer() : this(DefaultRules) { }
 
     /// <summary>
     /// Parses an expression <see cref="string"/> into an <see cref="IToken"/>.
