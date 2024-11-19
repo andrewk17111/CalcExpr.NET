@@ -30,7 +30,7 @@ public class OptionRule(string name, IEnumerable<string> options, Func<string, i
         {
             if (input.StartsWith(option, Comparison))
             {
-                input = input[1..];
+                input = input[option.Length..];
                 return _tokenize(option, index);
             }
         }
@@ -39,7 +39,7 @@ public class OptionRule(string name, IEnumerable<string> options, Func<string, i
     }
 
     public override bool Equals(object? obj)
-        => obj is OptionRule a && a.Options.SequenceEqual(Options) && a.Comparison == Comparison;
+        => obj is OptionRule a && a.Options.SetEquals(Options) && a.Comparison == Comparison;
 
     public override int GetHashCode()
         => Options.GetHashCode();

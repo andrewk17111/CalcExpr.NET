@@ -4,6 +4,13 @@ using System.Collections.Immutable;
 
 namespace CalcExpr.Parsing.Rules;
 
+/// <summary>
+/// A parser rule to match a token from a list of string values.
+/// </summary>
+/// <param name="name">The name of the rule.</param>
+/// <param name="options">The options for a matching token value.</param>
+/// <param name="parse">The function to parse the matching token.</param>
+/// <param name="stringComparison">String comparison options to checking if a token is a match.</param>
 public class OptionRule(string name, string[] options, Func<IToken, Parser, IExpression> parse,
     StringComparison stringComparison = StringComparison.CurrentCulture)
     : IParserRule
@@ -12,9 +19,9 @@ public class OptionRule(string name, string[] options, Func<IToken, Parser, IExp
 
     public string Name { get; } = name;
 
-    public readonly ImmutableHashSet<string> Options = options.Distinct().ToImmutableHashSet();
+    public ImmutableHashSet<string> Options { get; } = options.Distinct().ToImmutableHashSet();
 
-    public readonly StringComparison Comparison = stringComparison;
+    public StringComparison Comparison { get; } = stringComparison;
 
     public TokenMatch? Match(ImmutableArray<IToken> input, IEnumerable<IParserRule> _)
     {
@@ -34,4 +41,16 @@ public class OptionRule(string name, string[] options, Func<IToken, Parser, IExp
 
     public IExpression? Parse(ImmutableArray<IToken> _, TokenMatch match, Parser parser)
         => Parse([.. match.Match], parser);
+
+    public override bool Equals(object? obj)
+        => obj is OptionRule r && r._parse == _parse && r.Options.SetEquals(Options) && r.Comparison == Comparison;
+
+    public override int GetHashCode()
+        => HashCode.Combine(Name, _parse, Options, Comparison);
+
+    public static bool operator ==(OptionRule a, IParserRule b)
+        => a.Equals(b);
+
+    public static bool operator !=(OptionRule a, IParserRule b)
+        => !a.Equals(b);
 }

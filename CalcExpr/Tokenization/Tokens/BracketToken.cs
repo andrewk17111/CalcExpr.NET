@@ -19,6 +19,9 @@ public partial class OpenBracketToken(Bracket bracketType, int index) : IToken
 
     public int Index { get; } = index;
 
+    /// <summary>
+    /// The type of bracket for this token.
+    /// </summary>
     public Bracket BracketType { get; } = bracketType;
 
     public char RegexAlias => Value.First();
@@ -27,7 +30,7 @@ public partial class OpenBracketToken(Bracket bracketType, int index) : IToken
         => obj is OpenBracketToken token && token.BracketType == BracketType;
 
     public override int GetHashCode()
-        => Value.GetHashCode();
+        => BracketType.GetHashCode();
 
     public static bool operator ==(OpenBracketToken a, IToken b)
         => a.Equals(b);
@@ -60,11 +63,14 @@ public partial class CloseBracketToken(Bracket bracketType, int index) : IToken
 
     public char RegexAlias => Value.First();
 
+    /// <summary>
+    /// The type of bracket for this token.
+    /// </summary>
     public override bool Equals([NotNullWhen(true)] object? obj)
-        => obj is CloseBracketToken token && token.Value == Value;
+        => obj is CloseBracketToken token && token.BracketType == BracketType;
 
     public override int GetHashCode()
-        => Value.GetHashCode();
+        => BracketType.GetHashCode();
 
     public static bool operator ==(CloseBracketToken a, IToken b)
         => a.Equals(b);

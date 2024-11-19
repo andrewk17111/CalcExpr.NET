@@ -35,10 +35,10 @@ public class RegexRule(string name, string regex, Func<Match, int, IToken> token
     }
 
     public override bool Equals(object? obj)
-        => obj is not null && obj is RegexRule a && RegularExpression == a.RegularExpression;
+        => obj is not null && obj is RegexRule a && RegularExpression == a.RegularExpression && Options == a.Options;
 
     public override int GetHashCode()
-        => RegularExpression?.GetHashCode() ?? 0;
+        => HashCode.Combine(RegularExpression, Options);
 
     public static bool operator ==(RegexRule a, RegexRule b)
         => a.Equals(b);

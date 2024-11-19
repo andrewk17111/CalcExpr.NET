@@ -11,6 +11,9 @@ public class SymbolToken(char value, int index) : IToken
 {
     public string Value { get; } = value.ToString();
 
+    /// <summary>
+    /// The character for the captured symbol.
+    /// </summary>
     public char Character { get; } = value;
 
     public int Index { get; } = index;
@@ -21,7 +24,7 @@ public class SymbolToken(char value, int index) : IToken
         => obj is SymbolToken token && token.Character == Character;
 
     public override int GetHashCode()
-        => Value.GetHashCode();
+        => Character.GetHashCode();
 
     public static bool operator ==(SymbolToken a, IToken b)
         => a.Equals(b);

@@ -5,13 +5,18 @@ using System.Collections.Immutable;
 
 namespace CalcExpr.Parsing;
 
+/// <summary>
+/// A subset of tokens that match a rule.
+/// </summary>
+/// <param name="match">The matching subset of tokens.</param>
+/// <param name="index">The index in the list of tokens where the match was found.</param>
 public class TokenMatch(IEnumerable<IToken> match, int index) : IEnumerable<IToken>
 {
     private readonly IToken[] _match = [.. match];
 
     public IReadOnlyList<IToken> Match => _match;
 
-    public int Index { get; } = index;
+    public int Index { get; } = index >= 0 ? index : throw new ArgumentException(nameof(index), "Index cannot be negative.");
 
     public int Length => Match.Count;
 

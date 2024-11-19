@@ -7,6 +7,9 @@ public partial class NumberToken(string value, int index) : IToken
 {
     public string Value { get; } = value;
 
+    /// <summary>
+    /// The numeric value parsed from the captured string.
+    /// </summary>
     public double ParsedValue { get; } = double.Parse(value);
 
     public int Index { get; } = index;
@@ -17,7 +20,7 @@ public partial class NumberToken(string value, int index) : IToken
         => obj is NumberToken token && token.ParsedValue == ParsedValue;
 
     public override int GetHashCode()
-        => Value.GetHashCode();
+        => ParsedValue.GetHashCode();
 
     public static bool operator ==(NumberToken a, IToken b)
         => a.Equals(b);

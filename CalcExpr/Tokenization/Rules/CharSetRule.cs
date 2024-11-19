@@ -35,10 +35,10 @@ public class CharSetRule(string name, IEnumerable<char> chars, Func<char, int, I
     }
 
     public override bool Equals(object? obj)
-        => obj is CharSetRule a && a.Characters.SequenceEqual(Characters);
+        => obj is CharSetRule a && a.Characters.SetEquals(Characters);
 
     public override int GetHashCode()
-        => Characters.GetHashCode();
+        => HashCode.Combine(Name, Characters);
 
     public static bool operator ==(CharSetRule a, CharSetRule b)
         => a.Equals(b);
