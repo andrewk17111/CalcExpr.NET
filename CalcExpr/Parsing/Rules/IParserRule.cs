@@ -20,7 +20,7 @@ public interface IParserRule
     TokenMatch? Match(ImmutableArray<IToken> input, IEnumerable<IParserRule> rules);
 
     /// <summary>
-    /// Tries to parse the input <see cref="string"/> into an <see cref="IExpression"/>.
+    /// Tries to parse the input into an <see cref="IExpression"/>.
     /// </summary>
     /// <param name="input">The input <see cref="ImmutableArray{IToken}"/> to parse.</param>
     /// <param name="parser">The <see cref="Parser"/> to use to parse any sub-expressions.</param>
