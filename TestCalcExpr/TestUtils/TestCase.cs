@@ -1,21 +1,24 @@
 ﻿using CalcExpr.Expressions;
-using System.Text;
+using CalcExpr.Tokenization.Tokens;
+using System.Collections.Immutable;
 
 namespace TestCalcExpr.TestUtils;
 
 public readonly struct TestCase
 {
     public readonly string ExpressionString;
+    public readonly ImmutableArray<IToken> Tokenized;
     public readonly IExpression Parsed;
     public readonly IExpression Evaluated;
     public readonly IExpression[] StepEvaluated;
 
-    public TestCase(string expression_string, IExpression parsed, IExpression? evaluated = null,
-        params IExpression[] step_evaluated)
+    public TestCase(string expressionString, IEnumerable<IToken> tokenized, IExpression parsed, IExpression? evaluated = null,
+        params IExpression[] stepEvaluated)
     {
-        ExpressionString = expression_string;
+        ExpressionString = expressionString;
+        Tokenized = [.. tokenized];
         Parsed = parsed;
         Evaluated = evaluated ?? Parsed;
-        StepEvaluated = (step_evaluated ?? Array.Empty<IExpression>()).Append(Evaluated).ToArray();
+        StepEvaluated = [..stepEvaluated, Evaluated];
     }
 }
