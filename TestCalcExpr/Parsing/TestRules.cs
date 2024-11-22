@@ -77,7 +77,7 @@ public class TestRules
         string name = "OptionRuleName";
         IExpression parsed = Logical.TRUE;
         TokenMatch match = new TokenMatch([new WordToken("Input", 0)], 0);
-        ParserRule rule = new ParserRule(name, (_, _) => parsed, (_, _) => match);
+        OptionRule rule = new OptionRule(name, ["Input"], (_, _) => parsed);
         ImmutableArray<IToken> input = [new WordToken("Input", 0)];
 
         Assert.AreEqual(name, rule.Name);
