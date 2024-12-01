@@ -86,7 +86,7 @@ We welcome contributions to CalcExpr.NET! Whether it's bug fixes, new features, 
 
 ## License
 
-CalcExpr.NET is released under the GPL-3.0 License.
+CalcExpr.NET is released under the MIT License.
 
 ## Branches
 
