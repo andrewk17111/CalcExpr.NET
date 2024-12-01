@@ -1,7 +1,7 @@
 # CalcExpr.NET
 
 ![Lines of Code](https://tokei.rs/b1/github/andrewk17111/CalcExpr.NET?style=flat-square)
-[![License](https://img.shields.io/github/license/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/blob/dev/LICENSE)
 [![Open Issues](https://img.shields.io/github/issues/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/issues)
 [![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/andrewk17111/CalcExpr.NET?style=flat-square)](https://github.com/andrewk17111/CalcExpr.NET/pulls)
 
