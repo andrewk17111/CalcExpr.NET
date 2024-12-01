@@ -84,10 +84,6 @@ We welcome contributions to CalcExpr.NET! Whether it's bug fixes, new features, 
 1. **Make Your Changes**: Implement your changes and commit them with clear and descriptive commit messages.
 1. **Submit a Pull Request**: Open a pull request to the `dev` branch of the main repository, detailing the changes you made and why.
 
-### Code of Conduct
-
-We adhere to a Code of Conduct to ensure a welcoming and inclusive environment for everyone. Please read and follow our [Code of Conduct](https://github.com/andrewk17111/CalcExpr.NET/blob/dev/CONTRIBUTING.md) before contributing.
-
 ## License
 
 CalcExpr.NET is released under the GPL-3.0 License.
