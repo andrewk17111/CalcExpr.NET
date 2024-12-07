@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalcExpr\CalcExpr.csproj" />
+    <ProjectReference Include="..\..\src\CalcExpr\CalcExpr.csproj" />
   </ItemGroup>
 
 </Project>
