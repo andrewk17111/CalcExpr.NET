@@ -1,0 +1,1151 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Tokenization.Tokenizer
+  commentId: T:CalcExpr.Tokenization.Tokenizer
+  id: Tokenizer
+  parent: CalcExpr.Tokenization
+  children:
+  - CalcExpr.Tokenization.Tokenizer.#ctor
+  - CalcExpr.Tokenization.Tokenizer.#ctor(System.Collections.Generic.IEnumerable{CalcExpr.Tokenization.Rules.ITokenizerRule},System.Boolean)
+  - CalcExpr.Tokenization.Tokenizer.AddRule(CalcExpr.Tokenization.Rules.ITokenizerRule,System.Int32)
+  - CalcExpr.Tokenization.Tokenizer.ContainsRule(System.String)
+  - CalcExpr.Tokenization.Tokenizer.GetRule(System.Int32)
+  - CalcExpr.Tokenization.Tokenizer.GetRule(System.String)
+  - CalcExpr.Tokenization.Tokenizer.RemoveRule(System.String)
+  - CalcExpr.Tokenization.Tokenizer.RemoveRuleAt(System.Int32)
+  - CalcExpr.Tokenization.Tokenizer.ReplaceRule(CalcExpr.Tokenization.Rules.ITokenizerRule)
+  - CalcExpr.Tokenization.Tokenizer.Rules
+  - CalcExpr.Tokenization.Tokenizer.Tokenize(System.String)
+  - CalcExpr.Tokenization.Tokenizer.TrimWhitespace
+  langs:
+  - csharp
+  - vb
+  name: Tokenizer
+  nameWithType: Tokenizer
+  fullName: CalcExpr.Tokenization.Tokenizer
+  type: Class
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Tokenizer
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 14
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: A <xref href="CalcExpr.Tokenization.Tokenizer" data-throw-if-not-resolved="false"></xref> to convert a <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/reference-types">string</a> into a list of tokens.
+  example: []
+  syntax:
+    content: public class Tokenizer
+    content.vb: Public Class Tokenizer
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: CalcExpr.Tokenization.Tokenizer.#ctor(System.Collections.Generic.IEnumerable{CalcExpr.Tokenization.Rules.ITokenizerRule},System.Boolean)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.#ctor(System.Collections.Generic.IEnumerable{CalcExpr.Tokenization.Rules.ITokenizerRule},System.Boolean)
+  id: '#ctor(System.Collections.Generic.IEnumerable{CalcExpr.Tokenization.Rules.ITokenizerRule},System.Boolean)'
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: Tokenizer(IEnumerable<ITokenizerRule>, bool)
+  nameWithType: Tokenizer.Tokenizer(IEnumerable<ITokenizerRule>, bool)
+  fullName: CalcExpr.Tokenization.Tokenizer.Tokenizer(System.Collections.Generic.IEnumerable<CalcExpr.Tokenization.Rules.ITokenizerRule>, bool)
+  type: Constructor
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: .ctor
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 14
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: A <xref href="CalcExpr.Tokenization.Tokenizer" data-throw-if-not-resolved="false"></xref> to convert a <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/reference-types">string</a> into a list of tokens.
+  example: []
+  syntax:
+    content: public Tokenizer(IEnumerable<ITokenizerRule> rules, bool trimWhitespace = true)
+    parameters:
+    - id: rules
+      type: System.Collections.Generic.IEnumerable{CalcExpr.Tokenization.Rules.ITokenizerRule}
+      description: A list of types that implement <xref href="CalcExpr.Tokenization.Tokens.IToken" data-throw-if-not-resolved="false"></xref>s define the behavior of the <xref href="CalcExpr.Tokenization.Tokenizer" data-throw-if-not-resolved="false"></xref>.
+    - id: trimWhitespace
+      type: System.Boolean
+      description: Whether to trim the whitespace in between tokens.
+    content.vb: Public Sub New(rules As IEnumerable(Of ITokenizerRule), trimWhitespace As Boolean = True)
+  overload: CalcExpr.Tokenization.Tokenizer.#ctor*
+  nameWithType.vb: Tokenizer.New(IEnumerable(Of ITokenizerRule), Boolean)
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.New(System.Collections.Generic.IEnumerable(Of CalcExpr.Tokenization.Rules.ITokenizerRule), Boolean)
+  name.vb: New(IEnumerable(Of ITokenizerRule), Boolean)
+- uid: CalcExpr.Tokenization.Tokenizer.Rules
+  commentId: P:CalcExpr.Tokenization.Tokenizer.Rules
+  id: Rules
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: Rules
+  nameWithType: Tokenizer.Rules
+  fullName: CalcExpr.Tokenization.Tokenizer.Rules
+  type: Property
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Rules
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 18
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  syntax:
+    content: public ITokenizerRule[] Rules { get; }
+    parameters: []
+    return:
+      type: CalcExpr.Tokenization.Rules.ITokenizerRule[]
+    content.vb: Public ReadOnly Property Rules As ITokenizerRule()
+  overload: CalcExpr.Tokenization.Tokenizer.Rules*
+- uid: CalcExpr.Tokenization.Tokenizer.TrimWhitespace
+  commentId: P:CalcExpr.Tokenization.Tokenizer.TrimWhitespace
+  id: TrimWhitespace
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: TrimWhitespace
+  nameWithType: Tokenizer.TrimWhitespace
+  fullName: CalcExpr.Tokenization.Tokenizer.TrimWhitespace
+  type: Property
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: TrimWhitespace
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 20
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  syntax:
+    content: public bool TrimWhitespace { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public ReadOnly Property TrimWhitespace As Boolean
+  overload: CalcExpr.Tokenization.Tokenizer.TrimWhitespace*
+- uid: CalcExpr.Tokenization.Tokenizer.#ctor
+  commentId: M:CalcExpr.Tokenization.Tokenizer.#ctor
+  id: '#ctor'
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: Tokenizer()
+  nameWithType: Tokenizer.Tokenizer()
+  fullName: CalcExpr.Tokenization.Tokenizer.Tokenizer()
+  type: Constructor
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: .ctor
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 25
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Creates a <xref href="CalcExpr.Tokenization.Tokenizer" data-throw-if-not-resolved="false"></xref> with the default rules list.
+  example: []
+  syntax:
+    content: public Tokenizer()
+    content.vb: Public Sub New()
+  overload: CalcExpr.Tokenization.Tokenizer.#ctor*
+  nameWithType.vb: Tokenizer.New()
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.New()
+  name.vb: New()
+- uid: CalcExpr.Tokenization.Tokenizer.Tokenize(System.String)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.Tokenize(System.String)
+  id: Tokenize(System.String)
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: Tokenize(string)
+  nameWithType: Tokenizer.Tokenize(string)
+  fullName: CalcExpr.Tokenization.Tokenizer.Tokenize(string)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Tokenize
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 33
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Parses an expression <xref href="System.String" data-throw-if-not-resolved="false"></xref> into an <xref href="CalcExpr.Tokenization.Tokens.IToken" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public ImmutableArray<IToken> Tokenize(string input)
+    parameters:
+    - id: input
+      type: System.String
+      description: The expression <xref href="System.String" data-throw-if-not-resolved="false"></xref> to parse.
+    return:
+      type: System.Collections.Immutable.ImmutableArray{CalcExpr.Tokenization.Tokens.IToken}
+      description: An <xref href="CalcExpr.Tokenization.Tokens.IToken" data-throw-if-not-resolved="false"></xref> parsed from the specified expression <xref href="System.String" data-throw-if-not-resolved="false"></xref>.
+    content.vb: Public Function Tokenize(input As String) As ImmutableArray(Of IToken)
+  overload: CalcExpr.Tokenization.Tokenizer.Tokenize*
+  exceptions:
+  - type: System.ArgumentNullException
+    commentId: T:System.ArgumentNullException
+    description: ''
+  nameWithType.vb: Tokenizer.Tokenize(String)
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.Tokenize(String)
+  name.vb: Tokenize(String)
+- uid: CalcExpr.Tokenization.Tokenizer.AddRule(CalcExpr.Tokenization.Rules.ITokenizerRule,System.Int32)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.AddRule(CalcExpr.Tokenization.Rules.ITokenizerRule,System.Int32)
+  id: AddRule(CalcExpr.Tokenization.Rules.ITokenizerRule,System.Int32)
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: AddRule(ITokenizerRule, int)
+  nameWithType: Tokenizer.AddRule(ITokenizerRule, int)
+  fullName: CalcExpr.Tokenization.Tokenizer.AddRule(CalcExpr.Tokenization.Rules.ITokenizerRule, int)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: AddRule
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 93
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Add <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> to the grammar of the <xref href="CalcExpr.Tokenization.Tokenizer" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public bool AddRule(ITokenizerRule rule, int index = -1)
+    parameters:
+    - id: rule
+      type: CalcExpr.Tokenization.Rules.ITokenizerRule
+      description: The <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> to be added to the grammar.
+    - id: index
+      type: System.Int32
+      description: The index to put the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> in the grammar.
+    return:
+      type: System.Boolean
+      description: >-
+        <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> was successfully added to the grammar; otherwise, 
+
+        <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Function AddRule(rule As ITokenizerRule, index As Integer = -1) As Boolean
+  overload: CalcExpr.Tokenization.Tokenizer.AddRule*
+  nameWithType.vb: Tokenizer.AddRule(ITokenizerRule, Integer)
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.AddRule(CalcExpr.Tokenization.Rules.ITokenizerRule, Integer)
+  name.vb: AddRule(ITokenizerRule, Integer)
+- uid: CalcExpr.Tokenization.Tokenizer.RemoveRule(System.String)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.RemoveRule(System.String)
+  id: RemoveRule(System.String)
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: RemoveRule(string)
+  nameWithType: Tokenizer.RemoveRule(string)
+  fullName: CalcExpr.Tokenization.Tokenizer.RemoveRule(string)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: RemoveRule
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 125
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Removes the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> with the specified name from the grammar of the <xref href="CalcExpr.Tokenization.Tokenizer" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public int RemoveRule(string name)
+    parameters:
+    - id: name
+      type: System.String
+      description: The name of the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> to be removed.
+    return:
+      type: System.Int32
+      description: The index of the removed rule if the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> was successfully removed; otherwise, -1.
+    content.vb: Public Function RemoveRule(name As String) As Integer
+  overload: CalcExpr.Tokenization.Tokenizer.RemoveRule*
+  nameWithType.vb: Tokenizer.RemoveRule(String)
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.RemoveRule(String)
+  name.vb: RemoveRule(String)
+- uid: CalcExpr.Tokenization.Tokenizer.RemoveRuleAt(System.Int32)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.RemoveRuleAt(System.Int32)
+  id: RemoveRuleAt(System.Int32)
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: RemoveRuleAt(int)
+  nameWithType: Tokenizer.RemoveRuleAt(int)
+  fullName: CalcExpr.Tokenization.Tokenizer.RemoveRuleAt(int)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: RemoveRuleAt
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 148
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Removes the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> at the specified index from the grammar of the <xref href="CalcExpr.Tokenization.Tokenizer" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public bool RemoveRuleAt(int index)
+    parameters:
+    - id: index
+      type: System.Int32
+      description: The index for the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> to be removed.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> was successfully removed; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Function RemoveRuleAt(index As Integer) As Boolean
+  overload: CalcExpr.Tokenization.Tokenizer.RemoveRuleAt*
+  nameWithType.vb: Tokenizer.RemoveRuleAt(Integer)
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.RemoveRuleAt(Integer)
+  name.vb: RemoveRuleAt(Integer)
+- uid: CalcExpr.Tokenization.Tokenizer.ReplaceRule(CalcExpr.Tokenization.Rules.ITokenizerRule)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.ReplaceRule(CalcExpr.Tokenization.Rules.ITokenizerRule)
+  id: ReplaceRule(CalcExpr.Tokenization.Rules.ITokenizerRule)
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: ReplaceRule(ITokenizerRule)
+  nameWithType: Tokenizer.ReplaceRule(ITokenizerRule)
+  fullName: CalcExpr.Tokenization.Tokenizer.ReplaceRule(CalcExpr.Tokenization.Rules.ITokenizerRule)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: ReplaceRule
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 169
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Replaces the current <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> with the specified name with a new <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public int ReplaceRule(ITokenizerRule newRule)
+    parameters:
+    - id: newRule
+      type: CalcExpr.Tokenization.Rules.ITokenizerRule
+      description: The new rule to replace the old rule.
+    return:
+      type: System.Int32
+      description: The index of the replaced rule if the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> was successfully replaced; otherwise, -1.
+    content.vb: Public Function ReplaceRule(newRule As ITokenizerRule) As Integer
+  overload: CalcExpr.Tokenization.Tokenizer.ReplaceRule*
+- uid: CalcExpr.Tokenization.Tokenizer.ContainsRule(System.String)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.ContainsRule(System.String)
+  id: ContainsRule(System.String)
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: ContainsRule(string)
+  nameWithType: Tokenizer.ContainsRule(string)
+  fullName: CalcExpr.Tokenization.Tokenizer.ContainsRule(string)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: ContainsRule
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 190
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Determines whether a rule with the specified name is in the grammar of the <xref href="CalcExpr.Tokenization.Tokenizer" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public bool ContainsRule(string name)
+    parameters:
+    - id: name
+      type: System.String
+      description: The name of the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> to find.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> was successfully found; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Function ContainsRule(name As String) As Boolean
+  overload: CalcExpr.Tokenization.Tokenizer.ContainsRule*
+  nameWithType.vb: Tokenizer.ContainsRule(String)
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.ContainsRule(String)
+  name.vb: ContainsRule(String)
+- uid: CalcExpr.Tokenization.Tokenizer.GetRule(System.String)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.GetRule(System.String)
+  id: GetRule(System.String)
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: GetRule(string)
+  nameWithType: Tokenizer.GetRule(string)
+  fullName: CalcExpr.Tokenization.Tokenizer.GetRule(string)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: GetRule
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 204
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Gets a <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> from the grammar based on the specified name.
+  example: []
+  syntax:
+    content: public ITokenizerRule? GetRule(string name)
+    parameters:
+    - id: name
+      type: System.String
+      description: The name of the grammar rule.
+    return:
+      type: CalcExpr.Tokenization.Rules.ITokenizerRule
+      description: The <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> in the grammar with the name <code class="paramref">name</code>.
+    content.vb: Public Function GetRule(name As String) As ITokenizerRule
+  overload: CalcExpr.Tokenization.Tokenizer.GetRule*
+  nameWithType.vb: Tokenizer.GetRule(String)
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.GetRule(String)
+  name.vb: GetRule(String)
+- uid: CalcExpr.Tokenization.Tokenizer.GetRule(System.Int32)
+  commentId: M:CalcExpr.Tokenization.Tokenizer.GetRule(System.Int32)
+  id: GetRule(System.Int32)
+  parent: CalcExpr.Tokenization.Tokenizer
+  langs:
+  - csharp
+  - vb
+  name: GetRule(int)
+  nameWithType: Tokenizer.GetRule(int)
+  fullName: CalcExpr.Tokenization.Tokenizer.GetRule(int)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Tokenizer.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: GetRule
+    path: ../src/CalcExpr/Tokenization/Tokenizer.cs
+    startLine: 219
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization
+  summary: Gets a <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> from the grammar based on the specified index.
+  example: []
+  syntax:
+    content: public ITokenizerRule? GetRule(int index)
+    parameters:
+    - id: index
+      type: System.Int32
+      description: The index of the grammar rule.
+    return:
+      type: CalcExpr.Tokenization.Rules.ITokenizerRule
+      description: The <xref href="CalcExpr.Tokenization.Rules.ITokenizerRule" data-throw-if-not-resolved="false"></xref> in the grammar at the index of <code class="paramref">index</code>.
+    content.vb: Public Function GetRule(index As Integer) As ITokenizerRule
+  overload: CalcExpr.Tokenization.Tokenizer.GetRule*
+  nameWithType.vb: Tokenizer.GetRule(Integer)
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.GetRule(Integer)
+  name.vb: GetRule(Integer)
+references:
+- uid: CalcExpr.Tokenization.Tokenizer
+  commentId: T:CalcExpr.Tokenization.Tokenizer
+  parent: CalcExpr.Tokenization
+  href: CalcExpr.Tokenization.Tokenizer.html
+  name: Tokenizer
+  nameWithType: Tokenizer
+  fullName: CalcExpr.Tokenization.Tokenizer
+- uid: CalcExpr.Tokenization.Tokens.IToken
+  commentId: T:CalcExpr.Tokenization.Tokens.IToken
+  parent: CalcExpr.Tokenization.Tokens
+  href: CalcExpr.Tokenization.Tokens.IToken.html
+  name: IToken
+  nameWithType: IToken
+  fullName: CalcExpr.Tokenization.Tokens.IToken
+- uid: CalcExpr.Tokenization
+  commentId: N:CalcExpr.Tokenization
+  href: CalcExpr.html
+  name: CalcExpr.Tokenization
+  nameWithType: CalcExpr.Tokenization
+  fullName: CalcExpr.Tokenization
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: CalcExpr.Tokenization.Tokens
+  commentId: N:CalcExpr.Tokenization.Tokens
+  href: CalcExpr.html
+  name: CalcExpr.Tokenization.Tokens
+  nameWithType: CalcExpr.Tokenization.Tokens
+  fullName: CalcExpr.Tokenization.Tokens
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Tokens
+    name: Tokens
+    href: CalcExpr.Tokenization.Tokens.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Tokens
+    name: Tokens
+    href: CalcExpr.Tokenization.Tokens.html
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: CalcExpr.Tokenization.Tokenizer.#ctor*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.#ctor
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer__ctor_System_Collections_Generic_IEnumerable_CalcExpr_Tokenization_Rules_ITokenizerRule__System_Boolean_
+  name: Tokenizer
+  nameWithType: Tokenizer.Tokenizer
+  fullName: CalcExpr.Tokenization.Tokenizer.Tokenizer
+  nameWithType.vb: Tokenizer.New
+  fullName.vb: CalcExpr.Tokenization.Tokenizer.New
+  name.vb: New
+- uid: System.Collections.Generic.IEnumerable{CalcExpr.Tokenization.Rules.ITokenizerRule}
+  commentId: T:System.Collections.Generic.IEnumerable{CalcExpr.Tokenization.Rules.ITokenizerRule}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEnumerable`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<ITokenizerRule>
+  nameWithType: IEnumerable<ITokenizerRule>
+  fullName: System.Collections.Generic.IEnumerable<CalcExpr.Tokenization.Rules.ITokenizerRule>
+  nameWithType.vb: IEnumerable(Of ITokenizerRule)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of CalcExpr.Tokenization.Rules.ITokenizerRule)
+  name.vb: IEnumerable(Of ITokenizerRule)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: CalcExpr.Tokenization.Rules.ITokenizerRule
+    name: ITokenizerRule
+    href: CalcExpr.Tokenization.Rules.ITokenizerRule.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: CalcExpr.Tokenization.Rules.ITokenizerRule
+    name: ITokenizerRule
+    href: CalcExpr.Tokenization.Rules.ITokenizerRule.html
+  - name: )
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.Collections.Generic.IEnumerable`1
+  commentId: T:System.Collections.Generic.IEnumerable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: CalcExpr.Tokenization.Tokenizer.Rules*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.Rules
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_Rules
+  name: Rules
+  nameWithType: Tokenizer.Rules
+  fullName: CalcExpr.Tokenization.Tokenizer.Rules
+- uid: CalcExpr.Tokenization.Rules.ITokenizerRule[]
+  isExternal: true
+  href: CalcExpr.Tokenization.Rules.ITokenizerRule.html
+  name: ITokenizerRule[]
+  nameWithType: ITokenizerRule[]
+  fullName: CalcExpr.Tokenization.Rules.ITokenizerRule[]
+  nameWithType.vb: ITokenizerRule()
+  fullName.vb: CalcExpr.Tokenization.Rules.ITokenizerRule()
+  name.vb: ITokenizerRule()
+  spec.csharp:
+  - uid: CalcExpr.Tokenization.Rules.ITokenizerRule
+    name: ITokenizerRule
+    href: CalcExpr.Tokenization.Rules.ITokenizerRule.html
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: CalcExpr.Tokenization.Rules.ITokenizerRule
+    name: ITokenizerRule
+    href: CalcExpr.Tokenization.Rules.ITokenizerRule.html
+  - name: (
+  - name: )
+- uid: CalcExpr.Tokenization.Tokenizer.TrimWhitespace*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.TrimWhitespace
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_TrimWhitespace
+  name: TrimWhitespace
+  nameWithType: Tokenizer.TrimWhitespace
+  fullName: CalcExpr.Tokenization.Tokenizer.TrimWhitespace
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.ArgumentNullException
+  commentId: T:System.ArgumentNullException
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.argumentnullexception
+  name: ArgumentNullException
+  nameWithType: ArgumentNullException
+  fullName: System.ArgumentNullException
+- uid: CalcExpr.Tokenization.Tokenizer.Tokenize*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.Tokenize
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_Tokenize_System_String_
+  name: Tokenize
+  nameWithType: Tokenizer.Tokenize
+  fullName: CalcExpr.Tokenization.Tokenizer.Tokenize
+- uid: System.Collections.Immutable.ImmutableArray{CalcExpr.Tokenization.Tokens.IToken}
+  commentId: T:System.Collections.Immutable.ImmutableArray{CalcExpr.Tokenization.Tokens.IToken}
+  parent: System.Collections.Immutable
+  definition: System.Collections.Immutable.ImmutableArray`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablearray-1
+  name: ImmutableArray<IToken>
+  nameWithType: ImmutableArray<IToken>
+  fullName: System.Collections.Immutable.ImmutableArray<CalcExpr.Tokenization.Tokens.IToken>
+  nameWithType.vb: ImmutableArray(Of IToken)
+  fullName.vb: System.Collections.Immutable.ImmutableArray(Of CalcExpr.Tokenization.Tokens.IToken)
+  name.vb: ImmutableArray(Of IToken)
+  spec.csharp:
+  - uid: System.Collections.Immutable.ImmutableArray`1
+    name: ImmutableArray
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablearray-1
+  - name: <
+  - uid: CalcExpr.Tokenization.Tokens.IToken
+    name: IToken
+    href: CalcExpr.Tokenization.Tokens.IToken.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Immutable.ImmutableArray`1
+    name: ImmutableArray
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablearray-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: CalcExpr.Tokenization.Tokens.IToken
+    name: IToken
+    href: CalcExpr.Tokenization.Tokens.IToken.html
+  - name: )
+- uid: System.Collections.Immutable.ImmutableArray`1
+  commentId: T:System.Collections.Immutable.ImmutableArray`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablearray-1
+  name: ImmutableArray<T>
+  nameWithType: ImmutableArray<T>
+  fullName: System.Collections.Immutable.ImmutableArray<T>
+  nameWithType.vb: ImmutableArray(Of T)
+  fullName.vb: System.Collections.Immutable.ImmutableArray(Of T)
+  name.vb: ImmutableArray(Of T)
+  spec.csharp:
+  - uid: System.Collections.Immutable.ImmutableArray`1
+    name: ImmutableArray
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablearray-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Immutable.ImmutableArray`1
+    name: ImmutableArray
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablearray-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Immutable
+  commentId: N:System.Collections.Immutable
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Immutable
+  nameWithType: System.Collections.Immutable
+  fullName: System.Collections.Immutable
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Immutable
+    name: Immutable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.immutable
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Immutable
+    name: Immutable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.immutable
+- uid: CalcExpr.Tokenization.Rules.ITokenizerRule
+  commentId: T:CalcExpr.Tokenization.Rules.ITokenizerRule
+  parent: CalcExpr.Tokenization.Rules
+  href: CalcExpr.Tokenization.Rules.ITokenizerRule.html
+  name: ITokenizerRule
+  nameWithType: ITokenizerRule
+  fullName: CalcExpr.Tokenization.Rules.ITokenizerRule
+- uid: CalcExpr.Tokenization.Tokenizer.AddRule*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.AddRule
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_AddRule_CalcExpr_Tokenization_Rules_ITokenizerRule_System_Int32_
+  name: AddRule
+  nameWithType: Tokenizer.AddRule
+  fullName: CalcExpr.Tokenization.Tokenizer.AddRule
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: CalcExpr.Tokenization.Rules
+  commentId: N:CalcExpr.Tokenization.Rules
+  href: CalcExpr.html
+  name: CalcExpr.Tokenization.Rules
+  nameWithType: CalcExpr.Tokenization.Rules
+  fullName: CalcExpr.Tokenization.Rules
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Rules
+    name: Rules
+    href: CalcExpr.Tokenization.Rules.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Rules
+    name: Rules
+    href: CalcExpr.Tokenization.Rules.html
+- uid: CalcExpr.Tokenization.Tokenizer.RemoveRule*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.RemoveRule
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_RemoveRule_System_String_
+  name: RemoveRule
+  nameWithType: Tokenizer.RemoveRule
+  fullName: CalcExpr.Tokenization.Tokenizer.RemoveRule
+- uid: CalcExpr.Tokenization.Tokenizer.RemoveRuleAt*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.RemoveRuleAt
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_RemoveRuleAt_System_Int32_
+  name: RemoveRuleAt
+  nameWithType: Tokenizer.RemoveRuleAt
+  fullName: CalcExpr.Tokenization.Tokenizer.RemoveRuleAt
+- uid: CalcExpr.Tokenization.Tokenizer.ReplaceRule*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.ReplaceRule
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_ReplaceRule_CalcExpr_Tokenization_Rules_ITokenizerRule_
+  name: ReplaceRule
+  nameWithType: Tokenizer.ReplaceRule
+  fullName: CalcExpr.Tokenization.Tokenizer.ReplaceRule
+- uid: CalcExpr.Tokenization.Tokenizer.ContainsRule*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.ContainsRule
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_ContainsRule_System_String_
+  name: ContainsRule
+  nameWithType: Tokenizer.ContainsRule
+  fullName: CalcExpr.Tokenization.Tokenizer.ContainsRule
+- uid: CalcExpr.Tokenization.Tokenizer.GetRule*
+  commentId: Overload:CalcExpr.Tokenization.Tokenizer.GetRule
+  href: CalcExpr.Tokenization.Tokenizer.html#CalcExpr_Tokenization_Tokenizer_GetRule_System_String_
+  name: GetRule
+  nameWithType: Tokenizer.GetRule
+  fullName: CalcExpr.Tokenization.Tokenizer.GetRule

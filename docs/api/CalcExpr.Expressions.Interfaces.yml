@@ -1,0 +1,78 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Expressions.Interfaces
+  commentId: N:CalcExpr.Expressions.Interfaces
+  id: CalcExpr.Expressions.Interfaces
+  children:
+  - CalcExpr.Expressions.Interfaces.IBinaryOperable
+  - CalcExpr.Expressions.Interfaces.ILogicalConvertible
+  - CalcExpr.Expressions.Interfaces.IPostfixOperable
+  - CalcExpr.Expressions.Interfaces.IPrefixOperable
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.Expressions.Interfaces
+  nameWithType: CalcExpr.Expressions.Interfaces
+  fullName: CalcExpr.Expressions.Interfaces
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.Expressions.Interfaces.IBinaryOperable
+  commentId: T:CalcExpr.Expressions.Interfaces.IBinaryOperable
+  parent: CalcExpr.Expressions.Interfaces
+  href: CalcExpr.Expressions.Interfaces.IBinaryOperable.html
+  name: IBinaryOperable
+  nameWithType: IBinaryOperable
+  fullName: CalcExpr.Expressions.Interfaces.IBinaryOperable
+- uid: CalcExpr.Expressions.Interfaces.ILogicalConvertible
+  commentId: T:CalcExpr.Expressions.Interfaces.ILogicalConvertible
+  parent: CalcExpr.Expressions.Interfaces
+  href: CalcExpr.Expressions.Interfaces.ILogicalConvertible.html
+  name: ILogicalConvertible
+  nameWithType: ILogicalConvertible
+  fullName: CalcExpr.Expressions.Interfaces.ILogicalConvertible
+- uid: CalcExpr.Expressions.Interfaces.IPostfixOperable
+  commentId: T:CalcExpr.Expressions.Interfaces.IPostfixOperable
+  parent: CalcExpr.Expressions.Interfaces
+  href: CalcExpr.Expressions.Interfaces.IPostfixOperable.html
+  name: IPostfixOperable
+  nameWithType: IPostfixOperable
+  fullName: CalcExpr.Expressions.Interfaces.IPostfixOperable
+- uid: CalcExpr.Expressions.Interfaces.IPrefixOperable
+  commentId: T:CalcExpr.Expressions.Interfaces.IPrefixOperable
+  parent: CalcExpr.Expressions.Interfaces
+  href: CalcExpr.Expressions.Interfaces.IPrefixOperable.html
+  name: IPrefixOperable
+  nameWithType: IPrefixOperable
+  fullName: CalcExpr.Expressions.Interfaces.IPrefixOperable
+- uid: CalcExpr.Expressions.Interfaces
+  commentId: N:CalcExpr.Expressions.Interfaces
+  href: CalcExpr.html
+  name: CalcExpr.Expressions.Interfaces
+  nameWithType: CalcExpr.Expressions.Interfaces
+  fullName: CalcExpr.Expressions.Interfaces
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Interfaces
+    name: Interfaces
+    href: CalcExpr.Expressions.Interfaces.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Interfaces
+    name: Interfaces
+    href: CalcExpr.Expressions.Interfaces.html

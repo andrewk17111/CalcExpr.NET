@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Tokenization.Tokens.Defaults
+  commentId: N:CalcExpr.Tokenization.Tokens.Defaults
+  id: CalcExpr.Tokenization.Tokens.Defaults
+  children:
+  - CalcExpr.Tokenization.Tokens.Defaults.TokenizerDefaults
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.Tokenization.Tokens.Defaults
+  nameWithType: CalcExpr.Tokenization.Tokens.Defaults
+  fullName: CalcExpr.Tokenization.Tokens.Defaults
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.Tokenization.Tokens.Defaults.TokenizerDefaults
+  commentId: T:CalcExpr.Tokenization.Tokens.Defaults.TokenizerDefaults
+  href: CalcExpr.Tokenization.Tokens.Defaults.TokenizerDefaults.html
+  name: TokenizerDefaults
+  nameWithType: TokenizerDefaults
+  fullName: CalcExpr.Tokenization.Tokens.Defaults.TokenizerDefaults

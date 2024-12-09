@@ -1,0 +1,54 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Parsing.Tokens
+  commentId: N:CalcExpr.Parsing.Tokens
+  id: CalcExpr.Parsing.Tokens
+  children:
+  - CalcExpr.Parsing.Tokens.CondensedToken
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.Parsing.Tokens
+  nameWithType: CalcExpr.Parsing.Tokens
+  fullName: CalcExpr.Parsing.Tokens
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.Parsing.Tokens.CondensedToken
+  commentId: T:CalcExpr.Parsing.Tokens.CondensedToken
+  parent: CalcExpr.Parsing.Tokens
+  href: CalcExpr.Parsing.Tokens.CondensedToken.html
+  name: CondensedToken
+  nameWithType: CondensedToken
+  fullName: CalcExpr.Parsing.Tokens.CondensedToken
+- uid: CalcExpr.Parsing.Tokens
+  commentId: N:CalcExpr.Parsing.Tokens
+  href: CalcExpr.html
+  name: CalcExpr.Parsing.Tokens
+  nameWithType: CalcExpr.Parsing.Tokens
+  fullName: CalcExpr.Parsing.Tokens
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Parsing
+    name: Parsing
+    href: CalcExpr.Parsing.html
+  - name: .
+  - uid: CalcExpr.Parsing.Tokens
+    name: Tokens
+    href: CalcExpr.Parsing.Tokens.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Parsing
+    name: Parsing
+    href: CalcExpr.Parsing.html
+  - name: .
+  - uid: CalcExpr.Parsing.Tokens
+    name: Tokens
+    href: CalcExpr.Parsing.Tokens.html

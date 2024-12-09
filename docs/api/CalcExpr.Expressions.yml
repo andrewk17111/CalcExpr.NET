@@ -1,0 +1,111 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Expressions
+  commentId: N:CalcExpr.Expressions
+  id: CalcExpr.Expressions
+  children:
+  - CalcExpr.Expressions.AssignmentOperator
+  - CalcExpr.Expressions.BinaryOperator
+  - CalcExpr.Expressions.Constant
+  - CalcExpr.Expressions.FunctionCall
+  - CalcExpr.Expressions.IExpression
+  - CalcExpr.Expressions.Indexer
+  - CalcExpr.Expressions.Parentheses
+  - CalcExpr.Expressions.PostfixOperator
+  - CalcExpr.Expressions.PrefixOperator
+  - CalcExpr.Expressions.Variable
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.Expressions
+  nameWithType: CalcExpr.Expressions
+  fullName: CalcExpr.Expressions
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.Expressions.AssignmentOperator
+  commentId: T:CalcExpr.Expressions.AssignmentOperator
+  href: CalcExpr.Expressions.AssignmentOperator.html
+  name: AssignmentOperator
+  nameWithType: AssignmentOperator
+  fullName: CalcExpr.Expressions.AssignmentOperator
+- uid: CalcExpr.Expressions.BinaryOperator
+  commentId: T:CalcExpr.Expressions.BinaryOperator
+  href: CalcExpr.Expressions.BinaryOperator.html
+  name: BinaryOperator
+  nameWithType: BinaryOperator
+  fullName: CalcExpr.Expressions.BinaryOperator
+- uid: CalcExpr.Expressions.Constant
+  commentId: T:CalcExpr.Expressions.Constant
+  parent: CalcExpr.Expressions
+  href: CalcExpr.Expressions.Constant.html
+  name: Constant
+  nameWithType: Constant
+  fullName: CalcExpr.Expressions.Constant
+- uid: CalcExpr.Expressions.FunctionCall
+  commentId: T:CalcExpr.Expressions.FunctionCall
+  href: CalcExpr.Expressions.FunctionCall.html
+  name: FunctionCall
+  nameWithType: FunctionCall
+  fullName: CalcExpr.Expressions.FunctionCall
+- uid: CalcExpr.Expressions.IExpression
+  commentId: T:CalcExpr.Expressions.IExpression
+  parent: CalcExpr.Expressions
+  href: CalcExpr.Expressions.IExpression.html
+  name: IExpression
+  nameWithType: IExpression
+  fullName: CalcExpr.Expressions.IExpression
+- uid: CalcExpr.Expressions.Indexer
+  commentId: T:CalcExpr.Expressions.Indexer
+  href: CalcExpr.Expressions.Indexer.html
+  name: Indexer
+  nameWithType: Indexer
+  fullName: CalcExpr.Expressions.Indexer
+- uid: CalcExpr.Expressions.Parentheses
+  commentId: T:CalcExpr.Expressions.Parentheses
+  href: CalcExpr.Expressions.Parentheses.html
+  name: Parentheses
+  nameWithType: Parentheses
+  fullName: CalcExpr.Expressions.Parentheses
+- uid: CalcExpr.Expressions.PostfixOperator
+  commentId: T:CalcExpr.Expressions.PostfixOperator
+  href: CalcExpr.Expressions.PostfixOperator.html
+  name: PostfixOperator
+  nameWithType: PostfixOperator
+  fullName: CalcExpr.Expressions.PostfixOperator
+- uid: CalcExpr.Expressions.PrefixOperator
+  commentId: T:CalcExpr.Expressions.PrefixOperator
+  href: CalcExpr.Expressions.PrefixOperator.html
+  name: PrefixOperator
+  nameWithType: PrefixOperator
+  fullName: CalcExpr.Expressions.PrefixOperator
+- uid: CalcExpr.Expressions.Variable
+  commentId: T:CalcExpr.Expressions.Variable
+  parent: CalcExpr.Expressions
+  href: CalcExpr.Expressions.Variable.html
+  name: Variable
+  nameWithType: Variable
+  fullName: CalcExpr.Expressions.Variable
+- uid: CalcExpr.Expressions
+  commentId: N:CalcExpr.Expressions
+  href: CalcExpr.html
+  name: CalcExpr.Expressions
+  nameWithType: CalcExpr.Expressions
+  fullName: CalcExpr.Expressions
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html

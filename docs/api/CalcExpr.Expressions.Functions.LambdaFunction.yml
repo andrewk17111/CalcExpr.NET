@@ -1,0 +1,1335 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Expressions.Functions.LambdaFunction
+  commentId: T:CalcExpr.Expressions.Functions.LambdaFunction
+  id: LambdaFunction
+  parent: CalcExpr.Expressions.Functions
+  children:
+  - CalcExpr.Expressions.Functions.LambdaFunction.#ctor(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter},CalcExpr.Expressions.IExpression)
+  - CalcExpr.Expressions.Functions.LambdaFunction.Body
+  - CalcExpr.Expressions.Functions.LambdaFunction.Equals(System.Object)
+  - CalcExpr.Expressions.Functions.LambdaFunction.GetHashCode
+  - CalcExpr.Expressions.Functions.LambdaFunction.Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+  - CalcExpr.Expressions.Functions.LambdaFunction.IsElementwise
+  - CalcExpr.Expressions.Functions.LambdaFunction.Parameters
+  - CalcExpr.Expressions.Functions.LambdaFunction.ToString(System.String)
+  langs:
+  - csharp
+  - vb
+  name: LambdaFunction
+  nameWithType: LambdaFunction
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction
+  type: Class
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: LambdaFunction
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 6
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  syntax:
+    content: 'public class LambdaFunction : Function, IExpression'
+    content.vb: Public Class LambdaFunction Inherits Function Implements IExpression
+  inheritance:
+  - System.Object
+  - CalcExpr.Expressions.Terminals.Terminal
+  - CalcExpr.Expressions.Functions.Function
+  implements:
+  - CalcExpr.Expressions.IExpression
+  inheritedMembers:
+  - CalcExpr.Expressions.Functions.Function.ProcessArguments(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  - CalcExpr.Expressions.Functions.Function.ContextReconciliation(CalcExpr.Context.ExpressionContext,CalcExpr.Context.ExpressionContext,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter})
+  - CalcExpr.Expressions.Functions.Function.ForEach(System.Reflection.MethodInfo,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  - CalcExpr.Expressions.Functions.Function.ForEach(CalcExpr.Expressions.Functions.Function,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  - CalcExpr.Expressions.Terminals.Terminal.Evaluate
+  - CalcExpr.Expressions.Terminals.Terminal.Evaluate(CalcExpr.Context.ExpressionContext)
+  - CalcExpr.Expressions.Terminals.Terminal.StepEvaluate
+  - CalcExpr.Expressions.Terminals.Terminal.StepEvaluate(CalcExpr.Context.ExpressionContext)
+  - CalcExpr.Expressions.Terminals.Terminal.ToString
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.#ctor(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter},CalcExpr.Expressions.IExpression)
+  commentId: M:CalcExpr.Expressions.Functions.LambdaFunction.#ctor(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter},CalcExpr.Expressions.IExpression)
+  id: '#ctor(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter},CalcExpr.Expressions.IExpression)'
+  parent: CalcExpr.Expressions.Functions.LambdaFunction
+  langs:
+  - csharp
+  - vb
+  name: LambdaFunction(IEnumerable<Parameter>, IExpression)
+  nameWithType: LambdaFunction.LambdaFunction(IEnumerable<Parameter>, IExpression)
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.LambdaFunction(System.Collections.Generic.IEnumerable<CalcExpr.Expressions.Components.Parameter>, CalcExpr.Expressions.IExpression)
+  type: Constructor
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: .ctor
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 6
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  syntax:
+    content: public LambdaFunction(IEnumerable<Parameter> parameters, IExpression body)
+    parameters:
+    - id: parameters
+      type: System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter}
+    - id: body
+      type: CalcExpr.Expressions.IExpression
+    content.vb: Public Sub New(parameters As IEnumerable(Of Parameter), body As IExpression)
+  overload: CalcExpr.Expressions.Functions.LambdaFunction.#ctor*
+  nameWithType.vb: LambdaFunction.New(IEnumerable(Of Parameter), IExpression)
+  fullName.vb: CalcExpr.Expressions.Functions.LambdaFunction.New(System.Collections.Generic.IEnumerable(Of CalcExpr.Expressions.Components.Parameter), CalcExpr.Expressions.IExpression)
+  name.vb: New(IEnumerable(Of Parameter), IExpression)
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.Body
+  commentId: F:CalcExpr.Expressions.Functions.LambdaFunction.Body
+  id: Body
+  parent: CalcExpr.Expressions.Functions.LambdaFunction
+  langs:
+  - csharp
+  - vb
+  name: Body
+  nameWithType: LambdaFunction.Body
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.Body
+  type: Field
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Body
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 10
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  syntax:
+    content: public readonly IExpression Body
+    return:
+      type: CalcExpr.Expressions.IExpression
+    content.vb: Public ReadOnly Body As IExpression
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.Parameters
+  commentId: P:CalcExpr.Expressions.Functions.LambdaFunction.Parameters
+  id: Parameters
+  parent: CalcExpr.Expressions.Functions.LambdaFunction
+  langs:
+  - csharp
+  - vb
+  name: Parameters
+  nameWithType: LambdaFunction.Parameters
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.Parameters
+  type: Property
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Parameters
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 12
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  example: []
+  syntax:
+    content: public override IParameter[] Parameters { get; }
+    parameters: []
+    return:
+      type: CalcExpr.Expressions.Components.IParameter[]
+    content.vb: Public Overrides ReadOnly Property Parameters As IParameter()
+  overridden: CalcExpr.Expressions.Functions.Function.Parameters
+  overload: CalcExpr.Expressions.Functions.LambdaFunction.Parameters*
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.IsElementwise
+  commentId: P:CalcExpr.Expressions.Functions.LambdaFunction.IsElementwise
+  id: IsElementwise
+  parent: CalcExpr.Expressions.Functions.LambdaFunction
+  langs:
+  - csharp
+  - vb
+  name: IsElementwise
+  nameWithType: LambdaFunction.IsElementwise
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.IsElementwise
+  type: Property
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: IsElementwise
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 14
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  example: []
+  syntax:
+    content: public override bool IsElementwise { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Overrides ReadOnly Property IsElementwise As Boolean
+  overridden: CalcExpr.Expressions.Functions.Function.IsElementwise
+  overload: CalcExpr.Expressions.Functions.LambdaFunction.IsElementwise*
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+  commentId: M:CalcExpr.Expressions.Functions.LambdaFunction.Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+  id: Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+  parent: CalcExpr.Expressions.Functions.LambdaFunction
+  langs:
+  - csharp
+  - vb
+  name: Invoke(IExpression[], ExpressionContext)
+  nameWithType: LambdaFunction.Invoke(IExpression[], ExpressionContext)
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.Invoke(CalcExpr.Expressions.IExpression[], CalcExpr.Context.ExpressionContext)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Invoke
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 16
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  example: []
+  syntax:
+    content: public override Terminal Invoke(IExpression[] arguments, ExpressionContext context)
+    parameters:
+    - id: arguments
+      type: CalcExpr.Expressions.IExpression[]
+    - id: context
+      type: CalcExpr.Context.ExpressionContext
+    return:
+      type: CalcExpr.Expressions.Terminals.Terminal
+    content.vb: Public Overrides Function Invoke(arguments As IExpression(), context As ExpressionContext) As Terminal
+  overridden: CalcExpr.Expressions.Functions.Function.Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+  overload: CalcExpr.Expressions.Functions.LambdaFunction.Invoke*
+  nameWithType.vb: LambdaFunction.Invoke(IExpression(), ExpressionContext)
+  fullName.vb: CalcExpr.Expressions.Functions.LambdaFunction.Invoke(CalcExpr.Expressions.IExpression(), CalcExpr.Context.ExpressionContext)
+  name.vb: Invoke(IExpression(), ExpressionContext)
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.Equals(System.Object)
+  commentId: M:CalcExpr.Expressions.Functions.LambdaFunction.Equals(System.Object)
+  id: Equals(System.Object)
+  parent: CalcExpr.Expressions.Functions.LambdaFunction
+  langs:
+  - csharp
+  - vb
+  name: Equals(object?)
+  nameWithType: LambdaFunction.Equals(object?)
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.Equals(object?)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Equals
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 38
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  summary: Determines whether the specified object is equal to the current object.
+  example: []
+  syntax:
+    content: public override bool Equals(object? obj)
+    parameters:
+    - id: obj
+      type: System.Object
+      description: The object to compare with the current object.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified object  is equal to the current object; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Overrides Function Equals(obj As Object) As Boolean
+  overridden: System.Object.Equals(System.Object)
+  overload: CalcExpr.Expressions.Functions.LambdaFunction.Equals*
+  nameWithType.vb: LambdaFunction.Equals(Object)
+  fullName.vb: CalcExpr.Expressions.Functions.LambdaFunction.Equals(Object)
+  name.vb: Equals(Object)
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.GetHashCode
+  commentId: M:CalcExpr.Expressions.Functions.LambdaFunction.GetHashCode
+  id: GetHashCode
+  parent: CalcExpr.Expressions.Functions.LambdaFunction
+  langs:
+  - csharp
+  - vb
+  name: GetHashCode()
+  nameWithType: LambdaFunction.GetHashCode()
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.GetHashCode()
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: GetHashCode
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 50
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  summary: Serves as the default hash function.
+  example: []
+  syntax:
+    content: public override int GetHashCode()
+    return:
+      type: System.Int32
+      description: A hash code for the current object.
+    content.vb: Public Overrides Function GetHashCode() As Integer
+  overridden: System.Object.GetHashCode
+  overload: CalcExpr.Expressions.Functions.LambdaFunction.GetHashCode*
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.ToString(System.String)
+  commentId: M:CalcExpr.Expressions.Functions.LambdaFunction.ToString(System.String)
+  id: ToString(System.String)
+  parent: CalcExpr.Expressions.Functions.LambdaFunction
+  langs:
+  - csharp
+  - vb
+  name: ToString(string?)
+  nameWithType: LambdaFunction.ToString(string?)
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.ToString(string?)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: ToString
+    path: ../src/CalcExpr/Expressions/Functions/LambdaFunction.cs
+    startLine: 53
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Expressions.Functions
+  summary: >-
+    Returns a <xref href="System.String" data-throw-if-not-resolved="false"></xref> that represents the current <xref href="CalcExpr.Expressions.IExpression" data-throw-if-not-resolved="false"></xref> using the specified 
+
+    format <xref href="System.String" data-throw-if-not-resolved="false"></xref> for number formats.
+  example: []
+  syntax:
+    content: public override string ToString(string? format)
+    parameters:
+    - id: format
+      type: System.String
+      description: ''
+    return:
+      type: System.String
+      description: >-
+        A <xref href="System.String" data-throw-if-not-resolved="false"></xref> that represents the current <xref href="CalcExpr.Expressions.IExpression" data-throw-if-not-resolved="false"></xref> using the specified format 
+
+        <xref href="System.String" data-throw-if-not-resolved="false"></xref>.
+    content.vb: Public Overrides Function ToString(format As String) As String
+  overridden: CalcExpr.Expressions.Terminals.Terminal.ToString(System.String)
+  overload: CalcExpr.Expressions.Functions.LambdaFunction.ToString*
+  nameWithType.vb: LambdaFunction.ToString(String)
+  fullName.vb: CalcExpr.Expressions.Functions.LambdaFunction.ToString(String)
+  name.vb: ToString(String)
+references:
+- uid: CalcExpr.Expressions.Functions
+  commentId: N:CalcExpr.Expressions.Functions
+  href: CalcExpr.html
+  name: CalcExpr.Expressions.Functions
+  nameWithType: CalcExpr.Expressions.Functions
+  fullName: CalcExpr.Expressions.Functions
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Functions
+    name: Functions
+    href: CalcExpr.Expressions.Functions.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Functions
+    name: Functions
+    href: CalcExpr.Expressions.Functions.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: CalcExpr.Expressions.Terminals.Terminal
+  commentId: T:CalcExpr.Expressions.Terminals.Terminal
+  parent: CalcExpr.Expressions.Terminals
+  href: CalcExpr.Expressions.Terminals.Terminal.html
+  name: Terminal
+  nameWithType: Terminal
+  fullName: CalcExpr.Expressions.Terminals.Terminal
+- uid: CalcExpr.Expressions.Functions.Function
+  commentId: T:CalcExpr.Expressions.Functions.Function
+  parent: CalcExpr.Expressions.Functions
+  href: CalcExpr.Expressions.Functions.Function.html
+  name: Function
+  nameWithType: Function
+  fullName: CalcExpr.Expressions.Functions.Function
+- uid: CalcExpr.Expressions.IExpression
+  commentId: T:CalcExpr.Expressions.IExpression
+  parent: CalcExpr.Expressions
+  href: CalcExpr.Expressions.IExpression.html
+  name: IExpression
+  nameWithType: IExpression
+  fullName: CalcExpr.Expressions.IExpression
+- uid: CalcExpr.Expressions.Functions.Function.ProcessArguments(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  commentId: M:CalcExpr.Expressions.Functions.Function.ProcessArguments(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  parent: CalcExpr.Expressions.Functions.Function
+  isExternal: true
+  href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ProcessArguments_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  name: ProcessArguments(IEnumerable<IExpression>, ExpressionContext)
+  nameWithType: Function.ProcessArguments(IEnumerable<IExpression>, ExpressionContext)
+  fullName: CalcExpr.Expressions.Functions.Function.ProcessArguments(System.Collections.Generic.IEnumerable<CalcExpr.Expressions.IExpression>, CalcExpr.Context.ExpressionContext)
+  nameWithType.vb: Function.ProcessArguments(IEnumerable(Of IExpression), ExpressionContext)
+  fullName.vb: CalcExpr.Expressions.Functions.Function.ProcessArguments(System.Collections.Generic.IEnumerable(Of CalcExpr.Expressions.IExpression), CalcExpr.Context.ExpressionContext)
+  name.vb: ProcessArguments(IEnumerable(Of IExpression), ExpressionContext)
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Functions.Function.ProcessArguments(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+    name: ProcessArguments
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ProcessArguments_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: '>'
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Functions.Function.ProcessArguments(System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+    name: ProcessArguments
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ProcessArguments_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: )
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+- uid: CalcExpr.Expressions.Functions.Function.ContextReconciliation(CalcExpr.Context.ExpressionContext,CalcExpr.Context.ExpressionContext,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter})
+  commentId: M:CalcExpr.Expressions.Functions.Function.ContextReconciliation(CalcExpr.Context.ExpressionContext,CalcExpr.Context.ExpressionContext,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter})
+  parent: CalcExpr.Expressions.Functions.Function
+  isExternal: true
+  href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ContextReconciliation_CalcExpr_Context_ExpressionContext_CalcExpr_Context_ExpressionContext_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_Components_Parameter__
+  name: ContextReconciliation(ExpressionContext, ExpressionContext, IEnumerable<Parameter>)
+  nameWithType: Function.ContextReconciliation(ExpressionContext, ExpressionContext, IEnumerable<Parameter>)
+  fullName: CalcExpr.Expressions.Functions.Function.ContextReconciliation(CalcExpr.Context.ExpressionContext, CalcExpr.Context.ExpressionContext, System.Collections.Generic.IEnumerable<CalcExpr.Expressions.Components.Parameter>)
+  nameWithType.vb: Function.ContextReconciliation(ExpressionContext, ExpressionContext, IEnumerable(Of Parameter))
+  fullName.vb: CalcExpr.Expressions.Functions.Function.ContextReconciliation(CalcExpr.Context.ExpressionContext, CalcExpr.Context.ExpressionContext, System.Collections.Generic.IEnumerable(Of CalcExpr.Expressions.Components.Parameter))
+  name.vb: ContextReconciliation(ExpressionContext, ExpressionContext, IEnumerable(Of Parameter))
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Functions.Function.ContextReconciliation(CalcExpr.Context.ExpressionContext,CalcExpr.Context.ExpressionContext,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter})
+    name: ContextReconciliation
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ContextReconciliation_CalcExpr_Context_ExpressionContext_CalcExpr_Context_ExpressionContext_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_Components_Parameter__
+  - name: (
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: CalcExpr.Expressions.Components.Parameter
+    name: Parameter
+    href: CalcExpr.Expressions.Components.Parameter.html
+  - name: '>'
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Functions.Function.ContextReconciliation(CalcExpr.Context.ExpressionContext,CalcExpr.Context.ExpressionContext,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter})
+    name: ContextReconciliation
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ContextReconciliation_CalcExpr_Context_ExpressionContext_CalcExpr_Context_ExpressionContext_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_Components_Parameter__
+  - name: (
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: CalcExpr.Expressions.Components.Parameter
+    name: Parameter
+    href: CalcExpr.Expressions.Components.Parameter.html
+  - name: )
+  - name: )
+- uid: CalcExpr.Expressions.Functions.Function.ForEach(System.Reflection.MethodInfo,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  commentId: M:CalcExpr.Expressions.Functions.Function.ForEach(System.Reflection.MethodInfo,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  parent: CalcExpr.Expressions.Functions.Function
+  isExternal: true
+  href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ForEach_System_Reflection_MethodInfo_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  name: ForEach(MethodInfo, IEnumerable<IExpression>, ExpressionContext)
+  nameWithType: Function.ForEach(MethodInfo, IEnumerable<IExpression>, ExpressionContext)
+  fullName: CalcExpr.Expressions.Functions.Function.ForEach(System.Reflection.MethodInfo, System.Collections.Generic.IEnumerable<CalcExpr.Expressions.IExpression>, CalcExpr.Context.ExpressionContext)
+  nameWithType.vb: Function.ForEach(MethodInfo, IEnumerable(Of IExpression), ExpressionContext)
+  fullName.vb: CalcExpr.Expressions.Functions.Function.ForEach(System.Reflection.MethodInfo, System.Collections.Generic.IEnumerable(Of CalcExpr.Expressions.IExpression), CalcExpr.Context.ExpressionContext)
+  name.vb: ForEach(MethodInfo, IEnumerable(Of IExpression), ExpressionContext)
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Functions.Function.ForEach(System.Reflection.MethodInfo,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+    name: ForEach
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ForEach_System_Reflection_MethodInfo_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: System.Reflection.MethodInfo
+    name: MethodInfo
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.reflection.methodinfo
+  - name: ','
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: '>'
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Functions.Function.ForEach(System.Reflection.MethodInfo,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+    name: ForEach
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ForEach_System_Reflection_MethodInfo_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: System.Reflection.MethodInfo
+    name: MethodInfo
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.reflection.methodinfo
+  - name: ','
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: )
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+- uid: CalcExpr.Expressions.Functions.Function.ForEach(CalcExpr.Expressions.Functions.Function,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  commentId: M:CalcExpr.Expressions.Functions.Function.ForEach(CalcExpr.Expressions.Functions.Function,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+  parent: CalcExpr.Expressions.Functions.Function
+  isExternal: true
+  href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ForEach_CalcExpr_Expressions_Functions_Function_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  name: ForEach(Function, IEnumerable<IExpression>, ExpressionContext)
+  nameWithType: Function.ForEach(Function, IEnumerable<IExpression>, ExpressionContext)
+  fullName: CalcExpr.Expressions.Functions.Function.ForEach(CalcExpr.Expressions.Functions.Function, System.Collections.Generic.IEnumerable<CalcExpr.Expressions.IExpression>, CalcExpr.Context.ExpressionContext)
+  nameWithType.vb: Function.ForEach(Function, IEnumerable(Of IExpression), ExpressionContext)
+  fullName.vb: CalcExpr.Expressions.Functions.Function.ForEach(CalcExpr.Expressions.Functions.Function, System.Collections.Generic.IEnumerable(Of CalcExpr.Expressions.IExpression), CalcExpr.Context.ExpressionContext)
+  name.vb: ForEach(Function, IEnumerable(Of IExpression), ExpressionContext)
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Functions.Function.ForEach(CalcExpr.Expressions.Functions.Function,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+    name: ForEach
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ForEach_CalcExpr_Expressions_Functions_Function_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: CalcExpr.Expressions.Functions.Function
+    name: Function
+    href: CalcExpr.Expressions.Functions.Function.html
+  - name: ','
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: '>'
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Functions.Function.ForEach(CalcExpr.Expressions.Functions.Function,System.Collections.Generic.IEnumerable{CalcExpr.Expressions.IExpression},CalcExpr.Context.ExpressionContext)
+    name: ForEach
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_ForEach_CalcExpr_Expressions_Functions_Function_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_IExpression__CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: CalcExpr.Expressions.Functions.Function
+    name: Function
+    href: CalcExpr.Expressions.Functions.Function.html
+  - name: ','
+  - name: " "
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: )
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+- uid: CalcExpr.Expressions.Terminals.Terminal.Evaluate
+  commentId: M:CalcExpr.Expressions.Terminals.Terminal.Evaluate
+  parent: CalcExpr.Expressions.Terminals.Terminal
+  href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_Evaluate
+  name: Evaluate()
+  nameWithType: Terminal.Evaluate()
+  fullName: CalcExpr.Expressions.Terminals.Terminal.Evaluate()
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.Evaluate
+    name: Evaluate
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_Evaluate
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.Evaluate
+    name: Evaluate
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_Evaluate
+  - name: (
+  - name: )
+- uid: CalcExpr.Expressions.Terminals.Terminal.Evaluate(CalcExpr.Context.ExpressionContext)
+  commentId: M:CalcExpr.Expressions.Terminals.Terminal.Evaluate(CalcExpr.Context.ExpressionContext)
+  parent: CalcExpr.Expressions.Terminals.Terminal
+  href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_Evaluate_CalcExpr_Context_ExpressionContext_
+  name: Evaluate(ExpressionContext)
+  nameWithType: Terminal.Evaluate(ExpressionContext)
+  fullName: CalcExpr.Expressions.Terminals.Terminal.Evaluate(CalcExpr.Context.ExpressionContext)
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.Evaluate(CalcExpr.Context.ExpressionContext)
+    name: Evaluate
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_Evaluate_CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.Evaluate(CalcExpr.Context.ExpressionContext)
+    name: Evaluate
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_Evaluate_CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+- uid: CalcExpr.Expressions.Terminals.Terminal.StepEvaluate
+  commentId: M:CalcExpr.Expressions.Terminals.Terminal.StepEvaluate
+  parent: CalcExpr.Expressions.Terminals.Terminal
+  href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_StepEvaluate
+  name: StepEvaluate()
+  nameWithType: Terminal.StepEvaluate()
+  fullName: CalcExpr.Expressions.Terminals.Terminal.StepEvaluate()
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.StepEvaluate
+    name: StepEvaluate
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_StepEvaluate
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.StepEvaluate
+    name: StepEvaluate
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_StepEvaluate
+  - name: (
+  - name: )
+- uid: CalcExpr.Expressions.Terminals.Terminal.StepEvaluate(CalcExpr.Context.ExpressionContext)
+  commentId: M:CalcExpr.Expressions.Terminals.Terminal.StepEvaluate(CalcExpr.Context.ExpressionContext)
+  parent: CalcExpr.Expressions.Terminals.Terminal
+  href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_StepEvaluate_CalcExpr_Context_ExpressionContext_
+  name: StepEvaluate(ExpressionContext)
+  nameWithType: Terminal.StepEvaluate(ExpressionContext)
+  fullName: CalcExpr.Expressions.Terminals.Terminal.StepEvaluate(CalcExpr.Context.ExpressionContext)
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.StepEvaluate(CalcExpr.Context.ExpressionContext)
+    name: StepEvaluate
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_StepEvaluate_CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.StepEvaluate(CalcExpr.Context.ExpressionContext)
+    name: StepEvaluate
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_StepEvaluate_CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+- uid: CalcExpr.Expressions.Terminals.Terminal.ToString
+  commentId: M:CalcExpr.Expressions.Terminals.Terminal.ToString
+  parent: CalcExpr.Expressions.Terminals.Terminal
+  href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_ToString
+  name: ToString()
+  nameWithType: Terminal.ToString()
+  fullName: CalcExpr.Expressions.Terminals.Terminal.ToString()
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.ToString
+    name: ToString
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_ToString
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.ToString
+    name: ToString
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_ToString
+  - name: (
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: CalcExpr.Expressions.Terminals
+  commentId: N:CalcExpr.Expressions.Terminals
+  href: CalcExpr.html
+  name: CalcExpr.Expressions.Terminals
+  nameWithType: CalcExpr.Expressions.Terminals
+  fullName: CalcExpr.Expressions.Terminals
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Terminals
+    name: Terminals
+    href: CalcExpr.Expressions.Terminals.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Terminals
+    name: Terminals
+    href: CalcExpr.Expressions.Terminals.html
+- uid: CalcExpr.Expressions
+  commentId: N:CalcExpr.Expressions
+  href: CalcExpr.html
+  name: CalcExpr.Expressions
+  nameWithType: CalcExpr.Expressions
+  fullName: CalcExpr.Expressions
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.#ctor*
+  commentId: Overload:CalcExpr.Expressions.Functions.LambdaFunction.#ctor
+  href: CalcExpr.Expressions.Functions.LambdaFunction.html#CalcExpr_Expressions_Functions_LambdaFunction__ctor_System_Collections_Generic_IEnumerable_CalcExpr_Expressions_Components_Parameter__CalcExpr_Expressions_IExpression_
+  name: LambdaFunction
+  nameWithType: LambdaFunction.LambdaFunction
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.LambdaFunction
+  nameWithType.vb: LambdaFunction.New
+  fullName.vb: CalcExpr.Expressions.Functions.LambdaFunction.New
+  name.vb: New
+- uid: System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter}
+  commentId: T:System.Collections.Generic.IEnumerable{CalcExpr.Expressions.Components.Parameter}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEnumerable`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<Parameter>
+  nameWithType: IEnumerable<Parameter>
+  fullName: System.Collections.Generic.IEnumerable<CalcExpr.Expressions.Components.Parameter>
+  nameWithType.vb: IEnumerable(Of Parameter)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of CalcExpr.Expressions.Components.Parameter)
+  name.vb: IEnumerable(Of Parameter)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: CalcExpr.Expressions.Components.Parameter
+    name: Parameter
+    href: CalcExpr.Expressions.Components.Parameter.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: CalcExpr.Expressions.Components.Parameter
+    name: Parameter
+    href: CalcExpr.Expressions.Components.Parameter.html
+  - name: )
+- uid: System.Collections.Generic.IEnumerable`1
+  commentId: T:System.Collections.Generic.IEnumerable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: CalcExpr.Expressions.Functions.Function.Parameters
+  commentId: P:CalcExpr.Expressions.Functions.Function.Parameters
+  parent: CalcExpr.Expressions.Functions.Function
+  href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_Parameters
+  name: Parameters
+  nameWithType: Function.Parameters
+  fullName: CalcExpr.Expressions.Functions.Function.Parameters
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.Parameters*
+  commentId: Overload:CalcExpr.Expressions.Functions.LambdaFunction.Parameters
+  href: CalcExpr.Expressions.Functions.LambdaFunction.html#CalcExpr_Expressions_Functions_LambdaFunction_Parameters
+  name: Parameters
+  nameWithType: LambdaFunction.Parameters
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.Parameters
+- uid: CalcExpr.Expressions.Components.IParameter[]
+  isExternal: true
+  href: CalcExpr.Expressions.Components.IParameter.html
+  name: IParameter[]
+  nameWithType: IParameter[]
+  fullName: CalcExpr.Expressions.Components.IParameter[]
+  nameWithType.vb: IParameter()
+  fullName.vb: CalcExpr.Expressions.Components.IParameter()
+  name.vb: IParameter()
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Components.IParameter
+    name: IParameter
+    href: CalcExpr.Expressions.Components.IParameter.html
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: CalcExpr.Expressions.Components.IParameter
+    name: IParameter
+    href: CalcExpr.Expressions.Components.IParameter.html
+  - name: (
+  - name: )
+- uid: CalcExpr.Expressions.Functions.Function.IsElementwise
+  commentId: P:CalcExpr.Expressions.Functions.Function.IsElementwise
+  parent: CalcExpr.Expressions.Functions.Function
+  href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_IsElementwise
+  name: IsElementwise
+  nameWithType: Function.IsElementwise
+  fullName: CalcExpr.Expressions.Functions.Function.IsElementwise
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.IsElementwise*
+  commentId: Overload:CalcExpr.Expressions.Functions.LambdaFunction.IsElementwise
+  href: CalcExpr.Expressions.Functions.LambdaFunction.html#CalcExpr_Expressions_Functions_LambdaFunction_IsElementwise
+  name: IsElementwise
+  nameWithType: LambdaFunction.IsElementwise
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.IsElementwise
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: CalcExpr.Expressions.Functions.Function.Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+  commentId: M:CalcExpr.Expressions.Functions.Function.Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+  parent: CalcExpr.Expressions.Functions.Function
+  href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_Invoke_CalcExpr_Expressions_IExpression___CalcExpr_Context_ExpressionContext_
+  name: Invoke(IExpression[], ExpressionContext)
+  nameWithType: Function.Invoke(IExpression[], ExpressionContext)
+  fullName: CalcExpr.Expressions.Functions.Function.Invoke(CalcExpr.Expressions.IExpression[], CalcExpr.Context.ExpressionContext)
+  nameWithType.vb: Function.Invoke(IExpression(), ExpressionContext)
+  fullName.vb: CalcExpr.Expressions.Functions.Function.Invoke(CalcExpr.Expressions.IExpression(), CalcExpr.Context.ExpressionContext)
+  name.vb: Invoke(IExpression(), ExpressionContext)
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Functions.Function.Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+    name: Invoke
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_Invoke_CalcExpr_Expressions_IExpression___CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: '['
+  - name: ']'
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Functions.Function.Invoke(CalcExpr.Expressions.IExpression[],CalcExpr.Context.ExpressionContext)
+    name: Invoke
+    href: CalcExpr.Expressions.Functions.Function.html#CalcExpr_Expressions_Functions_Function_Invoke_CalcExpr_Expressions_IExpression___CalcExpr_Context_ExpressionContext_
+  - name: (
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: (
+  - name: )
+  - name: ','
+  - name: " "
+  - uid: CalcExpr.Context.ExpressionContext
+    name: ExpressionContext
+    href: CalcExpr.Context.ExpressionContext.html
+  - name: )
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.Invoke*
+  commentId: Overload:CalcExpr.Expressions.Functions.LambdaFunction.Invoke
+  href: CalcExpr.Expressions.Functions.LambdaFunction.html#CalcExpr_Expressions_Functions_LambdaFunction_Invoke_CalcExpr_Expressions_IExpression___CalcExpr_Context_ExpressionContext_
+  name: Invoke
+  nameWithType: LambdaFunction.Invoke
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.Invoke
+- uid: CalcExpr.Expressions.IExpression[]
+  isExternal: true
+  href: CalcExpr.Expressions.IExpression.html
+  name: IExpression[]
+  nameWithType: IExpression[]
+  fullName: CalcExpr.Expressions.IExpression[]
+  nameWithType.vb: IExpression()
+  fullName.vb: CalcExpr.Expressions.IExpression()
+  name.vb: IExpression()
+  spec.csharp:
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: (
+  - name: )
+- uid: CalcExpr.Context.ExpressionContext
+  commentId: T:CalcExpr.Context.ExpressionContext
+  parent: CalcExpr.Context
+  href: CalcExpr.Context.ExpressionContext.html
+  name: ExpressionContext
+  nameWithType: ExpressionContext
+  fullName: CalcExpr.Context.ExpressionContext
+- uid: CalcExpr.Context
+  commentId: N:CalcExpr.Context
+  href: CalcExpr.html
+  name: CalcExpr.Context
+  nameWithType: CalcExpr.Context
+  fullName: CalcExpr.Context
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Context
+    name: Context
+    href: CalcExpr.Context.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Context
+    name: Context
+    href: CalcExpr.Context.html
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.Equals*
+  commentId: Overload:CalcExpr.Expressions.Functions.LambdaFunction.Equals
+  href: CalcExpr.Expressions.Functions.LambdaFunction.html#CalcExpr_Expressions_Functions_LambdaFunction_Equals_System_Object_
+  name: Equals
+  nameWithType: LambdaFunction.Equals
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.Equals
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.GetHashCode*
+  commentId: Overload:CalcExpr.Expressions.Functions.LambdaFunction.GetHashCode
+  href: CalcExpr.Expressions.Functions.LambdaFunction.html#CalcExpr_Expressions_Functions_LambdaFunction_GetHashCode
+  name: GetHashCode
+  nameWithType: LambdaFunction.GetHashCode
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.GetHashCode
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: CalcExpr.Expressions.Terminals.Terminal.ToString(System.String)
+  commentId: M:CalcExpr.Expressions.Terminals.Terminal.ToString(System.String)
+  parent: CalcExpr.Expressions.Terminals.Terminal
+  isExternal: true
+  href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_ToString_System_String_
+  name: ToString(string)
+  nameWithType: Terminal.ToString(string)
+  fullName: CalcExpr.Expressions.Terminals.Terminal.ToString(string)
+  nameWithType.vb: Terminal.ToString(String)
+  fullName.vb: CalcExpr.Expressions.Terminals.Terminal.ToString(String)
+  name.vb: ToString(String)
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.ToString(System.String)
+    name: ToString
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_ToString_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.Expressions.Terminals.Terminal.ToString(System.String)
+    name: ToString
+    href: CalcExpr.Expressions.Terminals.Terminal.html#CalcExpr_Expressions_Terminals_Terminal_ToString_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: CalcExpr.Expressions.Functions.LambdaFunction.ToString*
+  commentId: Overload:CalcExpr.Expressions.Functions.LambdaFunction.ToString
+  href: CalcExpr.Expressions.Functions.LambdaFunction.html#CalcExpr_Expressions_Functions_LambdaFunction_ToString_System_String_
+  name: ToString
+  nameWithType: LambdaFunction.ToString
+  fullName: CalcExpr.Expressions.Functions.LambdaFunction.ToString

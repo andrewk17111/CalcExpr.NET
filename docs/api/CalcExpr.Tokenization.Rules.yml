@@ -1,0 +1,86 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Tokenization.Rules
+  commentId: N:CalcExpr.Tokenization.Rules
+  id: CalcExpr.Tokenization.Rules
+  children:
+  - CalcExpr.Tokenization.Rules.CharSetRule
+  - CalcExpr.Tokenization.Rules.ITokenizerRule
+  - CalcExpr.Tokenization.Rules.OptionRule
+  - CalcExpr.Tokenization.Rules.RegexRule
+  - CalcExpr.Tokenization.Rules.TokenizerRule
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.Tokenization.Rules
+  nameWithType: CalcExpr.Tokenization.Rules
+  fullName: CalcExpr.Tokenization.Rules
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.Tokenization.Rules.CharSetRule
+  commentId: T:CalcExpr.Tokenization.Rules.CharSetRule
+  parent: CalcExpr.Tokenization.Rules
+  href: CalcExpr.Tokenization.Rules.CharSetRule.html
+  name: CharSetRule
+  nameWithType: CharSetRule
+  fullName: CalcExpr.Tokenization.Rules.CharSetRule
+- uid: CalcExpr.Tokenization.Rules.ITokenizerRule
+  commentId: T:CalcExpr.Tokenization.Rules.ITokenizerRule
+  parent: CalcExpr.Tokenization.Rules
+  href: CalcExpr.Tokenization.Rules.ITokenizerRule.html
+  name: ITokenizerRule
+  nameWithType: ITokenizerRule
+  fullName: CalcExpr.Tokenization.Rules.ITokenizerRule
+- uid: CalcExpr.Tokenization.Rules.OptionRule
+  commentId: T:CalcExpr.Tokenization.Rules.OptionRule
+  parent: CalcExpr.Tokenization.Rules
+  href: CalcExpr.Tokenization.Rules.OptionRule.html
+  name: OptionRule
+  nameWithType: OptionRule
+  fullName: CalcExpr.Tokenization.Rules.OptionRule
+- uid: CalcExpr.Tokenization.Rules.RegexRule
+  commentId: T:CalcExpr.Tokenization.Rules.RegexRule
+  parent: CalcExpr.Tokenization.Rules
+  href: CalcExpr.Tokenization.Rules.RegexRule.html
+  name: RegexRule
+  nameWithType: RegexRule
+  fullName: CalcExpr.Tokenization.Rules.RegexRule
+- uid: CalcExpr.Tokenization.Rules.TokenizerRule
+  commentId: T:CalcExpr.Tokenization.Rules.TokenizerRule
+  parent: CalcExpr.Tokenization.Rules
+  href: CalcExpr.Tokenization.Rules.TokenizerRule.html
+  name: TokenizerRule
+  nameWithType: TokenizerRule
+  fullName: CalcExpr.Tokenization.Rules.TokenizerRule
+- uid: CalcExpr.Tokenization.Rules
+  commentId: N:CalcExpr.Tokenization.Rules
+  href: CalcExpr.html
+  name: CalcExpr.Tokenization.Rules
+  nameWithType: CalcExpr.Tokenization.Rules
+  fullName: CalcExpr.Tokenization.Rules
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Rules
+    name: Rules
+    href: CalcExpr.Tokenization.Rules.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Rules
+    name: Rules
+    href: CalcExpr.Tokenization.Rules.html

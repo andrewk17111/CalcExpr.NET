@@ -1,0 +1,46 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Context
+  commentId: N:CalcExpr.Context
+  id: CalcExpr.Context
+  children:
+  - CalcExpr.Context.ExpressionContext
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.Context
+  nameWithType: CalcExpr.Context
+  fullName: CalcExpr.Context
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.Context.ExpressionContext
+  commentId: T:CalcExpr.Context.ExpressionContext
+  parent: CalcExpr.Context
+  href: CalcExpr.Context.ExpressionContext.html
+  name: ExpressionContext
+  nameWithType: ExpressionContext
+  fullName: CalcExpr.Context.ExpressionContext
+- uid: CalcExpr.Context
+  commentId: N:CalcExpr.Context
+  href: CalcExpr.html
+  name: CalcExpr.Context
+  nameWithType: CalcExpr.Context
+  fullName: CalcExpr.Context
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Context
+    name: Context
+    href: CalcExpr.Context.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Context
+    name: Context
+    href: CalcExpr.Context.html

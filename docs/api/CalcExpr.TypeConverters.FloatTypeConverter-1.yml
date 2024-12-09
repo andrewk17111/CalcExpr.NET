@@ -1,0 +1,673 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.TypeConverters.FloatTypeConverter`1
+  commentId: T:CalcExpr.TypeConverters.FloatTypeConverter`1
+  id: FloatTypeConverter`1
+  parent: CalcExpr.TypeConverters
+  children:
+  - CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  - CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertToExpression(System.Nullable{`0})
+  langs:
+  - csharp
+  - vb
+  name: FloatTypeConverter<T>
+  nameWithType: FloatTypeConverter<T>
+  fullName: CalcExpr.TypeConverters.FloatTypeConverter<T>
+  type: Class
+  source:
+    remote:
+      path: src/CalcExpr/TypeConverters/FloatTypeConverter.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: FloatTypeConverter
+    path: ../src/CalcExpr/TypeConverters/FloatTypeConverter.cs
+    startLine: 6
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.TypeConverters
+  syntax:
+    content: 'public class FloatTypeConverter<T> : ITypeConverter<T?>, ITypeConverter where T : struct, IFloatingPointIeee754<T>, IMinMaxValue<T>'
+    typeParameters:
+    - id: T
+    content.vb: Public Class FloatTypeConverter(Of T As {Structure, IFloatingPointIeee754(Of T), IMinMaxValue(Of T)}) Implements ITypeConverter(Of T?), ITypeConverter
+  inheritance:
+  - System.Object
+  implements:
+  - CalcExpr.TypeConverters.ITypeConverter{System.Nullable{{T}}}
+  - CalcExpr.TypeConverters.ITypeConverter
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+  nameWithType.vb: FloatTypeConverter(Of T)
+  fullName.vb: CalcExpr.TypeConverters.FloatTypeConverter(Of T)
+  name.vb: FloatTypeConverter(Of T)
+- uid: CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertToExpression(System.Nullable{`0})
+  commentId: M:CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertToExpression(System.Nullable{`0})
+  id: ConvertToExpression(System.Nullable{`0})
+  parent: CalcExpr.TypeConverters.FloatTypeConverter`1
+  langs:
+  - csharp
+  - vb
+  name: ConvertToExpression(T?)
+  nameWithType: FloatTypeConverter<T>.ConvertToExpression(T?)
+  fullName: CalcExpr.TypeConverters.FloatTypeConverter<T>.ConvertToExpression(T?)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/TypeConverters/FloatTypeConverter.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: ConvertToExpression
+    path: ../src/CalcExpr/TypeConverters/FloatTypeConverter.cs
+    startLine: 9
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.TypeConverters
+  summary: Converts from a value to an expression.
+  example: []
+  syntax:
+    content: public Terminal ConvertToExpression(T? value)
+    parameters:
+    - id: value
+      type: System.Nullable{{T}}
+      description: The value to convert.
+    return:
+      type: CalcExpr.Expressions.Terminals.Terminal
+      description: An <xref href="CalcExpr.Expressions.Terminals.Terminal" data-throw-if-not-resolved="false"></xref> representing the value.
+    content.vb: Public Function ConvertToExpression(value As T?) As Terminal
+  overload: CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertToExpression*
+  implements:
+  - CalcExpr.TypeConverters.ITypeConverter{System.Nullable{{T}}}.ConvertToExpression(System.Nullable{{T}})
+  nameWithType.vb: FloatTypeConverter(Of T).ConvertToExpression(T?)
+  fullName.vb: CalcExpr.TypeConverters.FloatTypeConverter(Of T).ConvertToExpression(T?)
+- uid: CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  commentId: M:CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  id: ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  parent: CalcExpr.TypeConverters.FloatTypeConverter`1
+  langs:
+  - csharp
+  - vb
+  name: ConvertFromExpression(IExpression?)
+  nameWithType: FloatTypeConverter<T>.ConvertFromExpression(IExpression?)
+  fullName: CalcExpr.TypeConverters.FloatTypeConverter<T>.ConvertFromExpression(CalcExpr.Expressions.IExpression?)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/TypeConverters/FloatTypeConverter.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: ConvertFromExpression
+    path: ../src/CalcExpr/TypeConverters/FloatTypeConverter.cs
+    startLine: 32
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.TypeConverters
+  summary: Converts from an expression to a value.
+  example: []
+  syntax:
+    content: public T? ConvertFromExpression(IExpression? expression)
+    parameters:
+    - id: expression
+      type: CalcExpr.Expressions.IExpression
+      description: The expression to convert.
+    return:
+      type: System.Nullable{{T}}
+      description: A value representing the expression.
+    content.vb: Public Function ConvertFromExpression(expression As IExpression) As T?
+  overload: CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertFromExpression*
+  implements:
+  - CalcExpr.TypeConverters.ITypeConverter{System.Nullable{{T}}}.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  nameWithType.vb: FloatTypeConverter(Of T).ConvertFromExpression(IExpression)
+  fullName.vb: CalcExpr.TypeConverters.FloatTypeConverter(Of T).ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  name.vb: ConvertFromExpression(IExpression)
+references:
+- uid: CalcExpr.TypeConverters
+  commentId: N:CalcExpr.TypeConverters
+  href: CalcExpr.html
+  name: CalcExpr.TypeConverters
+  nameWithType: CalcExpr.TypeConverters
+  fullName: CalcExpr.TypeConverters
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.TypeConverters
+    name: TypeConverters
+    href: CalcExpr.TypeConverters.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.TypeConverters
+    name: TypeConverters
+    href: CalcExpr.TypeConverters.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{{T}}}
+  commentId: T:CalcExpr.TypeConverters.ITypeConverter{System.Nullable{`0}}
+  parent: CalcExpr.TypeConverters
+  definition: CalcExpr.TypeConverters.ITypeConverter`1
+  href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  name: ITypeConverter<T?>
+  nameWithType: ITypeConverter<T?>
+  fullName: CalcExpr.TypeConverters.ITypeConverter<T?>
+  nameWithType.vb: ITypeConverter(Of T?)
+  fullName.vb: CalcExpr.TypeConverters.ITypeConverter(Of T?)
+  name.vb: ITypeConverter(Of T?)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1
+    name: ITypeConverter
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  - name: <
+  - name: T
+  - name: '?'
+  - name: '>'
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1
+    name: ITypeConverter
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: '?'
+  - name: )
+- uid: CalcExpr.TypeConverters.ITypeConverter
+  commentId: T:CalcExpr.TypeConverters.ITypeConverter
+  parent: CalcExpr.TypeConverters
+  href: CalcExpr.TypeConverters.ITypeConverter.html
+  name: ITypeConverter
+  nameWithType: ITypeConverter
+  fullName: CalcExpr.TypeConverters.ITypeConverter
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: CalcExpr.TypeConverters.ITypeConverter`1
+  commentId: T:CalcExpr.TypeConverters.ITypeConverter`1
+  href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  name: ITypeConverter<T>
+  nameWithType: ITypeConverter<T>
+  fullName: CalcExpr.TypeConverters.ITypeConverter<T>
+  nameWithType.vb: ITypeConverter(Of T)
+  fullName.vb: CalcExpr.TypeConverters.ITypeConverter(Of T)
+  name.vb: ITypeConverter(Of T)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1
+    name: ITypeConverter
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1
+    name: ITypeConverter
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: CalcExpr.Expressions.Terminals.Terminal
+  commentId: T:CalcExpr.Expressions.Terminals.Terminal
+  parent: CalcExpr.Expressions.Terminals
+  href: CalcExpr.Expressions.Terminals.Terminal.html
+  name: Terminal
+  nameWithType: Terminal
+  fullName: CalcExpr.Expressions.Terminals.Terminal
+- uid: CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertToExpression*
+  commentId: Overload:CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertToExpression
+  href: CalcExpr.TypeConverters.FloatTypeConverter-1.html#CalcExpr_TypeConverters_FloatTypeConverter_1_ConvertToExpression_System_Nullable__0__
+  name: ConvertToExpression
+  nameWithType: FloatTypeConverter<T>.ConvertToExpression
+  fullName: CalcExpr.TypeConverters.FloatTypeConverter<T>.ConvertToExpression
+  nameWithType.vb: FloatTypeConverter(Of T).ConvertToExpression
+  fullName.vb: CalcExpr.TypeConverters.FloatTypeConverter(Of T).ConvertToExpression
+- uid: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{{T}}}.ConvertToExpression(System.Nullable{{T}})
+  commentId: M:CalcExpr.TypeConverters.ITypeConverter{System.Nullable{`0}}.ConvertToExpression(System.Nullable{`0})
+  parent: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{{T}}}
+  definition: CalcExpr.TypeConverters.ITypeConverter`1.ConvertToExpression(`0)
+  href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertToExpression__0_
+  name: ConvertToExpression(T?)
+  nameWithType: ITypeConverter<T?>.ConvertToExpression(T?)
+  fullName: CalcExpr.TypeConverters.ITypeConverter<T?>.ConvertToExpression(T?)
+  nameWithType.vb: ITypeConverter(Of T?).ConvertToExpression(T?)
+  fullName.vb: CalcExpr.TypeConverters.ITypeConverter(Of T?).ConvertToExpression(T?)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{`0}}.ConvertToExpression(System.Nullable{`0})
+    name: ConvertToExpression
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertToExpression__0_
+  - name: (
+  - name: T
+  - name: '?'
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{`0}}.ConvertToExpression(System.Nullable{`0})
+    name: ConvertToExpression
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertToExpression__0_
+  - name: (
+  - name: T
+  - name: '?'
+  - name: )
+- uid: System.Nullable{{T}}
+  commentId: T:System.Nullable{`0}
+  parent: System
+  definition: System.Nullable`1
+  name: T?
+  nameWithType: T?
+  fullName: T?
+  spec.csharp:
+  - name: T
+  - name: '?'
+  spec.vb:
+  - name: T
+  - name: '?'
+- uid: CalcExpr.Expressions.Terminals
+  commentId: N:CalcExpr.Expressions.Terminals
+  href: CalcExpr.html
+  name: CalcExpr.Expressions.Terminals
+  nameWithType: CalcExpr.Expressions.Terminals
+  fullName: CalcExpr.Expressions.Terminals
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Terminals
+    name: Terminals
+    href: CalcExpr.Expressions.Terminals.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Terminals
+    name: Terminals
+    href: CalcExpr.Expressions.Terminals.html
+- uid: CalcExpr.TypeConverters.ITypeConverter`1.ConvertToExpression(`0)
+  commentId: M:CalcExpr.TypeConverters.ITypeConverter`1.ConvertToExpression(`0)
+  href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertToExpression__0_
+  name: ConvertToExpression(T)
+  nameWithType: ITypeConverter<T>.ConvertToExpression(T)
+  fullName: CalcExpr.TypeConverters.ITypeConverter<T>.ConvertToExpression(T)
+  nameWithType.vb: ITypeConverter(Of T).ConvertToExpression(T)
+  fullName.vb: CalcExpr.TypeConverters.ITypeConverter(Of T).ConvertToExpression(T)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1.ConvertToExpression(`0)
+    name: ConvertToExpression
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertToExpression__0_
+  - name: (
+  - name: T
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1.ConvertToExpression(`0)
+    name: ConvertToExpression
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertToExpression__0_
+  - name: (
+  - name: T
+  - name: )
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertFromExpression*
+  commentId: Overload:CalcExpr.TypeConverters.FloatTypeConverter`1.ConvertFromExpression
+  href: CalcExpr.TypeConverters.FloatTypeConverter-1.html#CalcExpr_TypeConverters_FloatTypeConverter_1_ConvertFromExpression_CalcExpr_Expressions_IExpression_
+  name: ConvertFromExpression
+  nameWithType: FloatTypeConverter<T>.ConvertFromExpression
+  fullName: CalcExpr.TypeConverters.FloatTypeConverter<T>.ConvertFromExpression
+  nameWithType.vb: FloatTypeConverter(Of T).ConvertFromExpression
+  fullName.vb: CalcExpr.TypeConverters.FloatTypeConverter(Of T).ConvertFromExpression
+- uid: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{{T}}}.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  commentId: M:CalcExpr.TypeConverters.ITypeConverter{System.Nullable{`0}}.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  parent: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{{T}}}
+  definition: CalcExpr.TypeConverters.ITypeConverter`1.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertFromExpression_CalcExpr_Expressions_IExpression_
+  name: ConvertFromExpression(IExpression)
+  nameWithType: ITypeConverter<T?>.ConvertFromExpression(IExpression)
+  fullName: CalcExpr.TypeConverters.ITypeConverter<T?>.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  nameWithType.vb: ITypeConverter(Of T?).ConvertFromExpression(IExpression)
+  fullName.vb: CalcExpr.TypeConverters.ITypeConverter(Of T?).ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{`0}}.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+    name: ConvertFromExpression
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertFromExpression_CalcExpr_Expressions_IExpression_
+  - name: (
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.ITypeConverter{System.Nullable{`0}}.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+    name: ConvertFromExpression
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertFromExpression_CalcExpr_Expressions_IExpression_
+  - name: (
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: )
+- uid: CalcExpr.Expressions.IExpression
+  commentId: T:CalcExpr.Expressions.IExpression
+  parent: CalcExpr.Expressions
+  href: CalcExpr.Expressions.IExpression.html
+  name: IExpression
+  nameWithType: IExpression
+  fullName: CalcExpr.Expressions.IExpression
+- uid: CalcExpr.TypeConverters.ITypeConverter`1.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  commentId: M:CalcExpr.TypeConverters.ITypeConverter`1.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertFromExpression_CalcExpr_Expressions_IExpression_
+  name: ConvertFromExpression(IExpression)
+  nameWithType: ITypeConverter<T>.ConvertFromExpression(IExpression)
+  fullName: CalcExpr.TypeConverters.ITypeConverter<T>.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  nameWithType.vb: ITypeConverter(Of T).ConvertFromExpression(IExpression)
+  fullName.vb: CalcExpr.TypeConverters.ITypeConverter(Of T).ConvertFromExpression(CalcExpr.Expressions.IExpression)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+    name: ConvertFromExpression
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertFromExpression_CalcExpr_Expressions_IExpression_
+  - name: (
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: )
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1.ConvertFromExpression(CalcExpr.Expressions.IExpression)
+    name: ConvertFromExpression
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html#CalcExpr_TypeConverters_ITypeConverter_1_ConvertFromExpression_CalcExpr_Expressions_IExpression_
+  - name: (
+  - uid: CalcExpr.Expressions.IExpression
+    name: IExpression
+    href: CalcExpr.Expressions.IExpression.html
+  - name: )
+- uid: CalcExpr.Expressions
+  commentId: N:CalcExpr.Expressions
+  href: CalcExpr.html
+  name: CalcExpr.Expressions
+  nameWithType: CalcExpr.Expressions
+  fullName: CalcExpr.Expressions
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html

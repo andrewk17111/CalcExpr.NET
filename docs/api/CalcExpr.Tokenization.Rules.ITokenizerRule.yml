@@ -1,0 +1,209 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Tokenization.Rules.ITokenizerRule
+  commentId: T:CalcExpr.Tokenization.Rules.ITokenizerRule
+  id: ITokenizerRule
+  parent: CalcExpr.Tokenization.Rules
+  children:
+  - CalcExpr.Tokenization.Rules.ITokenizerRule.Name
+  - CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize(System.String@,System.Int32)
+  langs:
+  - csharp
+  - vb
+  name: ITokenizerRule
+  nameWithType: ITokenizerRule
+  fullName: CalcExpr.Tokenization.Rules.ITokenizerRule
+  type: Interface
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Rules/ITokenizerRule.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: ITokenizerRule
+    path: ../src/CalcExpr/Tokenization/Rules/ITokenizerRule.cs
+    startLine: 4
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization.Rules
+  syntax:
+    content: public interface ITokenizerRule
+    content.vb: Public Interface ITokenizerRule
+- uid: CalcExpr.Tokenization.Rules.ITokenizerRule.Name
+  commentId: P:CalcExpr.Tokenization.Rules.ITokenizerRule.Name
+  id: Name
+  parent: CalcExpr.Tokenization.Rules.ITokenizerRule
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: ITokenizerRule.Name
+  fullName: CalcExpr.Tokenization.Rules.ITokenizerRule.Name
+  type: Property
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Rules/ITokenizerRule.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Name
+    path: ../src/CalcExpr/Tokenization/Rules/ITokenizerRule.cs
+    startLine: 6
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization.Rules
+  syntax:
+    content: string Name { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Name As String
+  overload: CalcExpr.Tokenization.Rules.ITokenizerRule.Name*
+- uid: CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize(System.String@,System.Int32)
+  commentId: M:CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize(System.String@,System.Int32)
+  id: Tokenize(System.String@,System.Int32)
+  parent: CalcExpr.Tokenization.Rules.ITokenizerRule
+  langs:
+  - csharp
+  - vb
+  name: Tokenize(ref string, int)
+  nameWithType: ITokenizerRule.Tokenize(ref string, int)
+  fullName: CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize(ref string, int)
+  type: Method
+  source:
+    remote:
+      path: src/CalcExpr/Tokenization/Rules/ITokenizerRule.cs
+      branch: dev
+      repo: https://github.com/andrewk17111/CalcExpr.NET.git
+    id: Tokenize
+    path: ../src/CalcExpr/Tokenization/Rules/ITokenizerRule.cs
+    startLine: 16
+  assemblies:
+  - CalcExpr
+  namespace: CalcExpr.Tokenization.Rules
+  summary: Tries to tokenize the input <xref href="System.String" data-throw-if-not-resolved="false"></xref> into an <xref href="CalcExpr.Tokenization.Tokens.IToken" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: IToken? Tokenize(ref string input, int index)
+    parameters:
+    - id: input
+      type: System.String
+      description: The input <xref href="System.String" data-throw-if-not-resolved="false"></xref> to tokenize.
+    - id: index
+      type: System.Int32
+      description: The index of the start of the input string.
+    return:
+      type: CalcExpr.Tokenization.Tokens.IToken
+      description: The tokenized <xref href="CalcExpr.Tokenization.Tokens.IToken" data-throw-if-not-resolved="false"></xref>; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if the input does not match the rule.
+    content.vb: Function Tokenize(input As String, index As Integer) As IToken
+  overload: CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize*
+  nameWithType.vb: ITokenizerRule.Tokenize(String, Integer)
+  fullName.vb: CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize(String, Integer)
+  name.vb: Tokenize(String, Integer)
+references:
+- uid: CalcExpr.Tokenization.Rules
+  commentId: N:CalcExpr.Tokenization.Rules
+  href: CalcExpr.html
+  name: CalcExpr.Tokenization.Rules
+  nameWithType: CalcExpr.Tokenization.Rules
+  fullName: CalcExpr.Tokenization.Rules
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Rules
+    name: Rules
+    href: CalcExpr.Tokenization.Rules.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Rules
+    name: Rules
+    href: CalcExpr.Tokenization.Rules.html
+- uid: CalcExpr.Tokenization.Rules.ITokenizerRule.Name*
+  commentId: Overload:CalcExpr.Tokenization.Rules.ITokenizerRule.Name
+  href: CalcExpr.Tokenization.Rules.ITokenizerRule.html#CalcExpr_Tokenization_Rules_ITokenizerRule_Name
+  name: Name
+  nameWithType: ITokenizerRule.Name
+  fullName: CalcExpr.Tokenization.Rules.ITokenizerRule.Name
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: CalcExpr.Tokenization.Tokens.IToken
+  commentId: T:CalcExpr.Tokenization.Tokens.IToken
+  parent: CalcExpr.Tokenization.Tokens
+  href: CalcExpr.Tokenization.Tokens.IToken.html
+  name: IToken
+  nameWithType: IToken
+  fullName: CalcExpr.Tokenization.Tokens.IToken
+- uid: CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize*
+  commentId: Overload:CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize
+  href: CalcExpr.Tokenization.Rules.ITokenizerRule.html#CalcExpr_Tokenization_Rules_ITokenizerRule_Tokenize_System_String__System_Int32_
+  name: Tokenize
+  nameWithType: ITokenizerRule.Tokenize
+  fullName: CalcExpr.Tokenization.Rules.ITokenizerRule.Tokenize
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: CalcExpr.Tokenization.Tokens
+  commentId: N:CalcExpr.Tokenization.Tokens
+  href: CalcExpr.html
+  name: CalcExpr.Tokenization.Tokens
+  nameWithType: CalcExpr.Tokenization.Tokens
+  fullName: CalcExpr.Tokenization.Tokens
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Tokens
+    name: Tokens
+    href: CalcExpr.Tokenization.Tokens.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Tokenization
+    name: Tokenization
+    href: CalcExpr.Tokenization.html
+  - name: .
+  - uid: CalcExpr.Tokenization.Tokens
+    name: Tokens
+    href: CalcExpr.Tokenization.Tokens.html

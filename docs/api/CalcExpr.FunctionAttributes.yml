@@ -1,0 +1,46 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.FunctionAttributes
+  commentId: N:CalcExpr.FunctionAttributes
+  id: CalcExpr.FunctionAttributes
+  children:
+  - CalcExpr.FunctionAttributes.FunctionAttribute
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.FunctionAttributes
+  nameWithType: CalcExpr.FunctionAttributes
+  fullName: CalcExpr.FunctionAttributes
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.FunctionAttributes.FunctionAttribute
+  commentId: T:CalcExpr.FunctionAttributes.FunctionAttribute
+  parent: CalcExpr.FunctionAttributes
+  href: CalcExpr.FunctionAttributes.FunctionAttribute.html
+  name: FunctionAttribute
+  nameWithType: FunctionAttribute
+  fullName: CalcExpr.FunctionAttributes.FunctionAttribute
+- uid: CalcExpr.FunctionAttributes
+  commentId: N:CalcExpr.FunctionAttributes
+  href: CalcExpr.html
+  name: CalcExpr.FunctionAttributes
+  nameWithType: CalcExpr.FunctionAttributes
+  fullName: CalcExpr.FunctionAttributes
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.FunctionAttributes
+    name: FunctionAttributes
+    href: CalcExpr.FunctionAttributes.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.FunctionAttributes
+    name: FunctionAttributes
+    href: CalcExpr.FunctionAttributes.html

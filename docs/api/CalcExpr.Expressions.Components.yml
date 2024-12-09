@@ -1,0 +1,102 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.Expressions.Components
+  commentId: N:CalcExpr.Expressions.Components
+  id: CalcExpr.Expressions.Components
+  children:
+  - CalcExpr.Expressions.Components.ContextParameter
+  - CalcExpr.Expressions.Components.IParameter
+  - CalcExpr.Expressions.Components.Parameter
+  - CalcExpr.Expressions.Components.TypeParameter
+  - CalcExpr.Expressions.Components.TypeParameter`1
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.Expressions.Components
+  nameWithType: CalcExpr.Expressions.Components
+  fullName: CalcExpr.Expressions.Components
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.Expressions.Components.ContextParameter
+  commentId: T:CalcExpr.Expressions.Components.ContextParameter
+  href: CalcExpr.Expressions.Components.ContextParameter.html
+  name: ContextParameter
+  nameWithType: ContextParameter
+  fullName: CalcExpr.Expressions.Components.ContextParameter
+- uid: CalcExpr.Expressions.Components.Parameter
+  commentId: T:CalcExpr.Expressions.Components.Parameter
+  parent: CalcExpr.Expressions.Components
+  href: CalcExpr.Expressions.Components.Parameter.html
+  name: Parameter
+  nameWithType: Parameter
+  fullName: CalcExpr.Expressions.Components.Parameter
+- uid: CalcExpr.Expressions.Components.IParameter
+  commentId: T:CalcExpr.Expressions.Components.IParameter
+  parent: CalcExpr.Expressions.Components
+  href: CalcExpr.Expressions.Components.IParameter.html
+  name: IParameter
+  nameWithType: IParameter
+  fullName: CalcExpr.Expressions.Components.IParameter
+- uid: CalcExpr.Expressions.Components.TypeParameter`1
+  commentId: T:CalcExpr.Expressions.Components.TypeParameter`1
+  href: CalcExpr.Expressions.Components.TypeParameter-1.html
+  name: TypeParameter<T>
+  nameWithType: TypeParameter<T>
+  fullName: CalcExpr.Expressions.Components.TypeParameter<T>
+  nameWithType.vb: TypeParameter(Of T)
+  fullName.vb: CalcExpr.Expressions.Components.TypeParameter(Of T)
+  name.vb: TypeParameter(Of T)
+  spec.csharp:
+  - uid: CalcExpr.Expressions.Components.TypeParameter`1
+    name: TypeParameter
+    href: CalcExpr.Expressions.Components.TypeParameter-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: CalcExpr.Expressions.Components.TypeParameter`1
+    name: TypeParameter
+    href: CalcExpr.Expressions.Components.TypeParameter-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: CalcExpr.Expressions.Components.TypeParameter
+  commentId: T:CalcExpr.Expressions.Components.TypeParameter
+  href: CalcExpr.Expressions.Components.TypeParameter.html
+  name: TypeParameter
+  nameWithType: TypeParameter
+  fullName: CalcExpr.Expressions.Components.TypeParameter
+- uid: CalcExpr.Expressions.Components
+  commentId: N:CalcExpr.Expressions.Components
+  href: CalcExpr.html
+  name: CalcExpr.Expressions.Components
+  nameWithType: CalcExpr.Expressions.Components
+  fullName: CalcExpr.Expressions.Components
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Components
+    name: Components
+    href: CalcExpr.Expressions.Components.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.Expressions
+    name: Expressions
+    href: CalcExpr.Expressions.html
+  - name: .
+  - uid: CalcExpr.Expressions.Components
+    name: Components
+    href: CalcExpr.Expressions.Components.html

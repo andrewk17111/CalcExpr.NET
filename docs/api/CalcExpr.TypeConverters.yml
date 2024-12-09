@@ -1,0 +1,138 @@
+### YamlMime:ManagedReference
+items:
+- uid: CalcExpr.TypeConverters
+  commentId: N:CalcExpr.TypeConverters
+  id: CalcExpr.TypeConverters
+  children:
+  - CalcExpr.TypeConverters.BooleanTypeConverter
+  - CalcExpr.TypeConverters.DecimalTypeConverter
+  - CalcExpr.TypeConverters.FloatTypeConverter`1
+  - CalcExpr.TypeConverters.ITypeConverter
+  - CalcExpr.TypeConverters.ITypeConverter`1
+  - CalcExpr.TypeConverters.IntegerTypeConverter`1
+  langs:
+  - csharp
+  - vb
+  name: CalcExpr.TypeConverters
+  nameWithType: CalcExpr.TypeConverters
+  fullName: CalcExpr.TypeConverters
+  type: Namespace
+  assemblies:
+  - CalcExpr
+references:
+- uid: CalcExpr.TypeConverters.BooleanTypeConverter
+  commentId: T:CalcExpr.TypeConverters.BooleanTypeConverter
+  href: CalcExpr.TypeConverters.BooleanTypeConverter.html
+  name: BooleanTypeConverter
+  nameWithType: BooleanTypeConverter
+  fullName: CalcExpr.TypeConverters.BooleanTypeConverter
+- uid: CalcExpr.TypeConverters.DecimalTypeConverter
+  commentId: T:CalcExpr.TypeConverters.DecimalTypeConverter
+  href: CalcExpr.TypeConverters.DecimalTypeConverter.html
+  name: DecimalTypeConverter
+  nameWithType: DecimalTypeConverter
+  fullName: CalcExpr.TypeConverters.DecimalTypeConverter
+- uid: CalcExpr.TypeConverters.FloatTypeConverter`1
+  commentId: T:CalcExpr.TypeConverters.FloatTypeConverter`1
+  href: CalcExpr.TypeConverters.FloatTypeConverter-1.html
+  name: FloatTypeConverter<T>
+  nameWithType: FloatTypeConverter<T>
+  fullName: CalcExpr.TypeConverters.FloatTypeConverter<T>
+  nameWithType.vb: FloatTypeConverter(Of T)
+  fullName.vb: CalcExpr.TypeConverters.FloatTypeConverter(Of T)
+  name.vb: FloatTypeConverter(Of T)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.FloatTypeConverter`1
+    name: FloatTypeConverter
+    href: CalcExpr.TypeConverters.FloatTypeConverter-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.FloatTypeConverter`1
+    name: FloatTypeConverter
+    href: CalcExpr.TypeConverters.FloatTypeConverter-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: CalcExpr.TypeConverters.IntegerTypeConverter`1
+  commentId: T:CalcExpr.TypeConverters.IntegerTypeConverter`1
+  href: CalcExpr.TypeConverters.IntegerTypeConverter-1.html
+  name: IntegerTypeConverter<T>
+  nameWithType: IntegerTypeConverter<T>
+  fullName: CalcExpr.TypeConverters.IntegerTypeConverter<T>
+  nameWithType.vb: IntegerTypeConverter(Of T)
+  fullName.vb: CalcExpr.TypeConverters.IntegerTypeConverter(Of T)
+  name.vb: IntegerTypeConverter(Of T)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.IntegerTypeConverter`1
+    name: IntegerTypeConverter
+    href: CalcExpr.TypeConverters.IntegerTypeConverter-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.IntegerTypeConverter`1
+    name: IntegerTypeConverter
+    href: CalcExpr.TypeConverters.IntegerTypeConverter-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: CalcExpr.TypeConverters.ITypeConverter`1
+  commentId: T:CalcExpr.TypeConverters.ITypeConverter`1
+  href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  name: ITypeConverter<T>
+  nameWithType: ITypeConverter<T>
+  fullName: CalcExpr.TypeConverters.ITypeConverter<T>
+  nameWithType.vb: ITypeConverter(Of T)
+  fullName.vb: CalcExpr.TypeConverters.ITypeConverter(Of T)
+  name.vb: ITypeConverter(Of T)
+  spec.csharp:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1
+    name: ITypeConverter
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: CalcExpr.TypeConverters.ITypeConverter`1
+    name: ITypeConverter
+    href: CalcExpr.TypeConverters.ITypeConverter-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: CalcExpr.TypeConverters.ITypeConverter
+  commentId: T:CalcExpr.TypeConverters.ITypeConverter
+  parent: CalcExpr.TypeConverters
+  href: CalcExpr.TypeConverters.ITypeConverter.html
+  name: ITypeConverter
+  nameWithType: ITypeConverter
+  fullName: CalcExpr.TypeConverters.ITypeConverter
+- uid: CalcExpr.TypeConverters
+  commentId: N:CalcExpr.TypeConverters
+  href: CalcExpr.html
+  name: CalcExpr.TypeConverters
+  nameWithType: CalcExpr.TypeConverters
+  fullName: CalcExpr.TypeConverters
+  spec.csharp:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.TypeConverters
+    name: TypeConverters
+    href: CalcExpr.TypeConverters.html
+  spec.vb:
+  - uid: CalcExpr
+    name: CalcExpr
+    href: CalcExpr.html
+  - name: .
+  - uid: CalcExpr.TypeConverters
+    name: TypeConverters
+    href: CalcExpr.TypeConverters.html
